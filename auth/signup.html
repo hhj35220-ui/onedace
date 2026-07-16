@@ -305,12 +305,14 @@
         submitBtn.textContent = '';
 
         try {
-          await new Promise(r => setTimeout(r, 1000));
-          const result = OP.auth.signUp(
-            fullNameInput.value.trim(),
-            emailInput.value.trim(),
-            passwordInput.value
-          );
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const result = OP.auth && typeof OP.auth.signUp === 'function'
+            ? OP.auth.signUp(
+                fullNameInput.value.trim(),
+                emailInput.value.trim(),
+                passwordInput.value
+              )
+            : { success: false, message: 'Authentication service unavailable.' };
 
           if (result.success) {
             OP.toast.show(result.message, 'success');
@@ -319,9 +321,13 @@
               window.location.href = 'verify-email.html';
             }, 500);
           } else {
-            showError('email', result.message);
-            OP.toast.show(result.message, 'error');
+            showError('email', result.message || 'Unable to create account.');
+            OP.toast.show(result.message || 'Unable to create account.', 'error');
           }
+        } catch (error) {
+          console.error('Signup submit error:', error);
+          showError('email', 'Unable to create account. Please try again.');
+          OP.toast.show('Unable to create account. Please try again.', 'error');
         } finally {
           OP.loading.hide();
           isSubmitting = false;

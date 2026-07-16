@@ -192,7 +192,9 @@ class AuthManager {
     }
 
     const user = {
-      id: crypto.randomUUID(),
+      id: typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `user_${Math.random().toString(36).slice(2, 12)}`,
       fullName: fullName.trim(),
       email: email.toLowerCase().trim(),
       password: this.hashPassword(password),
@@ -317,7 +319,9 @@ class AuthManager {
         return { success: false, message: 'Verification code expired.' };
       }
 
-      if (verificationData.code !== code) {
+      const normalizedCode = String(code || '').trim();
+      const normalizedExpected = String(verificationData.code || '').trim();
+      if (normalizedExpected !== normalizedCode) {
         return { success: false, message: 'Invalid verification code.' };
       }
 

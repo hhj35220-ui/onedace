@@ -145,7 +145,10 @@
       inputs[0].focus();
 
       function getCode() {
-        return Array.from(inputs).map(i => i.value).join('');
+        return Array.from(inputs)
+          .map(i => i.value.replace(/\D/g, ''))
+          .join('')
+          .slice(0, 6);
       }
 
       function showError(message) {
