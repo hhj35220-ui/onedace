@@ -184,6 +184,7 @@
       const submitBtn = document.getElementById('submit-btn');
       const strengthMeter = document.getElementById('strength-meter');
       const strengthLabel = document.getElementById('strength-label');
+      let isSubmitting = false;
 
       // Toggle password
       toggleBtn.addEventListener('click', () => {
@@ -276,36 +277,38 @@
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!validate()) return;
+        if (isSubmitting || !validate()) return;
 
+        isSubmitting = true;
         OP.loading.show();
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
         submitBtn.textContent = '';
 
-        await new Promise(r => setTimeout(r, 1000));
+        try {
+          await new Promise(r => setTimeout(r, 1000));
+          const result = OP.auth.signUp(
+            fullNameInput.value.trim(),
+            emailInput.value.trim(),
+            passwordInput.value
+          );
 
-        const result = OP.auth.signUp(
-          fullNameInput.value.trim(),
-          emailInput.value.trim(),
-          passwordInput.value
-        );
-
-        OP.loading.hide();
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.textContent = 'Create Account';
-
-        if (result.success) {
-          OP.toast.show(result.message, 'success');
-          // Store verification code display for the next page
-          sessionStorage.setItem('op_verification_code_display', result.verificationCode);
-          setTimeout(() => {
-            window.location.href = 'verify-email.html';
-          }, 500);
-        } else {
-          showError('email', result.message);
-          OP.toast.show(result.message, 'error');
+          if (result.success) {
+            OP.toast.show(result.message, 'success');
+            sessionStorage.setItem('op_verification_code_display', result.verificationCode);
+            setTimeout(() => {
+              window.location.href = 'verify-email.html';
+            }, 500);
+          } else {
+            showError('email', result.message);
+            OP.toast.show(result.message, 'error');
+          }
+        } finally {
+          OP.loading.hide();
+          isSubmitting = false;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('btn-loading');
+          submitBtn.textContent = 'Create Account';
         }
       });
     });

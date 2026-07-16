@@ -306,34 +306,38 @@ class AuthManager {
       return { success: false, message: 'Session expired. Please sign up again.' };
     }
 
-    const verificationData = JSON.parse(localStorage.getItem(STORAGE_KEYS.VERIFICATION_CODE) || 'null');
-    
-    if (!verificationData || verificationData.email !== session.email) {
-      return { success: false, message: 'Verification data not found.' };
+    try {
+      const verificationData = JSON.parse(localStorage.getItem(STORAGE_KEYS.VERIFICATION_CODE) || 'null');
+      
+      if (!verificationData || verificationData.email !== session.email) {
+        return { success: false, message: 'Verification data not found.' };
+      }
+
+      if (new Date(verificationData.expiresAt) < new Date()) {
+        return { success: false, message: 'Verification code expired.' };
+      }
+
+      if (verificationData.code !== code) {
+        return { success: false, message: 'Invalid verification code.' };
+      }
+
+      // Mark user as verified
+      const users = this.getUsers();
+      const userIndex = users.findIndex(u => u.email === session.email);
+      if (userIndex !== -1) {
+        users[userIndex].verified = true;
+        this.saveUsers(users);
+      }
+
+      // Update session
+      session.verified = true;
+      this.setSession(session);
+      localStorage.removeItem(STORAGE_KEYS.VERIFICATION_CODE);
+
+      return { success: true, message: 'Email verified successfully.' };
+    } catch (error) {
+      return { success: false, message: 'We could not verify your email right now.' };
     }
-
-    if (new Date(verificationData.expiresAt) < new Date()) {
-      return { success: false, message: 'Verification code expired.' };
-    }
-
-    if (verificationData.code !== code) {
-      return { success: false, message: 'Invalid verification code.' };
-    }
-
-    // Mark user as verified
-    const users = this.getUsers();
-    const userIndex = users.findIndex(u => u.email === session.email);
-    if (userIndex !== -1) {
-      users[userIndex].verified = true;
-      this.saveUsers(users);
-    }
-
-    // Update session
-    session.verified = true;
-    this.setSession(session);
-    localStorage.removeItem(STORAGE_KEYS.VERIFICATION_CODE);
-
-    return { success: true, message: 'Email verified successfully.' };
   }
 
   resendVerificationCode() {
@@ -342,14 +346,18 @@ class AuthManager {
       return { success: false, message: 'Session expired.' };
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
-      email: session.email,
-      code,
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-    }));
+    try {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
+        email: session.email,
+        code,
+        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+      }));
 
-    return { success: true, message: 'New verification code sent.', code };
+      return { success: true, message: 'New verification code sent.', code };
+    } catch (error) {
+      return { success: false, message: 'We could not resend the verification code.' };
+    }
   }
 
   // --- Password Hash (Simple hash for demo) ---
@@ -554,7 +562,12 @@ class FormValidator {
 // Loading Manager
 // ============================================
 class LoadingManager {
+  constructor() {
+    this.activeCount = 0;
+  }
+
   show() {
+    this.activeCount = Math.max(this.activeCount + 1, 1);
     let overlay = document.querySelector('.loading-overlay');
     if (!overlay) {
       overlay = document.createElement('div');
@@ -566,6 +579,8 @@ class LoadingManager {
   }
 
   hide() {
+    this.activeCount = Math.max(this.activeCount - 1, 0);
+    if (this.activeCount > 0) return;
     const overlay = document.querySelector('.loading-overlay');
     if (overlay) overlay.classList.remove('active');
   }
@@ -645,8 +660,9 @@ class CommandPalette {
   }
 
   isPublicPage() {
-    const path = window.location.pathname.toLowerCase();
-    return path === '/' || path === '/index.html' || path.startsWith('/auth/');
+    const path = (window.location.pathname || '').toLowerCase();
+    const href = (window.location.href || '').toLowerCase();
+    return path === '/' || path === '/index' || path === '/index.html' || path === '/signin.html' || path === '/signup.html' || path === '/auth' || path.startsWith('/auth/') || (href.startsWith('file://') && (href.endsWith('/index.html') || href.includes('/auth/')));
   }
 
   init() {
@@ -929,6 +945,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 // Onboarding loader (lazy, single-init)
 // ============================================
+function getSiteAssetUrl(assetPath) {
+  const normalized = assetPath.replace(/^\/+/, '');
+  if (window.location.protocol === 'file:') {
+    const depth = window.location.pathname.split('/').filter(Boolean).length > 1 ? window.location.pathname.split('/').filter(Boolean).length - 1 : 0;
+    const prefix = depth > 0 ? '../'.repeat(depth) : '';
+    return `${prefix}${normalized}`;
+  }
+  return `/${normalized}`;
+}
+
 function loadOnboardingAssets() {
   if (window.OP && window.OP.onboardingLoaded) return;
   window.OP = window.OP || {};
@@ -939,7 +965,7 @@ function loadOnboardingAssets() {
     const link = document.createElement('link');
     link.id = 'onboardingCss';
     link.rel = 'stylesheet';
-    link.href = '/css/onboarding.css';
+    link.href = getSiteAssetUrl('/css/onboarding.css');
     document.head.appendChild(link);
   }
 
@@ -947,7 +973,7 @@ function loadOnboardingAssets() {
   if (!document.getElementById('onboardingScript')) {
     const script = document.createElement('script');
     script.id = 'onboardingScript';
-    script.src = '/js/onboarding.js';
+    script.src = getSiteAssetUrl('/js/onboarding.js');
     script.defer = true;
     script.onload = () => {
       try {
@@ -978,7 +1004,7 @@ function loadResponsiveAssets() {
     const link = document.createElement('link');
     link.id = 'responsiveCss';
     link.rel = 'stylesheet';
-    link.href = '/css/responsive.css';
+    link.href = getSiteAssetUrl('/css/responsive.css');
     document.head.appendChild(link);
   }
 
@@ -986,7 +1012,7 @@ function loadResponsiveAssets() {
   if (!document.getElementById('responsiveScript')) {
     const script = document.createElement('script');
     script.id = 'responsiveScript';
-    script.src = '/js/responsive.js';
+    script.src = getSiteAssetUrl('/js/responsive.js');
     script.defer = true;
     script.onload = () => {
       try {
@@ -1014,10 +1040,11 @@ function loadDesignSystemAssets() {
 
   const cssFiles = ['/css/design-tokens.css', '/css/design-core.css', '/css/design-components.css'];
   cssFiles.forEach(href => {
-    if (!document.querySelector(`link[href="${href}"]`)) {
+    const resolvedHref = getSiteAssetUrl(href);
+    if (!document.querySelector(`link[href="${resolvedHref}"]`)) {
       const l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = href;
+      l.href = resolvedHref;
       document.head.appendChild(l);
     }
   });
@@ -1025,7 +1052,7 @@ function loadDesignSystemAssets() {
   if (!document.getElementById('designSystemScript')) {
     const script = document.createElement('script');
     script.id = 'designSystemScript';
-    script.src = '/js/design-system.js';
+    script.src = getSiteAssetUrl('/js/design-system.js');
     script.defer = true;
     script.onload = () => {
       try { if (window.OP && window.OP.design && typeof window.OP.design.init === 'function') window.OP.design.init(); } catch (e) {}
@@ -1047,7 +1074,7 @@ function loadStateManager() {
   if (!document.getElementById('stateManagerScript')) {
     const script = document.createElement('script');
     script.id = 'stateManagerScript';
-    script.src = '/js/state-manager.js';
+    script.src = getSiteAssetUrl('/js/state-manager.js');
     script.defer = true;
     script.onload = () => {
       try { if (window.OP && window.OP.state && typeof window.OP.state.init === 'function') window.OP.state.init(); } catch (e) {}
@@ -1069,7 +1096,7 @@ function loadAPIIntegration() {
   if (!document.getElementById('apiIntegrationScript')) {
     const script = document.createElement('script');
     script.id = 'apiIntegrationScript';
-    script.src = '/js/api-integration.js';
+    script.src = getSiteAssetUrl('/js/api-integration.js');
     script.defer = true;
     script.onload = () => {
       try {

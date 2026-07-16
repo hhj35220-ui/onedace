@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      const storageKey = 'op_theme';
+      const savedTheme = localStorage.getItem(storageKey);
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const theme = savedTheme || systemTheme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.colorScheme = theme;
+      if (!savedTheme) localStorage.setItem(storageKey, theme);
+    })();
+  </script>
   <title>Verify Email — OnePlace Enterprise</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,10 +98,8 @@
         return;
       }
 
-      // Display email
       document.getElementById('display-email').textContent = session.email;
 
-      // Display simulated code
       const displayCode = sessionStorage.getItem('op_verification_code_display') || '------';
       document.getElementById('verification-code').textContent = displayCode;
 
@@ -98,16 +107,17 @@
       const form = document.getElementById('verify-form');
       const submitBtn = document.getElementById('submit-btn');
       const resendBtn = document.getElementById('resend-btn');
+      let isSubmitting = false;
+      let isResending = false;
 
-      // Auto-focus and auto-advance inputs
       inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
           const val = e.target.value;
           if (val && index < inputs.length - 1) {
             inputs[index + 1].focus();
           }
-          // Clear error on input
           document.getElementById('code-error').style.display = 'none';
+          input.classList.remove('error');
         });
 
         input.addEventListener('keydown', (e) => {
@@ -132,7 +142,6 @@
         });
       });
 
-      // Focus first input
       inputs[0].focus();
 
       function getCode() {
@@ -147,12 +156,15 @@
       }
 
       function clearErrors() {
-        document.getElementById('code-error').style.display = 'none';
+        const errorEl = document.getElementById('code-error');
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
         inputs.forEach(i => i.classList.remove('error'));
       }
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
         clearErrors();
 
         const code = getCode();
@@ -161,49 +173,65 @@
           return;
         }
 
+        isSubmitting = true;
         OP.loading.show();
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
         submitBtn.textContent = '';
 
-        await new Promise(r => setTimeout(r, 800));
-
-        const result = OP.auth.verifyEmail(code);
-
-        OP.loading.hide();
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.textContent = 'Verify Email';
-
-        if (result.success) {
-          OP.toast.show(result.message, 'success');
-          setTimeout(() => {
-            window.location.href = 'workspace-create.html';
-          }, 1000);
-        } else {
-          showError(result.message);
-          OP.toast.show(result.message, 'error');
-          inputs.forEach(i => {
-            i.value = '';
-            i.classList.add('animate-shake');
-          });
-          setTimeout(() => inputs.forEach(i => i.classList.remove('animate-shake')), 300);
-          inputs[0].focus();
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 700));
+          const result = OP.auth.verifyEmail(code);
+          if (result.success) {
+            OP.toast.show(result.message, 'success');
+            sessionStorage.removeItem('op_verification_code_display');
+            const hasWorkspaces = OP.workspace.getUserWorkspaces().length > 0;
+            setTimeout(() => {
+              window.location.href = hasWorkspaces ? 'workspace-select.html' : 'workspace-create.html';
+            }, 600);
+          } else {
+            showError(result.message);
+            OP.toast.show(result.message, 'error');
+            inputs.forEach(i => {
+              i.value = '';
+              i.classList.add('animate-shake');
+            });
+            setTimeout(() => inputs.forEach(i => i.classList.remove('animate-shake')), 300);
+            inputs[0].focus();
+          }
+        } catch (error) {
+          const message = 'We could not verify your email right now.';
+          showError(message);
+          OP.toast.show(message, 'error');
+        } finally {
+          OP.loading.hide();
+          isSubmitting = false;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('btn-loading');
+          submitBtn.textContent = 'Verify Email';
         }
       });
 
-      // Resend code
       resendBtn.addEventListener('click', async () => {
+        if (isResending) return;
+        isResending = true;
         resendBtn.disabled = true;
-        const result = OP.auth.resendVerificationCode();
-        if (result.success) {
-          sessionStorage.setItem('op_verification_code_display', result.code);
-          document.getElementById('verification-code').textContent = result.code;
-          OP.toast.show('New code sent!', 'success');
-        } else {
-          OP.toast.show(result.message, 'error');
+
+        try {
+          const result = OP.auth.resendVerificationCode();
+          if (result.success) {
+            sessionStorage.setItem('op_verification_code_display', result.code);
+            document.getElementById('verification-code').textContent = result.code;
+            OP.toast.show('New code sent!', 'success');
+          } else {
+            OP.toast.show(result.message, 'error');
+          }
+        } finally {
+          setTimeout(() => {
+            isResending = false;
+            resendBtn.disabled = false;
+          }, 30000);
         }
-        setTimeout(() => resendBtn.disabled = false, 30000);
       });
     });
   </script>

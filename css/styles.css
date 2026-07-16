@@ -1236,6 +1236,19 @@ h6 { font-size: var(--text-base); }
   max-width: 100%;
 }
 
+.landing-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.landing-header-actions .btn {
+  min-width: 8.75rem;
+}
+
 .landing-headline {
   font-size: var(--text-5xl);
   font-weight: var(--font-bold);
@@ -1477,6 +1490,10 @@ h6 { font-size: var(--text-base); }
     font-size: clamp(0.95rem, 3.5vw, 1.05rem);
     margin-bottom: var(--space-4);
     max-width: 100%;
+  }
+
+  .landing-header-actions {
+    display: none;
   }
 
   .landing-mobile-actions {
@@ -1730,28 +1747,59 @@ h6 { font-size: var(--text-base); }
 
 .verify-code-inputs {
   display: flex;
-  gap: var(--space-3);
+  gap: clamp(0.4rem, 1.2vw, 0.75rem);
   justify-content: center;
   margin: var(--space-6) 0;
+  flex-wrap: nowrap;
 }
 
 .verify-code-input {
-  width: 56px;
-  height: 64px;
+  width: clamp(2.6rem, 8vw, 3.5rem);
+  height: clamp(3.25rem, 8vw, 4rem);
   text-align: center;
-  font-size: var(--text-2xl);
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
   font-weight: var(--font-bold);
   border: 1px solid var(--gray-300);
   border-radius: var(--radius-lg);
   background: var(--gray-0);
   color: var(--gray-900);
   transition: all var(--transition-fast);
+  caret-color: var(--primary-600);
+  -webkit-text-fill-color: currentColor;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.verify-code-input:focus {
+.verify-code-input::placeholder {
+  color: var(--gray-400);
+}
+
+.verify-code-input:focus,
+.verify-code-input:focus-visible {
   border-color: var(--primary-500);
   box-shadow: 0 0 0 3px var(--primary-100);
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.verify-code-input.error {
+  border-color: var(--error-500);
+  box-shadow: 0 0 0 3px var(--error-50);
+}
+
+[data-theme="dark"] .verify-simulated {
+  background: var(--gray-50);
+  border-color: var(--gray-200);
+}
+
+[data-theme="dark"] .verify-simulated-box {
+  background: var(--gray-0);
+  border-color: var(--gray-200);
+}
+
+[data-theme="dark"] .verify-code-input {
+  background: var(--gray-50);
+  color: var(--gray-900);
+  border-color: var(--gray-300);
 }
 
 /* ============================================
@@ -1874,9 +1922,9 @@ h6 { font-size: var(--text-base); }
   }
 
   .verify-code-input {
-    width: 48px;
-    height: 56px;
-    font-size: var(--text-xl);
+    width: clamp(2.25rem, 7vw, 2.75rem);
+    height: clamp(3rem, 8vw, 3.5rem);
+    font-size: clamp(1rem, 3vw, 1.25rem);
   }
 
   .theme-toggle {

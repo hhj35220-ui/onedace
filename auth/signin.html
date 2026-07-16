@@ -153,6 +153,7 @@
       const passwordInput = document.getElementById('password');
       const toggleBtn = document.getElementById('toggle-password');
       const submitBtn = document.getElementById('submit-btn');
+      let isSubmitting = false;
 
       // Toggle password visibility
       toggleBtn.addEventListener('click', () => {
@@ -211,36 +212,38 @@
       // Form submission
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!validate()) return;
+        if (isSubmitting || !validate()) return;
 
+        isSubmitting = true;
         OP.loading.show();
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
         submitBtn.textContent = '';
 
-        // Simulate network delay
-        await new Promise(r => setTimeout(r, 800));
+        try {
+          await new Promise(r => setTimeout(r, 800));
+          const result = OP.auth.signIn(
+            emailInput.value.trim(),
+            passwordInput.value,
+            document.getElementById('remember-me').checked
+          );
 
-        const result = OP.auth.signIn(
-          emailInput.value.trim(),
-          passwordInput.value,
-          document.getElementById('remember-me').checked
-        );
-
-        OP.loading.hide();
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.textContent = 'Sign In';
-
-        if (result.success) {
-          OP.toast.show(result.message, 'success');
-          const workspaces = OP.workspace.getUserWorkspaces();
-          setTimeout(() => {
-            window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
-          }, 500);
-        } else {
-          showError('email', result.message);
-          OP.toast.show(result.message, 'error');
+          if (result.success) {
+            OP.toast.show(result.message, 'success');
+            const workspaces = OP.workspace.getUserWorkspaces();
+            setTimeout(() => {
+              window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+            }, 500);
+          } else {
+            showError('email', result.message);
+            OP.toast.show(result.message, 'error');
+          }
+        } finally {
+          OP.loading.hide();
+          isSubmitting = false;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('btn-loading');
+          submitBtn.textContent = 'Sign In';
         }
       });
 

@@ -155,9 +155,11 @@
     }
 
     _isAppPage() {
-      const path = window.location.pathname.toLowerCase();
-      const protectedPaths = ['/', '/index', '/index.html', '/signin', '/signup', '/register', '/auth', '/auth/', '/auth/signin.html', '/auth/signup.html', '/auth/index.html'];
-      return !protectedPaths.includes(path) && !path.startsWith('/auth');
+      const path = (window.location.pathname || '').toLowerCase();
+      const href = (window.location.href || '').toLowerCase();
+      const protectedPaths = ['/', '/index', '/index.html', '/signin', '/signin.html', '/signup', '/signup.html', '/register', '/auth', '/auth/', '/auth/index.html', '/auth/signin.html', '/auth/signup.html'];
+      const isPublicRoute = protectedPaths.includes(path) || path.startsWith('/auth/') || (href.startsWith('file://') && (href.endsWith('/index.html') || href.includes('/auth/')));
+      return !isPublicRoute;
     }
 
     _injectMobileNav() {
