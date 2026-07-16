@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unified Inbox — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css?v=3.1">
+  <link rel="stylesheet" href="../css/dashboard.css?v=3.1">
+  <link rel="stylesheet" href="../css/unified-inbox.css?v=3.1">
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- Unified Inbox Content -->
+      <div class="dashboard-content" style="padding: 0;">
+        <div class="unified-inbox-layout">
+          <!-- Left Panel: Conversation List -->
+          <div class="inbox-sidebar">
+            <div class="inbox-sidebar-header">
+              <div class="inbox-sidebar-title">Unified Inbox</div>
+              <div class="inbox-sidebar-subtitle">All your conversations in one place</div>
+            </div>
+
+            <!-- Search -->
+            <div class="inbox-search-wrapper">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="inbox-search" placeholder="Search conversations..." autocomplete="off">
+              <span class="inbox-search-clear" id="inbox-search-clear"><i class="ph ph-x"></i></span>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="inbox-filter-tabs">
+              <button class="inbox-filter-tab active" data-filter="all">
+                All <span class="tab-count">0</span>
+              </button>
+              <button class="inbox-filter-tab" data-filter="unread">
+                Unread <span class="tab-count">0</span>
+              </button>
+              <button class="inbox-filter-tab" data-filter="starred">
+                Starred <span class="tab-count">0</span>
+              </button>
+              <button class="inbox-filter-tab" data-filter="assigned">
+                Assigned <span class="tab-count">0</span>
+              </button>
+            </div>
+
+            <!-- Platform Filters -->
+            <div class="inbox-filter-tabs" style="border-bottom: none; padding-top: 0;">
+              <button class="inbox-filter-tab" data-filter="gmail">
+                <i class="ph ph-envelope-simple" style="color:#EA4335;"></i> Gmail
+              </button>
+              <button class="inbox-filter-tab" data-filter="whatsapp">
+                <i class="ph ph-chat-circle-text" style="color:#25D366;"></i> WhatsApp
+              </button>
+              <button class="inbox-filter-tab" data-filter="instagram">
+                <i class="ph ph-camera" style="color:#E4405F;"></i> IG
+              </button>
+              <button class="inbox-filter-tab" data-filter="tiktok">
+                <i class="ph ph-tiktok-logo" style="color:#000;"></i> TikTok
+              </button>
+              <button class="inbox-filter-tab" data-filter="x">
+                <i class="ph ph-x-logo" style="color:#1DA1F2;"></i> X
+              </button>
+              <button class="inbox-filter-tab" data-filter="linkedin">
+                <i class="ph ph-linkedin-logo" style="color:#0A66C2;"></i> LI
+              </button>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="inbox-list-actions">
+              <span class="inbox-list-count" id="inbox-list-count">0 conversations</span>
+              <div class="inbox-list-actions-right">
+                <div class="sort-dropdown-wrapper">
+                  <button class="sort-dropdown-btn" id="sort-dropdown-btn">
+                    <i class="ph ph-faders"></i> Sort
+                  </button>
+                </div>
+                <button class="inbox-action-btn" id="mark-all-read-btn" title="Mark all as read">
+                  <i class="ph ph-checks"></i>
+                </button>
+                <button class="inbox-action-btn" id="refresh-btn" title="Refresh">
+                  <i class="ph ph-arrow-clockwise"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Conversation List -->
+            <div class="inbox-conversation-list" id="inbox-conversation-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Center Panel: Conversation View -->
+          <div class="conversation-view" id="conversation-view">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Right Panel: Details -->
+          <div class="details-panel" id="details-panel">
+            <!-- Injected by JS -->
+          </div>
+          <div class="details-panel-overlay" id="details-panel-overlay"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js?v=3.1"></script>
+  <script src="../js/storage.js?v=3.1"></script>
+  <script src="../js/dashboard.js?v=3.1"></script>
+  <script src="../js/unified-inbox.js?v=3.1"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      const app = new DashboardApp();
+      const inbox = new UnifiedInbox();
+
+      // Handle search from header
+      document.addEventListener('dashboard:search', () => {
+        const searchInput = document.getElementById('global-search');
+        if (searchInput) {
+          document.getElementById('inbox-search').value = searchInput.value;
+          inbox.currentSearch = searchInput.value;
+          inbox.renderConversationList();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

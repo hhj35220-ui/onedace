@@ -30,7 +30,8 @@ class ThemeManager {
   init() {
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const theme = savedTheme === 'system' ? systemTheme : (savedTheme || systemTheme);
+    // Default to the light design theme unless the user explicitly chose one
+    const theme = savedTheme === 'system' ? systemTheme : (savedTheme || 'light');
 
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.style.colorScheme = theme;
@@ -616,7 +617,7 @@ class NavigationGuard {
 
   requireAuth() {
     if (!this.auth.isAuthenticated()) {
-      window.location.href = 'signin.html';
+      window.location.href = '../auth/login.html';
       return false;
     }
     return true;

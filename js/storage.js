@@ -70,12 +70,31 @@ const SAMPLE_MESSAGES = [
 ];
 
 const TEAM_MEMBERS_DATA = [
-  { id: 'tm1', name: 'Alex Morgan', avatar: 'AM', color: '#6366f1', role: 'Support Lead', conversations: 215, resolved: 189, responseRate: 94, rating: 4.9, workload: 85 },
-  { id: 'tm2', name: 'Jake Cooper', avatar: 'JC', color: '#8b5cf6', role: 'Sales Rep', conversations: 178, resolved: 142, responseRate: 92, rating: 4.7, workload: 72 },
-  { id: 'tm3', name: 'Cody Fisher', avatar: 'CF', color: '#ec4899', role: 'Support Agent', conversations: 156, resolved: 130, responseRate: 91, rating: 4.6, workload: 68 },
-  { id: 'tm4', name: 'Guy Hawkins', avatar: 'GH', color: '#f43f5e', role: 'Customer Success', conversations: 134, resolved: 112, responseRate: 90, rating: 4.5, workload: 60 },
-  { id: 'tm5', name: 'Darlene Robertson', avatar: 'DR', color: '#f97316', role: 'Account Manager', conversations: 98, resolved: 78, responseRate: 89, rating: 4.4, workload: 45 }
+  { id: 'tm1', name: 'Alex Morgan', avatar: 'AM', color: '#6366f1', photo: 'https://randomuser.me/api/portraits/women/65.jpg', role: 'Support Lead', conversations: 215, resolved: 189, responseRate: 94, rating: 4.9, workload: 85 },
+  { id: 'tm2', name: 'Jake Cooper', avatar: 'JC', color: '#8b5cf6', photo: 'https://randomuser.me/api/portraits/men/32.jpg', role: 'Sales Rep', conversations: 178, resolved: 142, responseRate: 92, rating: 4.7, workload: 72 },
+  { id: 'tm3', name: 'Cody Fisher', avatar: 'CF', color: '#ec4899', photo: 'https://randomuser.me/api/portraits/women/44.jpg', role: 'Support Agent', conversations: 156, resolved: 130, responseRate: 91, rating: 4.6, workload: 68 },
+  { id: 'tm4', name: 'Guy Hawkins', avatar: 'GH', color: '#f43f5e', photo: 'https://randomuser.me/api/portraits/men/54.jpg', role: 'Customer Success', conversations: 134, resolved: 112, responseRate: 90, rating: 4.5, workload: 60 },
+  { id: 'tm5', name: 'Darlene Robertson', avatar: 'DR', color: '#f97316', photo: 'https://randomuser.me/api/portraits/women/68.jpg', role: 'Account Manager', conversations: 98, resolved: 78, responseRate: 89, rating: 4.4, workload: 40 }
 ];
+
+// Fixed "today" snapshot used by dashboard widgets (matches design mockup)
+const PLATFORM_SNAPSHOT = [
+  { key: 'gmail', name: 'Gmail', unread: 24, messages: 30, conversations: 1988, responseRate: 92, avgResponseTime: 14, engagement: 7.2 },
+  { key: 'whatsapp', name: 'WhatsApp Business', unread: 18, messages: 28, conversations: 1901, responseRate: 95, avgResponseTime: 12, engagement: 9.8 },
+  { key: 'instagram', name: 'Instagram', unread: 16, messages: 20, conversations: 1556, responseRate: 88, avgResponseTime: 16, engagement: 8.7 },
+  { key: 'tiktok', name: 'TikTok', unread: 12, messages: 16, conversations: 1123, responseRate: 85, avgResponseTime: 19, engagement: 7.4 },
+  { key: 'x', name: 'X (Twitter)', unread: 20, messages: 20, conversations: 1210, responseRate: 90, avgResponseTime: 20, engagement: 6.3 },
+  { key: 'linkedin', name: 'LinkedIn', unread: 14, messages: 14, conversations: 864, responseRate: 93, avgResponseTime: 22, engagement: 6.1 }
+];
+
+function opSeededRandom(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 // ============================================
 // Data Initialization
@@ -87,6 +106,14 @@ class DashboardStorage {
   }
 
   init() {
+    // Bump DATA_VERSION whenever the seed shape changes — stale demo
+    // data from older versions is cleared so pages always match design.
+    const DATA_VERSION = '3.1';
+    if (localStorage.getItem('op_data_version') !== DATA_VERSION) {
+      Object.values(DASHBOARD_STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
+      localStorage.setItem('op_data_version', DATA_VERSION);
+    }
+
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.CONVERSATIONS)) {
       this.seedConversations();
     }
@@ -144,35 +171,23 @@ class DashboardStorage {
   }
 
   seedActivities() {
-    const platforms = ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin'];
-    const activityTypes = [
-      { template: 'New email from {name}', platform: 'gmail' },
-      { template: 'New WhatsApp message from {name}', platform: 'whatsapp' },
-      { template: 'New Instagram DM from {name}', platform: 'instagram' },
-      { template: 'New comment on TikTok from {name}', platform: 'tiktok' },
-      { template: 'New mention on X from {name}', platform: 'x' },
-      { template: 'New LinkedIn message from {name}', platform: 'linkedin' },
-      { template: 'Conversation assigned to you', platform: 'gmail' },
-      { template: 'AI suggestion available', platform: 'gmail' }
+    // Fixed activity feed matching the design mockup (times are today)
+    const at = (h, m) => {
+      const d = new Date();
+      d.setHours(h, m, 0, 0);
+      return d.toISOString();
+    };
+
+    const activities = [
+      { id: 'act_1', platform: 'gmail', title: 'New email from John Doe', description: 'Project Update & Requirements', timestamp: at(10, 30), read: false },
+      { id: 'act_2', platform: 'whatsapp', title: 'New WhatsApp message from +1 (555) 123-4567', description: 'Need help with my order', timestamp: at(10, 15), read: false },
+      { id: 'act_3', platform: 'instagram', title: 'New Instagram DM from jessica._wright', description: 'Collaboration Opportunity', timestamp: at(10, 8), read: false },
+      { id: 'act_4', platform: 'tiktok', title: 'New comment on TikTok from @creative.vibes', description: 'Great video! 🔥', timestamp: at(9, 56), read: true },
+      { id: 'act_5', platform: 'x', title: 'New mention from @design_master', description: '@oneplace_app Can you guys add a dark mode?', timestamp: at(9, 45), read: true },
+      { id: 'act_6', platform: 'linkedin', title: 'New LinkedIn message from Michael Brown', description: 'Partnership Inquiry', timestamp: at(9, 30), read: true },
+      { id: 'act_7', platform: 'whatsapp', title: 'WhatsApp conversation assigned to you', description: 'From +1 (669) 987-6543', timestamp: at(9, 20), read: true }
     ];
 
-    const activities = [];
-    for (let i = 0; i < 50; i++) {
-      const type = activityTypes[Math.floor(Math.random() * activityTypes.length)];
-      const customer = SAMPLE_CUSTOMERS[Math.floor(Math.random() * SAMPLE_CUSTOMERS.length)];
-      const minutesAgo = Math.floor(Math.random() * 1440);
-
-      activities.push({
-        id: `act_${i}`,
-        platform: type.platform,
-        title: type.template.replace('{name}', customer.name),
-        description: SAMPLE_MESSAGES[Math.floor(Math.random() * SAMPLE_MESSAGES.length)],
-        timestamp: new Date(Date.now() - minutesAgo * 60000).toISOString(),
-        read: Math.random() > 0.7
-      });
-    }
-
-    activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     localStorage.setItem(DASHBOARD_STORAGE_KEYS.ACTIVITIES, JSON.stringify(activities));
   }
 
@@ -181,26 +196,45 @@ class DashboardStorage {
   }
 
   seedPlatformStats() {
-    const stats = {
-      gmail: { conversations: 3200, unread: 24, messagesToday: 18, responseRate: 92, avgResponseTime: 18, open: 89, resolved: 56 },
-      whatsapp: { conversations: 2800, unread: 18, messagesToday: 12, responseRate: 95, avgResponseTime: 12, open: 67, resolved: 45 },
-      instagram: { conversations: 2100, unread: 16, messagesToday: 8, responseRate: 88, avgResponseTime: 25, open: 45, resolved: 32 },
-      tiktok: { conversations: 1500, unread: 12, messagesToday: 15, responseRate: 85, avgResponseTime: 30, open: 38, resolved: 28 },
-      x: { conversations: 1800, unread: 20, messagesToday: 10, responseRate: 90, avgResponseTime: 22, open: 52, resolved: 40 },
-      linkedin: { conversations: 1200, unread: 14, messagesToday: 6, responseRate: 93, avgResponseTime: 15, open: 34, resolved: 25 }
-    };
+    const stats = {};
+    PLATFORM_SNAPSHOT.forEach(p => {
+      stats[p.key] = {
+        conversations: p.conversations,
+        messages: p.messages,
+        unread: p.unread,
+        messagesToday: p.unread,
+        responseRate: p.responseRate,
+        avgResponseTime: p.avgResponseTime,
+        engagement: p.engagement
+      };
+    });
     localStorage.setItem(DASHBOARD_STORAGE_KEYS.PLATFORM_STATS, JSON.stringify(stats));
   }
 
   seedAISuggestions() {
     const suggestions = [
-      { id: 'ai1', type: 'quick_reply', platform: 'gmail', message: '12 conversations need quick response', priority: 'high', action: 'Reply' },
-      { id: 'ai2', type: 'follow_up', platform: 'whatsapp', message: '7 unread WhatsApp messages', priority: 'high', action: 'View' },
-      { id: 'ai3', type: 'high_priority', platform: 'instagram', message: '3 high priority conversations', priority: 'medium', action: 'Review' },
-      { id: 'ai4', type: 'new_lead', platform: 'tiktok', message: '5 new leads from TikTok', priority: 'medium', action: 'Follow Up' },
-      { id: 'ai5', type: 'response_time', platform: 'x', message: 'Response time above target on X', priority: 'low', action: 'Optimize' }
+      { id: 'ai1', color: 'green', message: '12 conversations need quick response', priority: 'high' },
+      { id: 'ai2', color: 'purple', message: '7 high-priority conversations', priority: 'high' },
+      { id: 'ai3', color: 'gray', message: '3 unread WhatsApp messages', priority: 'medium' },
+      { id: 'ai4', color: 'red', message: '5 new leads from Instagram', priority: 'medium' }
     ];
     localStorage.setItem(DASHBOARD_STORAGE_KEYS.AI_SUGGESTIONS, JSON.stringify(suggestions));
+  }
+
+  // Fixed "Recent Conversations" list shown on the main dashboard
+  getRecentConversations() {
+    const at = (h, m) => {
+      const d = new Date();
+      d.setHours(h, m, 0, 0);
+      return d.toISOString();
+    };
+    return [
+      { id: 'rc1', platform: 'gmail', name: 'John Doe', subject: 'Project Update & Requirements', preview: 'Hi Sophia, please find the updated requirements...', timestamp: at(10, 30), unreadCount: 3 },
+      { id: 'rc2', platform: 'whatsapp', name: 'Sarah Williams', subject: 'Order Confirmation', preview: 'Thank you! I have received my order.', timestamp: at(10, 28), unreadCount: 1 },
+      { id: 'rc3', platform: 'instagram', name: 'Jessica Wright', subject: 'Collaboration Opportunity', preview: "Hi! We love your content. Let's collaborate!", timestamp: at(10, 15), unreadCount: 1 },
+      { id: 'rc4', platform: 'tiktok', name: 'Alex Johnson', subject: 'Question about your product', preview: 'I saw your video and I have a question...', timestamp: at(10, 10), unreadCount: 0 },
+      { id: 'rc5', platform: 'x', name: 'Michael Brown', subject: 'Feature Request', preview: 'Can you guys add a dark mode to the app?', timestamp: at(9, 58), unreadCount: 0 }
+    ];
   }
 
   // ============================================
@@ -295,17 +329,38 @@ class DashboardStorage {
   }
 
   getConversationTrends(days = 7) {
-    const trends = [];
+    // Deterministic series (seeded) so charts are stable between reloads
+    const rand = opSeededRandom(42);
     const platforms = ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin'];
+    const labels = ['May 12', 'May 13', 'May 14', 'May 15', 'May 16', 'May 17', 'May 18'];
+    const trends = [];
 
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-      const dayData = { date: dateStr };
+    for (let i = 0; i < days; i++) {
+      const dayData = { date: labels[i] || `Day ${i + 1}` };
       platforms.forEach(p => {
-        dayData[p] = Math.floor(Math.random() * 50) + 10;
+        dayData[p] = Math.floor(rand() * 650) + 50;
+      });
+      trends.push(dayData);
+    }
+
+    return trends;
+  }
+
+  getAreaTrends(days = 30) {
+    // Deterministic stacked-area series for the analytics page
+    const rand = opSeededRandom(7);
+    const platforms = ['linkedin', 'x', 'whatsapp', 'instagram', 'tiktok', 'gmail'];
+    const trends = [];
+    const start = new Date(2024, 4, 12); // May 12, 2024
+
+    for (let i = 0; i < days; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      const dayData = {
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      };
+      platforms.forEach(p => {
+        dayData[p] = Math.floor(rand() * 900) + 400;
       });
       trends.push(dayData);
     }

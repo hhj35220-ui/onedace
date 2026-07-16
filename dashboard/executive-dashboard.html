@@ -8,8 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/styles.css?v=3.1">
+  <link rel="stylesheet" href="../css/dashboard.css?v=3.1">
+<base target="_blank">
 </head>
 <body>
   <div class="dashboard-layout">
@@ -18,18 +19,23 @@
     <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
 
     <main class="dashboard-main">
-      <header class="dashboard-header" role="banner"></header>
-
       <div class="dashboard-content">
-        <div class="dashboard-page-title">
-          <h1>Executive Overview</h1>
-          <p>Business performance across all platforms</p>
+        <div class="page-title-row">
+          <div class="dashboard-page-title">
+            <h1>Executive Overview</h1>
+            <p>Business performance across all platforms</p>
+          </div>
+          <div class="page-controls">
+            <button class="date-pill" type="button">
+              <i class="ph ph-calendar-blank"></i>
+              <span>May 12 - May 18, 2024</span>
+              <i class="ph ph-caret-down"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Executive Stats -->
-        <div class="exec-stat-grid" id="exec-stats">
-          <!-- Injected by JS -->
-        </div>
+        <div class="exec-stat-grid" id="exec-stats"></div>
 
         <div class="dashboard-grid">
           <!-- Conversations Over Time -->
@@ -37,9 +43,6 @@
             <div class="widget-card">
               <div class="widget-header">
                 <span class="widget-title">Conversations Over Time</span>
-                <div class="widget-actions">
-                  <button class="widget-action-btn" title="Export"><i class="ph ph-download-simple"></i></button>
-                </div>
               </div>
               <div class="widget-body">
                 <div class="line-chart-container" id="conversations-line-chart"></div>
@@ -61,26 +64,24 @@
 
           <!-- Top Performing Platform -->
           <div class="dashboard-col-6">
-            <div class="widget-card">
+            <div class="widget-card" style="height: 100%;">
               <div class="widget-header">
                 <span class="widget-title">Top Performing Platform</span>
               </div>
               <div class="widget-body">
-                <div class="platform-mini-list" id="top-platforms">
-                  <!-- Injected by JS -->
-                </div>
+                <div class="top-platforms-grid" id="top-platforms"></div>
               </div>
             </div>
           </div>
 
           <!-- Response Time by Platform -->
           <div class="dashboard-col-6">
-            <div class="widget-card">
+            <div class="widget-card" style="height: 100%;">
               <div class="widget-header">
                 <span class="widget-title">Response Time (Avg.) by Platform</span>
               </div>
               <div class="widget-body">
-                <div class="bar-chart-container" id="response-time-chart"></div>
+                <div id="response-time-chart"></div>
               </div>
             </div>
           </div>
@@ -92,9 +93,7 @@
                 <span class="widget-title">Key Insights</span>
               </div>
               <div class="widget-body">
-                <div class="insights-list" id="key-insights">
-                  <!-- Injected by JS -->
-                </div>
+                <div class="insights-grid" id="key-insights"></div>
               </div>
             </div>
           </div>
@@ -103,9 +102,9 @@
     </main>
   </div>
 
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
+  <script src="../js/app.js?v=3.1"></script>
+  <script src="../js/storage.js?v=3.1"></script>
+  <script src="../js/dashboard.js?v=3.1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (!OP.nav.requireAuth()) return;
@@ -113,121 +112,96 @@
       const app = new DashboardApp();
       const storage = app.storage;
 
-      // Render executive stats
+      // Executive stat cards (values from the design)
       function renderExecStats() {
-        const stats = storage.getDashboardStats();
-        const container = document.getElementById('exec-stats');
-
         const metrics = [
-          { label: 'Total Conversations', value: stats.totalConversations, trend: 24.5, suffix: '' },
-          { label: 'Engagement Rate', value: '7.82', trend: 18.0, suffix: '%' },
-          { label: 'Conversion Rate', value: '3.65', trend: 9.3, suffix: '%' },
-          { label: 'Revenue Influenced', value: '$48,250', trend: 15.8, suffix: '' },
-          { label: 'Customer Satisfaction', value: '4.7', trend: 4.2, suffix: '/5' }
+          { label: 'Total Conversations', value: '8,642', trend: 21.4 },
+          { label: 'Engagement Rate', value: '7.82%', trend: 18.6 },
+          { label: 'Conversion Rate', value: '3.65%', trend: 9.3 },
+          { label: 'Revenue Influenced', value: '$48,250', trend: 15.8 },
+          { label: 'Customer Satisfaction', value: '4.7/5', trend: 8.2 }
         ];
 
-        let html = '';
-        metrics.forEach(m => {
-          const trendClass = m.trend >= 0 ? 'up' : 'down';
-          const trendIcon = m.trend >= 0 ? 'ph-trend-up' : 'ph-trend-down';
-          html += `
-            <div class="exec-stat-card">
-              <div class="exec-stat-value">${m.value}${m.suffix}</div>
-              <div class="exec-stat-label">${m.label}</div>
-              <span class="exec-stat-trend ${trendClass}"><i class="ph ${trendIcon}"></i> ${Math.abs(m.trend)}%</span>
-            </div>
-          `;
-        });
-
-        container.innerHTML = html;
+        document.getElementById('exec-stats').innerHTML = metrics.map(m => `
+          <div class="exec-stat-card" style="text-align: left;">
+            <div class="exec-stat-label">${m.label}</div>
+            <div class="exec-stat-value">${m.value}</div>
+            <span class="exec-stat-trend ${m.trend >= 0 ? 'up' : 'down'}">
+              <i class="ph ${m.trend >= 0 ? 'ph-trend-up' : 'ph-trend-down'}"></i> ${Math.abs(m.trend)}%
+            </span>
+          </div>
+        `).join('');
       }
 
-      // Render line chart
+      // Line chart with legend
       function renderLineChart() {
         const trends = storage.getConversationTrends(7);
-        app.createLineChart('conversations-line-chart', trends, ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin']);
+        app.createLineChart('conversations-line-chart', trends, ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin'], { height: 230 });
       }
 
-      // Render donut chart
+      // Donut — 8,642 total per design
       function renderDonutChart() {
         const stats = storage.getPlatformStats();
         const data = [
           { label: 'Gmail', value: stats.gmail?.conversations || 0, color: '#EA4335' },
           { label: 'WhatsApp', value: stats.whatsapp?.conversations || 0, color: '#25D366' },
           { label: 'Instagram', value: stats.instagram?.conversations || 0, color: '#E4405F' },
-          { label: 'TikTok', value: stats.tiktok?.conversations || 0, color: '#000000' },
-          { label: 'X', value: stats.x?.conversations || 0, color: '#1DA1F2' },
+          { label: 'TikTok', value: stats.tiktok?.conversations || 0, color: '#111827' },
+          { label: 'X (Twitter)', value: stats.x?.conversations || 0, color: '#1E3A8A' },
           { label: 'LinkedIn', value: stats.linkedin?.conversations || 0, color: '#0A66C2' }
         ].filter(d => d.value > 0);
 
-        app.createDonutChart('platform-donut-chart', data, 'Total');
+        app.createDonutChart('platform-donut-chart', data, 'Total', { size: 168, stroke: 24 });
       }
 
-      // Render top platforms
+      // Top performing platforms (4 columns per design)
       function renderTopPlatforms() {
-        const stats = storage.getPlatformStats();
         const platforms = [
-          { key: 'gmail', name: 'WhatsApp', icon: 'whatsapp', conversations: 2073, engagement: '26.4%', color: '#25D366' },
-          { key: 'whatsapp', name: 'Gmail', icon: 'gmail', conversations: 1856, engagement: '23.2%', color: '#EA4335' },
-          { key: 'instagram', name: 'Instagram', icon: 'instagram', conversations: 1432, engagement: '18.3%', color: '#E4405F' },
-          { key: 'x', name: 'X (Twitter)', icon: 'x', conversations: 1432, engagement: '18.3%', color: '#1DA1F2' }
+          { key: 'whatsapp', conversations: 2073, trend: 28.6 },
+          { key: 'gmail', conversations: 1856, trend: 22.1 },
+          { key: 'instagram', conversations: 1432, trend: 18.3 },
+          { key: 'x', conversations: 1432, trend: 18.3 }
         ];
 
-        const container = document.getElementById('top-platforms');
-        let html = '';
-        platforms.forEach(p => {
-          html += `
-            <div class="platform-mini-item">
-              <div class="platform-mini-icon ${p.icon}"><i class="ph ${app.getPlatformIcon(p.key)}"></i></div>
-              <div class="platform-mini-info">
-                <div class="platform-mini-name">${p.name}</div>
-                <div class="platform-mini-count">${p.conversations.toLocaleString()} conversations</div>
-              </div>
-              <span class="platform-mini-value" style="color: ${p.color}">${p.engagement}</span>
-            </div>
-          `;
-        });
-
-        container.innerHTML = html;
+        document.getElementById('top-platforms').innerHTML = platforms.map(p => `
+          <div class="top-platform-item">
+            ${app.brandIcon(p.key, 'glyph', 34)}
+            <div class="tp-value">${p.conversations.toLocaleString()}</div>
+            <div class="tp-label">Conversations</div>
+            <span class="stat-trend up"><i class="ph ph-trend-up"></i> ${p.trend}%</span>
+          </div>
+        `).join('');
       }
 
-      // Render response time bar chart
+      // Response time bars (sorted ascending per design)
       function renderResponseTimeChart() {
-        const stats = storage.getPlatformStats();
-        const data = [
-          { platform: 'gmail', label: 'Gmail', value: stats.gmail?.avgResponseTime || 18 },
-          { platform: 'whatsapp', label: 'WhatsApp', value: stats.whatsapp?.avgResponseTime || 12 },
-          { platform: 'instagram', label: 'Instagram', value: stats.instagram?.avgResponseTime || 25 },
-          { platform: 'tiktok', label: 'TikTok', value: stats.tiktok?.avgResponseTime || 30 },
-          { platform: 'x', label: 'X', value: stats.x?.avgResponseTime || 22 },
-          { platform: 'linkedin', label: 'LinkedIn', value: stats.linkedin?.avgResponseTime || 15 }
-        ];
-
-        app.createBarChart('response-time-chart', data);
+        app.createBarChart('response-time-chart', [
+          { platform: 'whatsapp', label: 'WhatsApp', value: 12, display: '12m' },
+          { platform: 'gmail', label: 'Gmail', value: 14, display: '14m' },
+          { platform: 'instagram', label: 'Instagram', value: 16, display: '16m' },
+          { platform: 'tiktok', label: 'TikTok', value: 19, display: '19m' },
+          { platform: 'x', label: 'X', value: 20, display: '20m' },
+          { platform: 'linkedin', label: 'LinkedIn', value: 22, display: '22m' }
+        ]);
       }
 
-      // Render key insights
+      // Key insights (4 cards per design)
       function renderKeyInsights() {
-        const container = document.getElementById('key-insights');
         const insights = [
-          { icon: 'up', type: 'up', text: '<strong>WhatsApp engagement</strong> up by 15% this week compared to last week.' },
-          { icon: 'up', type: 'up', text: '<strong>Instagram conversations</strong> increased by 20% after the new campaign launch.' },
-          { icon: 'down', type: 'down', text: '<strong>X (Twitter) response time</strong> above target — consider adding more agents.' },
-          { icon: 'info', type: 'info', text: '<strong>Revenue influenced</strong> by conversations reached $48,250 this month.' }
+          { brand: 'whatsapp', bg: '#E8F5E9', text: '<strong>WhatsApp</strong> has the highest engagement this week.' },
+          { brand: 'instagram', bg: '#FCE4EC', text: '<strong>Instagram</strong> conversion increased by 20%.' },
+          { brand: 'x', bg: '#E3F2FD', text: '<strong>X (Twitter)</strong> response improved by 18%.' },
+          { brand: null, icon: 'ph-currency-dollar', bg: 'var(--primary-50)', color: 'var(--primary-600)', text: '<strong>Revenue influenced</strong> is up 15.8% compared to last week.' }
         ];
 
-        let html = '';
-        insights.forEach(insight => {
-          const iconMap = { up: 'ph-trend-up', down: 'ph-trend-down', info: 'ph-info' };
-          html += `
-            <div class="insight-item">
-              <div class="insight-icon ${insight.type}"><i class="ph ${iconMap[insight.type]}"></i></div>
-              <div class="insight-text">${insight.text}</div>
+        document.getElementById('key-insights').innerHTML = insights.map(i => `
+          <div class="insight-item">
+            <div class="insight-icon" style="background: ${i.bg}; ${i.color ? `color: ${i.color};` : ''}">
+              ${i.brand ? app.brandIcon(i.brand, 'glyph', 18) : `<i class="ph ${i.icon}"></i>`}
             </div>
-          `;
-        });
-
-        container.innerHTML = html;
+            <div class="insight-text">${i.text}</div>
+          </div>
+        `).join('');
       }
 
       renderExecStats();
