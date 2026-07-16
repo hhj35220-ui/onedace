@@ -149,7 +149,12 @@ class AuthManager {
   }
 
   saveUsers(users) {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    try {
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    } catch (error) {
+      console.error('Unable to save users to localStorage:', error);
+      throw new Error('Unable to persist user data to localStorage.');
+    }
   }
 
   getUserByEmail(email) {
@@ -186,7 +191,7 @@ class AuthManager {
   // --- Sign Up ---
   signUp(fullName, email, password) {
     const users = this.getUsers();
-    
+
     if (this.getUserByEmail(email)) {
       return { success: false, message: 'An account with this email already exists.' };
     }
@@ -202,30 +207,35 @@ class AuthManager {
       verified: false
     };
 
-    users.push(user);
-    this.saveUsers(users);
+    try {
+      users.push(user);
+      this.saveUsers(users);
 
-    // Generate verification code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
-      email: user.email,
-      code,
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-    }));
+      // Generate verification code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
+        email: user.email,
+        code,
+        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+      }));
 
-    // Create session for verification flow
-    this.setSession({
-      userId: user.id,
-      email: user.email,
-      verified: false,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    });
+      // Create session for verification flow
+      this.setSession({
+        userId: user.id,
+        email: user.email,
+        verified: false,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      });
 
-    return { 
-      success: true, 
-      message: 'Account created successfully.',
-      verificationCode: code // For simulation display
-    };
+      return {
+        success: true,
+        message: 'Account created successfully.',
+        verificationCode: code // For simulation display
+      };
+    } catch (error) {
+      console.error('Sign-up failed:', error);
+      return { success: false, message: 'Unable to create account. Please enable browser storage and try again.' };
+    }
   }
 
   // --- Sign In ---

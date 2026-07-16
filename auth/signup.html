@@ -298,38 +298,45 @@
         e.preventDefault();
         if (isSubmitting || !validate()) return;
 
+        const auth = OP?.auth;
+        const loading = OP?.loading;
+        const toast = OP?.toast;
+
         isSubmitting = true;
-        OP.loading.show();
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
         submitBtn.textContent = '';
 
         try {
+          loading?.show();
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          const result = OP.auth && typeof OP.auth.signUp === 'function'
-            ? OP.auth.signUp(
-                fullNameInput.value.trim(),
-                emailInput.value.trim(),
-                passwordInput.value
-              )
-            : { success: false, message: 'Authentication service unavailable.' };
+
+          if (!auth || typeof auth.signUp !== 'function') {
+            throw new Error('Authentication service unavailable');
+          }
+
+          const result = auth.signUp(
+            fullNameInput.value.trim(),
+            emailInput.value.trim(),
+            passwordInput.value
+          );
 
           if (result.success) {
-            OP.toast.show(result.message, 'success');
+            toast?.show(result.message, 'success');
             sessionStorage.setItem('op_verification_code_display', result.verificationCode);
             setTimeout(() => {
               window.location.href = 'verify-email.html';
             }, 500);
           } else {
             showError('email', result.message || 'Unable to create account.');
-            OP.toast.show(result.message || 'Unable to create account.', 'error');
+            toast?.show(result.message || 'Unable to create account.', 'error');
           }
         } catch (error) {
           console.error('Signup submit error:', error);
-          showError('email', 'Unable to create account. Please try again.');
-          OP.toast.show('Unable to create account. Please try again.', 'error');
+          showError('email', error?.message || 'Unable to create account. Please try again.');
+          toast?.show(error?.message || 'Unable to create account. Please try again.', 'error');
         } finally {
-          OP.loading.hide();
+          loading?.hide();
           isSubmitting = false;
           submitBtn.disabled = false;
           submitBtn.classList.remove('btn-loading');
