@@ -18,9 +18,11 @@ html.sidebar-collapsed .sidebar, html.sidebar-collapsed #sidebar, html.sidebar-c
 html.sidebar-open .sidebar, html.sidebar-open #sidebar, html.sidebar-open .app-sidebar { transform: translateX(0); }
 
 /* Mobile bottom navigation */
-#op-mobile-nav { position:fixed; left:0; right:0; bottom:0; height:56px; background:var(--mobile-nav-bg); display:flex; justify-content:space-around; align-items:center; z-index:1300; border-top:1px solid rgba(0,0,0,0.06); }
-#op-mobile-nav .op-mobile-btn{ background:transparent; border:0; padding:8px 10px; font-size:13px; color:var(--mobile-nav-fg); }
+#op-mobile-nav { position:fixed; left:0; right:0; bottom:0; height:calc(56px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); background:var(--mobile-nav-bg); display:flex; justify-content:space-around; align-items:center; z-index:1300; border-top:1px solid rgba(0,0,0,0.06); }
+#op-mobile-nav .op-mobile-btn{ background:transparent; border:0; padding:0.5rem 0.625rem; font-size:0.8125rem; color:var(--mobile-nav-fg); }
 #op-mobile-nav .op-mobile-btn.active{ color:var(--accent); font-weight:700; }
+
+@media (min-width:768px){ #op-mobile-nav{ display:none !important; } }
 
 /* Table responsiveness */
 .op-table-wrap{ overflow:auto; -webkit-overflow-scrolling:touch; margin-bottom:12px; }

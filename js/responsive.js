@@ -154,7 +154,17 @@
       });
     }
 
+    _isAppPage() {
+      const path = window.location.pathname.toLowerCase();
+      const protectedPaths = ['/', '/index', '/index.html', '/signin', '/signup', '/register', '/auth', '/auth/', '/auth/signin.html', '/auth/signup.html', '/auth/index.html'];
+      return !protectedPaths.includes(path) && !path.startsWith('/auth');
+    }
+
     _injectMobileNav() {
+      if (!this._isAppPage()) {
+        this._removeMobileNav();
+        return;
+      }
       if (document.getElementById('op-mobile-nav')) return;
       const nav = document.createElement('nav');
       nav.id = 'op-mobile-nav';

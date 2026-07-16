@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      const storageKey = 'op_theme';
+      const savedTheme = localStorage.getItem(storageKey);
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const theme = savedTheme || systemTheme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.colorScheme = theme;
+      if (!savedTheme) localStorage.setItem(storageKey, theme);
+    })();
+  </script>
   <title>OnePlace Enterprise — All your conversations. One powerful platform.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +69,7 @@
       </nav>
 
       <div class="landing-actions animate-fadeInUp">
-        <a href="auth/signup.html" class="btn btn-primary btn-lg btn-full">
+        <a href="auth/signup.html" class="btn btn-primary btn-lg btn-full" onclick="window.location.href='auth/signup.html'">
           Get Started Free
         </a>
         <a href="auth/signin.html" class="btn btn-secondary btn-lg btn-full">

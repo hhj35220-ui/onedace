@@ -29,21 +29,24 @@ class ThemeManager {
 
   init() {
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme) {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    } else if (prefersDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = savedTheme || systemTheme;
+
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+
+    if (!savedTheme) {
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
     }
 
     this.renderToggle();
   }
 
   toggle() {
-    const current = document.documentElement.getAttribute('data-theme');
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
+    document.documentElement.style.colorScheme = next;
     localStorage.setItem(STORAGE_KEYS.THEME, next);
     this.updateToggleIcon(next);
   }
