@@ -644,7 +644,13 @@ class CommandPalette {
     localStorage.setItem(key, JSON.stringify(data));
   }
 
+  isPublicPage() {
+    const path = window.location.pathname.toLowerCase();
+    return path === '/' || path === '/index.html' || path.startsWith('/auth/');
+  }
+
   init() {
+    if (this.isPublicPage()) return;
     this.buildMarkup();
     this.collectItems();
     this.bindShortcuts();
@@ -702,6 +708,7 @@ class CommandPalette {
   }
 
   bindShortcuts() {
+    if (this.isPublicPage()) return;
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
@@ -715,6 +722,7 @@ class CommandPalette {
   }
 
   open() {
+    if (this.isPublicPage()) return;
     if (!this.overlay) this.buildMarkup();
     this.overlay.classList.add('open');
     document.documentElement.classList.add('cp-open');

@@ -1164,10 +1164,12 @@ h6 { font-size: var(--text-base); }
   min-height: 100dvh;
   width: 100%;
   display: flex;
+  overflow-x: hidden;
 }
 
 .landing-sidebar {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   background: linear-gradient(160deg, #0f0f23 0%, #1e1b4b 40%, #312e81 100%);
   position: relative;
@@ -1230,6 +1232,8 @@ h6 { font-size: var(--text-base); }
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
 }
 
 .landing-headline {
@@ -1237,21 +1241,26 @@ h6 { font-size: var(--text-base); }
   font-weight: var(--font-bold);
   line-height: var(--leading-tight);
   margin-bottom: var(--space-6);
-  max-width: 480px;
+  max-width: min(100%, 480px);
 }
 
 .landing-description {
   font-size: var(--text-lg);
   color: rgba(255, 255, 255, 0.7);
-  max-width: 400px;
+  max-width: min(100%, 400px);
   line-height: var(--leading-relaxed);
   margin-bottom: var(--space-8);
+}
+
+.landing-mobile-actions {
+  display: none;
 }
 
 .landing-integrations {
   display: flex;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
+  flex-wrap: wrap;
 }
 
 .landing-integration-icon {
@@ -1440,25 +1449,69 @@ h6 { font-size: var(--text-base); }
 }
 
 @media (max-width: 1023px) {
+  .landing-page {
+    flex-direction: column;
+  }
+
   .landing-main {
     display: none;
   }
 
   .landing-sidebar {
-    min-height: 100vh;
-    padding: var(--space-6);
+    min-height: 100dvh;
+    padding: var(--space-6) var(--space-4) var(--space-8);
+  }
+
+  .landing-sidebar-content {
+    justify-content: flex-start;
+    gap: var(--space-4);
   }
 
   .landing-headline {
-    font-size: var(--text-3xl);
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    margin-bottom: var(--space-3);
+    max-width: 100%;
   }
 
-  .landing-sidebar .landing-actions {
+  .landing-description {
+    font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+    margin-bottom: var(--space-4);
+    max-width: 100%;
+  }
+
+  .landing-mobile-actions {
+    display: flex;
     flex-direction: column;
+    gap: var(--space-3);
+    width: min(100%, 24rem);
+    max-width: 100%;
+    margin: 0 0 var(--space-4);
+    align-self: center;
   }
 
-  .landing-sidebar .landing-actions .btn {
+  .landing-mobile-actions .btn {
     width: 100%;
+    justify-content: center;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .landing-trust {
+    margin-top: var(--space-4);
+  }
+
+  .landing-trust-logos {
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+
+  .landing-integrations {
+    margin-bottom: var(--space-4);
+    gap: 0.75rem;
+  }
+
+  .landing-integration-icon {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 
