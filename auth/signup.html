@@ -169,7 +169,26 @@
 
   <script src="../js/app.js"></script>
   <script>
+    function clearStaleOnboardingState() {
+      if (!window.OP || !window.OP.auth) return;
+      const session = window.OP.auth.getSession();
+      if (!session) return;
+
+      const expiresAt = session.expiresAt ? new Date(session.expiresAt) : null;
+      const isFullyVerified = expiresAt && expiresAt > new Date() && session.verified === true;
+      if (isFullyVerified) return;
+
+      window.OP.auth.clearSession();
+      localStorage.removeItem('op_verification_code');
+      localStorage.removeItem('op_reset_token');
+      localStorage.removeItem('op_current_workspace');
+      localStorage.removeItem('op_profile');
+      sessionStorage.removeItem('op_verification_code_display');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      clearStaleOnboardingState();
+
       if (OP.auth.isAuthenticated()) {
         const workspaces = OP.workspace.getUserWorkspaces();
         window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
