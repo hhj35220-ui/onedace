@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Company Inbox — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/linkedin.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="ph ph-list"></i>
+    </button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header linkedin-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="linkedin-header-icon"><i class="ph ph-linkedin-logo"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">LinkedIn</h1>
+              <p class="header-subtitle">Track and manage your LinkedIn presence and conversations</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search linkedin-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="linkedin-search" placeholder="Search conversations..." autocomplete="off">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot" id="notif-dot"></span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="linkedin-tabs" aria-label="LinkedIn sections">
+        <div class="linkedin-tabs-inner">
+          <a href="index.html" class="linkedin-tab" data-page="overview">
+            <i class="ph ph-squares-four"></i>
+            <span>Overview</span>
+          </a>
+          <a href="messages.html" class="linkedin-tab" data-page="messages">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>Messages</span>
+            <span class="tab-badge" id="msg-badge">24</span>
+          </a>
+          <a href="company-inbox.html" class="linkedin-tab active" data-page="company-inbox">
+            <i class="ph ph-buildings"></i>
+            <span>Company Inbox</span>
+            <span class="tab-badge" id="company-badge">8</span>
+          </a>
+          <a href="connection-requests.html" class="linkedin-tab" data-page="connection-requests">
+            <i class="ph ph-user-plus"></i>
+            <span>Connection Requests</span>
+            <span class="tab-badge" id="conn-badge">47</span>
+          </a>
+          <a href="mentions.html" class="linkedin-tab" data-page="mentions">
+            <i class="ph ph-at"></i>
+            <span>Mentions</span>
+            <span class="tab-badge" id="mention-badge">16</span>
+          </a>
+          <a href="post-engagements.html" class="linkedin-tab" data-page="post-engagements">
+            <i class="ph ph-heart"></i>
+            <span>Post Engagements</span>
+            <span class="tab-badge" id="engage-badge">23</span>
+          </a>
+          <a href="integration.html" class="linkedin-tab" data-page="integration">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integration</span>
+          </a>
+          <a href="settings.html" class="linkedin-tab" data-page="settings">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content linkedin-content">
+        <div class="linkedin-messages-layout">
+          <div class="messages-sidebar">
+            <div class="messages-sidebar-header">
+              <div class="messages-filter-tabs">
+                <button class="msg-filter active" data-filter="all">All</button>
+                <button class="msg-filter" data-filter="unread">Unread</button>
+                <button class="msg-filter" data-filter="inmail">InMail</button>
+                <button class="msg-filter" data-filter="connections">Connections</button>
+              </div>
+              <button class="msg-more-filters"><i class="ph ph-sliders-horizontal"></i> More Filters</button>
+            </div>
+            <div class="messages-list" id="company-messages-list"></div>
+            <div class="messages-pagination">
+              <span>Showing 1 to 6 of 8 conversations</span>
+              <div class="pagination-controls">
+                <button class="page-btn" disabled><i class="ph ph-caret-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn"><i class="ph ph-caret-right"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="messages-detail" id="company-detail">
+            <div class="detail-empty" id="company-detail-empty">
+              <div class="detail-empty-icon"><i class="ph ph-buildings"></i></div>
+              <p>Select a company conversation to view details</p>
+            </div>
+            <div class="detail-content" id="company-detail-content" style="display:none;">
+              <div class="detail-header">
+                <div class="detail-contact">
+                  <img src="" alt="" class="detail-avatar" id="company-detail-avatar">
+                  <div class="detail-contact-info">
+                    <h3 id="company-detail-name"></h3>
+                    <p id="company-detail-title"></p>
+                  </div>
+                </div>
+                <div class="detail-actions">
+                  <button class="detail-action-btn" title="Add to CRM"><i class="ph ph-user-plus"></i></button>
+                  <button class="detail-action-btn" title="View Profile"><i class="ph ph-user"></i></button>
+                  <button class="detail-action-btn" title="More"><i class="ph ph-dots-three-vertical"></i></button>
+                </div>
+              </div>
+              <div class="detail-messages" id="company-detail-messages"></div>
+              <div class="detail-input-area">
+                <div class="ai-suggestion-bar" id="company-ai-suggestions"></div>
+                <div class="message-input-wrap">
+                  <button class="input-attach"><i class="ph ph-paperclip"></i></button>
+                  <textarea id="company-message-input" placeholder="Type your message..." rows="1"></textarea>
+                  <button class="input-emoji"><i class="ph ph-smiley"></i></button>
+                  <button class="input-send" id="company-send-btn"><i class="ph ph-paper-plane-right"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/linkedin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) {
+        window.location.href = '../auth/signin.html';
+        return;
+      }
+      window.linkedinApp = new LinkedInApp();
+      window.linkedinApp.initCompanyInboxPage();
+    });
+  </script>
+</body>
+</html>

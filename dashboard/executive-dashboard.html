@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Dashboard — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-page-title">
+          <h1>Executive Overview</h1>
+          <p>Business performance across all platforms</p>
+        </div>
+
+        <!-- Executive Stats -->
+        <div class="exec-stat-grid" id="exec-stats">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Conversations Over Time -->
+          <div class="dashboard-col-7">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Conversations Over Time</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="Export"><i class="ph ph-download-simple"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="line-chart-container" id="conversations-line-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversations by Platform -->
+          <div class="dashboard-col-5">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Conversations by Platform</span>
+              </div>
+              <div class="widget-body">
+                <div id="platform-donut-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Performing Platform -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Top Performing Platform</span>
+              </div>
+              <div class="widget-body">
+                <div class="platform-mini-list" id="top-platforms">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Response Time by Platform -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Response Time (Avg.) by Platform</span>
+              </div>
+              <div class="widget-body">
+                <div class="bar-chart-container" id="response-time-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Insights -->
+          <div class="dashboard-col-12">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Key Insights</span>
+              </div>
+              <div class="widget-body">
+                <div class="insights-list" id="key-insights">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const app = new DashboardApp();
+      const storage = app.storage;
+
+      // Render executive stats
+      function renderExecStats() {
+        const stats = storage.getDashboardStats();
+        const container = document.getElementById('exec-stats');
+
+        const metrics = [
+          { label: 'Total Conversations', value: stats.totalConversations, trend: 24.5, suffix: '' },
+          { label: 'Engagement Rate', value: '7.82', trend: 18.0, suffix: '%' },
+          { label: 'Conversion Rate', value: '3.65', trend: 9.3, suffix: '%' },
+          { label: 'Revenue Influenced', value: '$48,250', trend: 15.8, suffix: '' },
+          { label: 'Customer Satisfaction', value: '4.7', trend: 4.2, suffix: '/5' }
+        ];
+
+        let html = '';
+        metrics.forEach(m => {
+          const trendClass = m.trend >= 0 ? 'up' : 'down';
+          const trendIcon = m.trend >= 0 ? 'ph-trend-up' : 'ph-trend-down';
+          html += `
+            <div class="exec-stat-card">
+              <div class="exec-stat-value">${m.value}${m.suffix}</div>
+              <div class="exec-stat-label">${m.label}</div>
+              <span class="exec-stat-trend ${trendClass}"><i class="ph ${trendIcon}"></i> ${Math.abs(m.trend)}%</span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render line chart
+      function renderLineChart() {
+        const trends = storage.getConversationTrends(7);
+        app.createLineChart('conversations-line-chart', trends, ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin']);
+      }
+
+      // Render donut chart
+      function renderDonutChart() {
+        const stats = storage.getPlatformStats();
+        const data = [
+          { label: 'Gmail', value: stats.gmail?.conversations || 0, color: '#EA4335' },
+          { label: 'WhatsApp', value: stats.whatsapp?.conversations || 0, color: '#25D366' },
+          { label: 'Instagram', value: stats.instagram?.conversations || 0, color: '#E4405F' },
+          { label: 'TikTok', value: stats.tiktok?.conversations || 0, color: '#000000' },
+          { label: 'X', value: stats.x?.conversations || 0, color: '#1DA1F2' },
+          { label: 'LinkedIn', value: stats.linkedin?.conversations || 0, color: '#0A66C2' }
+        ].filter(d => d.value > 0);
+
+        app.createDonutChart('platform-donut-chart', data, 'Total');
+      }
+
+      // Render top platforms
+      function renderTopPlatforms() {
+        const stats = storage.getPlatformStats();
+        const platforms = [
+          { key: 'gmail', name: 'WhatsApp', icon: 'whatsapp', conversations: 2073, engagement: '26.4%', color: '#25D366' },
+          { key: 'whatsapp', name: 'Gmail', icon: 'gmail', conversations: 1856, engagement: '23.2%', color: '#EA4335' },
+          { key: 'instagram', name: 'Instagram', icon: 'instagram', conversations: 1432, engagement: '18.3%', color: '#E4405F' },
+          { key: 'x', name: 'X (Twitter)', icon: 'x', conversations: 1432, engagement: '18.3%', color: '#1DA1F2' }
+        ];
+
+        const container = document.getElementById('top-platforms');
+        let html = '';
+        platforms.forEach(p => {
+          html += `
+            <div class="platform-mini-item">
+              <div class="platform-mini-icon ${p.icon}"><i class="ph ${app.getPlatformIcon(p.key)}"></i></div>
+              <div class="platform-mini-info">
+                <div class="platform-mini-name">${p.name}</div>
+                <div class="platform-mini-count">${p.conversations.toLocaleString()} conversations</div>
+              </div>
+              <span class="platform-mini-value" style="color: ${p.color}">${p.engagement}</span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render response time bar chart
+      function renderResponseTimeChart() {
+        const stats = storage.getPlatformStats();
+        const data = [
+          { platform: 'gmail', label: 'Gmail', value: stats.gmail?.avgResponseTime || 18 },
+          { platform: 'whatsapp', label: 'WhatsApp', value: stats.whatsapp?.avgResponseTime || 12 },
+          { platform: 'instagram', label: 'Instagram', value: stats.instagram?.avgResponseTime || 25 },
+          { platform: 'tiktok', label: 'TikTok', value: stats.tiktok?.avgResponseTime || 30 },
+          { platform: 'x', label: 'X', value: stats.x?.avgResponseTime || 22 },
+          { platform: 'linkedin', label: 'LinkedIn', value: stats.linkedin?.avgResponseTime || 15 }
+        ];
+
+        app.createBarChart('response-time-chart', data);
+      }
+
+      // Render key insights
+      function renderKeyInsights() {
+        const container = document.getElementById('key-insights');
+        const insights = [
+          { icon: 'up', type: 'up', text: '<strong>WhatsApp engagement</strong> up by 15% this week compared to last week.' },
+          { icon: 'up', type: 'up', text: '<strong>Instagram conversations</strong> increased by 20% after the new campaign launch.' },
+          { icon: 'down', type: 'down', text: '<strong>X (Twitter) response time</strong> above target — consider adding more agents.' },
+          { icon: 'info', type: 'info', text: '<strong>Revenue influenced</strong> by conversations reached $48,250 this month.' }
+        ];
+
+        let html = '';
+        insights.forEach(insight => {
+          const iconMap = { up: 'ph-trend-up', down: 'ph-trend-down', info: 'ph-info' };
+          html += `
+            <div class="insight-item">
+              <div class="insight-icon ${insight.type}"><i class="ph ${iconMap[insight.type]}"></i></div>
+              <div class="insight-text">${insight.text}</div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      renderExecStats();
+      renderLineChart();
+      renderDonutChart();
+      renderTopPlatforms();
+      renderResponseTimeChart();
+      renderKeyInsights();
+    });
+  </script>
+</body>
+</html>

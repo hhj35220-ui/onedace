@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Search — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/search.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <ul class="nav-list">
+            <li><a href="../dashboard/main-dashboard.html" class="nav-link"><i class="ph ph-squares-four"></i><span>Dashboard</span></a></li>
+            <li><a href="../dashboard/unified-inbox.html" class="nav-link"><i class="ph ph-tray"></i><span>Unified Inbox</span><span class="nav-badge">24</span></a></li>
+            <li><a href="../gmail/" class="nav-link"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a></li>
+            <li><a href="../whatsapp/" class="nav-link"><i class="ph ph-chat-circle-text"></i><span>WhatsApp Business</span><span class="nav-badge">5</span></a></li>
+            <li><a href="../instagram/" class="nav-link"><i class="ph ph-camera"></i><span>Instagram</span><span class="nav-badge">16</span></a></li>
+            <li><a href="../tiktok/" class="nav-link"><i class="ph ph-music-note"></i><span>TikTok</span><span class="nav-badge">23</span></a></li>
+            <li><a href="../x/" class="nav-link"><i class="ph ph-x-logo"></i><span>X (Twitter)</span><span class="nav-badge">54</span></a></li>
+            <li><a href="../linkedin/" class="nav-link"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span><span class="nav-badge">9</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Management</span>
+          <ul class="nav-list">
+            <li><a href="../crm/" class="nav-link"><i class="ph ph-users"></i><span>CRM</span></a></li>
+            <li><a href="../support/index.html" class="nav-link"><i class="ph ph-headset"></i><span>Customer Support</span></a></li>
+            <li><a href="../calendar/" class="nav-link"><i class="ph ph-calendar-blank"></i><span>Calendar</span></a></li>
+            <li><a href="../tasks/" class="nav-link"><i class="ph ph-check-circle"></i><span>Tasks</span></a></li>
+            <li><a href="../team/" class="nav-link"><i class="ph ph-users-three"></i><span>Team Management</span></a></li>
+            <li><a href="../workflow/" class="nav-link"><i class="ph ph-flow-arrow"></i><span>Workflow Automation</span></a></li>
+            <li><a href="../ai/" class="nav-link"><i class="ph ph-sparkle"></i><span>AI</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Analytics</span>
+          <ul class="nav-list">
+            <li><a href="../notifications/notifications.html" class="nav-link"><i class="ph ph-bell"></i><span>Notifications</span><span class="nav-badge">12</span></a></li>
+            <li><a href="../reports/" class="nav-link"><i class="ph ph-chart-bar"></i><span>Reports & Analytics</span></a></li>
+            <li><a href="../files/" class="nav-link"><i class="ph ph-folder"></i><span>File Manager</span></a></li>
+            <li><a href="../search/" class="nav-link active"><i class="ph ph-magnifying-glass"></i><span>Search</span></a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../settings/" class="nav-link"><i class="ph ph-gear"></i><span>Settings</span></a>
+        <a href="../help/" class="nav-link"><i class="ph ph-question"></i><span>Help Center</span></a>
+        <button class="nav-link theme-toggle-sidebar" id="themeToggleSidebar" type="button" aria-label="Toggle theme">
+          <i class="ph ph-moon" id="themeIconSidebar"></i><span>Dark Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="ph ph-list"></i>
+          </button>
+          <h1 class="page-title">Global Search Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <div class="header-search-wrapper">
+            <i class="ph ph-magnifying-glass header-search-icon"></i>
+            <input type="text" class="header-search-input" id="globalSearchInput" placeholder="Search anything... (emails, messages, contacts, files, tasks...)" autocomplete="off">
+            <kbd class="header-search-kbd">⌘K</kbd>
+            <div class="header-search-dropdown" id="searchSuggestionsDropdown"></div>
+          </div>
+          <button class="header-btn" id="headerNotifications" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="header-btn-badge">12</span>
+          </button>
+          <button class="header-btn" id="headerMessages" aria-label="Messages">
+            <i class="ph ph-chat-circle-dots"></i>
+            <span class="header-btn-badge">5</span>
+          </button>
+          <div class="header-profile" id="headerProfile">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar">
+            <div class="header-profile-info">
+              <span class="header-profile-name">Alex Morgan</span>
+              <span class="header-profile-role">Administrator</span>
+            </div>
+            <i class="ph ph-caret-down"></i>
+            <div class="header-profile-dropdown" id="profileDropdown">
+              <a href="../settings/"><i class="ph ph-gear"></i>Settings</a>
+              <a href="../billing/"><i class="ph ph-credit-card"></i>Billing</a>
+              <a href="#" id="signOutLink"><i class="ph ph-sign-out"></i>Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Search Content -->
+      <div class="search-content" id="searchContent">
+        <!-- View: Global Search Dashboard -->
+        <div class="search-view active" id="viewDashboard">
+          <!-- Hero Search -->
+          <div class="search-hero">
+            <div class="search-hero-inner">
+              <h2 class="search-hero-title">Search anything across your entire workspace</h2>
+              <p class="search-hero-subtitle">Find emails, messages, files, contacts, tasks, events and more in one place.</p>
+              <div class="search-hero-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="heroSearchInput" placeholder="Search anything... (emails, messages, contacts, files, tasks...)" autocomplete="off">
+                <kbd class="search-hero-kbd">⌘K</kbd>
+              </div>
+              <div class="search-hero-popular">
+                <span class="search-hero-popular-label">Popular:</span>
+                <button class="search-hero-chip" data-query="Q2 Report">Q2 Report</button>
+                <button class="search-hero-chip" data-query="John Smith">John Smith</button>
+                <button class="search-hero-chip" data-query="Product Launch">Product Launch</button>
+                <button class="search-hero-chip" data-query="Meeting Notes">Meeting Notes</button>
+                <button class="search-hero-chip" data-query="Invoice">Invoice</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="search-kpi-grid">
+            <div class="search-kpi-card">
+              <div class="search-kpi-icon" style="background: var(--primary-50); color: var(--primary-600);">
+                <i class="ph ph-database"></i>
+              </div>
+              <div class="search-kpi-info">
+                <div class="search-kpi-value" id="kpiTotalRecords">1,248,562</div>
+                <div class="search-kpi-label">Total Indexed Records</div>
+                <div class="search-kpi-trend trend-up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>18.6% vs last month</span>
+                </div>
+              </div>
+            </div>
+            <div class="search-kpi-card">
+              <div class="search-kpi-icon" style="background: var(--success-50); color: var(--success-600);">
+                <i class="ph ph-magnifying-glass"></i>
+              </div>
+              <div class="search-kpi-info">
+                <div class="search-kpi-value" id="kpiSearchesToday">342</div>
+                <div class="search-kpi-label">Searches Today</div>
+                <div class="search-kpi-trend trend-up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>24.3% vs yesterday</span>
+                </div>
+              </div>
+            </div>
+            <div class="search-kpi-card">
+              <div class="search-kpi-icon" style="background: var(--warning-50); color: var(--warning-600);">
+                <i class="ph ph-bookmark-simple"></i>
+              </div>
+              <div class="search-kpi-info">
+                <div class="search-kpi-value" id="kpiSavedSearches">28</div>
+                <div class="search-kpi-label">Saved Searches</div>
+                <div class="search-kpi-trend trend-up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>12.5% vs last month</span>
+                </div>
+              </div>
+            </div>
+            <div class="search-kpi-card">
+              <div class="search-kpi-icon" style="background: #f0fdf4; color: #16a34a;">
+                <i class="ph ph-chart-line-up"></i>
+              </div>
+              <div class="search-kpi-info">
+                <div class="search-kpi-value" id="kpiAccuracy">96.8%</div>
+                <div class="search-kpi-label">AI Search Accuracy</div>
+                <div class="search-kpi-trend trend-up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>4.2% vs last month</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Grid -->
+          <div class="search-dashboard-grid">
+            <!-- Recent Searches -->
+            <div class="search-panel">
+              <div class="search-panel-header">
+                <h3 class="search-panel-title">Recent Searches</h3>
+                <button class="search-panel-action" id="viewAllRecent">View All</button>
+              </div>
+              <div class="search-recent-list" id="recentSearchesList"></div>
+            </div>
+
+            <!-- Saved Searches -->
+            <div class="search-panel">
+              <div class="search-panel-header">
+                <h3 class="search-panel-title">Saved Searches</h3>
+                <button class="search-panel-action" id="viewAllSaved">View All</button>
+              </div>
+              <div class="search-saved-list" id="savedSearchesList"></div>
+            </div>
+
+            <!-- Quick Search -->
+            <div class="search-panel">
+              <div class="search-panel-header">
+                <h3 class="search-panel-title">Quick Search</h3>
+              </div>
+              <div class="search-quick-grid">
+                <button class="search-quick-btn" data-type="people">
+                  <div class="search-quick-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-users"></i></div>
+                  <span>People</span>
+                </button>
+                <button class="search-quick-btn" data-type="messages">
+                  <div class="search-quick-icon" style="background: #ecfdf5; color: #10b981;"><i class="ph ph-chat-circle-text"></i></div>
+                  <span>Messages</span>
+                </button>
+                <button class="search-quick-btn" data-type="files">
+                  <div class="search-quick-icon" style="background: #fffbeb; color: #f59e0b;"><i class="ph ph-file-text"></i></div>
+                  <span>Files</span>
+                </button>
+                <button class="search-quick-btn" data-type="calendar">
+                  <div class="search-quick-icon" style="background: #fef2f2; color: #ef4444;"><i class="ph ph-calendar-blank"></i></div>
+                  <span>Calendar</span>
+                </button>
+                <button class="search-quick-btn" data-type="tasks">
+                  <div class="search-quick-icon" style="background: #f0f9ff; color: #0ea5e9;"><i class="ph ph-check-square"></i></div>
+                  <span>Tasks</span>
+                </button>
+                <button class="search-quick-btn" data-type="tasks2">
+                  <div class="search-quick-icon" style="background: #faf5ff; color: #a855f7;"><i class="ph ph-check-circle"></i></div>
+                  <span>Tasks</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Trending Searches -->
+            <div class="search-panel">
+              <div class="search-panel-header">
+                <h3 class="search-panel-title">Trending Searches</h3>
+                <button class="search-panel-action" id="viewAllTrending">View All</button>
+              </div>
+              <div class="search-trending-list" id="trendingSearchesList"></div>
+            </div>
+          </div>
+
+          <!-- Search Activity Chart -->
+          <div class="search-panel search-chart-panel">
+            <div class="search-panel-header">
+              <h3 class="search-panel-title">Search Activity (Last 7 Days)</h3>
+              <select class="search-chart-filter" id="chartPeriodFilter">
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+              </select>
+            </div>
+            <div class="search-chart-container">
+              <canvas id="searchActivityChart" width="800" height="240"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- View: Search Results -->
+        <div class="search-view" id="viewResults">
+          <div class="search-results-header">
+            <div class="search-results-info">
+              <button class="search-results-back" id="resultsBackBtn"><i class="ph ph-arrow-left"></i></button>
+              <div class="search-results-query">
+                <h2 class="search-results-title" id="resultsTitle">Search Results</h2>
+                <p class="search-results-count" id="resultsCount">About 342 results found for "marketing strategy" (0.28 seconds)</p>
+              </div>
+            </div>
+            <div class="search-results-actions">
+              <button class="btn btn-ghost btn-sm" id="saveSearchBtn"><i class="ph ph-bookmark-simple"></i> Save Search</button>
+              <div class="search-results-sort">
+                <span>Sort by:</span>
+                <select id="resultsSort">
+                  <option value="relevance">Relevance</option>
+                  <option value="date-desc">Date (Newest)</option>
+                  <option value="date-asc">Date (Oldest)</option>
+                  <option value="name">Name</option>
+                </select>
+              </div>
+              <div class="search-results-view-toggle">
+                <button class="view-btn active" data-view="list" aria-label="List view"><i class="ph ph-list"></i></button>
+                <button class="view-btn" data-view="grid" aria-label="Grid view"><i class="ph ph-squares-four"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="search-results-layout">
+            <!-- Filters Sidebar -->
+            <aside class="search-filters-sidebar" id="filtersSidebar">
+              <div class="search-filters-header">
+                <h3>Filters</h3>
+                <button class="search-filters-clear" id="clearAllFilters">Clear All</button>
+              </div>
+
+              <div class="search-filter-group">
+                <div class="search-filter-toggle">
+                  <span>Platform</span>
+                  <i class="ph ph-caret-down"></i>
+                </div>
+                <div class="search-filter-content">
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="all" checked data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>All Platforms</span>
+                    <span class="filter-count">342</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="gmail" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Gmail</span>
+                    <span class="filter-count">58</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="whatsapp" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>WhatsApp</span>
+                    <span class="filter-count">62</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="instagram" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Instagram</span>
+                    <span class="filter-count">28</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="tiktok" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>TikTok</span>
+                    <span class="filter-count">18</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="x" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>X (Twitter)</span>
+                    <span class="filter-count">42</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="linkedin" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>LinkedIn</span>
+                    <span class="filter-count">31</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="crm" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>CRM</span>
+                    <span class="filter-count">46</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="calendar" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Calendar</span>
+                    <span class="filter-count">16</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="tasks" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Tasks</span>
+                    <span class="filter-count">12</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="files" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Files</span>
+                    <span class="filter-count">28</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="ai" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>AI</span>
+                    <span class="filter-count">16</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="reports" data-filter="platform">
+                    <span class="check-box"></span>
+                    <span>Reports</span>
+                    <span class="filter-count">24</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="search-filter-group">
+                <div class="search-filter-toggle">
+                  <span>Date Range</span>
+                  <i class="ph ph-caret-down"></i>
+                </div>
+                <div class="search-filter-content">
+                  <div class="search-filter-date">
+                    <label>From</label>
+                    <input type="date" id="filterDateFrom">
+                  </div>
+                  <div class="search-filter-date">
+                    <label>To</label>
+                    <input type="date" id="filterDateTo">
+                  </div>
+                </div>
+              </div>
+
+              <div class="search-filter-group">
+                <div class="search-filter-toggle">
+                  <span>Content Type</span>
+                  <i class="ph ph-caret-down"></i>
+                </div>
+                <div class="search-filter-content">
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="all" checked data-filter="type">
+                    <span class="check-box"></span>
+                    <span>All Types</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="email" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>Email</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="message" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>Message</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="file" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>File</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="contact" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>Contact</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="task" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>Task</span>
+                  </label>
+                  <label class="search-filter-checkbox">
+                    <input type="checkbox" value="event" data-filter="type">
+                    <span class="check-box"></span>
+                    <span>Event</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-full search-filters-apply" id="applyFiltersBtn">
+                <i class="ph ph-funnel"></i> Apply Filters
+              </button>
+            </aside>
+
+            <!-- Results Area -->
+            <div class="search-results-area">
+              <div class="search-results-list" id="searchResultsList"></div>
+              <div class="search-results-pagination" id="resultsPagination"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View: Advanced Search -->
+        <div class="search-view" id="viewAdvanced">
+          <div class="search-advanced-header">
+            <button class="search-results-back" id="advancedBackBtn"><i class="ph ph-arrow-left"></i></button>
+            <h2 class="search-advanced-title">Advanced Search</h2>
+          </div>
+
+          <div class="search-advanced-tabs">
+            <button class="search-advanced-tab active" data-tab="builder">Search Builder</button>
+            <button class="search-advanced-tab" data-tab="history">Search History</button>
+          </div>
+
+          <div class="search-advanced-content">
+            <div class="search-advanced-panel active" id="tabBuilder">
+              <div class="search-builder-form">
+                <div class="search-builder-row">
+                  <div class="search-builder-field">
+                    <label>Search Query</label>
+                    <div class="search-builder-input-wrapper">
+                      <i class="ph ph-magnifying-glass"></i>
+                      <input type="text" id="advancedQuery" placeholder="Enter search terms...">
+                      <label class="search-builder-toggle">
+                        <input type="checkbox" id="aiSemanticSearch">
+                        <span class="toggle-slider"></span>
+                        <span>AI Semantic Search</span>
+                      </label>
+                    </div>
+                    <p class="search-builder-hint">Finds results with similar meaning and related concepts</p>
+                  </div>
+                </div>
+
+                <div class="search-builder-row">
+                  <div class="search-builder-field">
+                    <label>Platforms</label>
+                    <div class="search-builder-platforms" id="builderPlatforms">
+                      <button class="platform-chip active" data-platform="all">All</button>
+                      <button class="platform-chip" data-platform="gmail"><i class="ph ph-envelope-simple"></i> Gmail</button>
+                      <button class="platform-chip" data-platform="whatsapp"><i class="ph ph-chat-circle-text"></i> WhatsApp</button>
+                      <button class="platform-chip" data-platform="instagram"><i class="ph ph-camera"></i> Instagram</button>
+                      <button class="platform-chip" data-platform="tiktok"><i class="ph ph-music-note"></i> TikTok</button>
+                      <button class="platform-chip" data-platform="x"><i class="ph ph-x-logo"></i> X</button>
+                      <button class="platform-chip" data-platform="linkedin"><i class="ph ph-linkedin-logo"></i> LinkedIn</button>
+                      <button class="platform-chip" data-platform="crm"><i class="ph ph-users"></i> CRM</button>
+                      <button class="platform-chip" data-platform="calendar"><i class="ph ph-calendar-blank"></i> Calendar</button>
+                      <button class="platform-chip" data-platform="tasks"><i class="ph ph-check-circle"></i> Tasks</button>
+                      <button class="platform-chip" data-platform="files"><i class="ph ph-folder"></i> Files</button>
+                      <button class="platform-chip" data-platform="ai"><i class="ph ph-sparkle"></i> AI</button>
+                      <button class="platform-chip" data-platform="reports"><i class="ph ph-chart-bar"></i> Reports</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="search-builder-row grid-3">
+                  <div class="search-builder-field">
+                    <label>Date Range</label>
+                    <div class="search-builder-dates">
+                      <input type="date" id="advancedDateFrom">
+                      <span>to</span>
+                      <input type="date" id="advancedDateTo">
+                    </div>
+                  </div>
+                  <div class="search-builder-field">
+                    <label>Content Type</label>
+                    <select id="advancedContentType" class="form-select">
+                      <option value="all">All Types</option>
+                      <option value="email">Email</option>
+                      <option value="message">Message</option>
+                      <option value="file">File</option>
+                      <option value="contact">Contact</option>
+                      <option value="task">Task</option>
+                      <option value="event">Event</option>
+                    </select>
+                  </div>
+                  <div class="search-builder-field">
+                    <label>Assigned To</label>
+                    <select id="advancedAssignedTo" class="form-select">
+                      <option value="all">All Users</option>
+                      <option value="me">Me</option>
+                      <option value="alex">Alex Morgan</option>
+                      <option value="jake">Jake Cooper</option>
+                      <option value="cody">Cody Fisher</option>
+                      <option value="guy">Guy Hawkins</option>
+                      <option value="darlene">Darlene Robertson</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="search-builder-row grid-2">
+                  <div class="search-builder-field">
+                    <label>Tags</label>
+                    <div class="search-builder-tags" id="builderTags">
+                      <span class="tag-chip">Project</span>
+                      <span class="tag-chip">Proposal</span>
+                      <span class="tag-chip">Support</span>
+                      <span class="tag-chip">Sales</span>
+                      <span class="tag-chip">Urgent</span>
+                      <span class="tag-chip">Follow-up</span>
+                      <span class="tag-chip">Bug</span>
+                      <span class="tag-chip">Feature Request</span>
+                      <input type="text" class="tag-input" placeholder="+ Add tag">
+                    </div>
+                  </div>
+                  <div class="search-builder-field">
+                    <label>Workspace</label>
+                    <select id="advancedWorkspace" class="form-select">
+                      <option value="all">All Workspaces</option>
+                      <option value="current">Current Workspace</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="search-builder-row">
+                  <div class="search-builder-field">
+                    <label class="search-builder-toggle-inline">
+                      <input type="checkbox" id="includeArchived">
+                      <span class="check-box"></span>
+                      <span>Include archived results</span>
+                    </label>
+                    <label class="search-builder-toggle-inline">
+                      <input type="checkbox" id="onlyFavorites">
+                      <span class="check-box"></span>
+                      <span>Only favorites</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="search-builder-actions">
+                  <button class="btn btn-ghost" id="clearAdvancedBtn"><i class="ph ph-arrow-counter-clockwise"></i> Clear All</button>
+                  <button class="btn btn-primary" id="runAdvancedSearchBtn"><i class="ph ph-magnifying-glass"></i> Search</button>
+                </div>
+              </div>
+
+              <div class="search-builder-templates">
+                <h4 class="search-builder-templates-title">Saved Templates</h4>
+                <div class="search-templates-list" id="searchTemplatesList"></div>
+              </div>
+            </div>
+
+            <div class="search-advanced-panel" id="tabHistory">
+              <div class="search-history-list" id="searchHistoryList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View: Saved Searches -->
+        <div class="search-view" id="viewSaved">
+          <div class="search-saved-header">
+            <button class="search-results-back" id="savedBackBtn"><i class="ph ph-arrow-left"></i></button>
+            <h2 class="search-saved-title">Saved Searches</h2>
+            <button class="btn btn-primary btn-sm" id="newSavedSearchBtn"><i class="ph ph-plus"></i> New Saved Search</button>
+          </div>
+
+          <div class="search-saved-tabs">
+            <button class="search-saved-tab active" data-tab="all">All Saved</button>
+            <button class="search-saved-tab" data-tab="favorites">Favorites</button>
+            <button class="search-saved-tab" data-tab="shared">Shared with Me</button>
+            <button class="search-saved-tab" data-tab="scheduled">Scheduled</button>
+            <button class="search-saved-tab" data-tab="recent">Recently Used</button>
+          </div>
+
+          <div class="search-saved-grid" id="savedSearchesGrid"></div>
+        </div>
+
+        <!-- View: Search Analytics -->
+        <div class="search-view" id="viewAnalytics">
+          <div class="search-analytics-header">
+            <button class="search-results-back" id="analyticsBackBtn"><i class="ph ph-arrow-left"></i></button>
+            <h2 class="search-analytics-title">Search Analytics</h2>
+            <div class="search-analytics-date">
+              <span>May 19 - May 25, 2025</span>
+              <button class="btn btn-ghost btn-sm"><i class="ph ph-calendar"></i></button>
+              <button class="btn btn-ghost btn-sm"><i class="ph ph-download-simple"></i> Export</button>
+            </div>
+          </div>
+
+          <div class="search-analytics-tabs">
+            <button class="search-analytics-tab active" data-tab="overview">Overview</button>
+            <button class="search-analytics-tab" data-tab="trends">Search Trends</button>
+            <button class="search-analytics-tab" data-tab="users">User Analytics</button>
+            <button class="search-analytics-tab" data-tab="ai">AI Insights</button>
+          </div>
+
+          <div class="search-analytics-content">
+            <div class="search-analytics-panel active" id="analyticsOverview">
+              <!-- KPI Row -->
+              <div class="search-analytics-kpi">
+                <div class="analytics-kpi-card">
+                  <div class="analytics-kpi-icon"><i class="ph ph-magnifying-glass"></i></div>
+                  <div class="analytics-kpi-info">
+                    <div class="analytics-kpi-value">1,248</div>
+                    <div class="analytics-kpi-label">Total Searches</div>
+                    <div class="analytics-kpi-trend up"><i class="ph ph-trend-up"></i> 18.6% vs last week</div>
+                  </div>
+                </div>
+                <div class="analytics-kpi-card">
+                  <div class="analytics-kpi-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-users"></i></div>
+                  <div class="analytics-kpi-info">
+                    <div class="analytics-kpi-value">342</div>
+                    <div class="analytics-kpi-label">Unique Users</div>
+                    <div class="analytics-kpi-trend up"><i class="ph ph-trend-up"></i> 12.4% vs last week</div>
+                  </div>
+                </div>
+                <div class="analytics-kpi-card">
+                  <div class="analytics-kpi-icon" style="background: #f0fdf4; color: #16a34a;"><i class="ph ph-clock"></i></div>
+                  <div class="analytics-kpi-info">
+                    <div class="analytics-kpi-value">0.28s</div>
+                    <div class="analytics-kpi-label">Avg. Response Time</div>
+                    <div class="analytics-kpi-trend down"><i class="ph ph-trend-down"></i> 5.2% vs last week</div>
+                  </div>
+                </div>
+                <div class="analytics-kpi-card">
+                  <div class="analytics-kpi-icon" style="background: #fef2f2; color: #ef4444;"><i class="ph ph-check-circle"></i></div>
+                  <div class="analytics-kpi-info">
+                    <div class="analytics-kpi-value">96.8%</div>
+                    <div class="analytics-kpi-label">Success Rate</div>
+                    <div class="analytics-kpi-trend up"><i class="ph ph-trend-up"></i> 4.2% vs last week</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Charts Row -->
+              <div class="search-analytics-charts">
+                <div class="analytics-chart-panel">
+                  <div class="analytics-chart-header">
+                    <h4>Search Volume</h4>
+                    <select class="analytics-chart-filter">
+                      <option>Last 7 Days</option>
+                      <option>Last 30 Days</option>
+                    </select>
+                  </div>
+                  <div class="analytics-chart-body">
+                    <canvas id="analyticsVolumeChart" width="600" height="220"></canvas>
+                  </div>
+                </div>
+                <div class="analytics-chart-panel">
+                  <div class="analytics-chart-header">
+                    <h4>Top Search Keywords</h4>
+                    <button class="analytics-chart-action">View All</button>
+                  </div>
+                  <div class="analytics-chart-body">
+                    <div class="analytics-keywords-list" id="analyticsKeywordsList"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Charts -->
+              <div class="search-analytics-charts">
+                <div class="analytics-chart-panel">
+                  <div class="analytics-chart-header">
+                    <h4>Search by Platform</h4>
+                  </div>
+                  <div class="analytics-chart-body flex-center">
+                    <canvas id="analyticsPlatformChart" width="280" height="220"></canvas>
+                    <div class="analytics-platform-legend" id="analyticsPlatformLegend"></div>
+                  </div>
+                </div>
+                <div class="analytics-chart-panel">
+                  <div class="analytics-chart-header">
+                    <h4>Search Success Rate</h4>
+                  </div>
+                  <div class="analytics-chart-body flex-center">
+                    <div class="analytics-success-ring">
+                      <canvas id="analyticsSuccessChart" width="200" height="200"></canvas>
+                      <div class="analytics-success-info">
+                        <div class="analytics-success-value">96.8%</div>
+                        <div class="analytics-success-label">Success Rate</div>
+                        <div class="analytics-success-trend"><i class="ph ph-trend-up"></i> 4.2%</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="analytics-chart-panel">
+                  <div class="analytics-chart-header">
+                    <h4>AI Search Insights</h4>
+                  </div>
+                  <div class="analytics-chart-body">
+                    <div class="analytics-ai-list" id="analyticsAIList"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-analytics-panel" id="analyticsTrends">
+              <div class="analytics-chart-panel full">
+                <div class="analytics-chart-header">
+                  <h4>Search Trends Over Time</h4>
+                  <select class="analytics-chart-filter">
+                    <option>Last 30 Days</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 90 Days</option>
+                  </select>
+                </div>
+                <div class="analytics-chart-body">
+                  <canvas id="analyticsTrendsChart" width="900" height="300"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-analytics-panel" id="analyticsUsers">
+              <div class="analytics-users-table-wrapper">
+                <table class="analytics-users-table">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Searches</th>
+                      <th>Avg. Time</th>
+                      <th>Success Rate</th>
+                      <th>Top Platform</th>
+                      <th>Trend</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analyticsUsersTable"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="search-analytics-panel" id="analyticsAI">
+              <div class="analytics-ai-insights">
+                <div class="analytics-ai-card">
+                  <div class="analytics-ai-metric">
+                    <span class="analytics-ai-number">342</span>
+                    <span class="analytics-ai-label">AI searches this week</span>
+                    <span class="analytics-ai-badge up">+18.3%</span>
+                  </div>
+                </div>
+                <div class="analytics-ai-card">
+                  <div class="analytics-ai-metric">
+                    <span class="analytics-ai-number">4.2%</span>
+                    <span class="analytics-ai-label">Accuracy improvement</span>
+                    <span class="analytics-ai-badge up">+1.1%</span>
+                  </div>
+                </div>
+                <div class="analytics-ai-card">
+                  <div class="analytics-ai-metric">
+                    <span class="analytics-ai-number">78%</span>
+                    <span class="analytics-ai-label">Related suggestions used</span>
+                    <span class="analytics-ai-badge up">+13.1%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Save Search Modal -->
+  <div class="modal-overlay" id="saveSearchModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Save Search</h3>
+        <button class="modal-close" id="closeSaveModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Search Name</label>
+          <input type="text" class="form-input" id="saveSearchName" placeholder="e.g., Marketing Strategy Q2">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description (optional)</label>
+          <textarea class="form-input" id="saveSearchDesc" rows="2" placeholder="Brief description of this search..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="search-builder-toggle-inline">
+            <input type="checkbox" id="saveSearchNotify">
+            <span class="check-box"></span>
+            <span>Notify me of new results</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelSaveSearch">Cancel</button>
+        <button class="btn btn-primary" id="confirmSaveSearch">Save Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Preview Modal -->
+  <div class="modal-overlay" id="previewModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="previewTitle">Result Preview</h3>
+        <button class="modal-close" id="closePreviewModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body" id="previewBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="previewCloseBtn">Close</button>
+        <button class="btn btn-primary" id="previewOpenBtn">Open in Module</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/search.js"></script>
+</body>
+</html>

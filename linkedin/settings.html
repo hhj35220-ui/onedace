@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Settings — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/linkedin.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="ph ph-list"></i>
+    </button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header linkedin-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="linkedin-header-icon"><i class="ph ph-linkedin-logo"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">LinkedIn</h1>
+              <p class="header-subtitle">Track and manage your LinkedIn presence and conversations</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search linkedin-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="linkedin-search" placeholder="Search..." autocomplete="off">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot" id="notif-dot"></span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="linkedin-tabs" aria-label="LinkedIn sections">
+        <div class="linkedin-tabs-inner">
+          <a href="index.html" class="linkedin-tab" data-page="overview">
+            <i class="ph ph-squares-four"></i>
+            <span>Overview</span>
+          </a>
+          <a href="messages.html" class="linkedin-tab" data-page="messages">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>Messages</span>
+            <span class="tab-badge" id="msg-badge">24</span>
+          </a>
+          <a href="company-inbox.html" class="linkedin-tab" data-page="company-inbox">
+            <i class="ph ph-buildings"></i>
+            <span>Company Inbox</span>
+            <span class="tab-badge" id="company-badge">8</span>
+          </a>
+          <a href="connection-requests.html" class="linkedin-tab" data-page="connection-requests">
+            <i class="ph ph-user-plus"></i>
+            <span>Connection Requests</span>
+            <span class="tab-badge" id="conn-badge">47</span>
+          </a>
+          <a href="mentions.html" class="linkedin-tab" data-page="mentions">
+            <i class="ph ph-at"></i>
+            <span>Mentions</span>
+            <span class="tab-badge" id="mention-badge">16</span>
+          </a>
+          <a href="post-engagements.html" class="linkedin-tab" data-page="post-engagements">
+            <i class="ph ph-heart"></i>
+            <span>Post Engagements</span>
+            <span class="tab-badge" id="engage-badge">23</span>
+          </a>
+          <a href="integration.html" class="linkedin-tab" data-page="integration">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integration</span>
+          </a>
+          <a href="settings.html" class="linkedin-tab active" data-page="settings">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content linkedin-content">
+        <div class="settings-page">
+          <div class="settings-card">
+            <div class="settings-section">
+              <h3 class="settings-section-title">General Settings</h3>
+              <div class="settings-row">
+                <div class="settings-item">
+                  <label class="settings-label">Default Response Time</label>
+                  <select class="settings-select" id="default-response-time">
+                    <option value="1h">1 Hour</option>
+                    <option value="2h" selected>2 Hours</option>
+                    <option value="4h">4 Hours</option>
+                    <option value="8h">8 Hours</option>
+                    <option value="24h">24 Hours</option>
+                  </select>
+                </div>
+                <div class="settings-item">
+                  <label class="settings-label">Timezone</label>
+                  <select class="settings-select" id="timezone">
+                    <option value="UTC-8">Pacific Time (UTC-8)</option>
+                    <option value="UTC-5" selected>Eastern Time (UTC-5)</option>
+                    <option value="UTC+0">GMT (UTC+0)</option>
+                    <option value="UTC+1">Central European (UTC+1)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="settings-section-title">Notification Settings</h3>
+              <div class="settings-toggles">
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Email Notifications</span>
+                    <span class="toggle-desc">Receive email alerts for new messages</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="email-notifs" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Auto Mark as Read</span>
+                    <span class="toggle-desc">Automatically mark messages as read when opened</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="auto-read" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Enable AI Suggestions</span>
+                    <span class="toggle-desc">Show AI-powered reply suggestions</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="ai-suggestions" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Auto Connect</span>
+                    <span class="toggle-desc">Automatically accept connection requests</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="auto-connect">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Show Typing Indicator</span>
+                    <span class="toggle-desc">Show when contacts are typing</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="typing-indicator" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="settings-section-title">CRM Integration</h3>
+              <div class="settings-toggles">
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Sync Contacts with CRM</span>
+                    <span class="toggle-desc">Automatically sync LinkedIn contacts to CRM</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="sync-crm" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Auto Create Leads</span>
+                    <span class="toggle-desc">Create CRM leads from new connections</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="auto-leads" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="settings-section-title">Security</h3>
+              <div class="settings-toggles">
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Two-Factor Authentication</span>
+                    <span class="toggle-desc">Require 2FA for LinkedIn access</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="2fa" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">Session Timeout</span>
+                    <span class="toggle-desc">Auto logout after 30 minutes of inactivity</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="session-timeout" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-actions">
+              <button class="btn btn-primary btn-lg" id="save-settings-btn"><i class="ph ph-floppy-disk"></i> Save Changes</button>
+              <button class="btn btn-outline btn-lg" id="reset-settings-btn"><i class="ph ph-arrow-counter-clockwise"></i> Reset to Default</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/linkedin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) {
+        window.location.href = '../auth/signin.html';
+        return;
+      }
+      window.linkedinApp = new LinkedInApp();
+      window.linkedinApp.initSettingsPage();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/ai.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item">
+            <i class="ph ph-tray"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">24</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../gmail/index.html" class="nav-item">
+            <i class="ph ph-envelope-simple"></i>
+            <span>Gmail</span>
+          </a>
+          <a href="../whatsapp/index.html" class="nav-item">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>WhatsApp Business</span>
+            <span class="nav-badge">8</span>
+          </a>
+          <a href="../instagram/index.html" class="nav-item">
+            <i class="ph ph-camera"></i>
+            <span>Instagram</span>
+            <span class="nav-badge">16</span>
+          </a>
+          <a href="../tiktok/index.html" class="nav-item">
+            <i class="ph ph-tiktok-logo"></i>
+            <span>TikTok</span>
+            <span class="nav-badge">23</span>
+          </a>
+          <a href="../x/index.html" class="nav-item">
+            <i class="ph ph-x-logo"></i>
+            <span>X (Twitter)</span>
+            <span class="nav-badge">34</span>
+          </a>
+          <a href="../linkedin/index.html" class="nav-item">
+            <i class="ph ph-linkedin-logo"></i>
+            <span>LinkedIn</span>
+            <span class="nav-badge">26</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Business</span>
+          <a href="../crm/index.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>CRM</span>
+          </a>
+          <a href="../support/index.html" class="nav-item">
+            <i class="ph ph-headset"></i>
+            <span>Customer Support</span>
+          </a>
+          <a href="../calendar/index.html" class="nav-item">
+            <i class="ph ph-calendar-blank"></i>
+            <span>Calendar</span>
+          </a>
+          <a href="../tasks/index.html" class="nav-item">
+            <i class="ph ph-check-square"></i>
+            <span>Tasks</span>
+          </a>
+          <a href="../team/index.html" class="nav-item">
+            <i class="ph ph-users-three"></i>
+            <span>Team Management</span>
+          </a>
+          <a href="../workflow/index.html" class="nav-item">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Workflow</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Analytics</span>
+          <a href="../reports/index.html" class="nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="index.html" class="nav-item active">
+            <i class="ph ph-sparkle"></i>
+            <span>AI</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <a href="../settings/index.html" class="nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../integrations/index.html" class="nav-item">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../help/index.html" class="nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" alt="Alex Morgan">
+          </div>
+          <div class="user-info">
+            <span class="user-name">Alex Morgan</span>
+            <span class="user-role">Administrator</span>
+          </div>
+          <button class="user-menu-btn" aria-label="User menu">
+            <i class="ph ph-caret-down"></i>
+          </button>
+        </div>
+        <button class="theme-toggle-sidebar" id="themeToggleSidebar" aria-label="Toggle theme">
+          <i class="ph ph-moon"></i>
+          <span>Light Mode</span>
+          <i class="ph ph-caret-right"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="header-title">AI Assistant</h1>
+          <p class="header-subtitle">Your intelligent assistant for all your business needs</p>
+        </div>
+        <div class="header-center">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything or ask AI..." id="headerSearch">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn btn-primary" id="newChatBtn">
+            <i class="ph ph-plus"></i>
+            <span>New Chat</span>
+          </button>
+          <button class="header-btn btn-icon" id="notificationsBtn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="header-btn btn-icon" id="messagesBtn" aria-label="Messages">
+            <i class="ph ph-chat-teardrop-text"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" alt="Alex Morgan">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Administrator</span>
+            </div>
+            <i class="ph ph-caret-down"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Stats Row -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">AI Conversations</span>
+            <div class="stat-icon stat-icon-purple">
+              <i class="ph ph-chat-circle-dots"></i>
+            </div>
+          </div>
+          <div class="stat-value">1,248</div>
+          <div class="stat-change stat-change-up">
+            <i class="ph ph-arrow-up-right"></i>
+            <span>32%</span>
+            <span class="stat-change-label">vs last 7 days</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Messages Generated</span>
+            <div class="stat-icon stat-icon-green">
+              <i class="ph ph-pencil-simple"></i>
+            </div>
+          </div>
+          <div class="stat-value">2,456</div>
+          <div class="stat-change stat-change-up">
+            <i class="ph ph-arrow-up-right"></i>
+            <span>28%</span>
+            <span class="stat-change-label">vs last 7 days</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Time Saved</span>
+            <div class="stat-icon stat-icon-orange">
+              <i class="ph ph-clock"></i>
+            </div>
+          </div>
+          <div class="stat-value">24h 35m</div>
+          <div class="stat-change stat-change-up">
+            <i class="ph ph-arrow-up-right"></i>
+            <span>18%</span>
+            <span class="stat-change-label">vs last 7 days</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Tasks Assisted</span>
+            <div class="stat-icon stat-icon-blue">
+              <i class="ph ph-check-circle"></i>
+            </div>
+          </div>
+          <div class="stat-value">892</div>
+          <div class="stat-change stat-change-up">
+            <i class="ph ph-arrow-up-right"></i>
+            <span>26%</span>
+            <span class="stat-change-label">vs last 7 days</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Accuracy Rate</span>
+            <div class="stat-icon stat-icon-pink">
+              <i class="ph ph-target"></i>
+            </div>
+          </div>
+          <div class="stat-value">96.8%</div>
+          <div class="stat-change stat-change-up">
+            <i class="ph ph-arrow-up-right"></i>
+            <span>4.2%</span>
+            <span class="stat-change-label">vs last 7 days</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Credits Used</span>
+            <div class="stat-icon stat-icon-indigo">
+              <i class="ph ph-credit-card"></i>
+            </div>
+          </div>
+          <div class="stat-value">78%</div>
+          <div class="stat-credits">
+            <span>784 / 1,000 credits</span>
+            <div class="stat-credits-bar">
+              <div class="stat-credits-fill" style="width: 78%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Tabs -->
+      <div class="ai-tabs-wrapper">
+        <div class="ai-tabs" id="aiTabs">
+          <button class="ai-tab active" data-tab="assistant">
+            <i class="ph ph-sparkle"></i>
+            <span>AI Assistant</span>
+          </button>
+          <button class="ai-tab" data-tab="writer">
+            <i class="ph ph-pencil-simple"></i>
+            <span>AI Writer</span>
+          </button>
+          <button class="ai-tab" data-tab="email">
+            <i class="ph ph-envelope-simple"></i>
+            <span>AI Email</span>
+          </button>
+          <button class="ai-tab" data-tab="reply">
+            <i class="ph ph-arrow-u-up-left"></i>
+            <span>AI Reply</span>
+          </button>
+          <button class="ai-tab" data-tab="search">
+            <i class="ph ph-magnifying-glass"></i>
+            <span>AI Search</span>
+          </button>
+          <button class="ai-tab" data-tab="prompts">
+            <i class="ph ph-books"></i>
+            <span>Prompt Library</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Content Area -->
+      <div class="ai-content" id="aiContent">
+        <!-- AI Assistant Tab -->
+        <div class="ai-tab-panel active" data-panel="assistant">
+          <div class="assistant-layout">
+            <!-- Left Column -->
+            <div class="assistant-left">
+              <!-- New Chat Button -->
+              <button class="new-chat-sidebar-btn" id="newChatSidebarBtn">
+                <i class="ph ph-plus"></i>
+                <span>New Chat</span>
+              </button>
+
+              <!-- Recent Conversations -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-section-title">Recent Conversations</h3>
+                <div class="recent-conversations" id="recentConversations">
+                  <div class="conversation-item" data-id="conv1">
+                    <div class="conversation-text">Help me analyze Q2 sales data</div>
+                    <div class="conversation-meta">2m ago</div>
+                  </div>
+                  <div class="conversation-item" data-id="conv2">
+                    <div class="conversation-text">Write a follow up email to client</div>
+                    <div class="conversation-meta">1h ago</div>
+                  </div>
+                  <div class="conversation-item" data-id="conv3">
+                    <div class="conversation-text">Summarize customer support tickets</div>
+                    <div class="conversation-meta">3h ago</div>
+                  </div>
+                  <div class="conversation-item" data-id="conv4">
+                    <div class="conversation-text">Create content calendar for May</div>
+                    <div class="conversation-meta">5h ago</div>
+                  </div>
+                  <div class="conversation-item" data-id="conv5">
+                    <div class="conversation-text">Generate Instagram post ideas</div>
+                    <div class="conversation-meta">1d ago</div>
+                  </div>
+                </div>
+                <a href="#" class="view-all-link" id="viewAllConversations">View All Conversations</a>
+              </div>
+
+              <!-- Prompt Categories -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-section-title">Prompt Categories</h3>
+                <div class="prompt-categories" id="promptCategories">
+                  <div class="category-item active" data-category="all">
+                    <div class="category-icon"><i class="ph ph-squares-four"></i></div>
+                    <span class="category-name">All Prompts</span>
+                    <span class="category-count">120</span>
+                  </div>
+                  <div class="category-item" data-category="email">
+                    <div class="category-icon"><i class="ph ph-envelope-simple"></i></div>
+                    <span class="category-name">Email & Messages</span>
+                    <span class="category-count">35</span>
+                  </div>
+                  <div class="category-item" data-category="social">
+                    <div class="category-icon"><i class="ph ph-share-network"></i></div>
+                    <span class="category-name">Social Media</span>
+                    <span class="category-count">28</span>
+                  </div>
+                  <div class="category-item" data-category="marketing">
+                    <div class="category-icon"><i class="ph ph-megaphone"></i></div>
+                    <span class="category-name">Marketing</span>
+                    <span class="category-count">22</span>
+                  </div>
+                  <div class="category-item" data-category="sales">
+                    <div class="category-icon"><i class="ph ph-currency-dollar"></i></div>
+                    <span class="category-name">Sales</span>
+                    <span class="category-count">18</span>
+                  </div>
+                  <div class="category-item" data-category="support">
+                    <div class="category-icon"><i class="ph ph-headset"></i></div>
+                    <span class="category-name">Customer Support</span>
+                    <span class="category-count">17</span>
+                  </div>
+                </div>
+                <a href="#" class="view-all-link" id="viewAllCategories">View All Categories</a>
+              </div>
+            </div>
+
+            <!-- Center Column -->
+            <div class="assistant-center">
+              <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-icon">
+                  <i class="ph ph-sparkle"></i>
+                </div>
+                <h2 class="welcome-title">Hello Alex! <span class="wave-emoji">👋</span></h2>
+                <p class="welcome-subtitle">How can I help you today?</p>
+
+                <div class="quick-actions-grid">
+                  <div class="quick-action-card" data-action="email">
+                    <div class="quick-action-icon"><i class="ph ph-envelope-simple"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Write a professional email</h4>
+                      <p>Create a well-structured email</p>
+                    </div>
+                  </div>
+                  <div class="quick-action-card" data-action="summarize">
+                    <div class="quick-action-icon"><i class="ph ph-text-t"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Summarize a conversation</h4>
+                      <p>Get key points from any text</p>
+                    </div>
+                  </div>
+                  <div class="quick-action-card" data-action="social">
+                    <div class="quick-action-icon"><i class="ph ph-share-network"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Generate social media post</h4>
+                      <p>Create engaging posts</p>
+                    </div>
+                  </div>
+                  <div class="quick-action-card" data-action="feedback">
+                    <div class="quick-action-icon"><i class="ph ph-chat-teardrop-text"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Analyze customer feedback</h4>
+                      <p>Extract insights and sentiment</p>
+                    </div>
+                  </div>
+                  <div class="quick-action-card" data-action="tasks">
+                    <div class="quick-action-icon"><i class="ph ph-list-checks"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Create a task list</h4>
+                      <p>Organize tasks and priorities</p>
+                    </div>
+                  </div>
+                  <div class="quick-action-card" data-action="brainstorm">
+                    <div class="quick-action-icon"><i class="ph ph-lightbulb"></i></div>
+                    <div class="quick-action-content">
+                      <h4>Brainstorm ideas</h4>
+                      <p>Generate creative ideas</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Interface (hidden by default) -->
+              <div class="chat-interface" id="chatInterface" style="display: none;">
+                <div class="chat-messages" id="chatMessages"></div>
+              </div>
+
+              <!-- Chat Input -->
+              <div class="chat-input-wrapper">
+                <div class="chat-input-container">
+                  <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything...">
+                  <div class="chat-input-actions">
+                    <button class="chat-action-btn" title="Attach file" aria-label="Attach file">
+                      <i class="ph ph-plus"></i>
+                    </button>
+                    <button class="chat-action-btn" title="Voice input" aria-label="Voice input">
+                      <i class="ph ph-microphone"></i>
+                    </button>
+                    <button class="chat-action-btn" title="Insert template" aria-label="Insert template">
+                      <i class="ph ph-shield-check"></i>
+                    </button>
+                    <button class="chat-action-btn" title="Web search" aria-label="Web search">
+                      <i class="ph ph-globe"></i>
+                    </button>
+                    <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message">
+                      <i class="ph ph-paper-plane-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="chat-disclaimer">AI responses may not always be accurate. Please verify important information.</p>
+              </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="assistant-right">
+              <!-- AI Usage Overview -->
+              <div class="right-panel-card">
+                <div class="right-panel-header">
+                  <h3>AI Usage Overview</h3>
+                  <a href="#" class="view-details-link">View Details</a>
+                </div>
+                <div class="usage-chart">
+                  <svg viewBox="0 0 120 120" class="donut-chart">
+                    <circle class="donut-bg" cx="60" cy="60" r="50" />
+                    <circle class="donut-fill" cx="60" cy="60" r="50" stroke-dasharray="251.2" stroke-dashoffset="55.26" />
+                  </svg>
+                  <div class="donut-center">
+                    <span class="donut-percent">78%</span>
+                    <span class="donut-label">Credits Used</span>
+                  </div>
+                </div>
+                <div class="usage-legend">
+                  <div class="legend-item">
+                    <span class="legend-dot legend-used"></span>
+                    <span class="legend-label">Used</span>
+                    <span class="legend-value">784 (78%)</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-remaining"></span>
+                    <span class="legend-label">Remaining</span>
+                    <span class="legend-value">216 (22%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="right-panel-card">
+                <h3 class="right-panel-title">Quick Actions</h3>
+                <div class="quick-actions-small">
+                  <div class="quick-action-small" data-action="writer">
+                    <div class="quick-action-small-icon"><i class="ph ph-pencil-simple"></i></div>
+                    <span class="quick-action-small-name">AI Writer</span>
+                    <span class="quick-action-small-desc">Generate content</span>
+                  </div>
+                  <div class="quick-action-small" data-action="email">
+                    <div class="quick-action-small-icon"><i class="ph ph-envelope-simple"></i></div>
+                    <span class="quick-action-small-name">AI Email</span>
+                    <span class="quick-action-small-desc">Compose emails</span>
+                  </div>
+                  <div class="quick-action-small" data-action="reply">
+                    <div class="quick-action-small-icon"><i class="ph ph-arrow-u-up-left"></i></div>
+                    <span class="quick-action-small-name">AI Reply</span>
+                    <span class="quick-action-small-desc">Smart replies</span>
+                  </div>
+                  <div class="quick-action-small" data-action="search">
+                    <div class="quick-action-small-icon"><i class="ph ph-magnifying-glass"></i></div>
+                    <span class="quick-action-small-name">AI Search</span>
+                    <span class="quick-action-small-desc">Find information</span>
+                  </div>
+                  <div class="quick-action-small" data-action="summarize">
+                    <div class="quick-action-small-icon"><i class="ph ph-text-t"></i></div>
+                    <span class="quick-action-small-name">AI Summarize</span>
+                    <span class="quick-action-small-desc">Summarize text</span>
+                  </div>
+                  <div class="quick-action-small" data-action="translate">
+                    <div class="quick-action-small-icon"><i class="ph ph-translate"></i></div>
+                    <span class="quick-action-small-name">AI Translate</span>
+                    <span class="quick-action-small-desc">Translate text</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Prompts -->
+              <div class="right-panel-card">
+                <div class="right-panel-header">
+                  <h3>Recent Prompts</h3>
+                  <a href="#" class="view-all-link" id="viewAllRecentPrompts">View All</a>
+                </div>
+                <div class="recent-prompts-list" id="recentPromptsList">
+                  <div class="recent-prompt-item">
+                    <div class="recent-prompt-text">Write a product launch announcement</div>
+                    <div class="recent-prompt-meta">
+                      <span class="prompt-tag tag-marketing">Marketing</span>
+                      <span class="prompt-time">2m ago</span>
+                    </div>
+                  </div>
+                  <div class="recent-prompt-item">
+                    <div class="recent-prompt-text">Generate customer support reply</div>
+                    <div class="recent-prompt-meta">
+                      <span class="prompt-tag tag-support">Support</span>
+                      <span class="prompt-time">1h ago</span>
+                    </div>
+                  </div>
+                  <div class="recent-prompt-item">
+                    <div class="recent-prompt-text">Create meeting follow up email</div>
+                    <div class="recent-prompt-meta">
+                      <span class="prompt-tag tag-email">Email</span>
+                      <span class="prompt-time">3h ago</span>
+                    </div>
+                  </div>
+                  <div class="recent-prompt-item">
+                    <div class="recent-prompt-text">Instagram post for new feature</div>
+                    <div class="recent-prompt-meta">
+                      <span class="prompt-tag tag-social">Social Media</span>
+                      <span class="prompt-time">5h ago</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Prompts -->
+          <div class="suggested-prompts-section">
+            <div class="suggested-header">
+              <h3>Suggested Prompts</h3>
+              <a href="#" class="view-all-link" id="viewAllSuggested">View All Prompts</a>
+            </div>
+            <div class="suggested-prompts-grid">
+              <div class="suggested-prompt-card" data-prompt="email-followup">
+                <div class="suggested-prompt-icon"><i class="ph ph-envelope-simple"></i></div>
+                <div class="suggested-prompt-content">
+                  <h4>Email Follow Up</h4>
+                  <p>Write a follow up email to a client</p>
+                </div>
+              </div>
+              <div class="suggested-prompt-card" data-prompt="meeting-summary">
+                <div class="suggested-prompt-icon"><i class="ph ph-users"></i></div>
+                <div class="suggested-prompt-content">
+                  <h4>Meeting Summary</h4>
+                  <p>Summarize key points from meeting</p>
+                </div>
+              </div>
+              <div class="suggested-prompt-card" data-prompt="content-ideas">
+                <div class="suggested-prompt-icon"><i class="ph ph-lightbulb"></i></div>
+                <div class="suggested-prompt-content">
+                  <h4>Content Ideas</h4>
+                  <p>Generate content ideas for blog</p>
+                </div>
+              </div>
+              <div class="suggested-prompt-card" data-prompt="customer-insights">
+                <div class="suggested-prompt-icon"><i class="ph ph-chart-bar"></i></div>
+                <div class="suggested-prompt-content">
+                  <h4>Customer Insights</h4>
+                  <p>Analyze customer feedback</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Writer Tab -->
+        <div class="ai-tab-panel" data-panel="writer">
+          <div class="tool-layout">
+            <div class="tool-sidebar">
+              <div class="tool-sidebar-header">
+                <h3>Writer Templates</h3>
+              </div>
+              <div class="template-list" id="writerTemplates">
+                <div class="template-item active" data-template="blog">
+                  <i class="ph ph-article"></i>
+                  <span>Blog Post</span>
+                </div>
+                <div class="template-item" data-template="social">
+                  <i class="ph ph-share-network"></i>
+                  <span>Social Media</span>
+                </div>
+                <div class="template-item" data-template="ad">
+                  <i class="ph ph-megaphone"></i>
+                  <span>Ad Copy</span>
+                </div>
+                <div class="template-item" data-template="product">
+                  <i class="ph ph-package"></i>
+                  <span>Product Description</span>
+                </div>
+                <div class="template-item" data-template="landing">
+                  <i class="ph ph-browser"></i>
+                  <span>Landing Page</span>
+                </div>
+                <div class="template-item" data-template="press">
+                  <i class="ph ph-newspaper"></i>
+                  <span>Press Release</span>
+                </div>
+              </div>
+            </div>
+            <div class="tool-main">
+              <div class="tool-header">
+                <h2>AI Writer</h2>
+                <p>Create high-quality content for any purpose</p>
+              </div>
+              <div class="writer-form">
+                <div class="form-group">
+                  <label class="form-label">Topic / Subject</label>
+                  <input type="text" class="form-input" id="writerTopic" placeholder="What do you want to write about?">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Tone</label>
+                    <select class="form-input form-select" id="writerTone">
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="persuasive">Persuasive</option>
+                      <option value="technical">Technical</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Length</label>
+                    <select class="form-input form-select" id="writerLength">
+                      <option value="short">Short (~200 words)</option>
+                      <option value="medium" selected>Medium (~500 words)</option>
+                      <option value="long">Long (~1000 words)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Additional Instructions (optional)</label>
+                  <textarea class="form-input" id="writerInstructions" rows="3" placeholder="Any specific details or requirements..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-generate" id="writerGenerateBtn">
+                  <i class="ph ph-sparkle"></i>
+                  Generate Content
+                </button>
+              </div>
+              <div class="writer-output" id="writerOutput" style="display: none;">
+                <div class="writer-output-header">
+                  <h4>Generated Content</h4>
+                  <div class="writer-output-actions">
+                    <button class="btn btn-sm btn-ghost" id="writerCopyBtn"><i class="ph ph-copy"></i> Copy</button>
+                    <button class="btn btn-sm btn-ghost" id="writerRegenerateBtn"><i class="ph ph-arrows-clockwise"></i> Regenerate</button>
+                    <button class="btn btn-sm btn-ghost" id="writerSaveBtn"><i class="ph ph-bookmark-simple"></i> Save</button>
+                  </div>
+                </div>
+                <div class="writer-output-content" id="writerOutputContent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Email Tab -->
+        <div class="ai-tab-panel" data-panel="email">
+          <div class="tool-layout">
+            <div class="tool-sidebar">
+              <div class="tool-sidebar-header">
+                <h3>Email Types</h3>
+              </div>
+              <div class="template-list" id="emailTemplates">
+                <div class="template-item active" data-template="followup">
+                  <i class="ph ph-arrow-u-up-left"></i>
+                  <span>Follow Up</span>
+                </div>
+                <div class="template-item" data-template="cold">
+                  <i class="ph ph-hand-waving"></i>
+                  <span>Cold Outreach</span>
+                </div>
+                <div class="template-item" data-template="proposal">
+                  <i class="ph ph-file-text"></i>
+                  <span>Proposal</span>
+                </div>
+                <div class="template-item" data-template="thankyou">
+                  <i class="ph ph-heart"></i>
+                  <span>Thank You</span>
+                </div>
+                <div class="template-item" data-template="meeting">
+                  <i class="ph ph-calendar-blank"></i>
+                  <span>Meeting Request</span>
+                </div>
+                <div class="template-item" data-template="announcement">
+                  <i class="ph ph-megaphone"></i>
+                  <span>Announcement</span>
+                </div>
+              </div>
+            </div>
+            <div class="tool-main">
+              <div class="tool-header">
+                <h2>AI Email Generator</h2>
+                <p>Compose professional emails in seconds</p>
+              </div>
+              <div class="email-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Recipient Name</label>
+                    <input type="text" class="form-input" id="emailRecipient" placeholder="John Doe">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-input" id="emailSender" placeholder="Alex Morgan" value="Alex Morgan">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Subject / Purpose</label>
+                  <input type="text" class="form-input" id="emailSubject" placeholder="What is this email about?">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Tone</label>
+                    <select class="form-input form-select" id="emailTone">
+                      <option value="professional">Professional</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="formal">Formal</option>
+                      <option value="casual">Casual</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Length</label>
+                    <select class="form-input form-select" id="emailLength">
+                      <option value="short">Short</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="long">Long</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Key Points to Include</label>
+                  <textarea class="form-input" id="emailPoints" rows="3" placeholder="List the main points you want to cover..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-generate" id="emailGenerateBtn">
+                  <i class="ph ph-sparkle"></i>
+                  Generate Email
+                </button>
+              </div>
+              <div class="email-output" id="emailOutput" style="display: none;">
+                <div class="email-output-header">
+                  <h4>Generated Email</h4>
+                  <div class="email-output-actions">
+                    <button class="btn btn-sm btn-ghost" id="emailCopyBtn"><i class="ph ph-copy"></i> Copy</button>
+                    <button class="btn btn-sm btn-ghost" id="emailRegenerateBtn"><i class="ph ph-arrows-clockwise"></i> Regenerate</button>
+                    <button class="btn btn-sm btn-ghost" id="emailSendBtn"><i class="ph ph-paper-plane-right"></i> Send</button>
+                  </div>
+                </div>
+                <div class="email-preview" id="emailPreview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Reply Tab -->
+        <div class="ai-tab-panel" data-panel="reply">
+          <div class="tool-layout">
+            <div class="tool-sidebar">
+              <div class="tool-sidebar-header">
+                <h3>Reply Types</h3>
+              </div>
+              <div class="template-list" id="replyTemplates">
+                <div class="template-item active" data-template="professional">
+                  <i class="ph ph-briefcase"></i>
+                  <span>Professional</span>
+                </div>
+                <div class="template-item" data-template="friendly">
+                  <i class="ph ph-smiley"></i>
+                  <span>Friendly</span>
+                </div>
+                <div class="template-item" data-template="apologetic">
+                  <i class="ph ph-heart-break"></i>
+                  <span>Apologetic</span>
+                </div>
+                <div class="template-item" data-template="decline">
+                  <i class="ph ph-x-circle"></i>
+                  <span>Decline</span>
+                </div>
+                <div class="template-item" data-template="accept">
+                  <i class="ph ph-check-circle"></i>
+                  <span>Accept</span>
+                </div>
+                <div class="template-item" data-template="followup">
+                  <i class="ph ph-arrow-u-up-left"></i>
+                  <span>Follow Up</span>
+                </div>
+              </div>
+            </div>
+            <div class="tool-main">
+              <div class="tool-header">
+                <h2>AI Reply Generator</h2>
+                <p>Generate smart replies to any message</p>
+              </div>
+              <div class="reply-form">
+                <div class="form-group">
+                  <label class="form-label">Original Message</label>
+                  <textarea class="form-input" id="replyOriginal" rows="4" placeholder="Paste the message you received..."></textarea>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Reply Tone</label>
+                    <select class="form-input form-select" id="replyTone">
+                      <option value="professional">Professional</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="casual">Casual</option>
+                      <option value="formal">Formal</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Reply Length</label>
+                    <select class="form-input form-select" id="replyLength">
+                      <option value="short">Short</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="long">Long</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Context (optional)</label>
+                  <input type="text" class="form-input" id="replyContext" placeholder="Any additional context...">
+                </div>
+                <button class="btn btn-primary btn-generate" id="replyGenerateBtn">
+                  <i class="ph ph-sparkle"></i>
+                  Generate Reply
+                </button>
+              </div>
+              <div class="reply-output" id="replyOutput" style="display: none;">
+                <div class="reply-output-header">
+                  <h4>Generated Reply</h4>
+                  <div class="reply-output-actions">
+                    <button class="btn btn-sm btn-ghost" id="replyCopyBtn"><i class="ph ph-copy"></i> Copy</button>
+                    <button class="btn btn-sm btn-ghost" id="replyRegenerateBtn"><i class="ph ph-arrows-clockwise"></i> Regenerate</button>
+                    <button class="btn btn-sm btn-ghost" id="replyUseBtn"><i class="ph ph-check"></i> Use Reply</button>
+                  </div>
+                </div>
+                <div class="reply-preview" id="replyPreview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Search Tab -->
+        <div class="ai-tab-panel" data-panel="search">
+          <div class="search-layout">
+            <div class="search-header">
+              <h2>AI Knowledge Search</h2>
+              <p>Search across all your connected data sources</p>
+            </div>
+            <div class="search-box-large">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="knowledgeSearch" placeholder="Search your emails, conversations, documents, and more...">
+              <button class="search-btn" id="knowledgeSearchBtn">Search</button>
+            </div>
+            <div class="search-filters" id="searchFilters">
+              <button class="search-filter active" data-filter="all">All Sources</button>
+              <button class="search-filter" data-filter="emails">Emails</button>
+              <button class="search-filter" data-filter="conversations">Conversations</button>
+              <button class="search-filter" data-filter="documents">Documents</button>
+              <button class="search-filter" data-filter="contacts">Contacts</button>
+              <button class="search-filter" data-filter="tasks">Tasks</button>
+            </div>
+            <div class="search-results" id="searchResults">
+              <div class="search-empty">
+                <i class="ph ph-magnifying-glass"></i>
+                <h3>Start searching</h3>
+                <p>Enter a query above to search across all your data sources</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt Library Tab -->
+        <div class="ai-tab-panel" data-panel="prompts">
+          <div class="prompts-layout">
+            <div class="prompts-header">
+              <div class="prompts-header-left">
+                <h2>Prompt Library</h2>
+                <p>Browse and manage your AI prompts</p>
+              </div>
+              <div class="prompts-header-right">
+                <div class="prompts-search">
+                  <i class="ph ph-magnifying-glass"></i>
+                  <input type="text" id="promptsSearch" placeholder="Search prompts...">
+                </div>
+                <button class="btn btn-primary" id="createPromptBtn">
+                  <i class="ph ph-plus"></i>
+                  New Prompt
+                </button>
+              </div>
+            </div>
+            <div class="prompts-filters" id="promptsFilters">
+              <button class="prompts-filter active" data-filter="all">All Prompts</button>
+              <button class="prompts-filter" data-filter="favorites">Favorites</button>
+              <button class="prompts-filter" data-filter="recent">Recent</button>
+              <button class="prompts-filter" data-filter="email">Email</button>
+              <button class="prompts-filter" data-filter="social">Social Media</button>
+              <button class="prompts-filter" data-filter="marketing">Marketing</button>
+              <button class="prompts-filter" data-filter="sales">Sales</button>
+              <button class="prompts-filter" data-filter="support">Support</button>
+            </div>
+            <div class="prompts-grid" id="promptsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Prompt Modal -->
+  <div class="modal-overlay" id="newPromptModal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Create New Prompt</h3>
+        <button class="modal-close" id="closePromptModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Prompt Name</label>
+          <input type="text" class="form-input" id="promptName" placeholder="e.g., Professional Email Template">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-input form-select" id="promptCategory">
+            <option value="email">Email & Messages</option>
+            <option value="social">Social Media</option>
+            <option value="marketing">Marketing</option>
+            <option value="sales">Sales</option>
+            <option value="support">Customer Support</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prompt Text</label>
+          <textarea class="form-input" id="promptText" rows="5" placeholder="Enter your prompt template..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description (optional)</label>
+          <input type="text" class="form-input" id="promptDescription" placeholder="Brief description of this prompt">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelPromptBtn">Cancel</button>
+        <button class="btn btn-primary" id="savePromptBtn">Save Prompt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversation History Modal -->
+  <div class="modal-overlay" id="conversationModal" style="display: none;">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h3>Conversation History</h3>
+        <button class="modal-close" id="closeConversationModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="conversation-list-full" id="conversationListFull"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Settings Modal -->
+  <div class="modal-overlay" id="aiSettingsModal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>AI Settings</h3>
+        <button class="modal-close" id="closeAiSettingsModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h4>General</h4>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Auto-save conversations</span>
+              <span class="setting-desc">Automatically save all AI conversations</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoSaveConversations" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Show suggestions</span>
+              <span class="setting-desc">Display AI suggestions on dashboard</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="showSuggestions" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h4>Response Preferences</h4>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Default tone</span>
+            </div>
+            <select class="form-input form-select" id="defaultTone">
+              <option value="professional">Professional</option>
+              <option value="friendly">Friendly</option>
+              <option value="casual">Casual</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Response length</span>
+            </div>
+            <select class="form-input form-select" id="defaultLength">
+              <option value="short">Short</option>
+              <option value="medium" selected>Medium</option>
+              <option value="long">Long</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h4>Data & Privacy</h4>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Clear conversation history</span>
+              <span class="setting-desc">Delete all saved conversations</span>
+            </div>
+            <button class="btn btn-sm btn-outline btn-danger" id="clearHistoryBtn">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelAiSettingsBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveAiSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <linearGradient id="donutGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/ai.js"></script>
+</body>
+</html>

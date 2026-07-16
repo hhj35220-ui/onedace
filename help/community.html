@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community — Help Center — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/help.css">
+</head>
+<body>
+  <div class="help-layout">
+    <aside class="help-sidebar">
+      <div class="help-sidebar-header">
+        <a href="../index.html" class="help-sidebar-logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="help-sidebar-nav">
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Help Center</div>
+          <a href="index.html" class="help-sidebar-link"><i class="ph ph-house"></i>Overview</a>
+          <a href="documentation.html" class="help-sidebar-link"><i class="ph ph-book-open"></i>Documentation</a>
+          <a href="tutorials.html" class="help-sidebar-link"><i class="ph ph-video"></i>Tutorials</a>
+          <a href="faq.html" class="help-sidebar-link"><i class="ph ph-question"></i>FAQ</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Support</div>
+          <a href="contact-support.html" class="help-sidebar-link"><i class="ph ph-envelope"></i>Contact Support</a>
+          <a href="live-chat.html" class="help-sidebar-link"><i class="ph ph-chat-circle-dots"></i>Live Chat</a>
+          <a href="submit-ticket.html" class="help-sidebar-link"><i class="ph ph-ticket"></i>Submit Ticket</a>
+          <a href="ticket-history.html" class="help-sidebar-link"><i class="ph ph-clock-counter-clockwise"></i>Ticket History</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Resources</div>
+          <a href="system-status.html" class="help-sidebar-link"><i class="ph ph-activity"></i>System Status</a>
+          <a href="feature-requests.html" class="help-sidebar-link"><i class="ph ph-lightbulb"></i>Feature Requests</a>
+          <a href="release-notes.html" class="help-sidebar-link"><i class="ph ph-scroll"></i>Release Notes</a>
+          <a href="api-documentation.html" class="help-sidebar-link"><i class="ph ph-code"></i>API Documentation</a>
+          <a href="keyboard-shortcuts.html" class="help-sidebar-link"><i class="ph ph-keyboard"></i>Keyboard Shortcuts</a>
+          <a href="community.html" class="help-sidebar-link active"><i class="ph ph-users-three"></i>Community</a>
+          <a href="about.html" class="help-sidebar-link"><i class="ph ph-info"></i>About OnePlace</a>
+        </div>
+      </nav>
+      <div class="help-sidebar-footer">
+        <div class="help-sidebar-user">
+          <div class="avatar avatar-md avatar-placeholder" id="user-avatar">AM</div>
+          <div class="help-sidebar-user-info">
+            <div class="help-sidebar-user-name" id="user-name">Alex Morgan</div>
+            <div class="help-sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="help-sidebar-overlay"></div>
+
+    <main class="help-main">
+      <header class="help-header">
+        <div class="help-header-left">
+          <button class="help-sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+          <nav class="help-header-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Help Center</a>
+            <i class="ph ph-caret-right"></i>
+            <a href="community.html">Community</a>
+          </nav>
+        </div>
+        <div class="help-header-right">
+          <div class="help-header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="search" placeholder="Search discussions..." aria-label="Search discussions">
+            <div class="help-search-results"></div>
+          </div>
+          <button class="help-header-btn" data-theme-toggle aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <a href="../dashboard/main-dashboard.html" class="help-header-btn" aria-label="Back to dashboard"><i class="ph ph-arrow-u-up-left"></i></a>
+        </div>
+      </header>
+
+      <div class="help-content">
+        <div class="help-community-header">
+          <div>
+            <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-1);">Community</h1>
+            <p style="color: var(--gray-500); font-size: var(--text-sm);">Join the conversation with other OnePlace users.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('discussion-modal')">
+            <i class="ph ph-plus"></i>
+            New Discussion
+          </button>
+        </div>
+
+        <div class="help-tabs" style="margin-bottom: var(--space-4);">
+          <button class="help-tab active" data-filter="popular">Popular Discussions</button>
+          <button class="help-tab" data-filter="unanswered">Unanswered</button>
+          <button class="help-tab" data-filter="my">My Discussions</button>
+        </div>
+
+        <div class="help-discussion-list" id="discussion-list">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="help-pagination" id="discussion-pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Discussion Modal -->
+  <div class="help-modal-overlay" id="discussion-modal">
+    <div class="help-modal">
+      <div class="help-modal-header">
+        <h3 class="help-modal-title">Start a New Discussion</h3>
+        <button class="help-modal-close" onclick="closeModal('discussion-modal')"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="help-modal-body">
+        <form id="discussion-form" onsubmit="handleDiscussionSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="discussion-title" required placeholder="What's your question or topic?">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input form-select" id="discussion-category">
+              <option value="general">General</option>
+              <option value="tips">Tips & Tricks</option>
+              <option value="help">Help & Support</option>
+              <option value="showcase">Showcase</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <textarea class="form-input" id="discussion-content" rows="5" required placeholder="Describe your topic in detail..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="help-modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('discussion-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" form="discussion-form">Post Discussion</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/help.js"></script>
+  <script>
+    let discussionFilter = 'popular';
+    let discussionPage = 1;
+
+    function renderDiscussions() {
+      const container = document.getElementById('discussion-list');
+      let filtered = [...HELP_DATA.discussions];
+
+      if (discussionFilter === 'unanswered') {
+        filtered = filtered.filter(d => d.tag === 'unanswered');
+      } else if (discussionFilter === 'my') {
+        filtered = filtered.filter(d => d.author === 'Alex Morgan');
+      }
+
+      const { items, totalPages } = helpManager.paginate(filtered, discussionPage, 5);
+
+      container.innerHTML = items.map(d => `
+        <div class="help-discussion-card" onclick="OP.toast.show('Opening discussion...', 'success')">
+          <div class="help-discussion-header">
+            <div class="help-discussion-avatar" style="background: ${d.color};">${d.avatar}</div>
+            <div class="help-discussion-author">
+              <div class="help-discussion-author-name">${d.author}</div>
+              <div class="help-discussion-author-time">${d.time}</div>
+            </div>
+            <span class="help-discussion-tag ${d.tag}">${d.tagLabel}</span>
+          </div>
+          <h3 class="help-discussion-title">${d.title}</h3>
+          <p class="help-discussion-preview">${d.preview}</p>
+          <div class="help-discussion-stats">
+            <span><i class="ph ph-chat-circle"></i> ${d.replies} replies</span>
+            <span><i class="ph ph-eye"></i> ${d.views} views</span>
+            <span><i class="ph ph-heart"></i> ${d.likes} likes</span>
+          </div>
+        </div>
+      `).join('');
+
+      helpManager.renderPagination(document.getElementById('discussion-pagination'), discussionPage, totalPages, (page) => {
+        discussionPage = page;
+        renderDiscussions();
+      });
+    }
+
+    // Tab filtering
+    document.querySelectorAll('.help-tabs .help-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.help-tabs .help-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        discussionFilter = tab.dataset.filter;
+        discussionPage = 1;
+        renderDiscussions();
+      });
+    });
+
+    function handleDiscussionSubmit(e) {
+      e.preventDefault();
+      const newDiscussion = {
+        id: Date.now(),
+        title: document.getElementById('discussion-title').value,
+        author: OP.auth.getSession()?.fullName || 'Anonymous',
+        avatar: 'ME',
+        color: '#6366f1',
+        time: 'Just now',
+        tag: 'unanswered',
+        tagLabel: 'Unanswered',
+        preview: document.getElementById('discussion-content').value.substring(0, 150) + '...',
+        replies: 0,
+        views: 0,
+        likes: 0
+      };
+      HELP_DATA.discussions.unshift(newDiscussion);
+      closeModal('discussion-modal');
+      document.getElementById('discussion-form').reset();
+      renderDiscussions();
+      OP.toast.show('Discussion posted!', 'success');
+    }
+
+    renderDiscussions();
+
+    // Load user
+    const session = OP.auth.getSession();
+    if (session) {
+      document.getElementById('user-name').textContent = session.fullName || 'User';
+      const initials = (session.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('user-avatar').textContent = initials;
+    }
+  </script>
+</body>
+</html>

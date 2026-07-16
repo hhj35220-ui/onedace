@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compose Email — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/gmail.css">
+</head>
+<body>
+  <div class="gmail-layout">
+    <aside class="gmail-sidebar" role="navigation" aria-label="Gmail navigation"></aside>
+    <div class="gmail-sidebar-overlay sidebar-overlay"></div>
+    <main class="gmail-main">
+      <header class="gmail-header" role="banner"></header>
+      <div class="gmail-content">
+        <div class="gmail-page-title">
+          <div class="gmail-page-title-left">
+            <h1>
+              <span class="gmail-icon"><i class="ph ph-pencil-simple"></i></span>
+              Compose Email
+            </h1>
+            <p>Create and send new emails</p>
+          </div>
+        </div>
+        <div class="gmail-compose-container">
+          <form id="gmail-compose-form">
+            <div class="gmail-compose-header">
+              <span class="gmail-compose-title">New Message</span>
+              <div class="gmail-compose-actions">
+                <button type="button" class="gmail-widget-action-btn" title="Minimize"><i class="ph ph-minus"></i></button>
+                <button type="button" class="gmail-widget-action-btn" title="Maximize"><i class="ph ph-corners-out"></i></button>
+                <a href="conversations.html" class="gmail-widget-action-btn" title="Close"><i class="ph ph-x"></i></a>
+              </div>
+            </div>
+            <div class="gmail-compose-body">
+              <div class="gmail-compose-field">
+                <span class="gmail-compose-field-label">From</span>
+                <span style="font-size: var(--text-sm); color: var(--gray-700);">alex.morgan@oneplace.com</span>
+              </div>
+              <div class="gmail-compose-field">
+                <span class="gmail-compose-field-label">To</span>
+                <input type="text" class="gmail-compose-field-input" id="compose-to" placeholder="Enter recipient email">
+              </div>
+              <div class="gmail-compose-field">
+                <span class="gmail-compose-field-label">Subject</span>
+                <input type="text" class="gmail-compose-field-input" id="compose-subject" placeholder="Enter subject">
+              </div>
+              <div class="gmail-compose-field">
+                <span class="gmail-compose-field-label">CC/BCC</span>
+                <input type="text" class="gmail-compose-field-input" placeholder="Add CC or BCC">
+              </div>
+              <div class="gmail-compose-toolbar">
+                <button type="button" class="gmail-compose-toolbar-btn" data-command="bold" title="Bold"><i class="ph ph-text-b"></i></button>
+                <button type="button" class="gmail-compose-toolbar-btn" data-command="italic" title="Italic"><i class="ph ph-text-italic"></i></button>
+                <button type="button" class="gmail-compose-toolbar-btn" data-command="underline" title="Underline"><i class="ph ph-text-underline"></i></button>
+                <div style="width: 1px; height: 20px; background: var(--gray-200); margin: 0 var(--space-1);"></div>
+                <button type="button" class="gmail-compose-toolbar-btn" title="Bullet List"><i class="ph ph-list-bullets"></i></button>
+                <button type="button" class="gmail-compose-toolbar-btn" title="Numbered List"><i class="ph ph-list-numbers"></i></button>
+                <div style="width: 1px; height: 20px; background: var(--gray-200); margin: 0 var(--space-1);"></div>
+                <button type="button" class="gmail-compose-toolbar-btn" title="Insert Link"><i class="ph ph-link"></i></button>
+                <button type="button" class="gmail-compose-toolbar-btn" title="Insert Image"><i class="ph ph-image"></i></button>
+                <button type="button" class="gmail-compose-toolbar-btn" title="Emoji"><i class="ph ph-smiley"></i></button>
+              </div>
+              <div class="gmail-compose-editor" id="compose-body" contenteditable="true" placeholder="Write your message here..."></div>
+            </div>
+            <div class="gmail-compose-footer">
+              <div class="gmail-compose-footer-left">
+                <button type="submit" class="btn btn-primary"><i class="ph ph-paper-plane-right"></i> Send</button>
+                <button type="button" class="btn btn-ghost" id="schedule-send-btn"><i class="ph ph-clock"></i> Schedule</button>
+              </div>
+              <div class="gmail-compose-footer-right">
+                <button type="button" class="btn btn-ghost" id="save-draft-btn"><i class="ph ph-floppy-disk"></i> Save Draft</button>
+                <button type="button" class="btn btn-ghost" title="Discard"><i class="ph ph-trash"></i></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/gmail.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.gmailApp = new GmailApp();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Details — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/gmail.css">
+</head>
+<body>
+  <div class="gmail-layout">
+    <aside class="gmail-sidebar" role="navigation" aria-label="Gmail navigation"></aside>
+    <div class="gmail-sidebar-overlay sidebar-overlay"></div>
+    <main class="gmail-main">
+      <header class="gmail-header" role="banner"></header>
+      <div class="gmail-content">
+        <div class="gmail-page-title">
+          <div class="gmail-page-title-left">
+            <h1>
+              <span class="gmail-icon"><i class="ph ph-envelope-open"></i></span>
+              Email Details
+            </h1>
+            <p>View conversation thread and details</p>
+          </div>
+          <div class="gmail-page-title-right">
+            <a href="conversations.html" class="btn btn-ghost"><i class="ph ph-arrow-left"></i> Back to Conversations</a>
+          </div>
+        </div>
+        <div id="gmail-email-details"></div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/gmail.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.gmailApp = new GmailApp();
+    });
+  </script>
+</body>
+</html>

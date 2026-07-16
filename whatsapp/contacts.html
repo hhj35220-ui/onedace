@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Contacts</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Manage your WhatsApp contacts and customer profiles.</p>
+              </div>
+              <button class="btn btn-primary" id="add-contact-btn">
+                <i class="ph ph-user-plus"></i>
+                <span>Add Contact</span>
+              </button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+              <div style="flex: 1; display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--gray-100); border-radius: var(--radius-lg);">
+                <i class="ph ph-magnifying-glass" style="color: var(--gray-400);"></i>
+                <input type="text" id="contact-search" placeholder="Search contacts..." style="border: none; background: transparent; outline: none; font-size: var(--text-sm); color: var(--gray-800); width: 100%;">
+              </div>
+              <select id="contact-filter" style="padding: var(--space-2) var(--space-4); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm);">
+                <option value="">All Status</option>
+                <option value="Active Customer">Active Customer</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Lead">Lead</option>
+              </select>
+            </div>
+
+            <div class="wa-contacts-grid" id="contacts-grid">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Contact Modal -->
+  <div class="wa-modal-overlay" id="add-contact-modal">
+    <div class="wa-modal">
+      <div class="wa-modal-header">
+        <span class="wa-modal-title">Add New Contact</span>
+        <button class="wa-modal-close" id="close-modal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wa-modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="new-contact-name" placeholder="Enter full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" id="new-contact-phone" placeholder="+1 (555) 000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="new-contact-email" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-input" id="new-contact-location" placeholder="City, Country">
+        </div>
+      </div>
+      <div class="wa-modal-footer">
+        <button class="btn btn-secondary" id="cancel-add">Cancel</button>
+        <button class="btn btn-primary" id="save-contact">Add Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const waStorage = new WhatsAppStorage();
+      const app = new WhatsAppApp();
+
+      function renderContacts() {
+        const container = document.getElementById('contacts-grid');
+        const contacts = waStorage.getContacts();
+
+        if (contacts.length === 0) {
+          container.innerHTML = `
+            <div class="wa-empty-state" style="grid-column: 1 / -1;">
+              <div class="wa-empty-state-icon"><i class="ph ph-users"></i></div>
+              <div class="wa-empty-state-title">No contacts yet</div>
+              <div class="wa-empty-state-desc">Add your first WhatsApp contact to get started.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        contacts.forEach(contact => {
+          html += `
+            <div class="wa-contact-card">
+              <div class="wa-contact-card-header">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=${contact.color.replace('#', '')}&color=fff&size=96" 
+                     alt="${contact.name}" class="wa-contact-card-avatar">
+                <div class="wa-contact-card-info">
+                  <div class="wa-contact-card-name">${contact.name}</div>
+                  <div class="wa-contact-card-phone">${contact.phone}</div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-3);">
+                <div>
+                  <div style="font-size: 11px; color: var(--gray-400); margin-bottom: 2px;">Lead Score</div>
+                  <div style="font-size: var(--text-lg); font-weight: var(--font-bold); color: var(--gray-900);">${contact.leadScore}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: var(--gray-400); margin-bottom: 2px;">Total Spent</div>
+                  <div style="font-size: var(--text-lg); font-weight: var(--font-bold); color: var(--gray-900);">$${contact.totalSpent.toLocaleString()}</div>
+                </div>
+              </div>
+              <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-3);">
+                <i class="ph ph-map-pin"></i> ${contact.location}
+              </div>
+              <div class="wa-contact-card-tags">
+                ${contact.tags.map(tag => `<span class="wa-conv-tag ${tag}">${tag.replace('-', ' ')}</span>`).join('')}
+              </div>
+              <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="window.location.href='conversations.html'">
+                  <i class="ph ph-chat-circle-text"></i> Message
+                </button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1;">
+                  <i class="ph ph-pencil-simple"></i> Edit
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      renderContacts();
+
+      // Modal handlers
+      const modal = document.getElementById('add-contact-modal');
+      document.getElementById('add-contact-btn').addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+      document.getElementById('close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('cancel-add').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('save-contact').addEventListener('click', () => {
+        const name = document.getElementById('new-contact-name').value;
+        const phone = document.getElementById('new-contact-phone').value;
+        const email = document.getElementById('new-contact-email').value;
+        const location = document.getElementById('new-contact-location').value;
+
+        if (!name || !phone) {
+          OP.toast.show('Name and phone are required', 'error');
+          return;
+        }
+
+        waStorage.addContact({
+          name, phone, email, location,
+          avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
+          color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
+          leadScore: 50,
+          status: 'Lead',
+          totalOrders: 0,
+          totalSpent: 0,
+          tags: []
+        });
+
+        modal.classList.remove('active');
+        renderContacts();
+        OP.toast.show('Contact added successfully', 'success');
+      });
+    });
+  </script>
+</body>
+</html>

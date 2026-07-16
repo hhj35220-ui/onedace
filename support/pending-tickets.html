@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Tickets — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header support-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="support-header-icon"><i class="ph ph-headset"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">Pending Tickets</h1>
+              <p class="header-subtitle">All pending customer support tickets awaiting follow-up</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search support-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="support-search" placeholder=placeholder="Search pending tickets..." autocomplete="off">
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="notification-dot" id="notif-dot"></span></button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="support-tabs" aria-label="Support sections">
+        <div class="support-tabs-inner">
+          <a href="index.html" class="support-tab" data-page="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="tickets.html" class="support-tab" data-page="tickets"><i class="ph ph-ticket"></i><span>Tickets</span><span class="tab-badge" id="tickets-badge">1,248</span></a>
+          <a href="open-tickets.html" class="support-tab" data-page="open"><i class="ph ph-envelope-open"></i><span>Open Tickets</span><span class="tab-badge" id="open-badge">342</span></a>
+          <a href="pending-tickets.html" class="support-tab active" data-page="pending"><i class="ph ph-clock"></i><span>Pending Tickets</span><span class="tab-badge" id="pending-badge">237</span></a>
+          <a href="closed-tickets.html" class="support-tab" data-page="closed"><i class="ph ph-check-circle"></i><span>Closed Tickets</span><span class="tab-badge" id="closed-badge">669</span></a>
+          <a href="sla-management.html" class="support-tab" data-page="sla"><i class="ph ph-shield-check"></i><span>SLA Management</span></a>
+          <a href="saved-replies.html" class="support-tab" data-page="replies"><i class="ph ph-floppy-disk"></i><span>Saved Replies</span></a>
+          <a href="knowledge-base.html" class="support-tab" data-page="kb"><i class="ph ph-book-open"></i><span>Knowledge Base</span></a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content support-content">
+        <div class="ticket-toolbar">
+          <div class="ticket-toolbar-left">
+            <div class="ticket-filters">
+              <button class="filter-btn" data-filter="all">All <span class="filter-count">1,248</span></button>
+              <button class="filter-btn" data-filter="open">Open <span class="filter-count">342</span></button>
+              <button class="filter-btn active" data-filter="pending">Pending <span class="filter-count">237</span></button>
+              <button class="filter-btn" data-filter="resolved">Resolved <span class="filter-count">534</span></button>
+              <button class="filter-btn" data-filter="closed">Closed <span class="filter-count">135</span></button>
+              <button class="filter-btn" data-filter="on-hold">On Hold <span class="filter-count">85</span></button>
+            </div>
+          </div>
+          <div class="ticket-toolbar-right">
+            <button class="btn btn-ghost btn-sm" id="export-btn"><i class="ph ph-download-simple"></i> Export</button>
+            <button class="btn btn-primary btn-sm" id="new-ticket-btn"><i class="ph ph-plus"></i> New Ticket</button>
+          </div>
+        </div>
+
+        <div class="bulk-actions-bar" id="bulk-actions-bar" style="display:none;">
+          <span class="bulk-count"><span id="bulk-count">0</span> selected</span>
+          <div class="bulk-actions">
+            <button class="btn btn-ghost btn-sm" data-action="assign"><i class="ph ph-user-plus"></i> Assign</button>
+            <button class="btn btn-ghost btn-sm" data-action="status"><i class="ph ph-arrows-clockwise"></i> Change Status</button>
+            <button class="btn btn-ghost btn-sm" data-action="priority"><i class="ph ph-flag"></i> Priority</button>
+            <button class="btn btn-ghost btn-sm danger" data-action="delete"><i class="ph ph-trash"></i> Delete</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="bulk-clear"><i class="ph ph-x"></i> Clear</button>
+        </div>
+
+        <div class="ticket-table-wrap">
+          <table class="ticket-table" id="tickets-table">
+            <thead>
+              <tr>
+                <th style="width:40px;"><input type="checkbox" class="table-checkbox" id="select-all"></th>
+                <th>Ticket</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Last Updated</th>
+                <th style="width:120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tickets-tbody"></tbody>
+          </table>
+        </div>
+        <div class="ticket-pagination" id="ticket-pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/support.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) { window.location.href = '../auth/signin.html'; return; }
+      window.supportApp = new SupportApp();
+      supportApp.initTicketsPage('pending');
+    });
+  </script>
+</body>
+</html>

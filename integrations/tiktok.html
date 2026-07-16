@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Integration — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/integrations.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text"><span class="logo-brand">OnePlace</span><span class="logo-sub">Enterprise</span></div>
+        </a>
+      </div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item"><i class="ph ph-chat-circle-text"></i><span>Unified Inbox</span><span class="nav-badge">54</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../gmail/index.html" class="nav-item"><i class="ph ph-envelope-simple"></i><span>Gmail</span><span class="nav-badge nav-badge-dot"></span></a>
+          <a href="../whatsapp/index.html" class="nav-item"><i class="ph ph-whatsapp-logo"></i><span>WhatsApp Business</span><span class="nav-badge">8</span></a>
+          <a href="../instagram/index.html" class="nav-item"><i class="ph ph-instagram-logo"></i><span>Instagram</span><span class="nav-badge">14</span></a>
+          <a href="../tiktok/index.html" class="nav-item"><i class="ph ph-tiktok-logo"></i><span>TikTok</span><span class="nav-badge">7</span></a>
+          <a href="../x/index.html" class="nav-item"><i class="ph ph-x-logo"></i><span>X (Twitter)</span><span class="nav-badge">24</span></a>
+          <a href="../linkedin/index.html" class="nav-item"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span><span class="nav-badge">5</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Business</span>
+          <a href="../crm/index.html" class="nav-item"><i class="ph ph-users"></i><span>CRM</span></a>
+          <a href="../support/index.html" class="nav-item"><i class="ph ph-headset"></i><span>Customer Support</span></a>
+          <a href="../calendar/index.html" class="nav-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+          <a href="../tasks/index.html" class="nav-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+          <a href="../team/index.html" class="nav-item"><i class="ph ph-users-three"></i><span>Team Management</span></a>
+          <a href="../workflow/index.html" class="nav-item"><i class="ph ph-flow-arrow"></i><span>Workflow Automation</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Tools</span>
+          <a href="../ai/index.html" class="nav-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+          <a href="../reports/index.html" class="nav-item"><i class="ph ph-chart-bar"></i><span>Reports & Analytics</span></a>
+          <a href="../files/index.html" class="nav-item"><i class="ph ph-folder"></i><span>File Manager</span></a>
+          <a href="../integrations/index.html" class="nav-item active"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../settings/index.html" class="nav-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+        <a href="../help/index.html" class="nav-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="userAvatar">AM</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name" id="userName">Alex Morgan</span>
+            <span class="sidebar-user-role" id="userRole">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" id="userMenuBtn" aria-label="User menu"><i class="ph ph-caret-down"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="ph ph-list"></i></button>
+          <div class="header-breadcrumb">
+            <a href="index.html">Integrations</a>
+            <i class="ph ph-caret-right"></i>
+            <span class="breadcrumb-current">TikTok</span>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything..." id="globalSearch">
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-icon-btn" id="themeToggleBtn" aria-label="Toggle theme"><i class="ph ph-moon" id="themeIcon"></i></button>
+          <button class="header-icon-btn" id="notificationsBtn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="header-badge">3</span></button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff" alt="Alex Morgan" class="header-user-img" id="headerUserImg">
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="int-integration-detail">
+          <div class="int-integration-header">
+            <div class="int-integration-icon-large" style="background: #F5F5F5; color: #000000;">
+              <i class="ph ph-tiktok-logo"></i>
+            </div>
+            <div class="int-integration-header-info">
+              <h1>TikTok</h1>
+              <p>Connect TikTok to manage comments, mentions, and messages in OnePlace Enterprise.</p>
+              <div class="int-integration-meta">
+                <span class="int-status-badge int-status-success">Connected</span>
+                <span><i class="ph ph-clock"></i> Last sync: 15 min ago</span>
+                <span><i class="ph ph-arrows-clockwise"></i> Auto-sync enabled</span>
+              </div>
+            </div>
+            <div class="int-integration-actions">
+              <button class="btn btn-secondary" onclick="integrationManager.syncIntegration('tiktok')"><i class="ph ph-arrows-clockwise"></i> Sync Now</button>
+              <button class="btn btn-outline" onclick="integrationManager.openDisconnectModal('tiktok')"><i class="ph ph-plugs"></i> Disconnect</button>
+            </div>
+          </div>
+
+          <div class="int-integration-stats">
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--primary-50); color: var(--primary-600);"><i class="ph ph-chat-circle-text"></i></div>
+              <div class="int-stat-info">
+                <span class="int-stat-value">432</span>
+                <span class="int-stat-label">Messages Synced</span>
+              </div>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--success-50); color: var(--success-600);"><i class="ph ph-check-circle"></i></div>
+              <div class="int-stat-info">
+                <span class="int-stat-value">96.2%</span>
+                <span class="int-stat-label">Sync Success Rate</span>
+              </div>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--warning-50); color: var(--warning-600);"><i class="ph ph-clock"></i></div>
+              <div class="int-stat-info">
+                <span class="int-stat-value">2.1s</span>
+                <span class="int-stat-label">Avg. Response Time</span>
+              </div>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: rgba(99,102,241,0.1); color: #6366f1;"><i class="ph ph-at"></i></div>
+              <div class="int-stat-info">
+                <span class="int-stat-value">@oneplace.enterprise</span>
+                <span class="int-stat-label">Account</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="int-integration-settings">
+            <div class="int-card">
+              <div class="int-card-header">
+                <h3 class="int-card-title">Sync Settings</h3>
+              </div>
+              <div class="int-settings-list">
+                <div class="int-setting-item">
+                  <div class="int-setting-info">
+                    <strong>Auto Sync</strong>
+                    <span>Automatically sync new comments and messages</span>
+                  </div>
+                  <label class="int-toggle"><input type="checkbox" checked></label>
+                </div>
+                <div class="int-setting-item">
+                  <div class="int-setting-info">
+                    <strong>Comments</strong>
+                    <span>Sync video comments</span>
+                  </div>
+                  <label class="int-toggle"><input type="checkbox" checked></label>
+                </div>
+                <div class="int-setting-item">
+                  <div class="int-setting-info">
+                    <strong>Mentions</strong>
+                    <span>Track mentions in videos and comments</span>
+                  </div>
+                  <label class="int-toggle"><input type="checkbox" checked></label>
+                </div>
+                <div class="int-setting-item">
+                  <div class="int-setting-info">
+                    <strong>Direct Messages</strong>
+                    <span>Sync TikTok DMs</span>
+                  </div>
+                  <label class="int-toggle"><input type="checkbox" checked></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="int-card">
+              <div class="int-card-header">
+                <h3 class="int-card-title">Recent Activity</h3>
+                <a href="index.html?tab=logs" class="int-card-link">View All Logs</a>
+              </div>
+              <div class="int-activity-list" id="tiktokActivity"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/integrations.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof OP !== 'undefined' && OP.nav && !OP.nav.requireAuth()) return;
+      integrationManager = new IntegrationManager();
+      renderTikTokActivity();
+    });
+
+    function renderTikTokActivity() {
+      const container = document.getElementById('tiktokActivity');
+      if (!container) return;
+      const activities = [
+        { title: 'Messages Sync completed', desc: '432 messages were successfully synced', time: '15 min ago', icon: 'ph-check-circle', color: '#10b981' },
+        { title: 'New comment received', desc: 'On video: "Product Demo 2025"', time: '18 min ago', icon: 'ph-chat-circle-text', color: '#000000' },
+        { title: 'Mention detected', desc: '@oneplace.enterprise mentioned in comment', time: '30 min ago', icon: 'ph-at', color: '#6366f1' },
+        { title: 'Auto-sync triggered', desc: 'Incremental sync completed', time: '1 hour ago', icon: 'ph-arrows-clockwise', color: '#059669' }
+      ];
+      container.innerHTML = activities.map(act => `
+        <div class="int-activity-item">
+          <div class="int-activity-icon" style="background: ${act.color}15; color: ${act.color};"><i class="ph ${act.icon}"></i></div>
+          <div class="int-activity-content"><span class="int-activity-title">${act.title}</span><span class="int-activity-desc">${act.desc}</span></div>
+          <span class="int-activity-time">${act.time}</span>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

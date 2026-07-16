@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/billing.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item">
+            <i class="ph ph-chat-circle-dots"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">24</span>
+          </a>
+          <a href="../crm/contacts.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>Contacts</span>
+          </a>
+          <a href="../team/" class="nav-item">
+            <i class="ph ph-users-three"></i>
+            <span>Teams</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../integrations/" class="nav-item">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../workflow/" class="nav-item">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Automation Center</span>
+          </a>
+          <a href="../ai/" class="nav-item">
+            <i class="ph ph-sparkle"></i>
+            <span>AI Assistant</span>
+          </a>
+          <a href="../reports/" class="nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Analytics</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Developer</span>
+          <a href="../settings/api-developer.html" class="nav-item">
+            <i class="ph ph-code"></i>
+            <span>Developer Center</span>
+            <span class="nav-badge badge-beta">Beta</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Billing</span>
+          <a href="index.html" class="nav-item active">
+            <i class="ph ph-credit-card"></i>
+            <span>Billing & Subscription</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <a href="../settings/" class="nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../help/" class="nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-cta">
+        <div class="sidebar-cta-content">
+          <p class="sidebar-cta-title">Upgrade to Business</p>
+          <p class="sidebar-cta-desc">Unlock unlimited everything and advanced features.</p>
+          <ul class="sidebar-cta-features">
+            <li><i class="ph ph-check"></i> Unlimited Integrations</li>
+            <li><i class="ph ph-check"></i> Advanced Automations</li>
+            <li><i class="ph ph-check"></i> Priority Support</li>
+            <li><i class="ph ph-check"></i> Advanced Analytics</li>
+          </ul>
+          <button class="btn btn-primary btn-sm btn-full" onclick="billingApp.showUpgradeModal()">Upgrade Now</button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Alex Morgan</span>
+            <span class="sidebar-user-role">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" aria-label="User menu">
+            <i class="ph ph-caret-up"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <i class="ph ph-list"></i>
+          </button>
+          <div class="header-title">
+            <h1>Invoices</h1>
+            <p>View and download all your invoices.</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search invoices..." id="invoiceSearch">
+            <span class="search-kbd">⌘ K</span>
+          </div>
+          <div class="header-actions">
+            <button class="header-action-btn" aria-label="Notifications">
+              <i class="ph ph-bell"></i>
+              <span class="header-action-dot"></span>
+            </button>
+            <button class="header-action-btn" aria-label="Settings" onclick="OP.theme.toggle()">
+              <i class="ph ph-gear"></i>
+            </button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan">
+              <div class="header-user-info">
+                <span class="header-user-name">Alex Morgan</span>
+                <span class="header-user-role">Administrator</span>
+              </div>
+              <i class="ph ph-caret-down"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="billing-content">
+        <div class="billing-card">
+          <div class="billing-card-header invoices-header">
+            <div class="invoices-header-left">
+              <h3>All Invoices</h3>
+              <span class="invoices-count" id="invoiceCount">5 invoices</span>
+            </div>
+            <div class="invoices-filters">
+              <div class="filter-group">
+                <select class="form-input form-select" id="statusFilter">
+                  <option value="all">All Status</option>
+                  <option value="paid">Paid</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <select class="form-input form-select" id="yearFilter">
+                  <option value="all">All Years</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="invoices-table-wrapper">
+            <table class="billing-history-table invoices-table" id="invoicesTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" class="invoice-checkbox-all" id="selectAll"></th>
+                  <th>Invoice</th>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="invoices-pagination">
+            <div class="pagination-info">
+              Showing <span id="showingStart">1</span> - <span id="showingEnd">5</span> of <span id="showingTotal">5</span>
+            </div>
+            <div class="pagination-controls">
+              <button class="pagination-btn" disabled id="prevPage">
+                <i class="ph ph-caret-left"></i>
+              </button>
+              <button class="pagination-btn active">1</button>
+              <button class="pagination-btn" disabled id="nextPage">
+                <i class="ph ph-caret-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/billing.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      billingApp.initInvoicesPage();
+    });
+  </script>
+</body>
+</html>

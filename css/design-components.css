@@ -1,0 +1,35 @@
+/* Design Components: modular styles for components */
+
+/* Badges */
+.badge{display:inline-block;padding:4px 8px;border-radius:9999px;background:var(--gray-200);color:var(--gray-800);font-size:12px}
+.badge.primary{background:var(--color-primary-500);color:#fff}
+
+/* Avatar */
+.avatar{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;width:40px;height:40px;background:var(--gray-300);color:var(--text-inverse);font-weight:600}
+
+/* Tooltip (simple) */
+.tooltip{position:relative;display:inline-block}
+.tooltip .tooltip-content{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg-surface);padding:8px;border-radius:6px;box-shadow:var(--shadow-sm);display:none;z-index:var(--z-tooltip)}
+.tooltip:focus-within .tooltip-content,.tooltip:hover .tooltip-content{display:block}
+
+/* Modal (simple accessible) */
+.ds-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:var(--z-modal);}
+.ds-modal .ds-modal-panel{background:var(--bg-surface);padding:20px;border-radius:10px;max-width:720px;width:94%}
+
+/* Drawer */
+.ds-drawer{position:fixed;top:0;bottom:0;right:0;width:360px;background:var(--bg-surface);box-shadow:var(--shadow-lg);z-index:var(--z-drawer);transform:translateX(100%);transition:transform var(--speed-normal) ease}
+.ds-drawer.open{transform:translateX(0)}
+
+/* Table helpers */
+.ds-table{width:100%;border-collapse:collapse}
+.ds-table th,.ds-table td{padding:10px;border-bottom:1px solid var(--border);}
+.ds-table th{background:transparent;text-align:left}
+
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.12), rgba(255,255,255,0.06));height:12px;border-radius:6px}
+
+/* Toast */
+.ds-toast{position:fixed;right:16px;bottom:16px;z-index:var(--z-toast);background:var(--bg-surface);padding:12px;border-radius:8px;box-shadow:var(--shadow-md)}
+
+/* Responsive helpers */
+@media (max-width:767px){ .ds-modal .ds-modal-panel{ max-width:96%; margin:12px; } }

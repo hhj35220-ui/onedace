@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/calendar.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- Calendar Content -->
+      <div class="dashboard-content calendar-content">
+        <!-- Page Title -->
+        <div class="dashboard-page-title calendar-page-title">
+          <div class="calendar-title-left">
+            <h1>Calendar</h1>
+            <p>Manage your schedule, meetings, and important events</p>
+          </div>
+          <div class="calendar-title-right">
+            <div class="calendar-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="calendar-search" placeholder="Search events, meetings, people..." />
+              <span class="calendar-search-kbd">⌘K</span>
+            </div>
+            <button class="header-btn" id="calendar-notifications-btn" title="Notifications">
+              <i class="ph ph-bell"></i>
+              <span class="notification-dot" id="calendar-notif-dot"></span>
+            </button>
+            <button class="header-btn" id="calendar-help-btn" title="Help">
+              <i class="ph ph-question"></i>
+            </button>
+            <div class="header-avatar" id="calendar-header-avatar">AM</div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="calendar-stats-row" id="calendar-stats">
+          <div class="calendar-stat-card">
+            <div class="calendar-stat-header">
+              <span class="calendar-stat-label">Today's Events</span>
+              <div class="calendar-stat-icon purple"><i class="ph ph-calendar-blank"></i></div>
+            </div>
+            <div class="calendar-stat-value" id="stat-today-events">8</div>
+            <div class="calendar-stat-trend up"><i class="ph ph-trend-up"></i> 25% <span>vs yesterday</span></div>
+          </div>
+          <div class="calendar-stat-card">
+            <div class="calendar-stat-header">
+              <span class="calendar-stat-label">Upcoming Meetings</span>
+              <div class="calendar-stat-icon green"><i class="ph ph-video-camera"></i></div>
+            </div>
+            <div class="calendar-stat-value" id="stat-upcoming-meetings">5</div>
+            <div class="calendar-stat-trend up"><i class="ph ph-trend-up"></i> 12% <span>vs yesterday</span></div>
+          </div>
+          <div class="calendar-stat-card">
+            <div class="calendar-stat-header">
+              <span class="calendar-stat-label">Pending Invitations</span>
+              <div class="calendar-stat-icon orange"><i class="ph ph-users"></i></div>
+            </div>
+            <div class="calendar-stat-value" id="stat-pending-invites">3</div>
+            <div class="calendar-stat-trend down"><i class="ph ph-trend-down"></i> 8% <span>vs yesterday</span></div>
+          </div>
+          <div class="calendar-stat-card">
+            <div class="calendar-stat-header">
+              <span class="calendar-stat-label">Completed Events</span>
+              <div class="calendar-stat-icon blue"><i class="ph ph-check-circle"></i></div>
+            </div>
+            <div class="calendar-stat-value" id="stat-completed-events">12</div>
+            <div class="calendar-stat-trend up"><i class="ph ph-trend-up"></i> 18% <span>vs yesterday</span></div>
+          </div>
+          <div class="calendar-stat-card">
+            <div class="calendar-stat-header">
+              <span class="calendar-stat-label">This Week</span>
+              <div class="calendar-stat-icon pink"><i class="ph ph-chart-bar"></i></div>
+            </div>
+            <div class="calendar-stat-value" id="stat-this-week">25</div>
+            <div class="calendar-stat-trend up"><i class="ph ph-trend-up"></i> 16% <span>vs last week</span></div>
+          </div>
+        </div>
+
+        <!-- Calendar Main Area -->
+        <div class="calendar-main-area">
+          <!-- Left: Calendar Views -->
+          <div class="calendar-view-section">
+            <!-- Toolbar -->
+            <div class="calendar-toolbar">
+              <div class="calendar-toolbar-left">
+                <button class="calendar-nav-btn" id="cal-prev"><i class="ph ph-caret-left"></i></button>
+                <button class="calendar-nav-btn" id="cal-next"><i class="ph ph-caret-right"></i></button>
+                <button class="calendar-today-btn" id="cal-today">Today</button>
+                <h2 class="calendar-current-range" id="cal-range">May 19 – 25, 2024</h2>
+              </div>
+              <div class="calendar-toolbar-right">
+                <div class="calendar-view-tabs">
+                  <button class="calendar-view-tab" data-view="day">Day</button>
+                  <button class="calendar-view-tab active" data-view="week">Week</button>
+                  <button class="calendar-view-tab" data-view="month">Month</button>
+                  <button class="calendar-view-tab" data-view="agenda">Agenda</button>
+                </div>
+                <button class="btn btn-primary btn-sm calendar-new-event-btn" id="btn-new-event">
+                  <i class="ph ph-plus"></i> New Event <i class="ph ph-caret-down"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Calendar Grid Container -->
+            <div class="calendar-grid-container" id="calendar-grid-container">
+              <!-- Injected by JS based on view -->
+            </div>
+
+            <!-- Bottom Panels -->
+            <div class="calendar-bottom-panels">
+              <!-- Today's Agenda -->
+              <div class="calendar-panel">
+                <div class="calendar-panel-header">
+                  <h3>Today's Agenda</h3>
+                  <a href="#" class="calendar-panel-link" id="view-full-agenda">View Full Agenda</a>
+                </div>
+                <div class="calendar-agenda-list" id="today-agenda">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+
+              <!-- Next Meeting -->
+              <div class="calendar-panel">
+                <div class="calendar-panel-header">
+                  <h3>Next Meeting</h3>
+                </div>
+                <div class="calendar-next-meeting" id="next-meeting">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+
+              <!-- Meeting Insights -->
+              <div class="calendar-panel">
+                <div class="calendar-panel-header">
+                  <h3>Meeting Insights</h3>
+                  <a href="#" class="calendar-panel-link" id="view-report">View Report</a>
+                </div>
+                <div class="calendar-insights-grid" id="meeting-insights">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Sidebar -->
+          <div class="calendar-right-sidebar">
+            <!-- Mini Calendar -->
+            <div class="calendar-mini-calendar">
+              <div class="mini-calendar-header">
+                <button class="mini-cal-nav" id="mini-prev"><i class="ph ph-caret-left"></i></button>
+                <span class="mini-cal-month" id="mini-cal-month">May 2024</span>
+                <div class="mini-cal-nav-group">
+                  <button class="mini-cal-nav" id="mini-prev-month"><i class="ph ph-caret-left"></i></button>
+                  <button class="mini-cal-nav" id="mini-next-month"><i class="ph ph-caret-right"></i></button>
+                </div>
+              </div>
+              <div class="mini-calendar-grid" id="mini-calendar-grid">
+                <!-- Injected by JS -->
+              </div>
+            </div>
+
+            <!-- My Calendars -->
+            <div class="calendar-calendars-list">
+              <div class="calendars-list-header">
+                <h4>My Calendars</h4>
+                <button class="calendars-add-btn" id="add-calendar-btn"><i class="ph ph-plus"></i></button>
+              </div>
+              <div class="calendars-items" id="my-calendars">
+                <!-- Injected by JS -->
+              </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="calendar-upcoming-events">
+              <div class="upcoming-header">
+                <h4>Upcoming Events</h4>
+                <a href="#" class="upcoming-view-all" id="view-all-upcoming">View All</a>
+              </div>
+              <div class="upcoming-events-list" id="upcoming-events-list">
+                <!-- Injected by JS -->
+              </div>
+            </div>
+
+            <!-- Quick Create -->
+            <div class="calendar-quick-create">
+              <h4>Quick Create</h4>
+              <div class="quick-create-grid">
+                <button class="quick-create-btn" data-type="event">
+                  <i class="ph ph-calendar-blank"></i>
+                  <span>Event</span>
+                </button>
+                <button class="quick-create-btn" data-type="meeting">
+                  <i class="ph ph-video-camera"></i>
+                  <span>Meeting</span>
+                </button>
+                <button class="quick-create-btn" data-type="task">
+                  <i class="ph ph-check-square"></i>
+                  <span>Task</span>
+                </button>
+                <button class="quick-create-btn" data-type="reminder">
+                  <i class="ph ph-bell"></i>
+                  <span>Reminder</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Event Modal -->
+  <div class="calendar-modal-overlay" id="event-modal-overlay">
+    <div class="calendar-modal" id="event-modal">
+      <div class="calendar-modal-header">
+        <h3 id="modal-title">New Event</h3>
+        <button class="calendar-modal-close" id="modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="calendar-modal-body">
+        <form id="event-form">
+          <input type="hidden" id="event-id" />
+          <div class="form-group">
+            <label class="form-label">Event Title</label>
+            <input type="text" class="form-input" id="event-title" placeholder="Add title" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start</label>
+              <input type="datetime-local" class="form-input" id="event-start" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">End</label>
+              <input type="datetime-local" class="form-input" id="event-end" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <div class="event-type-selector" id="event-type-selector">
+              <button type="button" class="event-type-btn active" data-type="meeting">
+                <i class="ph ph-video-camera"></i> Meeting
+              </button>
+              <button type="button" class="event-type-btn" data-type="event">
+                <i class="ph ph-calendar-blank"></i> Event
+              </button>
+              <button type="button" class="event-type-btn" data-type="task">
+                <i class="ph ph-check-square"></i> Task
+              </button>
+              <button type="button" class="event-type-btn" data-type="reminder">
+                <i class="ph ph-bell"></i> Reminder
+              </button>
+              <button type="button" class="event-type-btn" data-type="personal">
+                <i class="ph ph-user"></i> Personal
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Calendar</label>
+            <select class="form-input form-select" id="event-calendar">
+              <option value="my-calendar">My Calendar</option>
+              <option value="meetings">Meetings</option>
+              <option value="tasks">Tasks</option>
+              <option value="reminders">Reminders</option>
+              <option value="personal">Personal</option>
+              <option value="holidays">Holidays</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-input" id="event-location" placeholder="Add location or video link" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="event-description" rows="3" placeholder="Add description"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Attendees</label>
+            <input type="text" class="form-input" id="event-attendees" placeholder="Add attendees (comma separated)" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color Label</label>
+            <div class="event-color-picker" id="event-color-picker">
+              <button type="button" class="color-dot active" data-color="#6366f1" style="background:#6366f1"></button>
+              <button type="button" class="color-dot" data-color="#10b981" style="background:#10b981"></button>
+              <button type="button" class="color-dot" data-color="#f59e0b" style="background:#f59e0b"></button>
+              <button type="button" class="color-dot" data-color="#ef4444" style="background:#ef4444"></button>
+              <button type="button" class="color-dot" data-color="#8b5cf6" style="background:#8b5cf6"></button>
+              <button type="button" class="color-dot" data-color="#ec4899" style="background:#ec4899"></button>
+              <button type="button" class="color-dot" data-color="#06b6d4" style="background:#06b6d4"></button>
+              <button type="button" class="color-dot" data-color="#f97316" style="background:#f97316"></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="event-all-day" />
+              <span class="checkbox-label">All day event</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="event-reminder" checked />
+              <span class="checkbox-label">Send reminder notification</span>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="calendar-modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="button" class="btn btn-error" id="modal-delete" style="display:none;">Delete</button>
+        <button type="submit" class="btn btn-primary" id="modal-save">Save Event</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Details Modal -->
+  <div class="calendar-modal-overlay" id="event-details-overlay">
+    <div class="calendar-modal calendar-modal-sm" id="event-details-modal">
+      <div class="calendar-modal-header">
+        <h3 id="details-title">Event Details</h3>
+        <button class="calendar-modal-close" id="details-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="calendar-modal-body" id="details-body">
+        <!-- Injected by JS -->
+      </div>
+      <div class="calendar-modal-footer">
+        <button type="button" class="btn btn-secondary" id="details-close-btn">Close</button>
+        <button type="button" class="btn btn-primary" id="details-edit-btn">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/calendar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.calendarApp = new CalendarApp();
+    });
+  </script>
+</body>
+</html>

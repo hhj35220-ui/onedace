@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLA Management — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header support-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="support-header-icon"><i class="ph ph-headset"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">SLA Management</h1>
+              <p class="header-subtitle">Configure and monitor service level agreements</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="notification-dot" id="notif-dot"></span></button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="support-tabs" aria-label="Support sections">
+        <div class="support-tabs-inner">
+          <a href="index.html" class="support-tab" data-page="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="tickets.html" class="support-tab" data-page="tickets"><i class="ph ph-ticket"></i><span>Tickets</span></a>
+          <a href="open-tickets.html" class="support-tab" data-page="open"><i class="ph ph-envelope-open"></i><span>Open</span></a>
+          <a href="pending-tickets.html" class="support-tab" data-page="pending"><i class="ph ph-clock"></i><span>Pending</span></a>
+          <a href="closed-tickets.html" class="support-tab" data-page="closed"><i class="ph ph-check-circle"></i><span>Closed</span></a>
+          <a href="sla-management.html" class="support-tab active" data-page="sla"><i class="ph ph-shield-check"></i><span>SLA Management</span></a>
+          <a href="saved-replies.html" class="support-tab" data-page="replies"><i class="ph ph-floppy-disk"></i><span>Saved Replies</span></a>
+          <a href="knowledge-base.html" class="support-tab" data-page="kb"><i class="ph ph-book-open"></i><span>Knowledge Base</span></a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content support-content">
+        <!-- SLA Stats -->
+        <div class="sla-stats-row">
+          <div class="sla-stat-card">
+            <div class="sla-stat-icon met"><i class="ph ph-check-circle"></i></div>
+            <div class="sla-stat-info">
+              <span class="sla-stat-value">92%</span>
+              <span class="sla-stat-label">SLA Met</span>
+            </div>
+          </div>
+          <div class="sla-stat-card">
+            <div class="sla-stat-icon breached"><i class="ph ph-x-circle"></i></div>
+            <div class="sla-stat-info">
+              <span class="sla-stat-value">6.6%</span>
+              <span class="sla-stat-label">SLA Breached</span>
+            </div>
+          </div>
+          <div class="sla-stat-card">
+            <div class="sla-stat-icon warning"><i class="ph ph-warning"></i></div>
+            <div class="sla-stat-info">
+              <span class="sla-stat-value">1.4%</span>
+              <span class="sla-stat-label">SLA Warning</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sla-layout">
+          <!-- SLA Policies -->
+          <div class="sla-policies-card">
+            <div class="widget-header">
+              <h3 class="widget-title">SLA Policies</h3>
+              <button class="btn btn-primary btn-sm" id="new-policy-btn"><i class="ph ph-plus"></i> New Policy</button>
+            </div>
+            <div class="widget-body">
+              <div class="sla-policies-table-wrap">
+                <table class="sla-policies-table" id="sla-policies-table">
+                  <thead>
+                    <tr>
+                      <th>Policy Name</th>
+                      <th>Priority</th>
+                      <th>Response Time</th>
+                      <th>Resolution Time</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sla-policies-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLA Performance -->
+          <div class="sla-performance-card">
+            <div class="widget-header">
+              <h3 class="widget-title">SLA Performance</h3>
+              <a href="#" class="view-all-link">View Full SLA Report</a>
+            </div>
+            <div class="widget-body">
+              <div class="sla-performance-chart" id="sla-performance-chart"></div>
+              <div class="sla-performance-legend" id="sla-performance-legend"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Policy Modal -->
+  <div class="modal-overlay" id="policy-modal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="policy-modal-title">New SLA Policy</h3>
+        <button class="modal-close" id="policy-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Policy Name</label>
+          <input type="text" class="form-input" id="policy-name" placeholder="e.g. High Priority SLA">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Applies To</label>
+            <select class="form-input form-select" id="policy-priority">
+              <option value="all">All Priorities</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-input form-select" id="policy-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Response Time</label>
+            <div class="time-input-group">
+              <input type="number" class="form-input" id="policy-response-hours" placeholder="Hours" min="0">
+              <span>h</span>
+              <input type="number" class="form-input" id="policy-response-minutes" placeholder="Min" min="0" max="59">
+              <span>m</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Resolution Time</label>
+            <div class="time-input-group">
+              <input type="number" class="form-input" id="policy-resolution-hours" placeholder="Hours" min="0">
+              <span>h</span>
+              <input type="number" class="form-input" id="policy-resolution-minutes" placeholder="Min" min="0" max="59">
+              <span>m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="policy-cancel">Cancel</button>
+        <button class="btn btn-primary" id="policy-save">Save Policy</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/support.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) { window.location.href = '../auth/signin.html'; return; }
+      window.supportApp = new SupportApp();
+      supportApp.initSLAPage();
+    });
+  </script>
+</body>
+</html>

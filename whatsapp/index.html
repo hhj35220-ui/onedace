@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- WhatsApp Content -->
+      <div class="whatsapp-layout">
+        <!-- WhatsApp Sidebar -->
+        <div class="whatsapp-sidebar">
+          <!-- Account Header rendered by JS -->
+          <!-- Navigation rendered by JS -->
+
+          <!-- Today's Overview -->
+          <div class="wa-overview-card">
+            <div class="wa-overview-header">
+              <span class="wa-overview-title">Today's Overview</span>
+              <a href="../reports/index.html" class="wa-overview-link">View Report</a>
+            </div>
+            <div class="wa-overview-stats">
+              <div class="wa-overview-stat">
+                <span class="wa-stat-label">Messages Received</span>
+                <div class="wa-stat-value-row">
+                  <span class="wa-stat-value">248</span>
+                  <span class="wa-stat-change wa-stat-up">
+                    <i class="ph ph-trend-up"></i> 18.5%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-stat-label">Messages Sent</span>
+                <div class="wa-stat-value-row">
+                  <span class="wa-stat-value">216</span>
+                  <span class="wa-stat-change wa-stat-up">
+                    <i class="ph ph-trend-up"></i> 12.4%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-stat-label">New Contacts</span>
+                <div class="wa-stat-value-row">
+                  <span class="wa-stat-value">32</span>
+                  <span class="wa-stat-change wa-stat-up">
+                    <i class="ph ph-trend-up"></i> 8.3%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-stat-label">Response Rate</span>
+                <div class="wa-stat-value-row">
+                  <span class="wa-stat-value">94.2%</span>
+                  <span class="wa-stat-change wa-stat-up">
+                    <i class="ph ph-trend-up"></i> 6.7%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WhatsApp Main -->
+        <div class="whatsapp-main">
+          <!-- Stats Row -->
+          <div class="wa-stats-row" id="wa-stats-row">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Conversations Section -->
+          <div class="wa-conversations-section">
+            <!-- Conversation List -->
+            <div class="wa-conversation-list-panel">
+              <div class="wa-conversation-list-header">
+                <div class="wa-conversation-search">
+                  <i class="ph ph-magnifying-glass"></i>
+                  <input type="text" placeholder="Search conversations..." id="conversation-search">
+                </div>
+                <button class="wa-filter-btn" data-filter="" title="Filter"><i class="ph ph-funnel"></i></button>
+                <button class="wa-sort-btn" id="sort-btn"><i class="ph ph-sort-descending"></i><span>Latest</span></button>
+                <button class="wa-more-btn" title="More"><i class="ph ph-dots-three"></i></button>
+              </div>
+              <div class="wa-conversation-list" id="conversation-list">
+                <!-- Injected by JS -->
+              </div>
+              <div class="wa-conversation-pagination">
+                <button class="wa-page-btn active">1</button>
+                <button class="wa-page-btn">2</button>
+                <button class="wa-page-btn">3</button>
+                <span class="wa-page-dots">...</span>
+                <button class="wa-page-btn">12</button>
+                <button class="wa-page-btn wa-page-next"><i class="ph ph-caret-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="wa-chat-panel" id="chat-panel">
+              <div class="wa-chat-header" id="chat-header">
+                <!-- Injected by JS -->
+              </div>
+              <div class="wa-chat-messages" id="chat-messages">
+                <!-- Injected by JS -->
+              </div>
+              <div class="wa-chat-input-area">
+                <div class="wa-chat-tabs">
+                  <button class="wa-chat-tab active" data-tab="reply">Reply</button>
+                  <button class="wa-chat-tab" data-tab="note">Note</button>
+                </div>
+                <div class="wa-chat-input-wrapper">
+                  <textarea class="wa-chat-input" id="chat-input" placeholder="Type your message..."></textarea>
+                  <div class="wa-chat-input-actions">
+                    <button class="wa-input-action" title="Emoji"><i class="ph ph-smiley"></i></button>
+                    <button class="wa-input-action" title="Attachment"><i class="ph ph-paperclip"></i></button>
+                    <button class="wa-input-action" title="Template"><i class="ph ph-file-text"></i></button>
+                    <button class="wa-input-action" title="Quick Reply"><i class="ph ph-lightning"></i></button>
+                    <button class="wa-input-action" title="Note"><i class="ph ph-note"></i></button>
+                    <button class="wa-input-action" title="More"><i class="ph ph-dots-three"></i></button>
+                    <button class="wa-send-btn" id="send-btn"><i class="ph ph-paper-plane-right"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Details Panel -->
+            <div class="wa-contact-panel" id="contact-panel">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Create Menu Dropdown -->
+  <div class="dropdown-menu" id="create-menu">
+    <a href="conversations.html" class="dropdown-item">
+      <i class="ph ph-chat-circle-text"></i>
+      <span>New Conversation</span>
+    </a>
+    <a href="broadcast.html" class="dropdown-item">
+      <i class="ph ph-broadcast"></i>
+      <span>Broadcast Message</span>
+    </a>
+    <a href="contacts.html" class="dropdown-item">
+      <i class="ph ph-user-plus"></i>
+      <span>Add Contact</span>
+    </a>
+    <a href="templates.html" class="dropdown-item">
+      <i class="ph ph-file-text"></i>
+      <span>New Template</span>
+    </a>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OnePlace Enterprise — All your conversations. One powerful platform.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="landing-page page-transition">
+    <!-- Left Sidebar -->
+    <aside class="landing-sidebar">
+      <div class="landing-sidebar-content">
+        <div class="logo" style="color: white;">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: var(--space-20);">
+          <h1 class="landing-headline">All your conversations. One powerful platform.</h1>
+          <p class="landing-description">Connect Gmail, WhatsApp, Instagram, Slack, X (Twitter), LinkedIn and more. Manage customers, teams and workflows from one place.</p>
+          
+          <div class="landing-integrations">
+            <div class="landing-integration-icon" title="Gmail"><i class="ph ph-envelope-simple"></i></div>
+            <div class="landing-integration-icon" title="WhatsApp"><i class="ph ph-chat-circle-text"></i></div>
+            <div class="landing-integration-icon" title="Instagram"><i class="ph ph-camera"></i></div>
+            <div class="landing-integration-icon" title="Slack"><i class="ph ph-slack-logo"></i></div>
+            <div class="landing-integration-icon" title="X (Twitter)"><i class="ph ph-x-logo"></i></div>
+            <div class="landing-integration-icon" title="LinkedIn"><i class="ph ph-linkedin-logo"></i></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="landing-trust">
+        <p class="landing-trust-text">Trusted by teams worldwide</p>
+        <div class="landing-trust-logos">
+          <span>Google</span>
+          <span>Meta</span>
+          <span>Microsoft</span>
+          <span>Amazon</span>
+          <span>Adobe</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Main -->
+    <main class="landing-main">
+      <nav class="landing-nav" aria-label="Main navigation">
+        <a href="auth/signin.html" class="landing-nav-btn signin">Sign In</a>
+        <a href="auth/signup.html" class="landing-nav-btn getstarted">Get Started Free</a>
+      </nav>
+
+      <div class="landing-actions animate-fadeInUp">
+        <a href="auth/signup.html" class="btn btn-primary btn-lg btn-full">
+          Get Started Free
+        </a>
+        <a href="auth/signin.html" class="btn btn-secondary btn-lg btn-full">
+          Sign In
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Check if already authenticated
+    document.addEventListener('DOMContentLoaded', () => {
+      if (OP.auth.isAuthenticated()) {
+        const workspaces = OP.workspace.getUserWorkspaces();
+        if (workspaces.length > 0) {
+          window.location.href = 'workspace-select.html';
+        } else {
+          window.location.href = 'workspace-create.html';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

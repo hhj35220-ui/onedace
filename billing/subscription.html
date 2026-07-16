@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Subscription — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/billing.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item"><i class="ph ph-chat-circle-dots"></i><span>Unified Inbox</span><span class="nav-badge">24</span></a>
+          <a href="../crm/contacts.html" class="nav-item"><i class="ph ph-users"></i><span>Contacts</span></a>
+          <a href="../team/" class="nav-item"><i class="ph ph-users-three"></i><span>Teams</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../integrations/" class="nav-item"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+          <a href="../workflow/" class="nav-item"><i class="ph ph-flow-arrow"></i><span>Automation Center</span></a>
+          <a href="../ai/" class="nav-item"><i class="ph ph-sparkle"></i><span>AI Assistant</span></a>
+          <a href="../reports/" class="nav-item"><i class="ph ph-chart-bar"></i><span>Analytics</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Developer</span>
+          <a href="../settings/api-developer.html" class="nav-item"><i class="ph ph-code"></i><span>Developer Center</span><span class="nav-badge badge-beta">Beta</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Billing</span>
+          <a href="index.html" class="nav-item active"><i class="ph ph-credit-card"></i><span>Billing & Subscription</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <a href="../settings/" class="nav-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+          <a href="../help/" class="nav-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Alex Morgan</span>
+            <span class="sidebar-user-role">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" aria-label="User menu"><i class="ph ph-caret-up"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle"><i class="ph ph-list"></i></button>
+          <div class="header-title">
+            <h1>Current Subscription</h1>
+            <p>Manage your plan and billing details.</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search...">
+            <span class="search-kbd">⌘ K</span>
+          </div>
+          <div class="header-actions">
+            <button class="header-action-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="header-action-dot"></span></button>
+            <button class="header-action-btn" aria-label="Settings" onclick="OP.theme.toggle()"><i class="ph ph-gear"></i></button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan">
+              <div class="header-user-info">
+                <span class="header-user-name">Alex Morgan</span>
+                <span class="header-user-role">Administrator</span>
+              </div>
+              <i class="ph ph-caret-down"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="billing-content">
+        <div class="subscription-page">
+          <!-- Plan Card -->
+          <div class="billing-card plan-detail-card">
+            <div class="plan-detail-header">
+              <div class="plan-detail-icon">
+                <i class="ph ph-crown"></i>
+              </div>
+              <div class="plan-detail-info">
+                <h2 id="subPlanName">Starter</h2>
+                <span class="badge badge-success" id="subPlanStatus">Trial Active</span>
+              </div>
+              <div class="plan-detail-price" id="subPlanPrice">
+                <span class="price-amount">$29</span>
+                <span class="price-period">/ month</span>
+              </div>
+            </div>
+            
+            <div class="plan-detail-divider"></div>
+
+            <div class="plan-detail-grid">
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Trial Ends</span>
+                <span class="plan-detail-value" id="subTrialEnds">August 25, 2026</span>
+              </div>
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Days Remaining</span>
+                <span class="plan-detail-value" id="subDaysRemaining">13 days</span>
+              </div>
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Billing Cycle</span>
+                <span class="plan-detail-value" id="subBillingCycle">Monthly</span>
+              </div>
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Next Billing</span>
+                <span class="plan-detail-value" id="subNextBilling">August 25, 2026</span>
+              </div>
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Payment Method</span>
+                <span class="plan-detail-value">•••• 4242</span>
+              </div>
+              <div class="plan-detail-item">
+                <span class="plan-detail-label">Provider</span>
+                <span class="plan-detail-value provider-tag">Paystack</span>
+              </div>
+            </div>
+
+            <div class="plan-detail-actions">
+              <button class="btn btn-secondary" onclick="billingApp.showManageModal()">
+                <i class="ph ph-gear"></i> Manage Subscription
+              </button>
+              <button class="btn btn-primary" onclick="billingApp.showUpgradeModal()">
+                <i class="ph ph-arrow-up"></i> Upgrade Plan
+              </button>
+            </div>
+          </div>
+
+          <!-- Features Included -->
+          <div class="billing-card">
+            <div class="billing-card-header">
+              <h3>Features Included</h3>
+            </div>
+            <div class="features-grid" id="featuresGrid">
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>15 Integrations</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>3 Team Members</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>50,000 Monthly Messages</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>AI Reply Suggestions</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>AI Conversation Summaries</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Shared Inbox</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Search & Labels</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Internal Notes</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Mobile & Desktop Apps</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Email Support</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>Basic Analytics</span></div>
+              <div class="feature-item"><i class="ph ph-check-circle"></i><span>10 GB Storage</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="modal" id="upgradeModal">
+    <div class="modal-header">
+      <h3>Upgrade Your Plan</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('upgradeModal')"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-plans">
+        <div class="modal-plan" data-plan="starter">
+          <div class="modal-plan-name">Starter</div>
+          <div class="modal-plan-price">$29/mo</div>
+          <ul class="modal-plan-features">
+            <li>15 Integrations</li>
+            <li>3 Team Members</li>
+            <li>50K Messages</li>
+          </ul>
+        </div>
+        <div class="modal-plan modal-plan-selected" data-plan="business">
+          <div class="modal-plan-badge">Popular</div>
+          <div class="modal-plan-name">Business</div>
+          <div class="modal-plan-price">$79/mo</div>
+          <ul class="modal-plan-features">
+            <li>Unlimited Integrations</li>
+            <li>Unlimited Team</li>
+            <li>500K Messages</li>
+          </ul>
+        </div>
+        <div class="modal-plan" data-plan="enterprise">
+          <div class="modal-plan-name">Enterprise</div>
+          <div class="modal-plan-price">Custom</div>
+          <ul class="modal-plan-features">
+            <li>Unlimited Everything</li>
+            <li>SSO & Audit Logs</li>
+            <li>Dedicated Manager</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="billingApp.closeModal('upgradeModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="billingApp.confirmUpgrade()">Confirm Upgrade</button>
+    </div>
+  </div>
+
+  <div class="modal" id="manageModal">
+    <div class="modal-header">
+      <h3>Manage Subscription</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('manageModal')"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="manage-options">
+        <div class="manage-option">
+          <div class="manage-option-icon"><i class="ph ph-arrows-clockwise"></i></div>
+          <div class="manage-option-text">
+            <h4>Change Billing Cycle</h4>
+            <p>Switch between monthly and yearly billing.</p>
+          </div>
+          <button class="btn btn-sm btn-secondary">Change</button>
+        </div>
+        <div class="manage-option">
+          <div class="manage-option-icon"><i class="ph ph-pause-circle"></i></div>
+          <div class="manage-option-text">
+            <h4>Pause Subscription</h4>
+            <p>Temporarily pause for up to 3 months.</p>
+          </div>
+          <button class="btn btn-sm btn-secondary">Pause</button>
+        </div>
+        <div class="manage-option manage-option-danger">
+          <div class="manage-option-icon"><i class="ph ph-trash"></i></div>
+          <div class="manage-option-text">
+            <h4>Cancel Subscription</h4>
+            <p>Cancel now. Access until period end.</p>
+          </div>
+          <button class="btn btn-sm btn-outline btn-danger-text">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/billing.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      billingApp.initSubscriptionPage();
+    });
+  </script>
+</body>
+</html>

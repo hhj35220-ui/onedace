@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- Content -->
+      <div class="dashboard-content">
+        <!-- Page Title -->
+        <div class="dashboard-page-title">
+          <h1>Welcome back, <span id="user-name">Sophia</span>! 👋</h1>
+          <p>Here's what's happening across your platforms today.</p>
+        </div>
+
+        <!-- Platform Stats Row -->
+        <div class="stats-grid" id="platform-stats">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+          <!-- All Inbox -->
+          <div class="dashboard-col-5">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">All Inbox (Unified)</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="Go to inbox"><i class="ph ph-arrow-right"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="filter-bar">
+                  <button class="filter-btn active" data-filter="all">All</button>
+                  <button class="filter-btn" data-filter="unread">Unread</button>
+                  <button class="filter-btn" data-filter="starred">Starred</button>
+                  <button class="filter-btn" data-filter="assigned">Assigned to Me</button>
+                </div>
+                <div class="conversation-list" id="conversation-list">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages by Platform -->
+          <div class="dashboard-col-3">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Messages by Platform</span>
+              </div>
+              <div class="widget-body">
+                <div id="messages-donut-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Conversations -->
+          <div class="dashboard-col-4">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Recent Conversations</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="View all"><i class="ph ph-dots-three"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="conversation-list" id="recent-conversations">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Suggestions -->
+          <div class="dashboard-col-4">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">AI Suggestions</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="View all"><i class="ph ph-sparkle"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="ai-suggestion-list" id="ai-suggestions">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform Performance -->
+          <div class="dashboard-col-4">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Platform Performance</span>
+              </div>
+              <div class="widget-body">
+                <div class="platform-mini-list" id="platform-performance">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Summary -->
+          <div class="dashboard-col-4">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Activity Summary</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="View all activity"><i class="ph ph-arrow-right"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="platform-mini-list" id="activity-summary">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const app = new DashboardApp();
+      const storage = app.storage;
+
+      // Set user name
+      const session = OP.auth.getSession();
+      document.getElementById('user-name').textContent = session?.fullName?.split(' ')[0] || 'Sophia';
+
+      // Render platform stats
+      function renderPlatformStats() {
+        const stats = storage.getPlatformStats();
+        const container = document.getElementById('platform-stats');
+        const platforms = [
+          { key: 'gmail', icon: 'gmail', label: 'Gmail', color: '#EA4335' },
+          { key: 'whatsapp', icon: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
+          { key: 'instagram', icon: 'instagram', label: 'Instagram', color: '#E4405F' },
+          { key: 'tiktok', icon: 'tiktok', label: 'TikTok', color: '#000' },
+          { key: 'x', icon: 'x', label: 'X (Twitter)', color: '#1DA1F2' },
+          { key: 'linkedin', icon: 'linkedin', label: 'LinkedIn', color: '#0A66C2' }
+        ];
+
+        let html = '';
+        platforms.forEach(p => {
+          const s = stats[p.key] || { unread: 0, messagesToday: 0 };
+          const trend = Math.floor(Math.random() * 20) - 5;
+          const trendClass = trend >= 0 ? 'up' : 'down';
+          const trendIcon = trend >= 0 ? 'ph-trend-up' : 'ph-trend-down';
+
+          html += `
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon ${p.icon}"><i class="ph ${app.getPlatformIcon(p.key)}"></i></div>
+                <span class="stat-trend ${trendClass}"><i class="ph ${trendIcon}"></i> ${Math.abs(trend)}%</span>
+              </div>
+              <div class="stat-value">${s.unread}</div>
+              <div class="stat-label">${s.messagesToday} new today</div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render conversations
+      function renderConversations() {
+        const conversations = storage.getConversations(app.currentFilter, app.currentSearch).slice(0, 8);
+        const container = document.getElementById('conversation-list');
+
+        if (conversations.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="ph ph-inbox"></i></div>
+              <div class="empty-state-title">No conversations</div>
+              <div class="empty-state-desc">No conversations match your current filter.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        conversations.forEach(conv => {
+          const timeAgo = app.formatTimeAgo(conv.timestamp);
+          const unreadClass = conv.unread ? 'unread' : '';
+          const nameClass = conv.unread ? 'unread' : '';
+
+          html += `
+            <div class="conversation-item ${unreadClass}" data-id="${conv.id}">
+              <div class="conversation-avatar" style="background: ${conv.customer.color}">
+                ${conv.customer.avatar}
+                <span class="conversation-platform-badge ${conv.platform}"><i class="ph ${app.getPlatformIcon(conv.platform)}"></i></span>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-name ${nameClass}">${conv.customer.name}</div>
+                <div class="conversation-preview">${conv.message}</div>
+              </div>
+              <div class="conversation-meta">
+                <span class="conversation-time">${timeAgo}</span>
+                <div class="conversation-badges">
+                  <span class="conversation-badge priority-${conv.priority}">${conv.priority}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Add click handlers
+        container.querySelectorAll('.conversation-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const id = item.dataset.id;
+            storage.markConversationRead(id);
+            item.classList.remove('unread');
+            item.querySelector('.conversation-name').classList.remove('unread');
+            OP.toast.show('Conversation opened', 'success');
+          });
+        });
+      }
+
+      // Render recent conversations (smaller list)
+      function renderRecentConversations() {
+        const conversations = storage.getConversations().slice(0, 5);
+        const container = document.getElementById('recent-conversations');
+
+        let html = '';
+        conversations.forEach(conv => {
+          const timeAgo = app.formatTimeAgo(conv.timestamp);
+          html += `
+            <div class="conversation-item" data-id="${conv.id}">
+              <div class="conversation-avatar" style="background: ${conv.customer.color}">
+                ${conv.customer.avatar}
+                <span class="conversation-platform-badge ${conv.platform}"><i class="ph ${app.getPlatformIcon(conv.platform)}"></i></span>
+              </div>
+              <div class="conversation-content">
+                <div class="conversation-name">${conv.customer.name}</div>
+                <div class="conversation-preview">${conv.message}</div>
+              </div>
+              <div class="conversation-meta">
+                <span class="conversation-time">${timeAgo}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render donut chart
+      function renderDonutChart() {
+        const stats = storage.getPlatformStats();
+        const data = [
+          { label: 'Gmail', value: stats.gmail?.conversations || 0, color: '#EA4335' },
+          { label: 'WhatsApp', value: stats.whatsapp?.conversations || 0, color: '#25D366' },
+          { label: 'Instagram', value: stats.instagram?.conversations || 0, color: '#E4405F' },
+          { label: 'TikTok', value: stats.tiktok?.conversations || 0, color: '#000000' },
+          { label: 'X', value: stats.x?.conversations || 0, color: '#1DA1F2' },
+          { label: 'LinkedIn', value: stats.linkedin?.conversations || 0, color: '#0A66C2' }
+        ].filter(d => d.value > 0);
+
+        app.createDonutChart('messages-donut-chart', data, 'Total');
+      }
+
+      // Render AI suggestions
+      function renderAISuggestions() {
+        const suggestions = storage.getAISuggestions();
+        const container = document.getElementById('ai-suggestions');
+
+        let html = '';
+        suggestions.forEach(s => {
+          html += `
+            <div class="ai-suggestion-item priority-${s.priority}">
+              <div class="ai-suggestion-icon"><i class="ph ph-sparkle"></i></div>
+              <div class="ai-suggestion-content">
+                <div class="ai-suggestion-text">${s.message}</div>
+                <div class="ai-suggestion-action">
+                  <button class="btn btn-primary btn-sm">${s.action}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render platform performance
+      function renderPlatformPerformance() {
+        const stats = storage.getPlatformStats();
+        const platforms = [
+          { key: 'gmail', name: 'Gmail', icon: 'gmail' },
+          { key: 'whatsapp', name: 'WhatsApp', icon: 'whatsapp' },
+          { key: 'instagram', name: 'Instagram', icon: 'instagram' },
+          { key: 'tiktok', name: 'TikTok', icon: 'tiktok' },
+          { key: 'x', name: 'X', icon: 'x' },
+          { key: 'linkedin', name: 'LinkedIn', icon: 'linkedin' }
+        ];
+
+        const container = document.getElementById('platform-performance');
+        const maxConv = Math.max(...Object.values(stats).map(s => s.conversations));
+
+        let html = '';
+        platforms.forEach(p => {
+          const s = stats[p.key] || { conversations: 0, responseRate: 0 };
+          const percent = maxConv > 0 ? (s.conversations / maxConv) * 100 : 0;
+
+          html += `
+            <div class="platform-mini-item">
+              <div class="platform-mini-icon ${p.icon}"><i class="ph ${app.getPlatformIcon(p.key)}"></i></div>
+              <div class="platform-mini-info">
+                <div class="platform-mini-name">${p.name}</div>
+                <div class="platform-mini-count">${s.conversations.toLocaleString()} conversations</div>
+              </div>
+              <div class="platform-mini-bar">
+                <div class="platform-mini-bar-fill ${p.icon}" style="width: ${percent}%"></div>
+              </div>
+              <span class="platform-mini-value">${s.responseRate}%</span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render activity summary
+      function renderActivitySummary() {
+        const activities = storage.getActivities().slice(0, 6);
+        const container = document.getElementById('activity-summary');
+
+        let html = '';
+        activities.forEach(act => {
+          const timeAgo = app.formatTimeAgo(act.timestamp);
+          html += `
+            <div class="platform-mini-item">
+              <div class="platform-mini-icon ${act.platform}"><i class="ph ${app.getPlatformIcon(act.platform)}"></i></div>
+              <div class="platform-mini-info">
+                <div class="platform-mini-name">${act.title}</div>
+                <div class="platform-mini-count">${act.description}</div>
+              </div>
+              <span class="platform-mini-value" style="font-size: 11px; color: var(--gray-400); font-weight: 400;">${timeAgo}</span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Handle search/filter events
+      document.addEventListener('dashboard:search', () => renderConversations());
+      document.addEventListener('dashboard:filter', () => renderConversations());
+
+      // Initial render
+      renderPlatformStats();
+      renderConversations();
+      renderRecentConversations();
+      renderDonutChart();
+      renderAISuggestions();
+      renderPlatformPerformance();
+      renderActivitySummary();
+    });
+  </script>
+</body>
+</html>

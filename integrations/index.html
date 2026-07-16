@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integrations — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/integrations.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge" id="inboxBadge">54</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../gmail/index.html" class="nav-item">
+            <i class="ph ph-envelope-simple"></i>
+            <span>Gmail</span>
+            <span class="nav-badge nav-badge-dot" id="gmailBadge"></span>
+          </a>
+          <a href="../whatsapp/index.html" class="nav-item">
+            <i class="ph ph-whatsapp-logo"></i>
+            <span>WhatsApp Business</span>
+            <span class="nav-badge" id="whatsappBadge">8</span>
+          </a>
+          <a href="../instagram/index.html" class="nav-item">
+            <i class="ph ph-instagram-logo"></i>
+            <span>Instagram</span>
+            <span class="nav-badge" id="instagramBadge">14</span>
+          </a>
+          <a href="../tiktok/index.html" class="nav-item">
+            <i class="ph ph-tiktok-logo"></i>
+            <span>TikTok</span>
+            <span class="nav-badge" id="tiktokBadge">7</span>
+          </a>
+          <a href="../x/index.html" class="nav-item">
+            <i class="ph ph-x-logo"></i>
+            <span>X (Twitter)</span>
+            <span class="nav-badge" id="xBadge">24</span>
+          </a>
+          <a href="../linkedin/index.html" class="nav-item">
+            <i class="ph ph-linkedin-logo"></i>
+            <span>LinkedIn</span>
+            <span class="nav-badge" id="linkedinBadge">5</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Business</span>
+          <a href="../crm/index.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>CRM</span>
+          </a>
+          <a href="../support/index.html" class="nav-item">
+            <i class="ph ph-headset"></i>
+            <span>Customer Support</span>
+          </a>
+          <a href="../calendar/index.html" class="nav-item">
+            <i class="ph ph-calendar"></i>
+            <span>Calendar</span>
+          </a>
+          <a href="../tasks/index.html" class="nav-item">
+            <i class="ph ph-check-circle"></i>
+            <span>Tasks</span>
+          </a>
+          <a href="../team/index.html" class="nav-item">
+            <i class="ph ph-users-three"></i>
+            <span>Team Management</span>
+          </a>
+          <a href="../workflow/index.html" class="nav-item">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Workflow Automation</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Tools</span>
+          <a href="../ai/index.html" class="nav-item">
+            <i class="ph ph-sparkle"></i>
+            <span>AI</span>
+          </a>
+          <a href="../reports/index.html" class="nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Reports & Analytics</span>
+          </a>
+          <a href="../files/index.html" class="nav-item">
+            <i class="ph ph-folder"></i>
+            <span>File Manager</span>
+          </a>
+          <a href="../integrations/index.html" class="nav-item active">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../settings/index.html" class="nav-item">
+          <i class="ph ph-gear"></i>
+          <span>Settings</span>
+        </a>
+        <a href="../help/index.html" class="nav-item">
+          <i class="ph ph-question"></i>
+          <span>Help & Support</span>
+        </a>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="userAvatar">AM</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name" id="userName">Alex Morgan</span>
+            <span class="sidebar-user-role" id="userRole">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" id="userMenuBtn" aria-label="User menu">
+            <i class="ph ph-caret-down"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <i class="ph ph-list"></i>
+          </button>
+          <div class="header-breadcrumb">
+            <span class="breadcrumb-current">Integrations</span>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything..." id="globalSearch">
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-icon-btn" id="themeToggleBtn" aria-label="Toggle theme">
+            <i class="ph ph-moon" id="themeIcon"></i>
+          </button>
+          <button class="header-icon-btn" id="notificationsBtn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="header-badge">3</span>
+          </button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff" alt="Alex Morgan" class="header-user-img" id="headerUserImg">
+          </div>
+        </div>
+      </header>
+
+      <!-- Integrations Content -->
+      <div class="app-content">
+        <!-- Sub Navigation -->
+        <div class="int-subnav">
+          <nav class="int-subnav-tabs" id="intSubnav">
+            <button class="int-subnav-tab active" data-tab="dashboard">
+              <i class="ph ph-squares-four"></i>
+              Dashboard
+            </button>
+            <button class="int-subnav-tab" data-tab="connected">
+              <i class="ph ph-plugs-connected"></i>
+              Connected Apps
+            </button>
+            <button class="int-subnav-tab" data-tab="marketplace">
+              <i class="ph ph-storefront"></i>
+              Marketplace
+            </button>
+            <button class="int-subnav-tab" data-tab="apikeys">
+              <i class="ph ph-key"></i>
+              API Keys & Webhooks
+            </button>
+            <button class="int-subnav-tab" data-tab="logs">
+              <i class="ph ph-scroll"></i>
+              Integration Logs
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content: Dashboard -->
+        <div class="int-tab-content active" id="tab-dashboard">
+          <!-- Stats Row -->
+          <div class="int-stats-row">
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--primary-50); color: var(--primary-600);">
+                <i class="ph ph-plugs-connected"></i>
+              </div>
+              <div class="int-stat-info">
+                <span class="int-stat-value" id="statConnectedApps">12</span>
+                <span class="int-stat-label">Connected Apps</span>
+              </div>
+              <span class="int-stat-trend trend-up">
+                <i class="ph ph-trend-up"></i> 20% <span>vs last month</span>
+              </span>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--success-50); color: var(--success-600);">
+                <i class="ph ph-check-circle"></i>
+              </div>
+              <div class="int-stat-info">
+                <span class="int-stat-value" id="statActiveIntegrations">18</span>
+                <span class="int-stat-label">Active Integrations</span>
+              </div>
+              <span class="int-stat-trend trend-up">
+                <i class="ph ph-trend-up"></i> 18% <span>vs last month</span>
+              </span>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: rgba(99,102,241,0.1); color: #6366f1;">
+                <i class="ph ph-arrows-clockwise"></i>
+              </div>
+              <div class="int-stat-info">
+                <span class="int-stat-value" id="statSuccessfulSyncs">1,248</span>
+                <span class="int-stat-label">Successful Syncs</span>
+              </div>
+              <span class="int-stat-trend trend-up">
+                <i class="ph ph-trend-up"></i> 18% <span>vs last month</span>
+              </span>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: var(--error-50); color: var(--error-600);">
+                <i class="ph ph-x-circle"></i>
+              </div>
+              <div class="int-stat-info">
+                <span class="int-stat-value" id="statFailedSyncs">32</span>
+                <span class="int-stat-label">Failed Syncs</span>
+              </div>
+              <span class="int-stat-trend trend-down">
+                <i class="ph ph-trend-down"></i> 8% <span>vs last month</span>
+              </span>
+            </div>
+            <div class="int-stat-card">
+              <div class="int-stat-icon" style="background: rgba(16,185,129,0.1); color: #10b981;">
+                <i class="ph ph-heartbeat"></i>
+              </div>
+              <div class="int-stat-info">
+                <span class="int-stat-value" id="statOverallHealth">98%</span>
+                <span class="int-stat-label">Overall Health</span>
+              </div>
+              <span class="int-stat-status status-excellent">Excellent</span>
+            </div>
+          </div>
+
+          <!-- Dashboard Grid -->
+          <div class="int-dashboard-grid">
+            <!-- Left Column -->
+            <div class="int-dashboard-left">
+              <!-- Integration Health -->
+              <div class="int-card">
+                <div class="int-card-header">
+                  <h3 class="int-card-title">Integration Health</h3>
+                  <div class="int-card-actions">
+                    <span class="int-health-total">18 Total Integrations</span>
+                  </div>
+                </div>
+                <div class="int-health-chart">
+                  <div class="int-health-donut" id="healthDonut">
+                    <svg viewBox="0 0 120 120" class="int-health-svg">
+                      <circle class="int-health-track" cx="60" cy="60" r="50" />
+                      <circle class="int-health-segment int-health-healthy" cx="60" cy="60" r="50" stroke-dasharray="251.2" stroke-dashoffset="62.8" />
+                      <circle class="int-health-segment int-health-attention" cx="60" cy="60" r="50" stroke-dasharray="251.2" stroke-dashoffset="214.5" stroke-dashoffset-start="62.8" />
+                      <circle class="int-health-segment int-health-error" cx="60" cy="60" r="50" stroke-dasharray="251.2" stroke-dashoffset="239.6" stroke-dashoffset-start="214.5" />
+                    </svg>
+                    <div class="int-health-center">
+                      <span class="int-health-number">18</span>
+                      <span class="int-health-label">Total Integrations</span>
+                    </div>
+                  </div>
+                  <div class="int-health-legend">
+                    <div class="int-health-legend-item">
+                      <span class="int-health-legend-dot" style="background: #10b981;"></span>
+                      <span class="int-health-legend-label">Healthy</span>
+                      <span class="int-health-legend-value">14 (78%)</span>
+                    </div>
+                    <div class="int-health-legend-item">
+                      <span class="int-health-legend-dot" style="background: #f59e0b;"></span>
+                      <span class="int-health-legend-label">Attention</span>
+                      <span class="int-health-legend-value">3 (17%)</span>
+                    </div>
+                    <div class="int-health-legend-item">
+                      <span class="int-health-legend-dot" style="background: #ef4444;"></span>
+                      <span class="int-health-legend-label">Error</span>
+                      <span class="int-health-legend-value">1 (5%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sync Activity Chart -->
+              <div class="int-card">
+                <div class="int-card-header">
+                  <h3 class="int-card-title">Sync Activity (Last 7 Days)</h3>
+                  <div class="int-card-actions">
+                    <div class="int-legend">
+                      <span class="int-legend-item"><span class="int-legend-dot" style="background: #6366f1;"></span> Successful</span>
+                      <span class="int-legend-item"><span class="int-legend-dot" style="background: #ef4444;"></span> Failed</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="int-sync-chart" id="syncChart">
+                  <div class="int-sync-bars">
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 60%;" data-value="450"></div>
+                      <div class="int-sync-bar-failed" style="height: 15%;" data-value="12"></div>
+                      <span class="int-sync-bar-label">May 19</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 45%;" data-value="320"></div>
+                      <div class="int-sync-bar-failed" style="height: 10%;" data-value="8"></div>
+                      <span class="int-sync-bar-label">May 20</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 75%;" data-value="580"></div>
+                      <div class="int-sync-bar-failed" style="height: 20%;" data-value="18"></div>
+                      <span class="int-sync-bar-label">May 21</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 55%;" data-value="410"></div>
+                      <div class="int-sync-bar-failed" style="height: 12%;" data-value="10"></div>
+                      <span class="int-sync-bar-label">May 22</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 50%;" data-value="380"></div>
+                      <div class="int-sync-bar-failed" style="height: 8%;" data-value="6"></div>
+                      <span class="int-sync-bar-label">May 23</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 85%;" data-value="620"></div>
+                      <div class="int-sync-bar-failed" style="height: 18%;" data-value="15"></div>
+                      <span class="int-sync-bar-label">May 24</span>
+                    </div>
+                    <div class="int-sync-bar-group">
+                      <div class="int-sync-bar-success" style="height: 70%;" data-value="540"></div>
+                      <div class="int-sync-bar-failed" style="height: 14%;" data-value="11"></div>
+                      <span class="int-sync-bar-label">May 25</span>
+                    </div>
+                  </div>
+                  <div class="int-sync-y-axis">
+                    <span>600</span>
+                    <span>450</span>
+                    <span>300</span>
+                    <span>150</span>
+                    <span>0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="int-dashboard-right">
+              <!-- My Connected Apps -->
+              <div class="int-card">
+                <div class="int-card-header">
+                  <h3 class="int-card-title">My Connected Apps</h3>
+                  <a href="#" class="int-card-link" data-tab-trigger="connected">View All</a>
+                </div>
+                <div class="int-connected-apps-grid" id="dashboardConnectedApps">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Quick Connect -->
+              <div class="int-card">
+                <div class="int-card-header">
+                  <h3 class="int-card-title">Quick Connect</h3>
+                  <a href="#" class="int-card-link" data-tab-trigger="marketplace">Explore All</a>
+                </div>
+                <div class="int-quick-connect" id="quickConnect">
+                  <button class="int-quick-btn" data-integration="gmail">
+                    <i class="ph ph-envelope-simple" style="color: #EA4335;"></i>
+                    <span>Add Gmail</span>
+                  </button>
+                  <button class="int-quick-btn" data-integration="whatsapp">
+                    <i class="ph ph-whatsapp-logo" style="color: #25D366;"></i>
+                    <span>Add WhatsApp</span>
+                  </button>
+                  <button class="int-quick-btn" data-integration="instagram">
+                    <i class="ph ph-instagram-logo" style="color: #E4405F;"></i>
+                    <span>Add Instagram</span>
+                  </button>
+                  <button class="int-quick-btn" data-integration="tiktok">
+                    <i class="ph ph-tiktok-logo" style="color: #000000;"></i>
+                    <span>Add TikTok</span>
+                  </button>
+                  <button class="int-quick-btn" data-integration="slack">
+                    <i class="ph ph-slack-logo" style="color: #4A154B;"></i>
+                    <span>Add Slack</span>
+                  </button>
+                  <button class="int-quick-btn" data-integration="more">
+                    <i class="ph ph-plus" style="color: var(--gray-500);"></i>
+                    <span>Add More</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Recent Activity -->
+              <div class="int-card">
+                <div class="int-card-header">
+                  <h3 class="int-card-title">Recent Activity</h3>
+                  <a href="#" class="int-card-link" data-tab-trigger="logs">View All Activity</a>
+                </div>
+                <div class="int-activity-list" id="recentActivity">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Connected Apps -->
+        <div class="int-tab-content" id="tab-connected">
+          <div class="int-connected-header">
+            <div class="int-connected-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" placeholder="Search integrations..." id="connectedSearch">
+            </div>
+            <button class="btn btn-primary" id="addIntegrationBtn">
+              <i class="ph ph-plus"></i> Add Integration
+            </button>
+          </div>
+
+          <div class="int-connected-table-wrap">
+            <table class="int-connected-table">
+              <thead>
+                <tr>
+                  <th>Integration</th>
+                  <th>Status</th>
+                  <th>Last Sync</th>
+                  <th>Data Sync</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="connectedTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="int-pagination" id="connectedPagination">
+            <button class="int-page-btn" disabled><i class="ph ph-caret-left"></i></button>
+            <button class="int-page-btn active">1</button>
+            <button class="int-page-btn">2</button>
+            <button class="int-page-btn">3</button>
+            <span class="int-page-ellipsis">...</span>
+            <button class="int-page-btn">25</button>
+            <button class="int-page-btn"><i class="ph ph-caret-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Tab Content: Marketplace -->
+        <div class="int-tab-content" id="tab-marketplace">
+          <div class="int-marketplace-header">
+            <div class="int-marketplace-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" placeholder="Search integrations..." id="marketplaceSearch">
+            </div>
+          </div>
+
+          <div class="int-marketplace-layout">
+            <!-- Sidebar Categories -->
+            <aside class="int-marketplace-sidebar">
+              <div class="int-marketplace-categories">
+                <h4 class="int-marketplace-cat-title">Categories</h4>
+                <button class="int-marketplace-cat active" data-category="all">
+                  <i class="ph ph-squares-four"></i> All Integrations
+                </button>
+                <button class="int-marketplace-cat" data-category="popular">
+                  <i class="ph ph-fire"></i> Popular
+                </button>
+                <button class="int-marketplace-cat" data-category="social">
+                  <i class="ph ph-share-network"></i> Social Media
+                </button>
+                <button class="int-marketplace-cat" data-category="communication">
+                  <i class="ph ph-chat-circle-text"></i> Communication
+                </button>
+                <button class="int-marketplace-cat" data-category="productivity">
+                  <i class="ph ph-lightning"></i> Productivity
+                </button>
+                <button class="int-marketplace-cat" data-category="crm">
+                  <i class="ph ph-users"></i> CRM
+                </button>
+                <button class="int-marketplace-cat" data-category="analytics">
+                  <i class="ph ph-chart-line-up"></i> Analytics
+                </button>
+                <button class="int-marketplace-cat" data-category="file-storage">
+                  <i class="ph ph-hard-drives"></i> File Storage
+                </button>
+                <button class="int-marketplace-cat" data-category="developer">
+                  <i class="ph ph-code"></i> Developer Tools
+                </button>
+                <button class="int-marketplace-cat" data-category="other">
+                  <i class="ph ph-dots-three"></i> Other
+                </button>
+              </div>
+            </aside>
+
+            <!-- Main Marketplace Content -->
+            <div class="int-marketplace-main">
+              <!-- Expand Banner -->
+              <div class="int-marketplace-banner">
+                <div class="int-marketplace-banner-content">
+                  <h3>Expand Your Workspace</h3>
+                  <p>Connect your favorite tools and automate your workflow</p>
+                  <button class="btn btn-primary btn-sm">Explore All Integrations</button>
+                </div>
+                <div class="int-marketplace-banner-icons">
+                  <div class="int-banner-icon" style="background: #EA4335;"><i class="ph ph-envelope-simple"></i></div>
+                  <div class="int-banner-icon" style="background: #25D366;"><i class="ph ph-whatsapp-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #E4405F;"><i class="ph ph-instagram-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #4A154B;"><i class="ph ph-slack-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #0A66C2;"><i class="ph ph-linkedin-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #000;"><i class="ph ph-tiktok-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #FF4500;"><i class="ph ph-reddit-logo"></i></div>
+                  <div class="int-banner-icon" style="background: #5865F2;"><i class="ph ph-discord-logo"></i></div>
+                </div>
+              </div>
+
+              <!-- Popular Integrations -->
+              <div class="int-marketplace-section">
+                <h4 class="int-marketplace-section-title">Popular Integrations</h4>
+                <div class="int-marketplace-grid" id="popularIntegrations">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Recently Connected -->
+              <div class="int-marketplace-section">
+                <h4 class="int-marketplace-section-title">Recently Connected</h4>
+                <div class="int-marketplace-grid" id="recentlyConnected">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- New Integrations -->
+              <div class="int-marketplace-section">
+                <h4 class="int-marketplace-section-title">New Integrations</h4>
+                <div class="int-marketplace-grid" id="newIntegrations">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: API Keys & Webhooks -->
+        <div class="int-tab-content" id="tab-apikeys">
+          <div class="int-api-tabs">
+            <button class="int-api-tab active" data-api-tab="apikeys">API Keys</button>
+            <button class="int-api-tab" data-api-tab="webhooks">Webhooks</button>
+            <button class="int-api-tab" data-api-tab="oauth">OAuth Apps</button>
+          </div>
+
+          <!-- API Keys Panel -->
+          <div class="int-api-panel active" id="apiPanel-apikeys">
+            <div class="int-api-header">
+              <div>
+                <h3 class="int-api-title">Your API Keys</h3>
+                <p class="int-api-subtitle">Manage your API keys to access OnePlace Enterprise API</p>
+              </div>
+              <button class="btn btn-primary" id="createApiKeyBtn">
+                <i class="ph ph-plus"></i> Create API Key
+              </button>
+            </div>
+
+            <div class="int-api-keys-list" id="apiKeysList">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="int-api-create-form" id="apiKeyCreateForm" style="display: none;">
+              <h4>Create New API Key</h4>
+              <div class="form-group">
+                <label class="form-label">Key Name</label>
+                <input type="text" class="form-input" id="apiKeyName" placeholder="e.g. Production API Key">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Environment</label>
+                <select class="form-input form-select" id="apiKeyEnv">
+                  <option value="production">Production</option>
+                  <option value="development">Development</option>
+                  <option value="testing">Testing</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Permissions</label>
+                <div class="int-permissions-list">
+                  <label class="checkbox-wrapper">
+                    <input type="checkbox" checked value="read">
+                    <span class="checkbox-label">Read</span>
+                  </label>
+                  <label class="checkbox-wrapper">
+                    <input type="checkbox" value="write">
+                    <span class="checkbox-label">Write</span>
+                  </label>
+                  <label class="checkbox-wrapper">
+                    <input type="checkbox" value="delete">
+                    <span class="checkbox-label">Delete</span>
+                  </label>
+                </div>
+              </div>
+              <div class="int-api-form-actions">
+                <button class="btn btn-secondary" id="cancelApiKeyBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveApiKeyBtn">Create API Key</button>
+              </div>
+            </div>
+
+            <div class="int-api-docs-link">
+              <a href="#" class="int-card-link">View API Documentation <i class="ph ph-arrow-right"></i></a>
+            </div>
+
+            <div class="int-api-activity">
+              <h4 class="int-api-activity-title">Recent API Activity</h4>
+              <table class="int-api-activity-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>API Key</th>
+                    <th>Status</th>
+                    <th>IP Address</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="apiActivityBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+              <a href="#" class="int-card-link int-view-all-link">View All API Logs <i class="ph ph-arrow-right"></i></a>
+            </div>
+          </div>
+
+          <!-- Webhooks Panel -->
+          <div class="int-api-panel" id="apiPanel-webhooks">
+            <div class="int-api-header">
+              <div>
+                <h3 class="int-api-title">Webhook Endpoints</h3>
+                <p class="int-api-subtitle">Configure webhooks to receive real-time events</p>
+              </div>
+              <button class="btn btn-primary" id="addWebhookBtn">
+                <i class="ph ph-plus"></i> Add Webhook
+              </button>
+            </div>
+
+            <div class="int-webhooks-list" id="webhooksList">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="int-api-create-form" id="webhookCreateForm" style="display: none;">
+              <h4>Add Webhook Endpoint</h4>
+              <div class="form-group">
+                <label class="form-label">Endpoint URL</label>
+                <input type="url" class="form-input" id="webhookUrl" placeholder="https://api.yourapp.com/webhooks">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Event Type</label>
+                <select class="form-input form-select" id="webhookEvent">
+                  <option value="user.created">User Created</option>
+                  <option value="user.updated">User Updated</option>
+                  <option value="message.received">Message Received</option>
+                  <option value="message.sent">Message Sent</option>
+                  <option value="integration.connected">Integration Connected</option>
+                  <option value="integration.disconnected">Integration Disconnected</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Secret (optional)</label>
+                <input type="text" class="form-input" id="webhookSecret" placeholder="whsec_...">
+              </div>
+              <div class="int-api-form-actions">
+                <button class="btn btn-secondary" id="cancelWebhookBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveWebhookBtn">Add Webhook</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- OAuth Apps Panel -->
+          <div class="int-api-panel" id="apiPanel-oauth">
+            <div class="int-api-header">
+              <div>
+                <h3 class="int-api-title">OAuth Applications</h3>
+                <p class="int-api-subtitle">Manage OAuth applications connected to your account</p>
+              </div>
+            </div>
+            <div class="int-oauth-apps-list" id="oauthAppsList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Integration Logs -->
+        <div class="int-tab-content" id="tab-logs">
+          <div class="int-logs-header">
+            <div class="int-logs-filters">
+              <div class="int-logs-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Search logs..." id="logsSearch">
+              </div>
+              <select class="form-input form-select int-logs-filter" id="logsIntegrationFilter">
+                <option value="all">All Integrations</option>
+              </select>
+              <select class="form-input form-select int-logs-filter" id="logsStatusFilter">
+                <option value="all">All Status</option>
+                <option value="success">Success</option>
+                <option value="failed">Failed</option>
+                <option value="pending">Pending</option>
+              </select>
+              <div class="int-logs-date">
+                <i class="ph ph-calendar"></i>
+                <input type="text" class="form-input" id="logsDateRange" value="May 19, 2025 - May 25, 2025" readonly>
+              </div>
+            </div>
+          </div>
+
+          <div class="int-logs-stats">
+            <div class="int-logs-stat">
+              <div class="int-logs-stat-icon"><i class="ph ph-clock"></i></div>
+              <div class="int-logs-stat-info">
+                <span class="int-logs-stat-value" id="logsTotalEvents">2,458</span>
+                <span class="int-logs-stat-label">Total Events</span>
+              </div>
+              <span class="int-logs-stat-trend trend-up">18% <span>vs last 7 days</span></span>
+            </div>
+            <div class="int-logs-stat">
+              <div class="int-logs-stat-icon" style="background: var(--success-50); color: var(--success-600);"><i class="ph ph-check-circle"></i></div>
+              <div class="int-logs-stat-info">
+                <span class="int-logs-stat-value" id="logsSuccessful">2,245</span>
+                <span class="int-logs-stat-label">Successful</span>
+              </div>
+              <span class="int-logs-stat-trend trend-up">91.3%</span>
+            </div>
+            <div class="int-logs-stat">
+              <div class="int-logs-stat-icon" style="background: var(--error-50); color: var(--error-600);"><i class="ph ph-x-circle"></i></div>
+              <div class="int-logs-stat-info">
+                <span class="int-logs-stat-value" id="logsFailed">156</span>
+                <span class="int-logs-stat-label">Failed</span>
+              </div>
+              <span class="int-logs-stat-trend trend-down">6.3%</span>
+            </div>
+            <div class="int-logs-stat">
+              <div class="int-logs-stat-icon" style="background: var(--warning-50); color: var(--warning-600);"><i class="ph ph-clock-counter-clockwise"></i></div>
+              <div class="int-logs-stat-info">
+                <span class="int-logs-stat-value" id="logsPending">57</span>
+                <span class="int-logs-stat-label">Pending</span>
+              </div>
+              <span class="int-logs-stat-trend trend-down">2.4%</span>
+            </div>
+            <div class="int-logs-stat">
+              <div class="int-logs-stat-icon" style="background: var(--primary-50); color: var(--primary-600);"><i class="ph ph-timer"></i></div>
+              <div class="int-logs-stat-info">
+                <span class="int-logs-stat-value" id="logsAvgResponse">1.2s</span>
+                <span class="int-logs-stat-label">Avg. Response Time</span>
+              </div>
+              <span class="int-logs-stat-trend trend-up">12% <span>vs last 7 days</span></span>
+            </div>
+          </div>
+
+          <div class="int-logs-table-wrap">
+            <table class="int-logs-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Integration</th>
+                  <th>Event</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                  <th>Duration</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="int-logs-footer">
+            <div class="int-pagination" id="logsPagination">
+              <button class="int-page-btn" disabled><i class="ph ph-caret-left"></i></button>
+              <button class="int-page-btn active">1</button>
+              <button class="int-page-btn">2</button>
+              <button class="int-page-btn">3</button>
+              <span class="int-page-ellipsis">...</span>
+              <button class="int-page-btn">25</button>
+              <button class="int-page-btn"><i class="ph ph-caret-right"></i></button>
+            </div>
+            <div class="int-logs-per-page">
+              <select class="form-input form-select" id="logsPerPage">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Log Details Panel -->
+          <div class="int-log-details" id="logDetailsPanel">
+            <div class="int-log-details-header">
+              <h4>Log Details</h4>
+              <button class="int-log-details-close" id="closeLogDetails"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="int-log-details-body">
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Event</span>
+                <span class="int-log-detail-value" id="detailEvent">Email Sync</span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Integration</span>
+                <span class="int-log-detail-value" id="detailIntegration">Gmail</span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Status</span>
+                <span class="int-log-detail-value" id="detailStatus"><span class="int-status-badge int-status-success">Success</span></span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Time</span>
+                <span class="int-log-detail-value" id="detailTime">May 25, 2025 10:30 AM</span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Duration</span>
+                <span class="int-log-detail-value" id="detailDuration">1.2s</span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Details</span>
+                <span class="int-log-detail-value" id="detailDetails">1,245 emails were successfully synced from Gmail account.</span>
+              </div>
+              <div class="int-log-detail-row">
+                <span class="int-log-detail-label">Request ID</span>
+                <span class="int-log-detail-value int-log-detail-mono" id="detailRequestId">req_1234567890</span>
+              </div>
+            </div>
+            <div class="int-log-details-actions">
+              <button class="btn btn-secondary btn-sm" id="retryLogBtn"><i class="ph ph-arrow-counter-clockwise"></i> Retry</button>
+              <button class="btn btn-primary btn-sm" id="viewFullLogBtn">View Full Log</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Connect Integration Modal -->
+  <div class="int-modal-overlay" id="connectModal">
+    <div class="int-modal">
+      <div class="int-modal-header">
+        <h3 class="int-modal-title" id="connectModalTitle">Connect Integration</h3>
+        <button class="int-modal-close" id="closeConnectModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="int-modal-body">
+        <div class="int-modal-integration" id="connectModalIntegration">
+          <div class="int-modal-icon" id="connectModalIcon"><i class="ph ph-envelope-simple"></i></div>
+          <div class="int-modal-info">
+            <h4 id="connectModalName">Gmail</h4>
+            <p id="connectModalDesc">Connect your Gmail account to sync emails and manage conversations.</p>
+          </div>
+        </div>
+        <div class="int-modal-steps" id="connectModalSteps">
+          <div class="int-modal-step active">
+            <div class="int-modal-step-num">1</div>
+            <span>Authorize</span>
+          </div>
+          <div class="int-modal-step">
+            <div class="int-modal-step-num">2</div>
+            <span>Permissions</span>
+          </div>
+          <div class="int-modal-step">
+            <div class="int-modal-step-num">3</div>
+            <span>Connect</span>
+          </div>
+        </div>
+        <div class="int-modal-form" id="connectModalForm">
+          <p class="int-modal-text">You will be redirected to Gmail to authorize OnePlace Enterprise to access your account.</p>
+          <div class="int-modal-permissions">
+            <h5>Required Permissions:</h5>
+            <ul>
+              <li><i class="ph ph-check"></i> Read emails</li>
+              <li><i class="ph ph-check"></i> Send emails</li>
+              <li><i class="ph ph-check"></i> Manage labels</li>
+            </ul>
+          </div>
+        </div>
+        <div class="int-modal-loading" id="connectModalLoading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Connecting to Gmail...</p>
+        </div>
+        <div class="int-modal-success" id="connectModalSuccess" style="display: none;">
+          <div class="int-modal-success-icon"><i class="ph ph-check-circle"></i></div>
+          <h4>Successfully Connected!</h4>
+          <p>Gmail has been connected to your OnePlace Enterprise account.</p>
+        </div>
+      </div>
+      <div class="int-modal-footer">
+        <button class="btn btn-secondary" id="connectModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="connectModalAction">Connect Gmail</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disconnect Confirmation Modal -->
+  <div class="int-modal-overlay" id="disconnectModal">
+    <div class="int-modal int-modal-sm">
+      <div class="int-modal-header">
+        <h3 class="int-modal-title">Disconnect Integration</h3>
+        <button class="int-modal-close" id="closeDisconnectModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="int-modal-body">
+        <div class="int-modal-warning">
+          <i class="ph ph-warning-circle"></i>
+          <p>Are you sure you want to disconnect <strong id="disconnectModalName">Gmail</strong>? All synced data will be removed and you will no longer receive updates.</p>
+        </div>
+      </div>
+      <div class="int-modal-footer">
+        <button class="btn btn-secondary" id="disconnectModalCancel">Cancel</button>
+        <button class="btn btn-danger" id="disconnectModalConfirm">Disconnect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sync Now Modal -->
+  <div class="int-modal-overlay" id="syncModal">
+    <div class="int-modal int-modal-sm">
+      <div class="int-modal-header">
+        <h3 class="int-modal-title">Sync Integration</h3>
+        <button class="int-modal-close" id="closeSyncModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="int-modal-body">
+        <div class="int-modal-sync-options">
+          <label class="int-sync-option">
+            <input type="radio" name="syncType" value="full" checked>
+            <div class="int-sync-option-content">
+              <strong>Full Sync</strong>
+              <span>Sync all data from the beginning</span>
+            </div>
+          </label>
+          <label class="int-sync-option">
+            <input type="radio" name="syncType" value="incremental">
+            <div class="int-sync-option-content">
+              <strong>Incremental Sync</strong>
+              <span>Sync only new data since last sync</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="int-modal-footer">
+        <button class="btn btn-secondary" id="syncModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="syncModalConfirm">Start Sync</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/integrations.js"></script>
+</body>
+</html>

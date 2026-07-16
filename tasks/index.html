@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/tasks.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- Content -->
+      <div class="dashboard-content">
+        <!-- Page Title -->
+        <div class="tasks-page-title">
+          <div class="tasks-title-left">
+            <h1>Tasks</h1>
+            <p>Organize, track, and manage your tasks efficiently</p>
+          </div>
+          <div class="tasks-title-right">
+            <div class="tasks-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="tasks-search" placeholder="Search tasks, projects, people..." autocomplete="off">
+              <span class="tasks-search-kbd">⌘K</span>
+            </div>
+            <button class="btn btn-primary" id="btn-new-task">
+              <i class="ph ph-plus"></i> New Task
+              <i class="ph ph-caret-down" style="margin-left:4px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="tasks-stats-row" id="tasks-stats-row">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- View Tabs -->
+        <div class="tasks-view-bar">
+          <div class="tasks-view-tabs" id="tasks-view-tabs">
+            <button class="tasks-view-tab active" data-view="kanban">
+              <i class="ph ph-squares-four"></i> Kanban Board
+            </button>
+            <button class="tasks-view-tab" data-view="list">
+              <i class="ph ph-list-dashes"></i> List View
+            </button>
+            <button class="tasks-view-tab" data-view="calendar">
+              <i class="ph ph-calendar-blank"></i> Calendar View
+            </button>
+            <button class="tasks-view-tab" data-view="my-tasks">
+              <i class="ph ph-user"></i> My Tasks
+            </button>
+            <button class="tasks-view-tab" data-view="team">
+              <i class="ph ph-users"></i> Team Tasks
+            </button>
+            <button class="tasks-view-tab" data-view="completed">
+              <i class="ph ph-check-circle"></i> Completed
+            </button>
+          </div>
+          <div class="tasks-view-actions">
+            <button class="tasks-view-action-btn" id="btn-filters" title="Filters">
+              <i class="ph ph-funnel"></i> Filters
+            </button>
+            <button class="tasks-view-action-btn" id="btn-sort" title="Sort">
+              <i class="ph ph-arrows-down-up"></i> Sort
+            </button>
+            <button class="tasks-view-action-btn" id="btn-more" title="More options">
+              <i class="ph ph-dots-three-vertical"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Area -->
+        <div class="tasks-main-area">
+          <!-- Left: Task Views -->
+          <div class="tasks-left-panel" id="tasks-container">
+            <!-- Injected by JS based on current view -->
+          </div>
+
+          <!-- Right: Sidebar -->
+          <div class="tasks-right-sidebar">
+            <!-- Mini Calendar -->
+            <div class="tasks-mini-calendar">
+              <div class="mini-calendar-header">
+                <span class="mini-cal-month" id="mini-cal-month">May 2024</span>
+                <div class="mini-cal-nav-group">
+                  <button class="mini-cal-nav" id="mini-prev-month"><i class="ph ph-caret-left"></i></button>
+                  <button class="mini-cal-nav" id="mini-next-month"><i class="ph ph-caret-right"></i></button>
+                </div>
+              </div>
+              <div class="mini-calendar-grid" id="mini-calendar-grid"></div>
+            </div>
+
+            <!-- My Tasks Sidebar -->
+            <div class="tasks-my-tasks-sidebar">
+              <div class="tasks-sidebar-header">
+                <h4>My Tasks</h4>
+                <a href="#" class="tasks-sidebar-link" id="view-all-my-tasks">View All</a>
+              </div>
+              <div class="tasks-my-tasks-list" id="my-tasks-sidebar-list"></div>
+            </div>
+
+            <!-- Task Overview -->
+            <div class="tasks-overview-sidebar">
+              <div class="tasks-sidebar-header">
+                <h4>Task Overview</h4>
+              </div>
+              <div class="tasks-overview-chart" id="tasks-overview-chart"></div>
+              <div class="tasks-overview-legend" id="tasks-overview-legend"></div>
+            </div>
+
+            <!-- Quick Create -->
+            <div class="tasks-quick-create">
+              <h4>Quick Create</h4>
+              <div class="quick-create-grid">
+                <button class="quick-create-btn" data-type="task">
+                  <i class="ph ph-check-square"></i>
+                  <span>Task</span>
+                </button>
+                <button class="quick-create-btn" data-type="subtask">
+                  <i class="ph ph-list-checks"></i>
+                  <span>Subtask</span>
+                </button>
+                <button class="quick-create-btn" data-type="project">
+                  <i class="ph ph-folder"></i>
+                  <span>Project</span>
+                </button>
+                <button class="quick-create-btn" data-type="reminder">
+                  <i class="ph ph-bell"></i>
+                  <span>Reminder</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Panels -->
+        <div class="tasks-bottom-panels">
+          <!-- Upcoming Tasks -->
+          <div class="tasks-panel">
+            <div class="tasks-panel-header">
+              <h3>Upcoming Tasks</h3>
+              <a href="#" class="tasks-panel-link" id="view-all-upcoming">View All</a>
+            </div>
+            <div class="tasks-upcoming-list" id="upcoming-tasks-list"></div>
+          </div>
+
+          <!-- Tasks by Priority -->
+          <div class="tasks-panel">
+            <div class="tasks-panel-header">
+              <h3>Tasks by Priority</h3>
+            </div>
+            <div class="tasks-priority-chart" id="tasks-priority-chart"></div>
+            <div class="tasks-priority-legend" id="tasks-priority-legend"></div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="tasks-panel">
+            <div class="tasks-panel-header">
+              <h3>Recent Activity</h3>
+              <a href="#" class="tasks-panel-link" id="view-all-activity">View All</a>
+            </div>
+            <div class="tasks-activity-list" id="recent-activity-list"></div>
+          </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="tasks-projects-section">
+          <div class="tasks-projects-header">
+            <h3>Projects</h3>
+            <a href="#" class="tasks-panel-link" id="view-all-projects">View All Projects</a>
+          </div>
+          <div class="tasks-projects-grid" id="tasks-projects-grid"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="tasks-modal-overlay" id="task-modal-overlay">
+    <div class="tasks-modal" id="task-modal">
+      <div class="tasks-modal-header">
+        <h3 id="modal-title">New Task</h3>
+        <button class="tasks-modal-close" id="modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="tasks-modal-body" id="modal-body">
+        <form id="task-form">
+          <input type="hidden" id="task-id">
+          <div class="form-group">
+            <label class="form-label">Task Title</label>
+            <input type="text" class="form-input" id="task-title" placeholder="Enter task title" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-input form-select" id="task-status">
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">Review</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Priority</label>
+              <select class="form-input form-select" id="task-priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Due Date</label>
+              <input type="date" class="form-input" id="task-due-date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Assignee</label>
+              <select class="form-input form-select" id="task-assignee"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Project</label>
+            <select class="form-input form-select" id="task-project"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <input type="text" class="form-input" id="task-tags" placeholder="Add tags separated by commas">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="task-description" rows="3" placeholder="Add description..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subtasks</label>
+            <div id="subtasks-container"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="add-subtask-btn" style="margin-top:8px;">
+              <i class="ph ph-plus"></i> Add Subtask
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="task-recurring">
+              <span class="checkbox-label">Recurring Task</span>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="tasks-modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-danger" id="modal-delete" style="display:none;">Delete</button>
+        <button class="btn btn-primary" id="modal-save">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Details Modal -->
+  <div class="tasks-modal-overlay" id="task-details-overlay">
+    <div class="tasks-modal tasks-modal-sm" id="task-details-modal">
+      <div class="tasks-modal-header">
+        <h3>Task Details</h3>
+        <button class="tasks-modal-close" id="details-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="tasks-modal-body" id="details-body"></div>
+      <div class="tasks-modal-footer">
+        <button class="btn btn-secondary" id="details-close-btn">Close</button>
+        <button class="btn btn-primary" id="details-edit-btn">Edit Task</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/tasks.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.tasksApp = new TasksApp();
+    });
+  </script>
+</body>
+</html>

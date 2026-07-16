@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Manager — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/files.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <i class="ph ph-list"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <ul class="nav-list">
+            <li><a href="../dashboard/main-dashboard.html" class="nav-link"><i class="ph ph-squares-four"></i><span>Dashboard</span></a></li>
+            <li><a href="../dashboard/unified-inbox.html" class="nav-link"><i class="ph ph-tray"></i><span>Unified Inbox</span><span class="nav-badge">24</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <ul class="nav-list">
+            <li><a href="../gmail/index.html" class="nav-link"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a></li>
+            <li><a href="../whatsapp/index.html" class="nav-link"><i class="ph ph-chat-circle-text"></i><span>WhatsApp Business</span><span class="nav-badge">8</span></a></li>
+            <li><a href="../instagram/index.html" class="nav-link"><i class="ph ph-camera"></i><span>Instagram</span><span class="nav-badge">16</span></a></li>
+            <li><a href="../tiktok/index.html" class="nav-link"><i class="ph ph-music-notes"></i><span>TikTok</span><span class="nav-badge">23</span></a></li>
+            <li><a href="../x/index.html" class="nav-link"><i class="ph ph-x-logo"></i><span>X (Twitter)</span><span class="nav-badge">34</span></a></li>
+            <li><a href="../linkedin/index.html" class="nav-link"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span><span class="nav-badge">26</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Business</span>
+          <ul class="nav-list">
+            <li><a href="../crm/index.html" class="nav-link"><i class="ph ph-users-three"></i><span>CRM</span></a></li>
+            <li><a href="../support/index.html" class="nav-link"><i class="ph ph-headset"></i><span>Customer Support</span></a></li>
+            <li><a href="../calendar/index.html" class="nav-link"><i class="ph ph-calendar"></i><span>Calendar</span></a></li>
+            <li><a href="../tasks/index.html" class="nav-link"><i class="ph ph-check-square"></i><span>Tasks</span></a></li>
+            <li><a href="../team/index.html" class="nav-link"><i class="ph ph-users"></i><span>Team Management</span></a></li>
+            <li><a href="../workflow/index.html" class="nav-link"><i class="ph ph-flow-arrow"></i><span>Workflow</span></a></li>
+            <li><a href="../ai/index.html" class="nav-link"><i class="ph ph-sparkle"></i><span>AI</span></a></li>
+            <li><a href="../notifications/notifications.html" class="nav-link"><i class="ph ph-bell"></i><span>Notifications</span><span class="nav-badge">12</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Analytics</span>
+          <ul class="nav-list">
+            <li><a href="../reports/index.html" class="nav-link"><i class="ph ph-chart-bar"></i><span>Reports</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Files</span>
+          <ul class="nav-list">
+            <li><a href="index.html" class="nav-link active"><i class="ph ph-folder-open"></i><span>File Manager</span></a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <ul class="nav-list">
+            <li><a href="../settings/index.html" class="nav-link"><i class="ph ph-gear"></i><span>Settings</span></a></li>
+            <li><a href="../help/index.html" class="nav-link"><i class="ph ph-question"></i><span>Help & Support</span></a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=40" alt="Alex Morgan" class="user-avatar">
+          <div class="user-info">
+            <span class="user-name">Alex Morgan</span>
+            <span class="user-role">Administrator</span>
+          </div>
+          <button class="user-menu-btn" aria-label="User menu"><i class="ph ph-caret-down"></i></button>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme">
+          <i class="ph ph-moon" id="themeIcon"></i>
+          <span>Light Mode</span>
+          <i class="ph ph-caret-right"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title">File Manager</h1>
+          <p class="page-subtitle">Store, organize and manage all your files in one place</p>
+        </div>
+        <div class="header-right">
+          <div class="search-bar">
+            <i class="ph ph-magnifying-glass search-icon"></i>
+            <input type="text" placeholder="Search files, folders..." id="globalSearch">
+            <kbd class="search-shortcut">⌘K</kbd>
+          </div>
+          <div class="header-actions">
+            <button class="header-btn" id="uploadBtn" aria-label="Upload">
+              <i class="ph ph-upload-simple"></i>
+              <span>Upload</span>
+              <i class="ph ph-caret-down"></i>
+            </button>
+            <button class="header-btn icon-only" aria-label="Notifications">
+              <i class="ph ph-bell"></i>
+              <span class="header-badge">3</span>
+            </button>
+            <button class="header-btn icon-only" aria-label="Messages">
+              <i class="ph ph-chat-circle-dots"></i>
+            </button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=36" alt="Alex Morgan">
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- File Manager Content -->
+      <div class="files-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #818cf8, #6366f1);">
+              <i class="ph ph-hard-drives"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="totalStorage">256.8 GB</span>
+              <span class="stat-label">of 1 TB used</span>
+            </div>
+            <div class="stat-progress">
+              <div class="stat-progress-bar" style="width: 25.68%; background: linear-gradient(90deg, #6366f1, #818cf8);"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #34d399, #10b981);">
+              <i class="ph ph-files"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="myFilesCount">1,248</span>
+              <span class="stat-label">Files</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+              <i class="ph ph-folders"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="foldersCount">86</span>
+              <span class="stat-label">Folders</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);">
+              <i class="ph ph-share-network"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="sharedFilesCount">342</span>
+              <span class="stat-label">Shared Files</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #a78bfa, #8b5cf6);">
+              <i class="ph ph-clock-counter-clockwise"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="recentFilesCount">78</span>
+              <span class="stat-label">Recent Files</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f87171, #ef4444);">
+              <i class="ph ph-trash"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="trashCount">12</span>
+              <span class="stat-label">Trash</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="files-layout">
+          <!-- Left: File Explorer -->
+          <div class="files-explorer">
+            <!-- Tabs -->
+            <div class="files-tabs">
+              <button class="files-tab active" data-tab="my-files"><span>My Files</span></button>
+              <button class="files-tab" data-tab="shared"><span>Shared with Me</span></button>
+              <button class="files-tab" data-tab="recent"><span>Recent</span></button>
+              <button class="files-tab" data-tab="starred"><span>Starred</span></button>
+              <button class="files-tab" data-tab="trash"><span>Trash</span></button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="files-toolbar">
+              <div class="toolbar-left">
+                <label class="checkbox-wrapper toolbar-checkbox">
+                  <input type="checkbox" id="selectAll">
+                </label>
+                <button class="btn btn-secondary btn-sm" id="newFolderBtn">
+                  <i class="ph ph-plus"></i>
+                  <span>New Folder</span>
+                </button>
+                <div class="toolbar-actions" id="toolbarActions">
+                  <button class="toolbar-action" data-action="move" title="Move"><i class="ph ph-arrows-left-right"></i></button>
+                  <button class="toolbar-action" data-action="copy" title="Copy"><i class="ph ph-copy"></i></button>
+                  <button class="toolbar-action" data-action="share" title="Share"><i class="ph ph-share-network"></i></button>
+                  <button class="toolbar-action" data-action="download" title="Download"><i class="ph ph-download-simple"></i></button>
+                  <button class="toolbar-action" data-action="delete" title="Delete"><i class="ph ph-trash"></i></button>
+                  <button class="toolbar-action" data-action="rename" title="Rename"><i class="ph ph-pencil-simple"></i></button>
+                </div>
+              </div>
+              <div class="toolbar-right">
+                <button class="toolbar-btn" id="filterBtn">
+                  <i class="ph ph-funnel"></i>
+                  <span>Filter</span>
+                </button>
+                <div class="sort-dropdown">
+                  <button class="toolbar-btn" id="sortBtn">
+                    <span>Sort by: Name</span>
+                    <i class="ph ph-caret-down"></i>
+                  </button>
+                  <div class="dropdown-menu" id="sortMenu">
+                    <button class="dropdown-item active" data-sort="name">Name</button>
+                    <button class="dropdown-item" data-sort="date">Date Modified</button>
+                    <button class="dropdown-item" data-sort="size">Size</button>
+                    <button class="dropdown-item" data-sort="type">Type</button>
+                  </div>
+                </div>
+                <div class="view-toggle">
+                  <button class="view-btn active" data-view="grid" title="Grid view"><i class="ph ph-squares-four"></i></button>
+                  <button class="view-btn" data-view="list" title="List view"><i class="ph ph-list-dashes"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Breadcrumb -->
+            <div class="files-breadcrumb" id="breadcrumb">
+              <span class="breadcrumb-item" data-folder="root">My Files</span>
+            </div>
+
+            <!-- Folders Section -->
+            <div class="section-header">
+              <h3>Folders</h3>
+            </div>
+            <div class="folders-grid" id="foldersGrid"></div>
+
+            <!-- Files Section -->
+            <div class="section-header">
+              <h3>Files</h3>
+            </div>
+            <div class="files-grid" id="filesGrid"></div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+              <div class="empty-icon"><i class="ph ph-folder-open"></i></div>
+              <h4>No files found</h4>
+              <p>Upload files or create a folder to get started</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="files-pagination" id="pagination">
+              <span class="pagination-info">Showing <span id="showingStart">1</span> to <span id="showingEnd">12</span> of <span id="totalItems">248</span> files</span>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="prevPage" disabled><i class="ph ph-caret-left"></i></button>
+                <button class="pagination-btn active" data-page="1">1</button>
+                <button class="pagination-btn" data-page="2">2</button>
+                <button class="pagination-btn" data-page="3">3</button>
+                <button class="pagination-btn" data-page="4">4</button>
+                <button class="pagination-btn" data-page="5">5</button>
+                <span class="pagination-ellipsis">...</span>
+                <button class="pagination-btn" data-page="21">21</button>
+                <button class="pagination-btn" id="nextPage"><i class="ph ph-caret-right"></i></button>
+              </div>
+              <div class="pagination-size">
+                <select id="pageSize">
+                  <option value="12">12 per page</option>
+                  <option value="24">24 per page</option>
+                  <option value="48">48 per page</option>
+                  <option value="96">96 per page</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Sidebar Panel -->
+          <aside class="files-sidebar-panel">
+            <!-- Storage Overview -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <h4>Storage Overview</h4>
+                <a href="#" class="panel-link">View Details</a>
+              </div>
+              <div class="storage-chart">
+                <div class="storage-donut">
+                  <svg viewBox="0 0 120 120" class="donut-chart">
+                    <circle class="donut-bg" cx="60" cy="60" r="50"/>
+                    <circle class="donut-segment documents" cx="60" cy="60" r="50" stroke-dasharray="78.5 235.5" stroke-dashoffset="0"/>
+                    <circle class="donut-segment images" cx="60" cy="60" r="50" stroke-dasharray="47.1 266.9" stroke-dashoffset="-78.5"/>
+                    <circle class="donut-segment videos" cx="60" cy="60" r="50" stroke-dasharray="31.4 282.6" stroke-dashoffset="-125.6"/>
+                    <circle class="donut-segment others" cx="60" cy="60" r="50" stroke-dasharray="78.5 235.5" stroke-dashoffset="-157"/>
+                  </svg>
+                  <div class="donut-center">
+                    <span class="donut-value">256.8</span>
+                    <span class="donut-unit">GB</span>
+                    <span class="donut-label">Used</span>
+                  </div>
+                </div>
+              </div>
+              <div class="storage-legend">
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #6366f1;"></span>
+                  <span class="legend-label">Documents</span>
+                  <span class="legend-value">120.4 GB</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #3b82f6;"></span>
+                  <span class="legend-label">Images</span>
+                  <span class="legend-value">45.8 GB</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #10b981;"></span>
+                  <span class="legend-label">Videos</span>
+                  <span class="legend-value">32.6 GB</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #e5e7eb;"></span>
+                  <span class="legend-label">Others</span>
+                  <span class="legend-value">58.0 GB</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <h4>Quick Actions</h4>
+              </div>
+              <div class="quick-actions-grid">
+                <button class="quick-action" id="quickUpload">
+                  <div class="quick-action-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-cloud-arrow-up"></i></div>
+                  <span>Upload Files</span>
+                </button>
+                <button class="quick-action" id="quickFolder">
+                  <div class="quick-action-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-folder-plus"></i></div>
+                  <span>New Folder</span>
+                </button>
+                <button class="quick-action" id="quickShare">
+                  <div class="quick-action-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-share-network"></i></div>
+                  <span>Share File</span>
+                </button>
+                <button class="quick-action" id="quickRequest">
+                  <div class="quick-action-icon" style="background: #eef2ff; color: #6366f1;"><i class="ph ph-file-arrow-down"></i></div>
+                  <span>Request Files</span>
+                </button>
+                <button class="quick-action" id="quickTrash">
+                  <div class="quick-action-icon" style="background: #fef2f2; color: #ef4444;"><i class="ph ph-trash"></i></div>
+                  <span>Trash</span>
+                </button>
+                <button class="quick-action" id="quickSettings">
+                  <div class="quick-action-icon" style="background: #f3f4f6; color: #6b7280;"><i class="ph ph-gear"></i></div>
+                  <span>Storage Settings</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <h4>Recent Activity</h4>
+                <a href="#" class="panel-link">View All</a>
+              </div>
+              <div class="activity-list" id="activityList"></div>
+            </div>
+
+            <!-- File Types -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <h4>File Types</h4>
+                <a href="#" class="panel-link">View All</a>
+              </div>
+              <div class="file-types-list">
+                <div class="file-type-item">
+                  <div class="file-type-icon" style="background: #dbeafe; color: #3b82f6;"><i class="ph ph-file-doc"></i></div>
+                  <div class="file-type-info">
+                    <span class="file-type-name">Documents</span>
+                    <span class="file-type-count">680 files</span>
+                  </div>
+                </div>
+                <div class="file-type-item">
+                  <div class="file-type-icon" style="background: #fce7f3; color: #ec4899;"><i class="ph ph-file-image"></i></div>
+                  <div class="file-type-info">
+                    <span class="file-type-name">Images</span>
+                    <span class="file-type-count">420 files</span>
+                  </div>
+                </div>
+                <div class="file-type-item">
+                  <div class="file-type-icon" style="background: #d1fae5; color: #10b981;"><i class="ph ph-file-video"></i></div>
+                  <div class="file-type-info">
+                    <span class="file-type-name">Videos</span>
+                    <span class="file-type-count">132 files</span>
+                  </div>
+                </div>
+                <div class="file-type-item">
+                  <div class="file-type-icon" style="background: #fef3c7; color: #f59e0b;"><i class="ph ph-file-audio"></i></div>
+                  <div class="file-type-info">
+                    <span class="file-type-name">Audio</span>
+                    <span class="file-type-count">86 files</span>
+                  </div>
+                </div>
+                <div class="file-type-item">
+                  <div class="file-type-icon" style="background: #f3f4f6; color: #6b7280;"><i class="ph ph-file"></i></div>
+                  <div class="file-type-info">
+                    <span class="file-type-name">Others</span>
+                    <span class="file-type-count">148 files</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Upload Files</h3>
+        <button class="modal-close" data-modal="uploadModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-dropzone" id="uploadDropzone">
+          <div class="upload-dropzone-content">
+            <div class="upload-dropzone-icon"><i class="ph ph-cloud-arrow-up"></i></div>
+            <p class="upload-dropzone-title">Drag & drop files here</p>
+            <p class="upload-dropzone-subtitle">or click to browse files from your computer</p>
+            <button class="btn btn-secondary btn-sm">Browse Files</button>
+          </div>
+          <input type="file" id="fileInput" multiple hidden>
+        </div>
+        <div class="upload-progress-list" id="uploadProgressList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="uploadModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmUpload">Upload Files</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Folder Modal -->
+  <div class="modal-overlay" id="newFolderModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Create New Folder</h3>
+        <button class="modal-close" data-modal="newFolderModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Folder Name</label>
+          <input type="text" class="form-input" id="folderNameInput" placeholder="Enter folder name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <select class="form-input form-select" id="folderLocation">
+            <option value="root">My Files</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="newFolderModal">Cancel</button>
+        <button class="btn btn-primary" id="createFolderBtn">Create Folder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Modal -->
+  <div class="modal-overlay" id="renameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Rename</h3>
+        <button class="modal-close" data-modal="renameModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" id="renameInput" placeholder="Enter new name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="renameModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmRename">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Share File</h3>
+        <button class="modal-close" data-modal="shareModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Share with</label>
+          <input type="text" class="form-input" id="shareEmailInput" placeholder="Enter email addresses">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Permission</label>
+          <div class="share-permissions">
+            <label class="permission-option">
+              <input type="radio" name="permission" value="view" checked>
+              <span class="permission-icon"><i class="ph ph-eye"></i></span>
+              <div class="permission-info">
+                <span class="permission-title">Can view</span>
+                <span class="permission-desc">View and download only</span>
+              </div>
+            </label>
+            <label class="permission-option">
+              <input type="radio" name="permission" value="edit">
+              <span class="permission-icon"><i class="ph ph-pencil-simple"></i></span>
+              <div class="permission-info">
+                <span class="permission-title">Can edit</span>
+                <span class="permission-desc">View, download, and edit</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="shareModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmShare">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Move Modal -->
+  <div class="modal-overlay" id="moveModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Move to Folder</h3>
+        <button class="modal-close" data-modal="moveModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="folder-tree" id="moveFolderTree"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="moveModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmMove">Move</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div class="modal-overlay" id="previewModal">
+    <div class="modal modal-xl">
+      <div class="modal-header">
+        <div class="preview-header-info">
+          <div class="preview-file-icon" id="previewFileIcon"></div>
+          <div class="preview-file-meta">
+            <h3 id="previewFileName">File Name</h3>
+            <span id="previewFileDetails">2.4 MB • PDF • May 25, 2025</span>
+          </div>
+        </div>
+        <div class="preview-header-actions">
+          <button class="preview-action" title="Download"><i class="ph ph-download-simple"></i></button>
+          <button class="preview-action" title="Share"><i class="ph ph-share-network"></i></button>
+          <button class="preview-action" title="More"><i class="ph ph-dots-three-vertical"></i></button>
+          <button class="modal-close" data-modal="previewModal"><i class="ph ph-x"></i></button>
+        </div>
+      </div>
+      <div class="modal-body preview-body">
+        <div class="preview-content" id="previewContent"></div>
+        <div class="preview-sidebar">
+          <div class="preview-detail-group">
+            <h5>Information</h5>
+            <div class="preview-detail-row">
+              <span class="preview-detail-label">Type</span>
+              <span class="preview-detail-value" id="previewType">PDF Document</span>
+            </div>
+            <div class="preview-detail-row">
+              <span class="preview-detail-label">Size</span>
+              <span class="preview-detail-value" id="previewSize">2.4 MB</span>
+            </div>
+            <div class="preview-detail-row">
+              <span class="preview-detail-label">Created</span>
+              <span class="preview-detail-value" id="previewCreated">May 25, 2025</span>
+            </div>
+            <div class="preview-detail-row">
+              <span class="preview-detail-label">Modified</span>
+              <span class="preview-detail-value" id="previewModified">May 25, 2025</span>
+            </div>
+            <div class="preview-detail-row">
+              <span class="preview-detail-label">Owner</span>
+              <span class="preview-detail-value" id="previewOwner">Alex Morgan</span>
+            </div>
+          </div>
+          <div class="preview-detail-group">
+            <h5>Shared With</h5>
+            <div class="preview-shared-list" id="previewSharedList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal modal-sm">
+      <div class="modal-body text-center">
+        <div class="delete-icon"><i class="ph ph-trash"></i></div>
+        <h3>Move to Trash?</h3>
+        <p id="deleteMessage">This file will be moved to trash. You can restore it later.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-modal="deleteModal">Cancel</button>
+        <button class="btn btn-danger" id="confirmDelete">Move to Trash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu" id="contextMenu">
+    <button class="context-item" data-action="open"><i class="ph ph-eye"></i><span>Open</span></button>
+    <button class="context-item" data-action="preview"><i class="ph ph-frame-corners"></i><span>Preview</span></button>
+    <button class="context-item" data-action="share"><i class="ph ph-share-network"></i><span>Share</span></button>
+    <button class="context-item" data-action="download"><i class="ph ph-download-simple"></i><span>Download</span></button>
+    <div class="context-divider"></div>
+    <button class="context-item" data-action="rename"><i class="ph ph-pencil-simple"></i><span>Rename</span></button>
+    <button class="context-item" data-action="copy"><i class="ph ph-copy"></i><span>Copy</span></button>
+    <button class="context-item" data-action="move"><i class="ph ph-arrows-left-right"></i><span>Move</span></button>
+    <div class="context-divider"></div>
+    <button class="context-item" data-action="star"><i class="ph ph-star"></i><span>Add to Starred</span></button>
+    <button class="context-item danger" data-action="delete"><i class="ph ph-trash"></i><span>Move to Trash</span></button>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/files.js"></script>
+</body>
+</html>

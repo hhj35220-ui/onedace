@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/linkedin.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="ph ph-list"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header linkedin-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="linkedin-header-icon"><i class="ph ph-linkedin-logo"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">LinkedIn</h1>
+              <p class="header-subtitle">Track and manage your LinkedIn presence and conversations</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search linkedin-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="linkedin-search" placeholder="Search anything..." autocomplete="off">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot" id="notif-dot"></span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- LinkedIn Navigation Tabs -->
+      <nav class="linkedin-tabs" aria-label="LinkedIn sections">
+        <div class="linkedin-tabs-inner">
+          <a href="index.html" class="linkedin-tab active" data-page="overview">
+            <i class="ph ph-squares-four"></i>
+            <span>Overview</span>
+          </a>
+          <a href="messages.html" class="linkedin-tab" data-page="messages">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>Messages</span>
+            <span class="tab-badge" id="msg-badge">24</span>
+          </a>
+          <a href="company-inbox.html" class="linkedin-tab" data-page="company-inbox">
+            <i class="ph ph-buildings"></i>
+            <span>Company Inbox</span>
+            <span class="tab-badge" id="company-badge">8</span>
+          </a>
+          <a href="connection-requests.html" class="linkedin-tab" data-page="connection-requests">
+            <i class="ph ph-user-plus"></i>
+            <span>Connection Requests</span>
+            <span class="tab-badge" id="conn-badge">47</span>
+          </a>
+          <a href="mentions.html" class="linkedin-tab" data-page="mentions">
+            <i class="ph ph-at"></i>
+            <span>Mentions</span>
+            <span class="tab-badge" id="mention-badge">16</span>
+          </a>
+          <a href="post-engagements.html" class="linkedin-tab" data-page="post-engagements">
+            <i class="ph ph-heart"></i>
+            <span>Post Engagements</span>
+            <span class="tab-badge" id="engage-badge">23</span>
+          </a>
+          <a href="integration.html" class="linkedin-tab" data-page="integration">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integration</span>
+          </a>
+          <a href="settings.html" class="linkedin-tab" data-page="settings">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="dashboard-content linkedin-content">
+        <!-- Overview Dashboard -->
+        <div class="linkedin-overview" id="overview-page">
+          <!-- Top Stats Row -->
+          <div class="linkedin-stats-row">
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Conversations</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>18.4%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">128</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Connection Requests</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>23.6%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">47</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Messages Received</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>15.2%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">89</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">InMail Messages</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>18.8%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">35</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Profile Views</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>32.7%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">246</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Post Engagements</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>12.2%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">312</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+          </div>
+
+          <!-- Middle Section: Chart + Top Conversations + AI Insights -->
+          <div class="linkedin-mid-row">
+            <!-- Conversation Trend Chart -->
+            <div class="linkedin-chart-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Conversation Trend</h3>
+                <div class="widget-actions">
+                  <span class="chart-legend">
+                    <span class="legend-dot messages"></span> Messages
+                    <span class="legend-dot inmails"></span> InMails
+                  </span>
+                  <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="linkedin-line-chart" id="conversation-trend-chart"></div>
+              </div>
+            </div>
+
+            <!-- Top InMail Conversations -->
+            <div class="linkedin-conversations-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Top InMail Conversations</h3>
+                <a href="messages.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="top-conversation-list" id="top-conversations"></div>
+              </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="linkedin-ai-card">
+              <div class="widget-header">
+                <h3 class="widget-title">AI Insights <span class="ai-beta">BETA</span></h3>
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+              <div class="widget-body">
+                <div class="ai-insights-list" id="ai-insights"></div>
+                <a href="#" class="view-all-insights">View All Insights</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section: Recent Conversations + Connection Requests + Profile Dashboard -->
+          <div class="linkedin-bottom-row">
+            <!-- Recent Conversations -->
+            <div class="linkedin-recent-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Recent Conversations</h3>
+                <a href="messages.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="recent-conversation-list" id="recent-conversations"></div>
+              </div>
+            </div>
+
+            <!-- Connection Requests -->
+            <div class="linkedin-connections-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Connection Requests</h3>
+                <a href="connection-requests.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="connection-request-list" id="connection-requests-list"></div>
+              </div>
+            </div>
+
+            <!-- Profile Dashboard -->
+            <div class="linkedin-profile-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Profile Dashboard</h3>
+                <a href="#" class="view-all-link">View Profile</a>
+              </div>
+              <div class="widget-body profile-body">
+                <div class="profile-score-ring">
+                  <svg viewBox="0 0 120 120" class="profile-ring-svg">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gray-200)" stroke-width="8"/>
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="#0A66C2" stroke-width="8" 
+                            stroke-dasharray="314" stroke-dashoffset="47" stroke-linecap="round"
+                            transform="rotate(-90 60 60)"/>
+                  </svg>
+                  <div class="profile-score-center">
+                    <span class="profile-score-value">85%</span>
+                    <span class="profile-score-label">Very Good</span>
+                  </div>
+                </div>
+                <div class="profile-metrics">
+                  <div class="profile-metric">
+                    <span class="profile-metric-value">246</span>
+                    <span class="profile-metric-label">Profile Views</span>
+                    <span class="profile-metric-trend up"><i class="ph ph-trend-up"></i> 32.7%</span>
+                  </div>
+                  <div class="profile-metric">
+                    <span class="profile-metric-value">512</span>
+                    <span class="profile-metric-label">Search Appearances</span>
+                    <span class="profile-metric-trend up"><i class="ph ph-trend-up"></i> 24.8%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/linkedin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) {
+        window.location.href = '../auth/signin.html';
+        return;
+      }
+      window.linkedinApp = new LinkedInApp();
+    });
+  </script>
+</body>
+</html>

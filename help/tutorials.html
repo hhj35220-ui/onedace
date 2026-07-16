@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutorials — Help Center — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/help.css">
+</head>
+<body>
+  <div class="help-layout">
+    <aside class="help-sidebar">
+      <div class="help-sidebar-header">
+        <a href="../index.html" class="help-sidebar-logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="help-sidebar-nav">
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Help Center</div>
+          <a href="index.html" class="help-sidebar-link"><i class="ph ph-house"></i>Overview</a>
+          <a href="documentation.html" class="help-sidebar-link"><i class="ph ph-book-open"></i>Documentation</a>
+          <a href="tutorials.html" class="help-sidebar-link active"><i class="ph ph-video"></i>Tutorials</a>
+          <a href="faq.html" class="help-sidebar-link"><i class="ph ph-question"></i>FAQ</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Support</div>
+          <a href="contact-support.html" class="help-sidebar-link"><i class="ph ph-envelope"></i>Contact Support</a>
+          <a href="live-chat.html" class="help-sidebar-link"><i class="ph ph-chat-circle-dots"></i>Live Chat<span class="badge badge-primary">3</span></a>
+          <a href="submit-ticket.html" class="help-sidebar-link"><i class="ph ph-ticket"></i>Submit Ticket</a>
+          <a href="ticket-history.html" class="help-sidebar-link"><i class="ph ph-clock-counter-clockwise"></i>Ticket History</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Resources</div>
+          <a href="system-status.html" class="help-sidebar-link"><i class="ph ph-activity"></i>System Status</a>
+          <a href="feature-requests.html" class="help-sidebar-link"><i class="ph ph-lightbulb"></i>Feature Requests</a>
+          <a href="release-notes.html" class="help-sidebar-link"><i class="ph ph-scroll"></i>Release Notes</a>
+          <a href="api-documentation.html" class="help-sidebar-link"><i class="ph ph-code"></i>API Documentation</a>
+          <a href="keyboard-shortcuts.html" class="help-sidebar-link"><i class="ph ph-keyboard"></i>Keyboard Shortcuts</a>
+          <a href="community.html" class="help-sidebar-link"><i class="ph ph-users-three"></i>Community</a>
+          <a href="about.html" class="help-sidebar-link"><i class="ph ph-info"></i>About OnePlace</a>
+        </div>
+      </nav>
+      <div class="help-sidebar-footer">
+        <div class="help-sidebar-user">
+          <div class="avatar avatar-md avatar-placeholder" id="user-avatar">AM</div>
+          <div class="help-sidebar-user-info">
+            <div class="help-sidebar-user-name" id="user-name">Alex Morgan</div>
+            <div class="help-sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="help-sidebar-overlay"></div>
+
+    <main class="help-main">
+      <header class="help-header">
+        <div class="help-header-left">
+          <button class="help-sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+          <nav class="help-header-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Help Center</a>
+            <i class="ph ph-caret-right"></i>
+            <a href="tutorials.html">Tutorials</a>
+          </nav>
+        </div>
+        <div class="help-header-right">
+          <div class="help-header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="search" placeholder="Search tutorials..." aria-label="Search tutorials">
+            <div class="help-search-results"></div>
+          </div>
+          <button class="help-header-btn" data-theme-toggle aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <a href="../dashboard/main-dashboard.html" class="help-header-btn" aria-label="Back to dashboard"><i class="ph ph-arrow-u-up-left"></i></a>
+        </div>
+      </header>
+
+      <div class="help-content">
+        <div class="help-tabs" id="tutorial-tabs">
+          <button class="help-tab active" data-filter="all">All</button>
+          <button class="help-tab" data-filter="getting-started">Getting Started</button>
+          <button class="help-tab" data-filter="integrations">Integrations</button>
+          <button class="help-tab" data-filter="ai">AI & Automation</button>
+          <button class="help-tab" data-filter="crm">CRM</button>
+          <button class="help-tab" data-filter="billing">Billing</button>
+        </div>
+
+        <div class="help-tutorials-grid" id="tutorials-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="help-pagination" id="tutorials-pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/help.js"></script>
+  <script>
+    let currentFilter = 'all';
+    let currentPage = 1;
+
+    function renderTutorials() {
+      const grid = document.getElementById('tutorials-grid');
+      let filtered = HELP_DATA.tutorials;
+      
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(t => t.category === currentFilter);
+      }
+
+      const { items, totalPages } = helpManager.paginate(filtered, currentPage, 6);
+      
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="help-empty-state" style="grid-column: 1 / -1;">
+            <div class="help-empty-state-icon"><i class="ph ph-video"></i></div>
+            <h3 class="help-empty-state-title">No tutorials found</h3>
+            <p class="help-empty-state-desc">Try a different category or search term.</p>
+          </div>
+        `;
+      } else {
+        grid.innerHTML = items.map(t => `
+          <div class="help-tutorial-card" onclick="OP.toast.show('Playing: ${t.title}', 'success')">
+            <div class="help-tutorial-thumbnail">
+              <i class="ph ${t.icon}"></i>
+              <span class="help-tutorial-duration">${t.duration}</span>
+            </div>
+            <div class="help-tutorial-body">
+              <span class="help-tutorial-tag">${t.category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+              <h3 class="help-tutorial-title">${t.title}</h3>
+              <div class="help-tutorial-meta">
+                <span><i class="ph ph-eye"></i> ${t.views} views</span>
+                <span><i class="ph ph-clock"></i> ${t.date}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      helpManager.renderPagination(document.getElementById('tutorials-pagination'), currentPage, totalPages, (page) => {
+        currentPage = page;
+        renderTutorials();
+      });
+    }
+
+    // Tab filtering
+    document.querySelectorAll('#tutorial-tabs .help-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#tutorial-tabs .help-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        currentPage = 1;
+        renderTutorials();
+      });
+    });
+
+    renderTutorials();
+
+    // Load user
+    const session = OP.auth.getSession();
+    if (session) {
+      document.getElementById('user-name').textContent = session.fullName || 'User';
+      const initials = (session.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('user-avatar').textContent = initials;
+    }
+  </script>
+</body>
+</html>

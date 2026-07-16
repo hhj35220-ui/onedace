@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Replies — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Quick Replies</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Create shortcuts for frequently used messages.</p>
+              </div>
+              <button class="btn btn-primary" id="add-qr-btn">
+                <i class="ph ph-plus"></i>
+                <span>Add Quick Reply</span>
+              </button>
+            </div>
+
+            <div class="wa-quick-replies-list" id="quick-replies-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Quick Reply Modal -->
+  <div class="wa-modal-overlay" id="add-qr-modal">
+    <div class="wa-modal">
+      <div class="wa-modal-header">
+        <span class="wa-modal-title">New Quick Reply</span>
+        <button class="wa-modal-close" id="close-modal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wa-modal-body">
+        <div class="form-group">
+          <label class="form-label">Shortcut</label>
+          <input type="text" class="form-input" id="new-qr-shortcut" placeholder="e.g., /thanks">
+          <div class="form-hint">Type this shortcut in chat to quickly insert the message.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" id="new-qr-text" rows="4" placeholder="Type the full message..."></textarea>
+        </div>
+      </div>
+      <div class="wa-modal-footer">
+        <button class="btn btn-secondary" id="cancel-add">Cancel</button>
+        <button class="btn btn-primary" id="save-qr">Add Quick Reply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const waStorage = new WhatsAppStorage();
+      const app = new WhatsAppApp();
+
+      function renderQuickReplies() {
+        const container = document.getElementById('quick-replies-list');
+        const qrs = waStorage.getQuickReplies();
+
+        if (qrs.length === 0) {
+          container.innerHTML = `
+            <div class="wa-empty-state">
+              <div class="wa-empty-state-icon"><i class="ph ph-lightning"></i></div>
+              <div class="wa-empty-state-title">No quick replies yet</div>
+              <div class="wa-empty-state-desc">Create shortcuts for your most common responses.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        qrs.forEach(qr => {
+          html += `
+            <div class="wa-quick-reply-item">
+              <span class="wa-quick-reply-shortcut">${qr.shortcut}</span>
+              <div class="wa-quick-reply-content">
+                <div class="wa-quick-reply-text">${qr.text}</div>
+              </div>
+              <div style="display: flex; gap: var(--space-2);">
+                <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText('${qr.text.replace(/'/g, "\'")}'); OP.toast.show('Copied!', 'success');">
+                  <i class="ph ph-copy"></i>
+                </button>
+                <button class="btn btn-ghost btn-sm" style="color: var(--error-500);" data-id="${qr.id}">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Delete handlers
+        container.querySelectorAll('[data-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (confirm('Delete this quick reply?')) {
+              waStorage.deleteQuickReply(btn.dataset.id);
+              renderQuickReplies();
+              OP.toast.show('Quick reply deleted', 'success');
+            }
+          });
+        });
+      }
+
+      renderQuickReplies();
+
+      // Modal handlers
+      const modal = document.getElementById('add-qr-modal');
+      document.getElementById('add-qr-btn').addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+      document.getElementById('close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('cancel-add').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('save-qr').addEventListener('click', () => {
+        const shortcut = document.getElementById('new-qr-shortcut').value;
+        const text = document.getElementById('new-qr-text').value;
+
+        if (!shortcut || !text) {
+          OP.toast.show('Shortcut and message are required', 'error');
+          return;
+        }
+
+        waStorage.addQuickReply({ shortcut, text });
+        modal.classList.remove('active');
+        renderQuickReplies();
+        OP.toast.show('Quick reply added', 'success');
+      });
+    });
+  </script>
+</body>
+</html>

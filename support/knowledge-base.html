@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Base — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header support-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="support-header-icon"><i class="ph ph-headset"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">Knowledge Base</h1>
+              <p class="header-subtitle">Manage help articles and documentation</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="notification-dot" id="notif-dot"></span></button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="support-tabs" aria-label="Support sections">
+        <div class="support-tabs-inner">
+          <a href="index.html" class="support-tab" data-page="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="tickets.html" class="support-tab" data-page="tickets"><i class="ph ph-ticket"></i><span>Tickets</span></a>
+          <a href="open-tickets.html" class="support-tab" data-page="open"><i class="ph ph-envelope-open"></i><span>Open</span></a>
+          <a href="pending-tickets.html" class="support-tab" data-page="pending"><i class="ph ph-clock"></i><span>Pending</span></a>
+          <a href="closed-tickets.html" class="support-tab" data-page="closed"><i class="ph ph-check-circle"></i><span>Closed</span></a>
+          <a href="sla-management.html" class="support-tab" data-page="sla"><i class="ph ph-shield-check"></i><span>SLA</span></a>
+          <a href="saved-replies.html" class="support-tab" data-page="replies"><i class="ph ph-floppy-disk"></i><span>Saved Replies</span></a>
+          <a href="knowledge-base.html" class="support-tab active" data-page="kb"><i class="ph ph-book-open"></i><span>Knowledge Base</span></a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content support-content">
+        <div class="kb-layout">
+          <!-- Categories Sidebar -->
+          <div class="kb-categories">
+            <div class="kb-categories-header">
+              <h3 class="widget-title">Categories</h3>
+              <button class="widget-action-btn" id="new-kb-category-btn"><i class="ph ph-plus"></i></button>
+            </div>
+            <div class="kb-categories-list" id="kb-categories-list"></div>
+          </div>
+
+          <!-- Articles Main -->
+          <div class="kb-main">
+            <div class="kb-toolbar">
+              <div class="kb-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="kb-search" placeholder="Search articles..." class="form-input">
+              </div>
+              <button class="btn btn-primary btn-sm" id="new-article-btn"><i class="ph ph-plus"></i> New Article</button>
+            </div>
+
+            <div class="kb-section">
+              <h3 class="kb-section-title" id="kb-section-title">Popular Articles</h3>
+              <div class="kb-articles-grid" id="kb-articles-grid"></div>
+            </div>
+
+            <div class="kb-section">
+              <h3 class="kb-section-title">All Articles</h3>
+              <div class="kb-articles-list" id="kb-articles-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Article Modal -->
+  <div class="modal-overlay" id="article-modal" style="display:none;">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="article-modal-title">New Article</h3>
+        <button class="modal-close" id="article-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="article-title" placeholder="Article title">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input form-select" id="article-category">
+              <option value="getting-started">Getting Started</option>
+              <option value="account">Account & Billing</option>
+              <option value="technical">Technical Support</option>
+              <option value="features">Features</option>
+              <option value="integrations">Integrations</option>
+              <option value="troubleshooting">Troubleshooting</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <textarea class="form-input" id="article-content" rows="12" placeholder="Write your article content..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="article-cancel">Cancel</button>
+        <button class="btn btn-primary" id="article-save">Publish Article</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/support.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) { window.location.href = '../auth/signin.html'; return; }
+      window.supportApp = new SupportApp();
+      supportApp.initKnowledgeBasePage();
+    });
+  </script>
+</body>
+</html>

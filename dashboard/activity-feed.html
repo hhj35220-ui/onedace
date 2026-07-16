@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Feed — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-page-title">
+          <h1>Activity Feed</h1>
+          <p>Stay updated with everything happening</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-col-8">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">All Activity</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" id="mark-all-read" title="Mark all read"><i class="ph ph-checks"></i></button>
+                  <button class="widget-action-btn" title="Filters"><i class="ph ph-faders"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="filter-bar">
+                  <button class="filter-btn active" data-filter="all">All</button>
+                  <button class="filter-btn" data-filter="gmail">Gmail</button>
+                  <button class="filter-btn" data-filter="whatsapp">WhatsApp</button>
+                  <button class="filter-btn" data-filter="instagram">Instagram</button>
+                  <button class="filter-btn" data-filter="tiktok">TikTok</button>
+                  <button class="filter-btn" data-filter="x">X</button>
+                  <button class="filter-btn" data-filter="linkedin">LinkedIn</button>
+                </div>
+                <div class="activity-list" id="activity-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-col-4">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Activity Summary</span>
+              </div>
+              <div class="widget-body">
+                <div class="platform-mini-list" id="activity-summary"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      const app = new DashboardApp();
+      const storage = app.storage;
+
+      function renderActivities() {
+        const activities = storage.getActivities(app.currentFilter);
+        const container = document.getElementById('activity-list');
+        container.innerHTML = activities.map(act => `
+          <div class="activity-item ${act.read ? '' : 'unread'}" data-id="${act.id}">
+            <div class="activity-icon ${act.platform}"><i class="ph ${app.getPlatformIcon(act.platform)}"></i></div>
+            <div class="activity-content">
+              <div class="activity-title">${act.title}</div>
+              <div class="activity-desc">${act.description}</div>
+            </div>
+            <span class="activity-time">${app.formatTimeAgo(act.timestamp)}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderSummary() {
+        const activities = storage.getActivities();
+        const platforms = ['gmail','whatsapp','instagram','tiktok','x','linkedin'];
+        const container = document.getElementById('activity-summary');
+        container.innerHTML = platforms.map(p => {
+          const count = activities.filter(a => a.platform === p).length;
+          return `
+            <div class="platform-mini-item">
+              <div class="platform-mini-icon ${p}"><i class="ph ${app.getPlatformIcon(p)}"></i></div>
+              <div class="platform-mini-info">
+                <div class="platform-mini-name">${p.charAt(0).toUpperCase() + p.slice(1)}</div>
+              </div>
+              <span class="platform-mini-value">${count}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.addEventListener('dashboard:filter', () => renderActivities());
+      document.getElementById('mark-all-read')?.addEventListener('click', () => {
+        OP.toast.show('All activities marked as read', 'success');
+      });
+
+      renderActivities();
+      renderSummary();
+    });
+  </script>
+</body>
+</html>

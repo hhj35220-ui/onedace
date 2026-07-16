@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Profile — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="profile-setup-page page-transition">
+    <div class="profile-setup-container">
+      <div class="workspace-header">
+        <a href="index.html" class="logo" style="margin-bottom: var(--space-6); display: inline-flex;">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise</span>
+          </div>
+        </a>
+        <h1 class="auth-title">Complete your profile</h1>
+        <p class="auth-subtitle">Tell us a bit about yourself to personalize your experience.</p>
+      </div>
+
+      <!-- Avatar Upload -->
+      <div class="profile-avatar-upload">
+        <div class="profile-avatar-preview" id="avatar-preview">
+          <span id="avatar-initials">--</span>
+          <img id="avatar-img" style="display: none;" alt="Profile avatar">
+          <button type="button" class="profile-avatar-edit" id="avatar-edit-btn" aria-label="Upload avatar">
+            <i class="ph ph-camera"></i>
+          </button>
+        </div>
+        <input type="file" id="avatar-input" accept="image/*" style="display: none;" aria-label="Upload profile picture">
+        <p class="profile-avatar-hint">Click to upload a profile picture</p>
+      </div>
+
+      <form id="profile-form" novalidate>
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full name</label>
+          <div class="form-input-wrapper">
+            <i class="ph ph-user form-input-icon"></i>
+            <input 
+              type="text" 
+              id="fullName" 
+              name="fullName" 
+              class="form-input with-icon" 
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            >
+          </div>
+          <div class="form-error" id="fullName-error" style="display: none;"></div>
+        </div>
+
+        <!-- Role -->
+        <div class="form-group">
+          <label class="form-label" for="role">Role</label>
+          <select id="role" name="role" class="form-input form-select" required>
+            <option value="" disabled selected>Select your role</option>
+            <option value="founder">Founder / CEO</option>
+            <option value="executive">Executive</option>
+            <option value="manager">Manager</option>
+            <option value="team-lead">Team Lead</option>
+            <option value="developer">Developer</option>
+            <option value="designer">Designer</option>
+            <option value="marketer">Marketer</option>
+            <option value="support">Customer Support</option>
+            <option value="sales">Sales</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="form-error" id="role-error" style="display: none;"></div>
+        </div>
+
+        <!-- Timezone -->
+        <div class="form-group">
+          <label class="form-label" for="timezone">Timezone</label>
+          <select id="timezone" name="timezone" class="form-input form-select" required>
+            <option value="" disabled selected>Select your timezone</option>
+            <option value="UTC-12">(UTC-12:00) International Date Line West</option>
+            <option value="UTC-11">(UTC-11:00) Coordinated Universal Time-11</option>
+            <option value="UTC-10">(UTC-10:00) Hawaii</option>
+            <option value="UTC-9">(UTC-09:00) Alaska</option>
+            <option value="UTC-8">(UTC-08:00) Pacific Time</option>
+            <option value="UTC-7">(UTC-07:00) Mountain Time</option>
+            <option value="UTC-6">(UTC-06:00) Central Time</option>
+            <option value="UTC-5">(UTC-05:00) Eastern Time</option>
+            <option value="UTC-4">(UTC-04:00) Atlantic Time</option>
+            <option value="UTC-3">(UTC-03:00) Buenos Aires</option>
+            <option value="UTC+0">(UTC+00:00) London, Dublin</option>
+            <option value="UTC+1">(UTC+01:00) Berlin, Paris, Rome</option>
+            <option value="UTC+2">(UTC+02:00) Cairo, Johannesburg</option>
+            <option value="UTC+3">(UTC+03:00) Moscow, Nairobi</option>
+            <option value="UTC+4">(UTC+04:00) Dubai, Baku</option>
+            <option value="UTC+5">(UTC+05:00) Karachi, Tashkent</option>
+            <option value="UTC+5:30">(UTC+05:30) Mumbai, New Delhi</option>
+            <option value="UTC+6">(UTC+06:00) Dhaka, Almaty</option>
+            <option value="UTC+7">(UTC+07:00) Bangkok, Jakarta</option>
+            <option value="UTC+8">(UTC+08:00) Singapore, Beijing</option>
+            <option value="UTC+9">(UTC+09:00) Tokyo, Seoul</option>
+            <option value="UTC+10">(UTC+10:00) Sydney, Melbourne</option>
+            <option value="UTC+11">(UTC+11:00) Solomon Islands</option>
+            <option value="UTC+12">(UTC+12:00) Auckland, Fiji</option>
+          </select>
+          <div class="form-error" id="timezone-error" style="display: none;"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn">
+          Continue to Dashboard
+        </button>
+      </form>
+
+      <p style="text-align: center; margin-top: var(--space-4); font-size: var(--text-xs); color: var(--gray-400);">
+        You can update this anytime in settings.
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const session = OP.auth.getSession();
+      const form = document.getElementById('profile-form');
+      const fullNameInput = document.getElementById('fullName');
+      const avatarPreview = document.getElementById('avatar-preview');
+      const avatarInitials = document.getElementById('avatar-initials');
+      const avatarImg = document.getElementById('avatar-img');
+      const avatarInput = document.getElementById('avatar-input');
+      const avatarEditBtn = document.getElementById('avatar-edit-btn');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // Pre-fill name from session
+      if (session && session.fullName) {
+        fullNameInput.value = session.fullName;
+        updateAvatarInitials(session.fullName);
+      }
+
+      function updateAvatarInitials(name) {
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        avatarInitials.textContent = initials || '--';
+      }
+
+      fullNameInput.addEventListener('input', () => {
+        updateAvatarInitials(fullNameInput.value);
+      });
+
+      // Avatar upload
+      avatarEditBtn.addEventListener('click', () => avatarInput.click());
+      avatarPreview.addEventListener('click', () => avatarInput.click());
+
+      avatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            avatarImg.src = event.target.result;
+            avatarImg.style.display = 'block';
+            avatarInitials.style.display = 'none';
+            // Store in localStorage (base64)
+            localStorage.setItem('op_avatar_temp', event.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      function showError(fieldId, message) {
+        const errorEl = document.getElementById(`${fieldId}-error`);
+        const inputEl = document.getElementById(fieldId);
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.style.display = 'flex';
+        }
+        if (inputEl) inputEl.classList.add('error');
+      }
+
+      function clearErrors() {
+        document.querySelectorAll('.form-error').forEach(el => {
+          el.style.display = 'none';
+          el.textContent = '';
+        });
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearErrors();
+
+        const fullName = fullNameInput.value.trim();
+        const role = document.getElementById('role').value;
+        const timezone = document.getElementById('timezone').value;
+
+        if (!fullName) {
+          showError('fullName', 'Full name is required.');
+          return;
+        }
+
+        if (!role) {
+          showError('role', 'Please select your role.');
+          return;
+        }
+
+        if (!timezone) {
+          showError('timezone', 'Please select your timezone.');
+          return;
+        }
+
+        OP.loading.show();
+        submitBtn.disabled = true;
+        submitBtn.classList.add('btn-loading');
+        submitBtn.textContent = '';
+
+        await new Promise(r => setTimeout(r, 800));
+
+        // Save profile
+        const avatar = localStorage.getItem('op_avatar_temp');
+        OP.profile.updateProfile({
+          fullName,
+          role,
+          timezone,
+          avatar: avatar || null,
+          completedAt: new Date().toISOString()
+        });
+
+        // Update user name
+        const users = OP.auth.getUsers();
+        const userIndex = users.findIndex(u => u.id === session.userId);
+        if (userIndex !== -1) {
+          users[userIndex].fullName = fullName;
+          OP.auth.saveUsers(users);
+        }
+
+        OP.loading.hide();
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.textContent = 'Continue to Dashboard';
+
+        OP.toast.show('Profile completed successfully!', 'success');
+        setTimeout(() => {
+          OP.toast.show('Redirecting to dashboard...', 'success');
+          window.location.href = '../dashboard/main-dashboard.html';
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+</html>

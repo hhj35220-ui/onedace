@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing & Subscription — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/billing.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item">
+            <i class="ph ph-chat-circle-dots"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">24</span>
+          </a>
+          <a href="../crm/contacts.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>Contacts</span>
+          </a>
+          <a href="../team/" class="nav-item">
+            <i class="ph ph-users-three"></i>
+            <span>Teams</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../integrations/" class="nav-item">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../workflow/" class="nav-item">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Automation Center</span>
+          </a>
+          <a href="../ai/" class="nav-item">
+            <i class="ph ph-sparkle"></i>
+            <span>AI Assistant</span>
+          </a>
+          <a href="../reports/" class="nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Analytics</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Developer</span>
+          <a href="../settings/api-developer.html" class="nav-item">
+            <i class="ph ph-code"></i>
+            <span>Developer Center</span>
+            <span class="nav-badge badge-beta">Beta</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Billing</span>
+          <a href="index.html" class="nav-item active">
+            <i class="ph ph-credit-card"></i>
+            <span>Billing & Subscription</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <a href="../settings/" class="nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../help/" class="nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-cta">
+        <div class="sidebar-cta-content">
+          <p class="sidebar-cta-title">Upgrade to Business</p>
+          <p class="sidebar-cta-desc">Unlock unlimited everything and advanced features.</p>
+          <ul class="sidebar-cta-features">
+            <li><i class="ph ph-check"></i> Unlimited Integrations</li>
+            <li><i class="ph ph-check"></i> Advanced Automations</li>
+            <li><i class="ph ph-check"></i> Priority Support</li>
+            <li><i class="ph ph-check"></i> Advanced Analytics</li>
+          </ul>
+          <button class="btn btn-primary btn-sm btn-full" onclick="billingApp.showUpgradeModal()">Upgrade Now</button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Alex Morgan</span>
+            <span class="sidebar-user-role">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" aria-label="User menu">
+            <i class="ph ph-caret-up"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <i class="ph ph-list"></i>
+          </button>
+          <div class="header-title">
+            <h1>Billing & Subscription</h1>
+            <p>Manage your subscription, payments and billing.</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything..." id="globalSearch">
+            <span class="search-kbd">⌘ K</span>
+          </div>
+          <div class="header-actions">
+            <button class="header-action-btn" aria-label="Gift">
+              <i class="ph ph-gift"></i>
+              <span class="header-action-badge">New</span>
+            </button>
+            <button class="header-action-btn" aria-label="Notifications">
+              <i class="ph ph-bell"></i>
+              <span class="header-action-dot"></span>
+            </button>
+            <button class="header-action-btn" aria-label="Help">
+              <i class="ph ph-question"></i>
+            </button>
+            <button class="header-action-btn" aria-label="Settings" onclick="OP.theme.toggle()">
+              <i class="ph ph-gear"></i>
+            </button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan">
+              <div class="header-user-info">
+                <span class="header-user-name">Alex Morgan</span>
+                <span class="header-user-role">Administrator</span>
+              </div>
+              <i class="ph ph-caret-down"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Billing Content -->
+      <div class="billing-content">
+        <!-- Trial Hero Banner -->
+        <div class="trial-hero" id="trialHero">
+          <div class="trial-hero-content">
+            <div class="trial-hero-icon">🎉</div>
+            <div class="trial-hero-text">
+              <h2>Start your 14-Day Free Trial</h2>
+              <p>Enjoy full access to Starter features. No charges until your trial ends.</p>
+            </div>
+          </div>
+          <div class="trial-hero-progress">
+            <span class="trial-hero-label">Trial Progress</span>
+            <div class="trial-progress-info">
+              <span class="trial-progress-day" id="trialDayText">Day 1 of 14</span>
+              <span class="trial-progress-remaining" id="trialRemainingText">13 days remaining</span>
+            </div>
+            <div class="trial-progress-bar">
+              <div class="trial-progress-fill" id="trialProgressFill" style="width: 7%"></div>
+            </div>
+          </div>
+          <div class="trial-hero-end">
+            <span class="trial-hero-label">Trial Ends</span>
+            <div class="trial-end-date">
+              <i class="ph ph-calendar-blank"></i>
+              <span id="trialEndDate">August 25, 2026</span>
+            </div>
+            <p class="trial-end-hint">We'll remind you 3 days before your trial ends.</p>
+            <button class="btn btn-primary" onclick="billingApp.showUpgradeModal()">
+              Upgrade to Business
+              <i class="ph ph-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="billing-grid">
+          <!-- Left Column -->
+          <div class="billing-col billing-col-left">
+            <!-- Current Subscription -->
+            <div class="billing-card" id="currentSubscriptionCard">
+              <div class="billing-card-header">
+                <i class="ph ph-credit-card"></i>
+                <h3>Current Subscription</h3>
+              </div>
+              <div class="subscription-details">
+                <div class="sub-row">
+                  <span class="sub-label">Plan</span>
+                  <div class="sub-value-group">
+                    <span class="sub-value" id="currentPlanName">Starter</span>
+                    <span class="badge badge-success" id="currentPlanStatus">Trial Active</span>
+                  </div>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-label">Trial Ends</span>
+                  <span class="sub-value" id="currentTrialEnds">August 25, 2026 <span class="sub-value-muted">(13 days left)</span></span>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-label">After Trial</span>
+                  <span class="sub-value" id="currentAfterTrial">$29 / month</span>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-label">Billing Cycle</span>
+                  <span class="sub-value" id="currentBillingCycle">Monthly</span>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-label">Payment Provider</span>
+                  <span class="sub-value provider-value">
+                    <img src="https://cdn.jsdelivr.net/gh/paystack/brand-assets@master/paystack-logo.png" alt="Paystack" class="provider-logo" onerror="this.style.display='none'">
+                    <span>Paystack</span>
+                  </span>
+                </div>
+              </div>
+              <div class="sub-notice">
+                <i class="ph ph-info"></i>
+                <span>You won't be charged until your trial ends.</span>
+              </div>
+              <div class="sub-actions">
+                <button class="btn btn-secondary" onclick="billingApp.showManageModal()">Manage Subscription</button>
+                <button class="btn btn-primary" onclick="billingApp.showUpgradeModal()">Upgrade Plan</button>
+              </div>
+            </div>
+
+            <!-- Usage Overview -->
+            <div class="billing-card">
+              <div class="billing-card-header">
+                <h3>Usage Overview</h3>
+              </div>
+              <div class="usage-list">
+                <div class="usage-item">
+                  <div class="usage-item-header">
+                    <div class="usage-item-icon usage-icon-purple">
+                      <i class="ph ph-plugs-connected"></i>
+                    </div>
+                    <div class="usage-item-info">
+                      <span class="usage-item-name">Integrations</span>
+                    </div>
+                    <span class="usage-item-value">8 / 15</span>
+                  </div>
+                  <div class="usage-progress">
+                    <div class="usage-progress-bar">
+                      <div class="usage-progress-fill usage-fill-purple" style="width: 53%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="usage-item">
+                  <div class="usage-item-header">
+                    <div class="usage-item-icon usage-icon-blue">
+                      <i class="ph ph-users"></i>
+                    </div>
+                    <div class="usage-item-info">
+                      <span class="usage-item-name">Team Members</span>
+                    </div>
+                    <span class="usage-item-value">2 / 3</span>
+                  </div>
+                  <div class="usage-progress">
+                    <div class="usage-progress-bar">
+                      <div class="usage-progress-fill usage-fill-blue" style="width: 67%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="usage-item">
+                  <div class="usage-item-header">
+                    <div class="usage-item-icon usage-icon-indigo">
+                      <i class="ph ph-chat-circle-text"></i>
+                    </div>
+                    <div class="usage-item-info">
+                      <span class="usage-item-name">Monthly Messages</span>
+                    </div>
+                    <span class="usage-item-value">18,540 / 50,000</span>
+                  </div>
+                  <div class="usage-progress">
+                    <div class="usage-progress-bar">
+                      <div class="usage-progress-fill usage-fill-indigo" style="width: 37%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="usage-item">
+                  <div class="usage-item-header">
+                    <div class="usage-item-icon usage-icon-violet">
+                      <i class="ph ph-hard-drives"></i>
+                    </div>
+                    <div class="usage-item-info">
+                      <span class="usage-item-name">Storage</span>
+                    </div>
+                    <span class="usage-item-value">3.4 GB / 10 GB</span>
+                  </div>
+                  <div class="usage-progress">
+                    <div class="usage-progress-bar">
+                      <div class="usage-progress-fill usage-fill-violet" style="width: 34%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Usage Stat Cards -->
+            <div class="usage-stats-grid">
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-green">
+                  <i class="ph ph-check-circle"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">Connected Apps</span>
+                  <span class="usage-stat-value">8 / 15</span>
+                  <span class="usage-stat-percent">53% of limit</span>
+                </div>
+              </div>
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-blue">
+                  <i class="ph ph-chat-circle-dots"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">Monthly Messages</span>
+                  <span class="usage-stat-value">18,540</span>
+                  <span class="usage-stat-percent">37% of limit</span>
+                </div>
+              </div>
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-orange">
+                  <i class="ph ph-users"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">Team Members</span>
+                  <span class="usage-stat-value">2 / 3</span>
+                  <span class="usage-stat-percent">67% of limit</span>
+                </div>
+              </div>
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-purple">
+                  <i class="ph ph-sparkle"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">AI Replies Generated</span>
+                  <span class="usage-stat-value">2,486</span>
+                  <span class="usage-stat-percent usage-stat-trend-up"><i class="ph ph-arrow-up-right"></i> 14%</span>
+                </div>
+              </div>
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-teal">
+                  <i class="ph ph-lightning"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">Automation Runs</span>
+                  <span class="usage-stat-value">4,320</span>
+                  <span class="usage-stat-percent usage-stat-trend-up"><i class="ph ph-arrow-up-right"></i> 18%</span>
+                </div>
+              </div>
+              <div class="usage-stat-card">
+                <div class="usage-stat-icon usage-stat-pink">
+                  <i class="ph ph-hard-drives"></i>
+                </div>
+                <div class="usage-stat-info">
+                  <span class="usage-stat-label">Storage</span>
+                  <span class="usage-stat-value">3.4 GB / 10 GB</span>
+                  <span class="usage-stat-percent">34% of limit</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plans & Pricing -->
+            <div class="billing-card plans-card">
+              <div class="billing-card-header plans-header">
+                <h3>Plans & Pricing</h3>
+                <div class="plans-toggle">
+                  <button class="plans-toggle-btn active" data-cycle="monthly">Monthly</button>
+                  <button class="plans-toggle-btn" data-cycle="yearly">Yearly</button>
+                  <span class="plans-toggle-save">Save 20%</span>
+                </div>
+              </div>
+              <div class="plans-grid">
+                <!-- Starter -->
+                <div class="plan-card plan-current">
+                  <div class="plan-badge-current">Current Plan</div>
+                  <div class="plan-header">
+                    <h4 class="plan-name">Starter</h4>
+                    <p class="plan-desc">Perfect for small teams</p>
+                  </div>
+                  <div class="plan-price">
+                    <span class="plan-price-trial">14-Day Free Trial</span>
+                    <div class="plan-price-amount">
+                      <span class="plan-price-currency">$</span>
+                      <span class="plan-price-number" data-monthly="29" data-yearly="24">29</span>
+                      <span class="plan-price-period">/ month after trial</span>
+                    </div>
+                  </div>
+                  <ul class="plan-features">
+                    <li><i class="ph ph-check"></i> 15 Integrations</li>
+                    <li><i class="ph ph-check"></i> 3 Team Members</li>
+                    <li><i class="ph ph-check"></i> 50,000 Monthly Messages</li>
+                    <li><i class="ph ph-check"></i> AI Reply Suggestions</li>
+                    <li><i class="ph ph-check"></i> AI Conversation Summaries</li>
+                    <li><i class="ph ph-check"></i> Shared Inbox</li>
+                    <li><i class="ph ph-check"></i> Search</li>
+                    <li><i class="ph ph-check"></i> Labels</li>
+                    <li><i class="ph ph-check"></i> Internal Notes</li>
+                    <li><i class="ph ph-check"></i> Mobile App</li>
+                    <li><i class="ph ph-check"></i> Desktop App</li>
+                    <li><i class="ph ph-check"></i> Email Support</li>
+                    <li><i class="ph ph-check"></i> Basic Analytics</li>
+                    <li><i class="ph ph-check"></i> Basic Automation Templates</li>
+                    <li><i class="ph ph-check"></i> 10 GB Storage</li>
+                  </ul>
+                  <div class="plan-action">
+                    <button class="btn btn-outline btn-full" disabled>Start Free Trial</button>
+                    <span class="plan-action-note">No payment required.</span>
+                  </div>
+                </div>
+
+                <!-- Business -->
+                <div class="plan-card plan-popular">
+                  <div class="plan-badge-popular">Most Popular</div>
+                  <div class="plan-header">
+                    <h4 class="plan-name">Business</h4>
+                    <p class="plan-desc">For growing businesses</p>
+                  </div>
+                  <div class="plan-price">
+                    <div class="plan-price-amount">
+                      <span class="plan-price-currency">$</span>
+                      <span class="plan-price-number" data-monthly="79" data-yearly="63">79</span>
+                      <span class="plan-price-period">/ month</span>
+                    </div>
+                  </div>
+                  <div class="plan-includes">Everything in Starter, plus:</div>
+                  <ul class="plan-features">
+                    <li><i class="ph ph-check"></i> Unlimited Integrations</li>
+                    <li><i class="ph ph-check"></i> Unlimited Team Members</li>
+                    <li><i class="ph ph-check"></i> 100,000 Monthly Messages</li>
+                    <li><i class="ph ph-check"></i> Advanced Automations</li>
+                    <li><i class="ph ph-check"></i> Advanced Analytics</li>
+                    <li><i class="ph ph-check"></i> CRM Integrations</li>
+                    <li><i class="ph ph-check"></i> Priority Support</li>
+                    <li><i class="ph ph-check"></i> API Access</li>
+                    <li><i class="ph ph-check"></i> Webhooks</li>
+                    <li><i class="ph ph-check"></i> 10 GB Storage</li>
+                  </ul>
+                  <div class="plan-action">
+                    <button class="btn btn-primary btn-full" onclick="billingApp.upgradeTo('business')">Upgrade</button>
+                  </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="plan-card">
+                  <div class="plan-header">
+                    <h4 class="plan-name">Enterprise</h4>
+                    <p class="plan-desc">For large organizations</p>
+                  </div>
+                  <div class="plan-price">
+                    <span class="plan-price-custom">Custom Pricing</span>
+                  </div>
+                  <div class="plan-includes">Everything in Business, plus:</div>
+                  <ul class="plan-features">
+                    <li><i class="ph ph-check"></i> Unlimited Everything</li>
+                    <li><i class="ph ph-check"></i> Dedicated Account Manager</li>
+                    <li><i class="ph ph-check"></i> White Label Solution</li>
+                    <li><i class="ph ph-check"></i> Single Sign-On (SSO)</li>
+                    <li><i class="ph ph-check"></i> Custom AI Models</li>
+                    <li><i class="ph ph-check"></i> Advanced Security & Compliance</li>
+                    <li><i class="ph ph-check"></i> Audit Logs</li>
+                    <li><i class="ph ph-check"></i> SLA Support</li>
+                    <li><i class="ph ph-check"></i> Unlimited Storage</li>
+                    <li><i class="ph ph-check"></i> Unlimited Messages</li>
+                    <li><i class="ph ph-check"></i> On-premise Deployment (Optional)</li>
+                  </ul>
+                  <div class="plan-action">
+                    <button class="btn btn-outline btn-full" onclick="billingApp.contactSales()">Contact Sales</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="plans-custom">
+                <div class="plans-custom-icon">
+                  <i class="ph ph-shield-check"></i>
+                </div>
+                <div class="plans-custom-text">
+                  <h4>Need a custom plan?</h4>
+                  <p>Contact our sales team for a tailored solution that fits your business needs.</p>
+                </div>
+                <button class="btn btn-secondary" onclick="billingApp.contactSales()">Contact Sales</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="billing-col billing-col-right">
+            <!-- Upgrade Notifications -->
+            <div class="upgrade-notifications">
+              <div class="upgrade-notice upgrade-notice-warning">
+                <div class="upgrade-notice-icon">
+                  <i class="ph ph-warning"></i>
+                </div>
+                <div class="upgrade-notice-content">
+                  <p class="upgrade-notice-title">You're using <strong>13</strong> of your <strong>15</strong> integrations.</p>
+                  <p class="upgrade-notice-desc">Upgrade to Business for unlimited integrations.</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="billingApp.showUpgradeModal()">Upgrade</button>
+              </div>
+              <div class="upgrade-notice upgrade-notice-danger">
+                <div class="upgrade-notice-icon">
+                  <i class="ph ph-chart-bar"></i>
+                </div>
+                <div class="upgrade-notice-content">
+                  <p class="upgrade-notice-title">You've used <strong>92%</strong> of your monthly message allowance.</p>
+                  <p class="upgrade-notice-desc">Upgrade now to continue without interruption.</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="billingApp.showUpgradeModal()">Upgrade</button>
+              </div>
+              <div class="upgrade-notice upgrade-notice-info">
+                <div class="upgrade-notice-icon">
+                  <i class="ph ph-users"></i>
+                </div>
+                <div class="upgrade-notice-content">
+                  <p class="upgrade-notice-title">Need more than 3 team members?</p>
+                  <p class="upgrade-notice-desc">Upgrade to Business.</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="billingApp.showUpgradeModal()">Upgrade</button>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="billing-card">
+              <div class="billing-card-header">
+                <h3>Payment Method</h3>
+              </div>
+              <div class="payment-method">
+                <div class="payment-provider">
+                  <span class="payment-label">Provider</span>
+                  <div class="payment-provider-info">
+                    <img src="https://cdn.jsdelivr.net/gh/paystack/brand-assets@master/paystack-logo.png" alt="Paystack" class="provider-logo" onerror="this.style.display='none'">
+                    <span class="provider-name">Paystack</span>
+                    <span class="badge badge-success">Active</span>
+                  </div>
+                </div>
+                <div class="payment-details">
+                  <div class="payment-detail-row">
+                    <span class="payment-label">Next Billing Date</span>
+                    <span class="payment-value" id="nextBillingDate">August 25, 2026</span>
+                  </div>
+                  <div class="payment-detail-row">
+                    <span class="payment-label">After trial</span>
+                    <span class="payment-value">$29.00 / month</span>
+                  </div>
+                </div>
+                <div class="payment-card-preview">
+                  <div class="payment-card-brand">
+                    <i class="ph ph-credit-card"></i>
+                  </div>
+                  <div class="payment-card-number">•••• •••• •••• 4242</div>
+                  <button class="payment-card-menu" aria-label="Card options">
+                    <i class="ph ph-dots-three-vertical"></i>
+                  </button>
+                </div>
+                <button class="btn btn-secondary btn-full" onclick="billingApp.showPaymentModal()">Manage Payment Method</button>
+              </div>
+            </div>
+
+            <!-- Billing History -->
+            <div class="billing-card">
+              <div class="billing-card-header billing-history-header">
+                <h3>Billing History</h3>
+                <a href="invoices.html" class="billing-view-all">View All</a>
+              </div>
+              <div class="billing-history-table-wrapper">
+                <table class="billing-history-table">
+                  <thead>
+                    <tr>
+                      <th>Invoice</th>
+                      <th>Date</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="billingHistoryBody">
+                    <tr>
+                      <td><span class="invoice-number">INV-002</span></td>
+                      <td>Aug 25, 2026</td>
+                      <td>$29.00</td>
+                      <td><span class="invoice-status invoice-upcoming">Upcoming</span></td>
+                      <td>
+                        <button class="invoice-action" aria-label="Download" onclick="billingApp.downloadInvoice('INV-002')">
+                          <i class="ph ph-download-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><span class="invoice-number">INV-001</span></td>
+                      <td>Jul 25, 2026</td>
+                      <td>$29.00</td>
+                      <td><span class="invoice-status invoice-paid">Paid</span></td>
+                      <td>
+                        <button class="invoice-action" aria-label="Download" onclick="billingApp.downloadInvoice('INV-001')">
+                          <i class="ph ph-download-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><span class="invoice-number">INV-000</span></td>
+                      <td>Jun 25, 2026</td>
+                      <td>$29.00</td>
+                      <td><span class="invoice-status invoice-paid">Paid</span></td>
+                      <td>
+                        <button class="invoice-action" aria-label="Download" onclick="billingApp.downloadInvoice('INV-000')">
+                          <i class="ph ph-download-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><span class="invoice-number">INV-099</span></td>
+                      <td>May 25, 2026</td>
+                      <td>$29.00</td>
+                      <td><span class="invoice-status invoice-paid">Paid</span></td>
+                      <td>
+                        <button class="invoice-action" aria-label="Download" onclick="billingApp.downloadInvoice('INV-099')">
+                          <i class="ph ph-download-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><span class="invoice-number">INV-098</span></td>
+                      <td>Apr 25, 2026</td>
+                      <td>$29.00</td>
+                      <td><span class="invoice-status invoice-paid">Paid</span></td>
+                      <td>
+                        <button class="invoice-action" aria-label="Download" onclick="billingApp.downloadInvoice('INV-098')">
+                          <i class="ph ph-download-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <a href="invoices.html" class="btn btn-outline btn-full btn-view-invoices">View All Invoices</a>
+            </div>
+
+            <!-- Payment Methods Grid -->
+            <div class="billing-card">
+              <div class="billing-card-header">
+                <h3>Payment Methods</h3>
+              </div>
+              <p class="payment-methods-subtitle">All payments are securely processed via <strong>Paystack</strong>.</p>
+              <div class="payment-methods-grid">
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-visa">VISA</div>
+                  <span class="payment-method-name">Visa</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-mastercard">
+                    <div class="mc-circle mc-red"></div>
+                    <div class="mc-circle mc-orange"></div>
+                  </div>
+                  <span class="payment-method-name">Mastercard</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-verve">Verve</div>
+                  <span class="payment-method-name">Verve</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-bank">
+                    <i class="ph ph-bank"></i>
+                  </div>
+                  <span class="payment-method-name">Bank Transfer</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-ussd">
+                    <span>*#</span>
+                  </div>
+                  <span class="payment-method-name">USSD</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-mobile">
+                    <i class="ph ph-device-mobile"></i>
+                  </div>
+                  <span class="payment-method-name">Mobile Money</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-apple">
+                    <i class="ph ph-apple-logo"></i>
+                  </div>
+                  <span class="payment-method-name">Apple Pay</span>
+                </div>
+                <div class="payment-method-item">
+                  <div class="payment-method-logo payment-google">
+                    <i class="ph ph-google-logo"></i>
+                  </div>
+                  <span class="payment-method-name">Google Pay</span>
+                </div>
+              </div>
+              <div class="payment-secure">
+                <i class="ph ph-lock-key"></i>
+                <span>Your payment information is encrypted and secure. We never store your full card details.</span>
+                <div class="payment-secure-shield">
+                  <i class="ph ph-shield-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+
+  <!-- Upgrade Modal -->
+  <div class="modal" id="upgradeModal">
+    <div class="modal-header">
+      <h3>Upgrade Your Plan</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('upgradeModal')">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-plans">
+        <div class="modal-plan" data-plan="starter">
+          <div class="modal-plan-name">Starter</div>
+          <div class="modal-plan-price">$29/mo</div>
+          <ul class="modal-plan-features">
+            <li>15 Integrations</li>
+            <li>3 Team Members</li>
+            <li>50K Messages</li>
+          </ul>
+        </div>
+        <div class="modal-plan modal-plan-selected" data-plan="business">
+          <div class="modal-plan-badge">Popular</div>
+          <div class="modal-plan-name">Business</div>
+          <div class="modal-plan-price">$79/mo</div>
+          <ul class="modal-plan-features">
+            <li>Unlimited Integrations</li>
+            <li>Unlimited Team</li>
+            <li>500K Messages</li>
+          </ul>
+        </div>
+        <div class="modal-plan" data-plan="enterprise">
+          <div class="modal-plan-name">Enterprise</div>
+          <div class="modal-plan-price">Custom</div>
+          <ul class="modal-plan-features">
+            <li>Unlimited Everything</li>
+            <li>SSO & Audit Logs</li>
+            <li>Dedicated Manager</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="billingApp.closeModal('upgradeModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="billingApp.confirmUpgrade()">Confirm Upgrade</button>
+    </div>
+  </div>
+
+  <!-- Manage Subscription Modal -->
+  <div class="modal" id="manageModal">
+    <div class="modal-header">
+      <h3>Manage Subscription</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('manageModal')">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="manage-options">
+        <div class="manage-option">
+          <div class="manage-option-icon"><i class="ph ph-arrows-clockwise"></i></div>
+          <div class="manage-option-text">
+            <h4>Change Billing Cycle</h4>
+            <p>Switch between monthly and yearly billing.</p>
+          </div>
+          <button class="btn btn-sm btn-secondary">Change</button>
+        </div>
+        <div class="manage-option">
+          <div class="manage-option-icon"><i class="ph ph-pause-circle"></i></div>
+          <div class="manage-option-text">
+            <h4>Pause Subscription</h4>
+            <p>Temporarily pause your subscription for up to 3 months.</p>
+          </div>
+          <button class="btn btn-sm btn-secondary">Pause</button>
+        </div>
+        <div class="manage-option manage-option-danger">
+          <div class="manage-option-icon"><i class="ph ph-trash"></i></div>
+          <div class="manage-option-text">
+            <h4>Cancel Subscription</h4>
+            <p>Cancel your subscription. You'll keep access until the end of your billing period.</p>
+          </div>
+          <button class="btn btn-sm btn-outline btn-danger-text">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Method Modal -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-header">
+      <h3>Manage Payment Method</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('paymentModal')">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="payment-form">
+        <div class="form-group">
+          <label class="form-label">Card Number</label>
+          <div class="form-input-wrapper">
+            <input type="text" class="form-input" placeholder="4242 4242 4242 4242" maxlength="19" id="cardNumber">
+            <i class="ph ph-credit-card form-input-icon"></i>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Expiry Date</label>
+            <input type="text" class="form-input" placeholder="MM / YY" maxlength="7" id="cardExpiry">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVC</label>
+            <input type="text" class="form-input" placeholder="123" maxlength="4" id="cardCvc">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cardholder Name</label>
+          <input type="text" class="form-input" placeholder="Alex Morgan" id="cardName">
+        </div>
+        <div class="saved-cards">
+          <h4>Saved Cards</h4>
+          <div class="saved-card-item">
+            <div class="saved-card-info">
+              <i class="ph ph-credit-card"></i>
+              <span>•••• •••• •••• 4242</span>
+              <span class="saved-card-expiry">Exp 12/28</span>
+            </div>
+            <span class="badge badge-ghost">Default</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="billingApp.closeModal('paymentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="billingApp.savePaymentMethod()">Save Card</button>
+    </div>
+  </div>
+
+  <!-- Contact Sales Modal -->
+  <div class="modal" id="contactModal">
+    <div class="modal-header">
+      <h3>Contact Sales</h3>
+      <button class="modal-close" onclick="billingApp.closeModal('contactModal')">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" value="Alex Morgan" id="contactName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work Email</label>
+          <input type="email" class="form-input" value="alex@oneplace.com" id="contactEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input type="text" class="form-input" placeholder="Your company name" id="contactCompany">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" rows="4" placeholder="Tell us about your requirements..." id="contactMessage"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="billingApp.closeModal('contactModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="billingApp.submitContact()">Send Message</button>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/billing.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      billingApp.init();
+    });
+  </script>
+</body>
+</html>

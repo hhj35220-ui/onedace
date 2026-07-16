@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — Help Center — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/help.css">
+</head>
+<body>
+  <div class="help-layout">
+    <!-- Sidebar -->
+    <aside class="help-sidebar">
+      <div class="help-sidebar-header">
+        <a href="../index.html" class="help-sidebar-logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      
+      <nav class="help-sidebar-nav">
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Help Center</div>
+          <a href="index.html" class="help-sidebar-link">
+            <i class="ph ph-house"></i>
+            Overview
+          </a>
+          <a href="documentation.html" class="help-sidebar-link active">
+            <i class="ph ph-book-open"></i>
+            Documentation
+          </a>
+          <a href="tutorials.html" class="help-sidebar-link">
+            <i class="ph ph-video"></i>
+            Tutorials
+          </a>
+          <a href="faq.html" class="help-sidebar-link">
+            <i class="ph ph-question"></i>
+            FAQ
+          </a>
+        </div>
+        
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Support</div>
+          <a href="contact-support.html" class="help-sidebar-link">
+            <i class="ph ph-envelope"></i>
+            Contact Support
+          </a>
+          <a href="live-chat.html" class="help-sidebar-link">
+            <i class="ph ph-chat-circle-dots"></i>
+            Live Chat
+            <span class="badge badge-primary">3</span>
+          </a>
+          <a href="submit-ticket.html" class="help-sidebar-link">
+            <i class="ph ph-ticket"></i>
+            Submit Ticket
+          </a>
+          <a href="ticket-history.html" class="help-sidebar-link">
+            <i class="ph ph-clock-counter-clockwise"></i>
+            Ticket History
+          </a>
+        </div>
+        
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Resources</div>
+          <a href="system-status.html" class="help-sidebar-link">
+            <i class="ph ph-activity"></i>
+            System Status
+          </a>
+          <a href="feature-requests.html" class="help-sidebar-link">
+            <i class="ph ph-lightbulb"></i>
+            Feature Requests
+          </a>
+          <a href="release-notes.html" class="help-sidebar-link">
+            <i class="ph ph-scroll"></i>
+            Release Notes
+          </a>
+          <a href="api-documentation.html" class="help-sidebar-link">
+            <i class="ph ph-code"></i>
+            API Documentation
+          </a>
+          <a href="keyboard-shortcuts.html" class="help-sidebar-link">
+            <i class="ph ph-keyboard"></i>
+            Keyboard Shortcuts
+          </a>
+          <a href="community.html" class="help-sidebar-link">
+            <i class="ph ph-users-three"></i>
+            Community
+          </a>
+          <a href="about.html" class="help-sidebar-link">
+            <i class="ph ph-info"></i>
+            About OnePlace
+          </a>
+        </div>
+      </nav>
+      
+      <div class="help-sidebar-footer">
+        <div class="help-sidebar-user">
+          <div class="avatar avatar-md avatar-placeholder" id="user-avatar">AM</div>
+          <div class="help-sidebar-user-info">
+            <div class="help-sidebar-user-name" id="user-name">Alex Morgan</div>
+            <div class="help-sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="help-sidebar-overlay"></div>
+
+    <main class="help-main">
+      <header class="help-header">
+        <div class="help-header-left">
+          <button class="help-sidebar-toggle" aria-label="Toggle sidebar">
+            <i class="ph ph-list"></i>
+          </button>
+          <nav class="help-header-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Help Center</a>
+            <i class="ph ph-caret-right"></i>
+            <span class="current">Documentation</span>
+          </nav>
+        </div>
+        <div class="help-header-right">
+          <div class="help-header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="search" placeholder="Search documentation..." aria-label="Search documentation">
+            <div class="help-search-results"></div>
+          </div>
+          <button class="help-header-btn" data-theme-toggle aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <a href="../dashboard/main-dashboard.html" class="help-header-btn" aria-label="Back to dashboard">
+            <i class="ph ph-arrow-u-up-left"></i>
+          </a>
+        </div>
+      </header>
+
+      <div class="help-content">
+        <div class="help-doc-layout">
+          <!-- Sidebar -->
+          <aside class="help-doc-sidebar" id="doc-sidebar">
+            <!-- Populated by JS -->
+          </aside>
+
+          <!-- Content -->
+          <article class="help-doc-content" id="doc-content">
+            <h1>Getting Started</h1>
+            <div class="help-doc-meta">
+              <span class="help-doc-meta-item">
+                <i class="ph ph-clock"></i>
+                5 min read
+              </span>
+              <span class="help-doc-meta-item">
+                <i class="ph ph-calendar"></i>
+                Updated Jul 12, 2026
+              </span>
+              <span class="help-doc-meta-item">
+                <i class="ph ph-user"></i>
+                OnePlace Team
+              </span>
+            </div>
+            
+            <h2>Introduction to OnePlace</h2>
+            <p>OnePlace Enterprise is an all-in-one platform designed to streamline your business communications. Whether you're managing customer support, sales pipelines, or team collaboration, OnePlace brings everything together in a single, powerful interface.</p>
+            
+            <h3>Key Features</h3>
+            <ul>
+              <li><strong>Unified Inbox:</strong> Manage all your conversations from Gmail, WhatsApp, Instagram, Slack, and more in one place.</li>
+              <li><strong>CRM Integration:</strong> Track leads, manage contacts, and monitor deals without leaving your inbox.</li>
+              <li><strong>AI Assistant:</strong> Leverage AI to automate responses, summarize conversations, and extract insights.</li>
+              <li><strong>Workflow Automation:</strong> Build custom automations to handle repetitive tasks.</li>
+              <li><strong>Team Collaboration:</strong> Assign conversations, leave internal notes, and collaborate in real-time.</li>
+            </ul>
+
+            <h3>Quick Setup</h3>
+            <p>Getting started with OnePlace takes just a few minutes. Follow these steps to set up your workspace:</p>
+            
+            <div class="code-block">
+              <div class="code-header">
+                <span>bash</span>
+                <button class="copy-code-btn" onclick="copyCode(this)">
+                  <i class="ph ph-copy"></i> Copy
+                </button>
+              </div>
+              <pre><code># Install OnePlace CLI
+npm install -g @oneplace/cli
+
+# Login to your account
+oneplace login
+
+# Create a new workspace
+oneplace workspace create "My Workspace"</code></pre>
+            </div>
+
+            <h2>Creating Your Account</h2>
+            <p>To create your OnePlace account, visit our sign-up page and enter your email address. You'll receive a verification code to confirm your identity. Once verified, you can set up your profile and workspace.</p>
+            
+            <h3>Workspace Configuration</h3>
+            <p>Your workspace is the central hub for all your team activities. Configure your workspace settings, invite team members, and set up integrations from the workspace settings panel.</p>
+
+            <div class="code-block">
+              <div class="code-header">
+                <span>javascript</span>
+                <button class="copy-code-btn" onclick="copyCode(this)">
+                  <i class="ph ph-copy"></i> Copy
+                </button>
+              </div>
+              <pre><code>// Initialize OnePlace SDK
+import { OnePlace } from '@oneplace/sdk';
+
+const client = new OnePlace({
+  apiKey: 'your_api_key',
+  workspace: 'my-workspace'
+});
+
+// Connect a channel
+await client.channels.connect('whatsapp', {
+  phoneNumber: '+1234567890'
+});</code></pre>
+            </div>
+
+            <h2>Connecting Your First Channel</h2>
+            <p>OnePlace supports multiple communication channels. Start by connecting your most-used channel:</p>
+            <ol>
+              <li>Navigate to <strong>Integrations</strong> in your sidebar</li>
+              <li>Select the channel you want to connect (e.g., Gmail, WhatsApp)</li>
+              <li>Follow the authentication flow</li>
+              <li>Configure sync settings and filters</li>
+              <li>Start receiving messages in your Unified Inbox</li>
+            </ol>
+
+            <div class="help-doc-feedback">
+              <h4 class="help-doc-feedback-title">Was this article helpful?</h4>
+              <div class="help-doc-feedback-buttons">
+                <button class="help-doc-feedback-btn" onclick="this.classList.toggle('active-yes')">
+                  <i class="ph ph-thumbs-up"></i>
+                  Yes, it helped
+                </button>
+                <button class="help-doc-feedback-btn" onclick="this.classList.toggle('active-no')">
+                  <i class="ph ph-thumbs-down"></i>
+                  No, not really
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/help.js"></script>
+  <script>
+    // Populate doc sidebar
+    const docSidebar = document.getElementById('doc-sidebar');
+    docSidebar.innerHTML = HELP_DATA.documentation.map(section => `
+      <div class="help-doc-sidebar-section">
+        <div class="help-doc-sidebar-title">${section.title}</div>
+        ${section.articles.map(article => `
+          <a href="#" class="help-doc-sidebar-link" data-article="${article.id}" onclick="loadArticle('${article.id}', event)">
+            ${article.title}
+          </a>
+        `).join('')}
+      </div>
+    `).join('');
+
+    // Active link handling
+    document.querySelectorAll('.help-doc-sidebar-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        document.querySelectorAll('.help-doc-sidebar-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Set first link active
+    document.querySelector('.help-doc-sidebar-link')?.classList.add('active');
+
+    // Load user info
+    const session = OP.auth.getSession();
+    if (session) {
+      document.getElementById('user-name').textContent = session.fullName || 'User';
+      const initials = (session.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('user-avatar').textContent = initials;
+    }
+
+    function loadArticle(id, e) {
+      e.preventDefault();
+      // In a real app, this would fetch article content
+      // For demo, we'll just scroll to top
+      document.getElementById('doc-content').scrollTop = 0;
+      OP.toast.show('Article loaded', 'success');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X (Twitter) — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/x.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="X sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- X Content -->
+      <div class="x-layout">
+        <!-- X Sidebar -->
+        <div class="x-sidebar">
+          <div class="x-account-header">
+            <div class="x-account-icon"><i class="ph ph-x-logo"></i></div>
+            <div class="x-account-info">
+              <span class="x-account-name">@acmesolutions</span>
+              <span class="x-account-detail">Business Account</span>
+              <span class="x-account-phone">Connected on May 12, 2024</span>
+            </div>
+            <div class="x-account-status">
+              <span class="x-status-dot"></span>
+              <span>Connected</span>
+            </div>
+            <button class="x-view-integration">View Integration</button>
+          </div>
+
+          <nav class="x-nav" id="x-nav">
+            <a href="#overview" class="x-nav-item active" data-page="overview">
+              <i class="ph ph-chart-pie-slice"></i>
+              <span>Overview</span>
+            </a>
+            <a href="#conversations" class="x-nav-item" data-page="conversations">
+              <i class="ph ph-chat-circle-text"></i>
+              <span>Conversations</span>
+              <span class="x-nav-badge">34</span>
+            </a>
+            <a href="#mentions" class="x-nav-item" data-page="mentions">
+              <i class="ph ph-at"></i>
+              <span>Mentions</span>
+              <span class="x-nav-badge">128</span>
+            </a>
+            <a href="#replies" class="x-nav-item" data-page="replies">
+              <i class="ph ph-chat-teardrop-text"></i>
+              <span>Comments & Replies</span>
+              <span class="x-nav-badge">96</span>
+            </a>
+            <a href="#saved-replies" class="x-nav-item" data-page="saved-replies">
+              <i class="ph ph-lightning"></i>
+              <span>Saved Replies</span>
+            </a>
+            <a href="#integration" class="x-nav-item" data-page="integration">
+              <i class="ph ph-plugs-connected"></i>
+              <span>Integration</span>
+            </a>
+            <a href="#settings" class="x-nav-item" data-page="settings">
+              <i class="ph ph-gear"></i>
+              <span>Settings</span>
+            </a>
+          </nav>
+
+          <div class="x-overview-card">
+            <div class="x-overview-header">
+              <span class="x-overview-title">Today's Overview</span>
+              <a href="../reports/index.html" class="x-overview-link">View Report</a>
+            </div>
+            <div class="x-overview-stats">
+              <div class="x-overview-stat">
+                <span class="x-stat-label">Total Conversations</span>
+                <div class="x-stat-value-row">
+                  <span class="x-stat-value">236</span>
+                  <span class="x-stat-change x-stat-up"><i class="ph ph-trend-up"></i> 12.4%</span>
+                </div>
+              </div>
+              <div class="x-overview-stat">
+                <span class="x-stat-label">Response Rate</span>
+                <div class="x-stat-value-row">
+                  <span class="x-stat-value">91.4%</span>
+                  <span class="x-stat-change x-stat-up"><i class="ph ph-trend-up"></i> 5.1%</span>
+                </div>
+              </div>
+              <div class="x-overview-stat">
+                <span class="x-stat-label">Mentions</span>
+                <div class="x-stat-value-row">
+                  <span class="x-stat-value">128</span>
+                  <span class="x-stat-change x-stat-up"><i class="ph ph-trend-up"></i> 13.6%</span>
+                </div>
+              </div>
+              <div class="x-overview-stat">
+                <span class="x-stat-label">Profile Visits</span>
+                <div class="x-stat-value-row">
+                  <span class="x-stat-value">1.2K</span>
+                  <span class="x-stat-change x-stat-up"><i class="ph ph-trend-up"></i> 22.5%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- X Main -->
+        <div class="x-main" id="x-main">
+          <!-- Page content injected by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/x.js"></script>
+</body>
+</html>

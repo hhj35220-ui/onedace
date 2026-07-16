@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentions & Replies — X (Twitter) — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/x.css">
+</head>
+<body>
+  <div class="x-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-page-title">
+          <h1>Mentions & Replies</h1>
+          <p>Track and respond to mentions, replies, and quote tweets.</p>
+        </div>
+
+        <div class="x-conversations-section">
+          <div class="x-conversation-list-panel">
+            <div class="x-conversation-list-header">
+              <div class="x-conversation-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="mention-search" placeholder="Search mentions..." autocomplete="off">
+              </div>
+              <button class="x-filter-btn" id="filter-mentions" title="Filter"><i class="ph ph-funnel"></i></button>
+            </div>
+            <div class="x-mention-filters">
+              <button class="x-mention-filter active" data-filter="all">All</button>
+              <button class="x-mention-filter" data-filter="unread">Unread</button>
+              <button class="x-mention-filter" data-filter="replied">Replied</button>
+              <button class="x-mention-filter" data-filter="pending">Pending</button>
+            </div>
+            <div class="x-conversation-list" id="mentions-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <div class="x-chat-panel" style="flex: 1; border-right: none;">
+            <div class="x-chat-header" id="mention-detail-header">
+              <div style="display:flex;align-items:center;gap:var(--space-3);">
+                <div style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--gray-100);display:flex;align-items:center;justify-content:center;">
+                  <i class="ph ph-at" style="font-size:20px;color:var(--gray-500);"></i>
+                </div>
+                <div>
+                  <div style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--gray-900);">Select a mention</div>
+                  <div style="font-size:var(--text-xs);color:var(--gray-400);">Click a mention to view details and reply</div>
+                </div>
+              </div>
+            </div>
+            <div class="x-chat-messages" id="mention-detail">
+              <div class="x-empty-state">
+                <div class="x-empty-state-icon"><i class="ph ph-at"></i></div>
+                <div class="x-empty-state-title">No mention selected</div>
+                <div class="x-empty-state-desc">Select a mention from the list to view details and compose a reply.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/x.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.xApp = new XApp();
+      window.xApp.renderMentionsPage();
+    });
+  </script>
+</body>
+</html>

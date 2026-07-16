@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message Templates — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Message Templates</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Create and manage reusable message templates.</p>
+              </div>
+              <button class="btn btn-primary" id="add-template-btn">
+                <i class="ph ph-plus"></i>
+                <span>New Template</span>
+              </button>
+            </div>
+
+            <div class="wa-templates-grid" id="templates-grid">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Template Modal -->
+  <div class="wa-modal-overlay" id="add-template-modal">
+    <div class="wa-modal">
+      <div class="wa-modal-header">
+        <span class="wa-modal-title">New Message Template</span>
+        <button class="wa-modal-close" id="close-modal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wa-modal-body">
+        <div class="form-group">
+          <label class="form-label">Template Name</label>
+          <input type="text" class="form-input" id="new-template-name" placeholder="e.g., Welcome Message">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-input form-select" id="new-template-category">
+            <option value="Greeting">Greeting</option>
+            <option value="Transactional">Transactional</option>
+            <option value="Engagement">Engagement</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message Content</label>
+          <textarea class="form-input" id="new-template-content" rows="4" placeholder="Use {{variable}} for dynamic content..."></textarea>
+          <div class="form-hint">Use {{name}}, {{orderId}}, etc. for variables that will be replaced when sending.</div>
+        </div>
+      </div>
+      <div class="wa-modal-footer">
+        <button class="btn btn-secondary" id="cancel-add">Cancel</button>
+        <button class="btn btn-primary" id="save-template">Create Template</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const waStorage = new WhatsAppStorage();
+      const app = new WhatsAppApp();
+
+      function renderTemplates() {
+        const container = document.getElementById('templates-grid');
+        const templates = waStorage.getTemplates();
+
+        if (templates.length === 0) {
+          container.innerHTML = `
+            <div class="wa-empty-state" style="grid-column: 1 / -1;">
+              <div class="wa-empty-state-icon"><i class="ph ph-file-text"></i></div>
+              <div class="wa-empty-state-title">No templates yet</div>
+              <div class="wa-empty-state-desc">Create your first message template to save time.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        templates.forEach(template => {
+          const categoryColors = {
+            'Greeting': 'background: var(--success-50); color: var(--success-600);',
+            'Transactional': 'background: var(--primary-50); color: var(--primary-600);',
+            'Engagement': 'background: var(--warning-50); color: var(--warning-600);',
+            'Marketing': 'background: #F3E8FF; color: #7C3AED;'
+          };
+
+          html += `
+            <div class="wa-template-card">
+              <div class="wa-template-card-header">
+                <span class="wa-template-card-name">${template.name}</span>
+                <span class="wa-template-card-category" style="${categoryColors[template.category] || ''}">${template.category}</span>
+              </div>
+              <div class="wa-template-card-body">${template.content}</div>
+              <div class="wa-template-card-actions">
+                <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('${template.content.replace(/'/g, "\'")}'); OP.toast.show('Template copied!', 'success');">
+                  <i class="ph ph-copy"></i> Copy
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.location.href='conversations.html'">
+                  <i class="ph ph-paper-plane-right"></i> Use
+                </button>
+                <button class="btn btn-ghost btn-sm" style="color: var(--error-500);" data-id="${template.id}">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Delete handlers
+        container.querySelectorAll('[data-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (confirm('Delete this template?')) {
+              waStorage.deleteTemplate(btn.dataset.id);
+              renderTemplates();
+              OP.toast.show('Template deleted', 'success');
+            }
+          });
+        });
+      }
+
+      renderTemplates();
+
+      // Modal handlers
+      const modal = document.getElementById('add-template-modal');
+      document.getElementById('add-template-btn').addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+      document.getElementById('close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('cancel-add').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('save-template').addEventListener('click', () => {
+        const name = document.getElementById('new-template-name').value;
+        const category = document.getElementById('new-template-category').value;
+        const content = document.getElementById('new-template-content').value;
+
+        if (!name || !content) {
+          OP.toast.show('Name and content are required', 'error');
+          return;
+        }
+
+        waStorage.addTemplate({ name, category, content, variables: [] });
+        modal.classList.remove('active');
+        renderTemplates();
+        OP.toast.show('Template created successfully', 'success');
+      });
+    });
+  </script>
+</body>
+</html>

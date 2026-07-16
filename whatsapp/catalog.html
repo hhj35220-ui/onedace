@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Product Catalog</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Manage products available through WhatsApp Business.</p>
+              </div>
+              <button class="btn btn-primary" id="add-product-btn">
+                <i class="ph ph-plus"></i>
+                <span>Add Product</span>
+              </button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+              <div style="flex: 1; display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--gray-100); border-radius: var(--radius-lg);">
+                <i class="ph ph-magnifying-glass" style="color: var(--gray-400);"></i>
+                <input type="text" id="product-search" placeholder="Search products..." style="border: none; background: transparent; outline: none; font-size: var(--text-sm); color: var(--gray-800); width: 100%;">
+              </div>
+              <select id="category-filter" style="padding: var(--space-2) var(--space-4); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm);">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Footwear">Footwear</option>
+              </select>
+            </div>
+
+            <div class="wa-catalog-grid" id="catalog-grid">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="wa-modal-overlay" id="add-product-modal">
+    <div class="wa-modal">
+      <div class="wa-modal-header">
+        <span class="wa-modal-title">Add New Product</span>
+        <button class="wa-modal-close" id="close-modal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wa-modal-body">
+        <div class="form-group">
+          <label class="form-label">Product Name</label>
+          <input type="text" class="form-input" id="new-product-name" placeholder="Enter product name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price</label>
+          <input type="number" class="form-input" id="new-product-price" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stock Quantity</label>
+          <input type="number" class="form-input" id="new-product-stock" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-input form-select" id="new-product-category">
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="wa-modal-footer">
+        <button class="btn btn-secondary" id="cancel-add">Cancel</button>
+        <button class="btn btn-primary" id="save-product">Add Product</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const waStorage = new WhatsAppStorage();
+      const app = new WhatsAppApp();
+
+      function renderCatalog() {
+        const container = document.getElementById('catalog-grid');
+        const products = waStorage.getCatalog();
+
+        if (products.length === 0) {
+          container.innerHTML = `
+            <div class="wa-empty-state" style="grid-column: 1 / -1;">
+              <div class="wa-empty-state-icon"><i class="ph ph-shopping-bag"></i></div>
+              <div class="wa-empty-state-title">No products yet</div>
+              <div class="wa-empty-state-desc">Add products to your WhatsApp catalog.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        products.forEach(product => {
+          const stockStatus = product.stock > 20 ? 'In Stock' : product.stock > 0 ? 'Low Stock' : 'Out of Stock';
+          const stockColor = product.stock > 20 ? 'color: var(--success-600);' : product.stock > 0 ? 'color: var(--warning-600);' : 'color: var(--error-600);';
+
+          html += `
+            <div class="wa-product-card">
+              <div class="wa-product-image">
+                <i class="ph ${product.image || 'ph-package'}"></i>
+              </div>
+              <div class="wa-product-info">
+                <div class="wa-product-name">${product.name}</div>
+                <div class="wa-product-price">$${product.price.toFixed(2)}</div>
+                <div class="wa-product-stock" style="${stockColor}">
+                  <i class="ph ph-package"></i> ${stockStatus} (${product.stock} left)
+                </div>
+                <div style="margin-top: var(--space-2); font-size: 11px; color: var(--gray-400);">${product.category}</div>
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                  <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="window.location.href='conversations.html'">
+                    <i class="ph ph-share-network"></i> Share
+                  </button>
+                  <button class="btn btn-ghost btn-sm" style="color: var(--error-500);" data-id="${product.id}">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Delete handlers
+        container.querySelectorAll('[data-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (confirm('Delete this product?')) {
+              waStorage.deleteProduct(btn.dataset.id);
+              renderCatalog();
+              OP.toast.show('Product deleted', 'success');
+            }
+          });
+        });
+      }
+
+      renderCatalog();
+
+      // Modal handlers
+      const modal = document.getElementById('add-product-modal');
+      document.getElementById('add-product-btn').addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+      document.getElementById('close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('cancel-add').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      document.getElementById('save-product').addEventListener('click', () => {
+        const name = document.getElementById('new-product-name').value;
+        const price = parseFloat(document.getElementById('new-product-price').value);
+        const stock = parseInt(document.getElementById('new-product-stock').value);
+        const category = document.getElementById('new-product-category').value;
+
+        if (!name || isNaN(price)) {
+          OP.toast.show('Name and price are required', 'error');
+          return;
+        }
+
+        waStorage.addProduct({ name, price, stock, category, image: 'ph-package' });
+        modal.classList.remove('active');
+        renderCatalog();
+        OP.toast.show('Product added successfully', 'success');
+      });
+    });
+  </script>
+</body>
+</html>

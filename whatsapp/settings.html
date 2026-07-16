@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Settings — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-1);">WhatsApp Settings</h2>
+            <p style="font-size: var(--text-sm); color: var(--gray-500); margin-bottom: var(--space-6);">Configure your WhatsApp Business integration and preferences.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+              <!-- Integration Settings -->
+              <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">
+                  <i class="ph ph-plugs-connected" style="color: var(--wa-green); margin-right: var(--space-2);"></i>
+                  Integration
+                </h3>
+
+                <div class="wa-settings-section">
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Connection Status</div>
+                      <div class="wa-settings-desc">WhatsApp Business API connection</div>
+                    </div>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--radius-md); background: var(--success-50); color: var(--success-600); font-size: var(--text-xs); font-weight: var(--font-semibold);">
+                      <span style="width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--success-500);"></span>
+                      Connected
+                    </span>
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Phone Number</div>
+                      <div class="wa-settings-desc">Your WhatsApp Business number</div>
+                    </div>
+                    <span style="font-size: var(--text-sm); color: var(--gray-700); font-weight: var(--font-medium);">+1 (555) 123-4567</span>
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Business Name</div>
+                      <div class="wa-settings-desc">Displayed to customers</div>
+                    </div>
+                    <input type="text" class="form-input" value="Acme Solutions" style="width: 200px; padding: var(--space-2) var(--space-3); font-size: var(--text-sm);">
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">API Key</div>
+                      <div class="wa-settings-desc">For webhook integration</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                      <input type="password" class="form-input" value="wa_api_xxxxxxxxxxxx" readonly style="width: 180px; padding: var(--space-2) var(--space-3); font-size: var(--text-sm); font-family: var(--font-mono);">
+                      <button class="btn btn-ghost btn-sm"><i class="ph ph-copy"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Messaging Settings -->
+              <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">
+                  <i class="ph ph-chat-circle-text" style="color: var(--primary-500); margin-right: var(--space-2);"></i>
+                  Messaging
+                </h3>
+
+                <div class="wa-settings-section">
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Auto-Reply</div>
+                      <div class="wa-settings-desc">Automatically respond to new messages</div>
+                    </div>
+                    <label class="wa-toggle">
+                      <input type="checkbox" id="auto-reply" checked>
+                      <span class="wa-toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Read Receipts</div>
+                      <div class="wa-settings-desc">Show when messages are read</div>
+                    </div>
+                    <label class="wa-toggle">
+                      <input type="checkbox" id="read-receipts" checked>
+                      <span class="wa-toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Typing Indicators</div>
+                      <div class="wa-settings-desc">Show when agent is typing</div>
+                    </div>
+                    <label class="wa-toggle">
+                      <input type="checkbox" id="typing-indicators" checked>
+                      <span class="wa-toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div class="wa-settings-row">
+                    <div>
+                      <div class="wa-settings-label">Sound Notifications</div>
+                      <div class="wa-settings-desc">Play sound for new messages</div>
+                    </div>
+                    <label class="wa-toggle">
+                      <input type="checkbox" id="sound-notifications" checked>
+                      <span class="wa-toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Hours -->
+              <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">
+                  <i class="ph ph-clock" style="color: var(--warning-500); margin-right: var(--space-2);"></i>
+                  Business Hours
+                </h3>
+
+                <div class="wa-settings-section">
+                  <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" class="form-input" id="business-start" value="09:00">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="time" class="form-input" id="business-end" value="18:00">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Timezone</label>
+                    <select class="form-input form-select" id="business-timezone">
+                      <option value="EST">Eastern Time (EST)</option>
+                      <option value="CST">Central Time (CST)</option>
+                      <option value="MST">Mountain Time (MST)</option>
+                      <option value="PST">Pacific Time (PST)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Automated Messages -->
+              <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">
+                  <i class="ph ph-robot" style="color: var(--purple-500); margin-right: var(--space-2);"></i>
+                  Automated Messages
+                </h3>
+
+                <div class="wa-settings-section">
+                  <div class="form-group">
+                    <label class="form-label">Greeting Message</label>
+                    <textarea class="form-input" id="greeting-message" rows="3">Hello! Welcome to Acme Solutions. How can we help you today?</textarea>
+                    <div class="form-hint">Sent automatically when a customer first messages you.</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Away Message</label>
+                    <textarea class="form-input" id="away-message" rows="3">Thank you for your message! We are currently away and will respond during business hours.</textarea>
+                    <div class="form-hint">Sent when customers message outside business hours.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+              <button class="btn btn-secondary" id="reset-settings">Reset to Defaults</button>
+              <button class="btn btn-primary" id="save-settings">
+                <i class="ph ph-floppy-disk"></i>
+                <span>Save Changes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const waStorage = new WhatsAppStorage();
+      const app = new WhatsAppApp();
+
+      // Load current settings
+      const settings = waStorage.getSettings();
+      document.getElementById('auto-reply').checked = settings.autoReply;
+      document.getElementById('read-receipts').checked = settings.readReceipts;
+      document.getElementById('typing-indicators').checked = settings.typingIndicators;
+      document.getElementById('sound-notifications').checked = settings.soundEnabled;
+      document.getElementById('business-start').value = settings.businessHours?.start || '09:00';
+      document.getElementById('business-end').value = settings.businessHours?.end || '18:00';
+      document.getElementById('business-timezone').value = settings.businessHours?.timezone || 'EST';
+      document.getElementById('greeting-message').value = settings.greetingMessage || '';
+      document.getElementById('away-message').value = settings.awayMessage || '';
+
+      // Save settings
+      document.getElementById('save-settings').addEventListener('click', () => {
+        waStorage.updateSettings({
+          autoReply: document.getElementById('auto-reply').checked,
+          readReceipts: document.getElementById('read-receipts').checked,
+          typingIndicators: document.getElementById('typing-indicators').checked,
+          soundEnabled: document.getElementById('sound-notifications').checked,
+          businessHours: {
+            start: document.getElementById('business-start').value,
+            end: document.getElementById('business-end').value,
+            timezone: document.getElementById('business-timezone').value
+          },
+          greetingMessage: document.getElementById('greeting-message').value,
+          awayMessage: document.getElementById('away-message').value
+        });
+        OP.toast.show('Settings saved successfully', 'success');
+      });
+
+      // Reset settings
+      document.getElementById('reset-settings').addEventListener('click', () => {
+        if (confirm('Reset all WhatsApp settings to defaults?')) {
+          localStorage.removeItem(WA_STORAGE_KEYS.WHATSAPP_SETTINGS);
+          waStorage.init();
+          window.location.reload();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workflow Automation — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/workflow.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <a href="../dashboard/main-dashboard.html" class="nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item">
+            <i class="ph ph-tray"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">24</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <p class="nav-section-title">Channels</p>
+          <a href="../gmail/index.html" class="nav-item">
+            <i class="ph ph-envelope-simple"></i>
+            <span>Gmail</span>
+          </a>
+          <a href="../whatsapp/index.html" class="nav-item">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>WhatsApp Business</span>
+            <span class="nav-badge">8</span>
+          </a>
+          <a href="../instagram/index.html" class="nav-item">
+            <i class="ph ph-camera"></i>
+            <span>Instagram</span>
+            <span class="nav-badge">16</span>
+          </a>
+          <a href="../tiktok/index.html" class="nav-item">
+            <i class="ph ph-tiktok-logo"></i>
+            <span>TikTok</span>
+            <span class="nav-badge">23</span>
+          </a>
+          <a href="../x/index.html" class="nav-item">
+            <i class="ph ph-x-logo"></i>
+            <span>X (Twitter)</span>
+            <span class="nav-badge">34</span>
+          </a>
+          <a href="../linkedin/index.html" class="nav-item">
+            <i class="ph ph-linkedin-logo"></i>
+            <span>LinkedIn</span>
+            <span class="nav-badge">26</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <p class="nav-section-title">Business</p>
+          <a href="../crm/index.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>CRM</span>
+          </a>
+          <a href="../support/index.html" class="nav-item">
+            <i class="ph ph-headset"></i>
+            <span>Customer Support</span>
+          </a>
+          <a href="../calendar/index.html" class="nav-item">
+            <i class="ph ph-calendar"></i>
+            <span>Calendar</span>
+          </a>
+          <a href="../tasks/index.html" class="nav-item">
+            <i class="ph ph-check-square"></i>
+            <span>Tasks</span>
+          </a>
+          <a href="../team/index.html" class="nav-item">
+            <i class="ph ph-users-three"></i>
+            <span>Team Management</span>
+          </a>
+          <a href="index.html" class="nav-item active">
+            <i class="ph ph-git-merge"></i>
+            <span>Workflow</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <p class="nav-section-title">Settings</p>
+          <a href="../settings/index.html" class="nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../integrations/index.html" class="nav-item">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../help/index.html" class="nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="theme-toggle-sidebar" id="themeToggleSidebar" aria-label="Toggle theme">
+          <i class="ph ph-moon" id="themeIcon"></i>
+          <span>Light Mode</span>
+        </button>
+        <div class="sidebar-user">
+          <div class="avatar avatar-sm avatar-placeholder" id="userAvatar">AM</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name" id="userName">Alex Morgan</span>
+            <span class="sidebar-user-role">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle menu">
+            <i class="ph ph-list"></i>
+          </button>
+          <div class="header-breadcrumb">
+            <h1 class="header-title">Workflow Automation</h1>
+            <p class="header-subtitle">Create powerful automations between your apps and tasks</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search workflows, triggers, actions..." id="globalSearch">
+            <span class="search-kbd">⌘K</span>
+          </div>
+          <button class="header-icon-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="header-badge">3</span>
+          </button>
+          <button class="header-icon-btn" aria-label="Messages">
+            <i class="ph ph-chat-circle-dots"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://i.pravatar.cc/150?u=alex" alt="Alex Morgan" class="header-avatar">
+          </div>
+        </div>
+      </header>
+
+      <!-- Workflow Content -->
+      <div class="workflow-content">
+        <!-- Stats Cards -->
+        <div class="wf-stats-grid">
+          <div class="wf-stat-card">
+            <div class="wf-stat-icon wf-stat-icon-purple">
+              <i class="ph ph-git-merge"></i>
+            </div>
+            <div class="wf-stat-info">
+              <span class="wf-stat-value" id="statActiveWorkflows">28</span>
+              <span class="wf-stat-label">Active Workflows</span>
+              <span class="wf-stat-change wf-stat-up">
+                <i class="ph ph-trend-up"></i> 27% <span>vs last 7 days</span>
+              </span>
+            </div>
+          </div>
+          <div class="wf-stat-card">
+            <div class="wf-stat-icon wf-stat-icon-green">
+              <i class="ph ph-play-circle"></i>
+            </div>
+            <div class="wf-stat-info">
+              <span class="wf-stat-value" id="statExecutions">1,245</span>
+              <span class="wf-stat-label">Executions</span>
+              <span class="wf-stat-change wf-stat-up">
+                <i class="ph ph-trend-up"></i> 18% <span>vs last 7 days</span>
+              </span>
+            </div>
+          </div>
+          <div class="wf-stat-card">
+            <div class="wf-stat-icon wf-stat-icon-teal">
+              <i class="ph ph-check-circle"></i>
+            </div>
+            <div class="wf-stat-info">
+              <span class="wf-stat-value" id="statSuccessRate">96.8%</span>
+              <span class="wf-stat-label">Success Rate</span>
+              <span class="wf-stat-change wf-stat-up">
+                <i class="ph ph-trend-up"></i> 4.2% <span>vs last 7 days</span>
+              </span>
+            </div>
+          </div>
+          <div class="wf-stat-card">
+            <div class="wf-stat-icon wf-stat-icon-orange">
+              <i class="ph ph-check-square"></i>
+            </div>
+            <div class="wf-stat-info">
+              <span class="wf-stat-value" id="statTasksAutomated">892</span>
+              <span class="wf-stat-label">Tasks Automated</span>
+              <span class="wf-stat-change wf-stat-up">
+                <i class="ph ph-trend-up"></i> 32% <span>vs last 7 days</span>
+              </span>
+            </div>
+          </div>
+          <div class="wf-stat-card">
+            <div class="wf-stat-icon wf-stat-icon-blue">
+              <i class="ph ph-clock"></i>
+            </div>
+            <div class="wf-stat-info">
+              <span class="wf-stat-value" id="statTimeSaved">124h</span>
+              <span class="wf-stat-label">Time Saved</span>
+              <span class="wf-stat-change wf-stat-up">
+                <i class="ph ph-trend-up"></i> 24% <span>vs last 7 days</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="wf-main-grid">
+          <!-- Left Column -->
+          <div class="wf-main-left">
+            <!-- Tabs & Toolbar -->
+            <div class="wf-toolbar">
+              <div class="wf-tabs">
+                <button class="wf-tab active" data-tab="all">All Workflows</button>
+                <button class="wf-tab" data-tab="active">Active</button>
+                <button class="wf-tab" data-tab="draft">Draft</button>
+                <button class="wf-tab" data-tab="paused">Paused</button>
+                <button class="wf-tab" data-tab="completed">Completed</button>
+              </div>
+              <div class="wf-toolbar-actions">
+                <button class="wf-btn-icon" id="filterBtn" aria-label="Filters">
+                  <i class="ph ph-faders"></i>
+                </button>
+                <button class="wf-btn-icon" id="sortBtn" aria-label="Sort">
+                  <i class="ph ph-sort-ascending"></i>
+                </button>
+                <div class="wf-view-toggle">
+                  <button class="wf-view-btn active" data-view="grid" aria-label="Grid view">
+                    <i class="ph ph-squares-four"></i>
+                  </button>
+                  <button class="wf-view-btn" data-view="list" aria-label="List view">
+                    <i class="ph ph-list"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workflow Cards Grid -->
+            <div class="wf-cards-grid" id="workflowCards">
+              <!-- Cards rendered by JS -->
+            </div>
+
+            <!-- Create New Workflow CTA -->
+            <div class="wf-create-card" id="createWorkflowCard">
+              <div class="wf-create-icon">
+                <i class="ph ph-plus"></i>
+              </div>
+              <span class="wf-create-text">Create New Workflow</span>
+              <span class="wf-create-sub">Build custom automations to connect your apps and streamline your work</span>
+            </div>
+
+            <!-- Workflow Builder Preview -->
+            <div class="wf-builder-section">
+              <div class="wf-builder-header">
+                <div class="wf-builder-title">
+                  <span class="wf-builder-badge">Beta</span>
+                  <h3>Workflow Builder</h3>
+                </div>
+                <p class="wf-builder-desc">Design your workflow using our visual builder</p>
+                <button class="btn btn-primary btn-sm" id="openBuilderBtn">
+                  <i class="ph ph-arrow-right"></i> Open Builder
+                </button>
+              </div>
+              <div class="wf-builder-preview" id="builderPreview">
+                <div class="wf-builder-node wf-node-trigger">
+                  <div class="wf-node-icon"><i class="ph ph-lightning"></i></div>
+                  <div class="wf-node-content">
+                    <span class="wf-node-label">Trigger</span>
+                    <span class="wf-node-name">New Lead Created</span>
+                    <span class="wf-node-source">CRM</span>
+                  </div>
+                </div>
+                <div class="wf-builder-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="wf-builder-node wf-node-condition">
+                  <div class="wf-node-icon"><i class="ph ph-git-branch"></i></div>
+                  <div class="wf-node-content">
+                    <span class="wf-node-label">Condition</span>
+                    <span class="wf-node-name">Lead Score > 70</span>
+                    <span class="wf-node-type">Yes / No</span>
+                  </div>
+                </div>
+                <div class="wf-builder-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="wf-builder-node wf-node-action">
+                  <div class="wf-node-icon"><i class="ph ph-check-square"></i></div>
+                  <div class="wf-node-content">
+                    <span class="wf-node-label">Action</span>
+                    <span class="wf-node-name">Create Task</span>
+                    <span class="wf-node-app">Tasks</span>
+                  </div>
+                </div>
+                <div class="wf-builder-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="wf-builder-node wf-node-action">
+                  <div class="wf-node-icon"><i class="ph ph-envelope-simple"></i></div>
+                  <div class="wf-node-content">
+                    <span class="wf-node-label">Action</span>
+                    <span class="wf-node-name">Send Email</span>
+                    <span class="wf-node-app">Gmail</span>
+                  </div>
+                </div>
+                <div class="wf-builder-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="wf-builder-node wf-node-action">
+                  <div class="wf-node-icon"><i class="ph ph-users"></i></div>
+                  <div class="wf-node-content">
+                    <span class="wf-node-label">Action</span>
+                    <span class="wf-node-name">Add to Campaign</span>
+                    <span class="wf-node-app">CRM</span>
+                  </div>
+                </div>
+                <!-- Branch for No -->
+                <div class="wf-builder-branch">
+                  <div class="wf-builder-branch-label">No</div>
+                  <div class="wf-builder-arrow-down"><i class="ph ph-arrow-down"></i></div>
+                  <div class="wf-builder-node wf-node-action wf-node-branch">
+                    <div class="wf-node-icon"><i class="ph ph-envelope-simple"></i></div>
+                    <div class="wf-node-content">
+                      <span class="wf-node-label">Action</span>
+                      <span class="wf-node-name">Add to Nurture Campaign</span>
+                      <span class="wf-node-app">Mail</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="wf-main-right">
+            <!-- Automation Templates -->
+            <div class="wf-panel">
+              <div class="wf-panel-header">
+                <h3>Automation Templates</h3>
+                <a href="#" class="wf-panel-link" id="viewAllTemplates">View All</a>
+              </div>
+              <div class="wf-templates-list" id="templatesList">
+                <!-- Templates rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Workflow Analytics -->
+            <div class="wf-panel">
+              <div class="wf-panel-header">
+                <h3>Workflow Analytics</h3>
+                <div class="wf-panel-filter">
+                  <span>Last 7 Days</span>
+                  <i class="ph ph-caret-down"></i>
+                </div>
+              </div>
+              <div class="wf-analytics-chart" id="analyticsChart">
+                <canvas id="wfChartCanvas"></canvas>
+              </div>
+            </div>
+
+            <!-- Recent Executions -->
+            <div class="wf-panel">
+              <div class="wf-panel-header">
+                <h3>Recent Executions</h3>
+                <a href="#" class="wf-panel-link" id="viewAllExecutions">View All</a>
+              </div>
+              <div class="wf-executions-list" id="executionsList">
+                <!-- Executions rendered by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Create Workflow Modal -->
+  <div class="wf-modal" id="createWorkflowModal">
+    <div class="wf-modal-overlay"></div>
+    <div class="wf-modal-content">
+      <div class="wf-modal-header">
+        <h3>Create New Workflow</h3>
+        <button class="wf-modal-close" id="closeCreateModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wf-modal-body">
+        <div class="form-group">
+          <label class="form-label">Workflow Name</label>
+          <input type="text" class="form-input" id="wfNameInput" placeholder="e.g., New Lead Automation">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" id="wfDescInput" rows="3" placeholder="Describe what this workflow does..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-input form-select" id="wfCategoryInput">
+            <option value="crm">CRM</option>
+            <option value="support">Customer Support</option>
+            <option value="marketing">Marketing</option>
+            <option value="sales">Sales</option>
+            <option value="calendar">Calendar</option>
+            <option value="tasks">Tasks</option>
+            <option value="gmail">Gmail</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="x">X (Twitter)</option>
+            <option value="linkedin">LinkedIn</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trigger</label>
+          <select class="form-input form-select" id="wfTriggerInput">
+            <option value="new_lead">New Lead Created</option>
+            <option value="new_message">New Message Received</option>
+            <option value="ticket_created">Support Ticket Created</option>
+            <option value="appointment_booked">Appointment Booked</option>
+            <option value="task_completed">Task Completed</option>
+            <option value="form_submitted">Form Submitted</option>
+            <option value="tag_added">Tag Added</option>
+            <option value="status_changed">Status Changed</option>
+          </select>
+        </div>
+      </div>
+      <div class="wf-modal-footer">
+        <button class="btn btn-ghost" id="cancelCreateBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveWorkflowBtn">Create Workflow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workflow Builder Modal -->
+  <div class="wf-modal wf-modal-large" id="builderModal">
+    <div class="wf-modal-overlay"></div>
+    <div class="wf-modal-content">
+      <div class="wf-modal-header">
+        <h3>Workflow Builder</h3>
+        <div class="wf-modal-actions">
+          <button class="btn btn-ghost btn-sm" id="builderSaveDraft">Save Draft</button>
+          <button class="btn btn-primary btn-sm" id="builderActivate">Activate</button>
+          <button class="wf-modal-close" id="closeBuilderModal"><i class="ph ph-x"></i></button>
+        </div>
+      </div>
+      <div class="wf-modal-body wf-builder-canvas-body">
+        <div class="wf-builder-sidebar">
+          <div class="wf-builder-sidebar-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search triggers & actions..." id="builderSearch">
+          </div>
+          <div class="wf-builder-categories">
+            <div class="wf-builder-category">
+              <div class="wf-builder-category-header">
+                <i class="ph ph-lightning"></i>
+                <span>Triggers</span>
+                <i class="ph ph-caret-down"></i>
+              </div>
+              <div class="wf-builder-category-items">
+                <div class="wf-builder-item" draggable="true" data-type="trigger" data-value="new_lead">
+                  <i class="ph ph-user-plus"></i>
+                  <span>New Lead</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="trigger" data-value="new_message">
+                  <i class="ph ph-chat-circle-text"></i>
+                  <span>New Message</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="trigger" data-value="ticket_created">
+                  <i class="ph ph-ticket"></i>
+                  <span>Ticket Created</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="trigger" data-value="appointment">
+                  <i class="ph ph-calendar"></i>
+                  <span>Appointment</span>
+                </div>
+              </div>
+            </div>
+            <div class="wf-builder-category">
+              <div class="wf-builder-category-header">
+                <i class="ph ph-git-branch"></i>
+                <span>Conditions</span>
+                <i class="ph ph-caret-down"></i>
+              </div>
+              <div class="wf-builder-category-items">
+                <div class="wf-builder-item" draggable="true" data-type="condition" data-value="if_else">
+                  <i class="ph ph-fork-knife"></i>
+                  <span>If / Else</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="condition" data-value="wait">
+                  <i class="ph ph-clock"></i>
+                  <span>Wait / Delay</span>
+                </div>
+              </div>
+            </div>
+            <div class="wf-builder-category">
+              <div class="wf-builder-category-header">
+                <i class="ph ph-lightning-slash"></i>
+                <span>Actions</span>
+                <i class="ph ph-caret-down"></i>
+              </div>
+              <div class="wf-builder-category-items">
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="send_email">
+                  <i class="ph ph-envelope-simple"></i>
+                  <span>Send Email</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="send_message">
+                  <i class="ph ph-chat-circle-text"></i>
+                  <span>Send Message</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="create_task">
+                  <i class="ph ph-check-square"></i>
+                  <span>Create Task</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="add_to_crm">
+                  <i class="ph ph-users"></i>
+                  <span>Add to CRM</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="update_status">
+                  <i class="ph ph-arrows-clockwise"></i>
+                  <span>Update Status</span>
+                </div>
+                <div class="wf-builder-item" draggable="true" data-type="action" data-value="add_tag">
+                  <i class="ph ph-tag"></i>
+                  <span>Add Tag</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-builder-canvas" id="builderCanvas">
+          <div class="wf-canvas-grid"></div>
+          <div class="wf-canvas-dropzone" id="canvasDropzone">
+            <div class="wf-canvas-placeholder">
+              <i class="ph ph-plus-circle"></i>
+              <span>Drag and drop triggers, conditions, and actions here</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="wf-modal" id="deleteModal">
+    <div class="wf-modal-overlay"></div>
+    <div class="wf-modal-content wf-modal-small">
+      <div class="wf-modal-header">
+        <h3>Delete Workflow</h3>
+        <button class="wf-modal-close" id="closeDeleteModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="wf-modal-body">
+        <p class="wf-modal-text">Are you sure you want to delete "<span id="deleteWorkflowName"></span>"? This action cannot be undone.</p>
+      </div>
+      <div class="wf-modal-footer">
+        <button class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/workflow.js"></script>
+</body>
+</html>

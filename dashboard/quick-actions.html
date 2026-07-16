@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Actions — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-page-title">
+          <h1>Quick Actions</h1>
+          <p>Take action across your platforms</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-col-12">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Message Actions</span>
+              </div>
+              <div class="widget-body">
+                <div class="quick-actions-grid" id="message-actions"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-col-12">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Other Actions</span>
+              </div>
+              <div class="widget-body">
+                <div class="quick-actions-grid" id="other-actions"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-col-12">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Shortcuts</span>
+              </div>
+              <div class="widget-body">
+                <div class="quick-actions-grid" id="shortcuts"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      const app = new DashboardApp();
+
+      const messageActions = [
+        { icon: 'gmail', label: 'Compose Email', desc: 'Gmail', ph: 'ph-envelope-simple', action: () => OP.toast.show('Compose Gmail email', 'info') },
+        { icon: 'whatsapp', label: 'Send Message', desc: 'WhatsApp Business', ph: 'ph-chat-circle-text', action: () => OP.toast.show('Send WhatsApp message', 'info') },
+        { icon: 'instagram', label: 'Reply to DM', desc: 'Instagram', ph: 'ph-camera', action: () => OP.toast.show('Reply to Instagram DM', 'info') },
+        { icon: 'tiktok', label: 'Reply to Comment', desc: 'TikTok', ph: 'ph-tiktok-logo', action: () => OP.toast.show('Reply to TikTok comment', 'info') },
+        { icon: 'x', label: 'Reply to Message', desc: 'X (Twitter)', ph: 'ph-x-logo', action: () => OP.toast.show('Reply to X message', 'info') },
+        { icon: 'linkedin', label: 'Reply to Message', desc: 'LinkedIn', ph: 'ph-linkedin-logo', action: () => OP.toast.show('Reply to LinkedIn message', 'info') }
+      ];
+
+      const otherActions = [
+        { icon: 'primary', label: 'Create Contact', desc: 'Add to CRM', ph: 'ph-user-plus', action: () => OP.toast.show('Create contact', 'info') },
+        { icon: 'success', label: 'Create Deal', desc: 'Sales pipeline', ph: 'ph-currency-dollar', action: () => OP.toast.show('Create deal', 'info') },
+        { icon: 'warning', label: 'Create Task', desc: 'Assign to team', ph: 'ph-check-circle', action: () => OP.toast.show('Create task', 'info') },
+        { icon: 'primary', label: 'Generate AI Reply', desc: 'Smart response', ph: 'ph-sparkle', action: () => OP.toast.show('Generate AI reply', 'info') },
+        { icon: 'success', label: 'Generate Report', desc: 'Analytics', ph: 'ph-chart-bar', action: () => OP.toast.show('Generate report', 'info') },
+        { icon: 'primary', label: 'Team Broadcast', desc: 'Notify team', ph: 'ph-broadcast', action: () => OP.toast.show('Team broadcast', 'info') }
+      ];
+
+      const shortcuts = [
+        { icon: 'primary', label: 'All Inbox', desc: 'Unified view', ph: 'ph-inbox', action: () => window.location.href = 'main-dashboard.html' },
+        { icon: 'primary', label: 'Starred', desc: 'Important items', ph: 'ph-star', action: () => OP.toast.show('Starred items', 'info') },
+        { icon: 'primary', label: 'Unread', desc: 'Pending messages', ph: 'ph-envelope-open', action: () => OP.toast.show('Unread messages', 'info') },
+        { icon: 'primary', label: 'Assigned to Me', desc: 'Your tasks', ph: 'ph-user-check', action: () => OP.toast.show('Assigned to me', 'info') },
+        { icon: 'primary', label: 'Snoozed', desc: 'Later', ph: 'ph-clock', action: () => OP.toast.show('Snoozed items', 'info') },
+        { icon: 'primary', label: 'Drafts', desc: 'Unsent', ph: 'ph-pencil-simple', action: () => OP.toast.show('Drafts', 'info') }
+      ];
+
+      function renderActions(containerId, actions) {
+        document.getElementById(containerId).innerHTML = actions.map(a => `
+          <div class="quick-action-card" onclick="(${a.action.toString()})()">
+            <div class="quick-action-icon ${a.icon}"><i class="ph ${a.ph}"></i></div>
+            <div class="quick-action-label">${a.label}</div>
+            <div class="quick-action-desc">${a.desc}</div>
+          </div>
+        `).join('');
+      }
+
+      renderActions('message-actions', messageActions);
+      renderActions('other-actions', otherActions);
+      renderActions('shortcuts', shortcuts);
+    });
+  </script>
+</body>
+</html>

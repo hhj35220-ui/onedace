@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Management — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/team.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header team-header" role="banner"></header>
+
+      <!-- Content -->
+      <div class="dashboard-content team-content">
+        <!-- Page Title -->
+        <div class="team-page-title">
+          <div class="team-title-left">
+            <h1>Team Management</h1>
+            <p>Manage your team, roles, permissions, and organization</p>
+          </div>
+          <div class="team-title-right">
+            <div class="team-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="team-search" placeholder="Search users, teams, departments..." autocomplete="off">
+              <span class="team-search-kbd">⌘K</span>
+            </div>
+            <button class="btn btn-primary" id="btn-invite-user">
+              <i class="ph ph-plus"></i> Invite User
+            </button>
+            <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+              <i class="ph ph-bell"></i>
+              <span class="notification-dot" id="notif-dot"></span>
+            </button>
+            <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+              <i class="ph ph-moon"></i>
+            </button>
+            <div class="header-user-menu" id="header-user-menu">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+              <div class="header-user-info">
+                <span class="header-user-name">Alex Morgan</span>
+                <span class="header-user-role">Administrator</span>
+              </div>
+              <i class="ph ph-caret-down" style="color: var(--gray-400); font-size: 12px;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="team-stats-row" id="team-stats-row">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Charts Row -->
+        <div class="team-charts-row">
+          <!-- Team Overview Donut -->
+          <div class="team-chart-card">
+            <div class="team-chart-header">
+              <h3 class="team-chart-title">Team Overview</h3>
+            </div>
+            <div class="team-chart-body">
+              <div class="donut-chart-container" id="team-overview-donut"></div>
+            </div>
+          </div>
+
+          <!-- User Activity Line Chart -->
+          <div class="team-chart-card team-chart-wide">
+            <div class="team-chart-header">
+              <h3 class="team-chart-title">User Activity</h3>
+              <div class="team-chart-actions">
+                <button class="team-chart-filter active" data-period="7">Last 7 Days</button>
+                <button class="team-chart-filter" data-period="30">Last 30 Days</button>
+                <button class="team-chart-filter" data-period="90">Last 90 Days</button>
+              </div>
+            </div>
+            <div class="team-chart-body">
+              <div class="line-chart-container" id="user-activity-chart"></div>
+            </div>
+          </div>
+
+          <!-- Users by Role Donut -->
+          <div class="team-chart-card">
+            <div class="team-chart-header">
+              <h3 class="team-chart-title">Users by Role</h3>
+            </div>
+            <div class="team-chart-body">
+              <div class="donut-chart-container" id="users-by-role-donut"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Tabs & Table -->
+        <div class="team-main-section">
+          <div class="team-tabs-bar">
+            <div class="team-tabs" id="team-tabs">
+              <button class="team-tab active" data-tab="users">
+                <span>All Users</span>
+              </button>
+              <button class="team-tab" data-tab="teams">
+                <span>Teams</span>
+              </button>
+              <button class="team-tab" data-tab="departments">
+                <span>Departments</span>
+              </button>
+              <button class="team-tab" data-tab="roles">
+                <span>Roles</span>
+              </button>
+              <button class="team-tab" data-tab="permissions">
+                <span>Permissions</span>
+              </button>
+            </div>
+            <div class="team-table-actions">
+              <div class="team-table-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="table-search" placeholder="Search users..." autocomplete="off">
+              </div>
+              <button class="team-table-action-btn" id="btn-filters" title="Filters">
+                <i class="ph ph-funnel"></i> Filters
+              </button>
+              <button class="team-table-action-btn" id="btn-export" title="Export">
+                <i class="ph ph-export"></i> Export
+              </button>
+              <button class="team-table-action-btn" id="btn-more" title="More options">
+                <i class="ph ph-dots-three"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Content -->
+          <div class="team-table-container" id="team-table-container">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Pagination -->
+          <div class="team-pagination" id="team-pagination">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Sidebar -->
+      <aside class="team-right-sidebar">
+        <!-- Recent Activity -->
+        <div class="team-sidebar-section">
+          <div class="team-sidebar-header">
+            <h4>Recent Activity</h4>
+            <a href="#" class="team-sidebar-link" id="view-all-activity">View All</a>
+          </div>
+          <div class="team-activity-list" id="recent-activity-list"></div>
+        </div>
+
+        <!-- Pending Invitations -->
+        <div class="team-sidebar-section">
+          <div class="team-sidebar-header">
+            <h4>Pending Invitations</h4>
+            <a href="#" class="team-sidebar-link" id="view-all-invites">View All</a>
+          </div>
+          <div class="team-invite-list" id="pending-invites-list"></div>
+        </div>
+
+        <!-- Users by Department -->
+        <div class="team-sidebar-section">
+          <div class="team-sidebar-header">
+            <h4>Users by Department</h4>
+            <a href="#" class="team-sidebar-link" id="view-all-depts">View All</a>
+          </div>
+          <div class="team-dept-list" id="users-by-dept-list"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="team-sidebar-section">
+          <div class="team-sidebar-header">
+            <h4>Quick Actions</h4>
+          </div>
+          <div class="team-quick-actions-grid" id="quick-actions-grid"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Invite User Modal -->
+  <div class="team-modal-overlay" id="invite-modal-overlay">
+    <div class="team-modal" id="invite-modal">
+      <div class="team-modal-header">
+        <h3 id="invite-modal-title">Invite User</h3>
+        <button class="team-modal-close" id="invite-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="invite-modal-body">
+        <form id="invite-form">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="invite-name" placeholder="Enter full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="invite-email" placeholder="Enter email address" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select class="form-input form-select" id="invite-department"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Role</label>
+              <select class="form-input form-select" id="invite-role"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Team</label>
+            <select class="form-input form-select" id="invite-team"></select>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="invite-send-email" checked>
+              <span class="checkbox-label">Send invitation email</span>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="invite-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="invite-modal-send">Send Invitation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile Modal -->
+  <div class="team-modal-overlay" id="profile-modal-overlay">
+    <div class="team-modal team-modal-lg" id="profile-modal">
+      <div class="team-modal-header">
+        <h3 id="profile-modal-title">User Profile</h3>
+        <button class="team-modal-close" id="profile-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="profile-modal-body"></div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="profile-modal-cancel">Close</button>
+        <button class="btn btn-primary" id="profile-modal-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Profile Modal -->
+  <div class="team-modal-overlay" id="team-modal-overlay">
+    <div class="team-modal" id="team-modal">
+      <div class="team-modal-header">
+        <h3 id="team-modal-title">Team Details</h3>
+        <button class="team-modal-close" id="team-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="team-modal-body"></div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="team-modal-cancel">Close</button>
+        <button class="btn btn-primary" id="team-modal-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Profile Modal -->
+  <div class="team-modal-overlay" id="dept-modal-overlay">
+    <div class="team-modal" id="dept-modal">
+      <div class="team-modal-header">
+        <h3 id="dept-modal-title">Department Details</h3>
+        <button class="team-modal-close" id="dept-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="dept-modal-body"></div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="dept-modal-cancel">Close</button>
+        <button class="btn btn-primary" id="dept-modal-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Modal -->
+  <div class="team-modal-overlay" id="role-modal-overlay">
+    <div class="team-modal" id="role-modal">
+      <div class="team-modal-header">
+        <h3 id="role-modal-title">Manage Role</h3>
+        <button class="team-modal-close" id="role-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="role-modal-body"></div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="role-modal-cancel">Close</button>
+        <button class="btn btn-primary" id="role-modal-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="team-modal-overlay" id="delete-modal-overlay">
+    <div class="team-modal team-modal-sm" id="delete-modal">
+      <div class="team-modal-header">
+        <h3 id="delete-modal-title">Confirm Delete</h3>
+        <button class="team-modal-close" id="delete-modal-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="team-modal-body" id="delete-modal-body">
+        <p style="color: var(--gray-600); font-size: var(--text-sm);">Are you sure you want to delete this item? This action cannot be undone.</p>
+      </div>
+      <div class="team-modal-footer">
+        <button class="btn btn-secondary" id="delete-modal-cancel">Cancel</button>
+        <button class="btn btn-danger" id="delete-modal-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/team.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) {
+        window.location.href = '../auth/signin.html';
+        return;
+      }
+      window.teamApp = new TeamApp();
+    });
+  </script>
+</body>
+</html>

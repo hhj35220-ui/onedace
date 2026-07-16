@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Settings — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/gmail.css">
+</head>
+<body>
+  <div class="gmail-layout">
+    <aside class="gmail-sidebar" role="navigation" aria-label="Gmail navigation"></aside>
+    <div class="gmail-sidebar-overlay sidebar-overlay"></div>
+    <main class="gmail-main">
+      <header class="gmail-header" role="banner"></header>
+      <div class="gmail-content">
+        <div class="gmail-page-title">
+          <div class="gmail-page-title-left">
+            <h1>
+              <span class="gmail-icon"><i class="ph ph-gear"></i></span>
+              Gmail Settings
+            </h1>
+            <p>Configure your Gmail preferences</p>
+          </div>
+        </div>
+        <div class="gmail-settings-tabs">
+          <button class="gmail-settings-tab active" data-tab="general">General</button>
+          <button class="gmail-settings-tab" data-tab="notifications">Notifications</button>
+          <button class="gmail-settings-tab" data-tab="templates">Templates</button>
+          <button class="gmail-settings-tab" data-tab="labels">Labels</button>
+          <button class="gmail-settings-tab" data-tab="filters">Filters</button>
+          <button class="gmail-settings-tab" data-tab="more">More</button>
+        </div>
+        <div class="gmail-settings-panel active" id="panel-general">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">General Settings</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Default Sender</div>
+                  <div class="gmail-settings-desc">Default email address for sending emails</div>
+                </div>
+                <input type="text" class="form-input" value="alex.morgan@oneplace.com" style="width: 250px;">
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Email Signature</div>
+                  <div class="gmail-settings-desc">Add a signature to your emails</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Auto Reply</div>
+                  <div class="gmail-settings-desc">Send automatic replies when unavailable</div>
+                </div>
+                <div class="gmail-toggle"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Default Email Template</div>
+                  <div class="gmail-settings-desc">Select a default template for new emails</div>
+                </div>
+                <select class="form-select" style="width: 200px;">
+                  <option>None</option>
+                  <option>Sales Follow Up</option>
+                  <option>Welcome Email</option>
+                  <option>Support Response</option>
+                </select>
+              </div>
+            </div>
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Email Notifications</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">New Email Notifications</div>
+                  <div class="gmail-settings-desc">Get notified when you receive new emails</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Desktop Notifications</div>
+                  <div class="gmail-settings-desc">Show desktop notifications for new emails</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Sound Alerts</div>
+                  <div class="gmail-settings-desc">Play a sound when new emails arrive</div>
+                </div>
+                <div class="gmail-toggle"><div class="gmail-toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Import/Settings</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Import Contacts</div>
+                  <div class="gmail-settings-desc">Import contacts from Gmail</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Import</button>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Export Data</div>
+                  <div class="gmail-settings-desc">Export your email data</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Export</button>
+              </div>
+            </div>
+            <div style="margin-top: var(--space-6);">
+              <button class="btn btn-primary" id="save-settings-btn"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="gmail-settings-panel" id="panel-notifications">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Notification Preferences</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Email Alerts</div>
+                  <div class="gmail-settings-desc">Receive alerts for important emails</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Weekly Digest</div>
+                  <div class="gmail-settings-desc">Get a weekly summary of email activity</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">AI Suggestions</div>
+                  <div class="gmail-settings-desc">Get AI-powered email suggestions</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gmail-settings-panel" id="panel-templates">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Template Settings</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Auto-suggest Templates</div>
+                  <div class="gmail-settings-desc">Suggest templates based on email content</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Template Sharing</div>
+                  <div class="gmail-settings-desc">Share templates with team members</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gmail-settings-panel" id="panel-labels">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Email Labels</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Show Labels</div>
+                  <div class="gmail-settings-desc">Display labels in conversation list</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Auto-label Emails</div>
+                  <div class="gmail-settings-desc">Automatically categorize emails</div>
+                </div>
+                <div class="gmail-toggle"><div class="gmail-toggle-knob"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gmail-settings-panel" id="panel-filters">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Email Filters</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Spam Filter</div>
+                  <div class="gmail-settings-desc">Automatically filter spam emails</div>
+                </div>
+                <div class="gmail-toggle active"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Auto-archive</div>
+                  <div class="gmail-settings-desc">Automatically archive resolved emails</div>
+                </div>
+                <div class="gmail-toggle"><div class="gmail-toggle-knob"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gmail-settings-panel" id="panel-more">
+          <div class="gmail-settings-form">
+            <div class="gmail-settings-group">
+              <h3 class="gmail-settings-group-title">Advanced Settings</h3>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Debug Mode</div>
+                  <div class="gmail-settings-desc">Enable debug logging</div>
+                </div>
+                <div class="gmail-toggle"><div class="gmail-toggle-knob"></div></div>
+              </div>
+              <div class="gmail-settings-row">
+                <div>
+                  <div class="gmail-settings-label">Clear Cache</div>
+                  <div class="gmail-settings-desc">Clear local email cache</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/gmail.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+      window.gmailApp = new GmailApp();
+    });
+  </script>
+</body>
+</html>

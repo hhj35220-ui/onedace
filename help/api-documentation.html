@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation — Help Center — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/help.css">
+</head>
+<body>
+  <div class="help-layout">
+    <aside class="help-sidebar">
+      <div class="help-sidebar-header">
+        <a href="../index.html" class="help-sidebar-logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="help-sidebar-nav">
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Help Center</div>
+          <a href="index.html" class="help-sidebar-link"><i class="ph ph-house"></i>Overview</a>
+          <a href="documentation.html" class="help-sidebar-link"><i class="ph ph-book-open"></i>Documentation</a>
+          <a href="tutorials.html" class="help-sidebar-link"><i class="ph ph-video"></i>Tutorials</a>
+          <a href="faq.html" class="help-sidebar-link"><i class="ph ph-question"></i>FAQ</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Support</div>
+          <a href="contact-support.html" class="help-sidebar-link"><i class="ph ph-envelope"></i>Contact Support</a>
+          <a href="live-chat.html" class="help-sidebar-link"><i class="ph ph-chat-circle-dots"></i>Live Chat</a>
+          <a href="submit-ticket.html" class="help-sidebar-link"><i class="ph ph-ticket"></i>Submit Ticket</a>
+          <a href="ticket-history.html" class="help-sidebar-link"><i class="ph ph-clock-counter-clockwise"></i>Ticket History</a>
+        </div>
+        <div class="help-sidebar-section">
+          <div class="help-sidebar-section-title">Resources</div>
+          <a href="system-status.html" class="help-sidebar-link"><i class="ph ph-activity"></i>System Status</a>
+          <a href="feature-requests.html" class="help-sidebar-link"><i class="ph ph-lightbulb"></i>Feature Requests</a>
+          <a href="release-notes.html" class="help-sidebar-link"><i class="ph ph-scroll"></i>Release Notes</a>
+          <a href="api-documentation.html" class="help-sidebar-link active"><i class="ph ph-code"></i>API Documentation</a>
+          <a href="keyboard-shortcuts.html" class="help-sidebar-link"><i class="ph ph-keyboard"></i>Keyboard Shortcuts</a>
+          <a href="community.html" class="help-sidebar-link"><i class="ph ph-users-three"></i>Community</a>
+          <a href="about.html" class="help-sidebar-link"><i class="ph ph-info"></i>About OnePlace</a>
+        </div>
+      </nav>
+      <div class="help-sidebar-footer">
+        <div class="help-sidebar-user">
+          <div class="avatar avatar-md avatar-placeholder" id="user-avatar">AM</div>
+          <div class="help-sidebar-user-info">
+            <div class="help-sidebar-user-name" id="user-name">Alex Morgan</div>
+            <div class="help-sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="help-sidebar-overlay"></div>
+
+    <main class="help-main">
+      <header class="help-header">
+        <div class="help-header-left">
+          <button class="help-sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+          <nav class="help-header-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Help Center</a>
+            <i class="ph ph-caret-right"></i>
+            <a href="api-documentation.html">API Documentation</a>
+          </nav>
+        </div>
+        <div class="help-header-right">
+          <div class="help-header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="search" placeholder="Search API..." aria-label="Search API">
+            <div class="help-search-results"></div>
+          </div>
+          <button class="help-header-btn" data-theme-toggle aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <a href="../dashboard/main-dashboard.html" class="help-header-btn" aria-label="Back to dashboard"><i class="ph ph-arrow-u-up-left"></i></a>
+        </div>
+      </header>
+
+      <div class="help-content">
+        <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);">API Documentation</h1>
+        <p style="color: var(--gray-500); margin-bottom: var(--space-6);">Integrate OnePlace with your applications using our REST API.</p>
+
+        <div class="help-api-nav">
+          <button class="help-api-nav-btn active" data-section="overview">Overview</button>
+          <button class="help-api-nav-btn" data-section="authentication">Authentication</button>
+          <button class="help-api-nav-btn" data-section="endpoints">Endpoints</button>
+          <button class="help-api-nav-btn" data-section="webhooks">Webhooks</button>
+        </div>
+
+        <div class="help-api-section active" id="section-overview">
+          <div class="help-doc-content">
+            <h2>Getting Started</h2>
+            <p>The OnePlace API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.</p>
+            
+            <h3>Base URL</h3>
+            <div class="code-block">
+              <div class="code-header">
+                <span>https://api.oneplace.com/v1</span>
+                <button class="copy-code-btn" onclick="copyCode(this)"><i class="ph ph-copy"></i> Copy</button>
+              </div>
+              <pre><code>https://api.oneplace.com/v1</code></pre>
+            </div>
+
+            <h3>Authentication</h3>
+            <p>All API requests must include your API key in the Authorization header:</p>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Authorization: Bearer YOUR_API_KEY</span>
+                <button class="copy-code-btn" onclick="copyCode(this)"><i class="ph ph-copy"></i> Copy</button>
+              </div>
+              <pre><code>curl https://api.oneplace.com/v1/conversations \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-api-section" id="section-authentication">
+          <div class="help-doc-content">
+            <h2>Authentication</h2>
+            <p>OnePlace uses API keys to authenticate requests. You can view and manage your API keys in your workspace settings.</p>
+            
+            <h3>API Key</h3>
+            <div class="code-block">
+              <div class="code-header">
+                <span>API Key</span>
+                <button class="copy-code-btn" onclick="copyCode(this)"><i class="ph ph-copy"></i> Copy</button>
+              </div>
+              <pre><code>sk_live_51HxZ9l2eZvKYlo2C9xYzAbCdEfGhIjKlMnOpQrStUvWxYz</code></pre>
+            </div>
+
+            <h3>OAuth 2.0</h3>
+            <p>For third-party applications, we support OAuth 2.0 authentication flow.</p>
+          </div>
+        </div>
+
+        <div class="help-api-section" id="section-endpoints">
+          <div id="endpoints-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="help-api-section" id="section-webhooks">
+          <div class="help-doc-content">
+            <h2>Webhooks</h2>
+            <p>Webhooks allow you to receive real-time notifications when events occur in your OnePlace workspace.</p>
+            
+            <h3>Event Types</h3>
+            <ul>
+              <li><code>conversation.created</code> — Triggered when a new conversation is created</li>
+              <li><code>message.received</code> — Triggered when a new message is received</li>
+              <li><code>contact.updated</code> — Triggered when a contact is updated</li>
+              <li><code>ticket.status_changed</code> — Triggered when a ticket status changes</li>
+            </ul>
+
+            <h3>Webhook Payload</h3>
+            <div class="code-block">
+              <div class="code-header">
+                <span>JSON</span>
+                <button class="copy-code-btn" onclick="copyCode(this)"><i class="ph ph-copy"></i> Copy</button>
+              </div>
+              <pre><code>{
+  "event": "message.received",
+  "timestamp": "2026-07-12T10:30:00Z",
+  "data": {
+    "conversation_id": "conv_123",
+    "message_id": "msg_456",
+    "content": "Hello, I need help with...",
+    "sender": {
+      "id": "user_789",
+      "name": "John Doe"
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/help.js"></script>
+  <script>
+    // API nav tabs
+    document.querySelectorAll('.help-api-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.help-api-nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.help-api-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`section-${btn.dataset.section}`).classList.add('active');
+      });
+    });
+
+    // Render endpoints
+    function renderEndpoints() {
+      const container = document.getElementById('endpoints-list');
+      const sections = ['conversations', 'contacts', 'messages', 'webhooks'];
+      
+      container.innerHTML = sections.map(section => {
+        const endpoints = HELP_DATA.apiEndpoints.filter(e => e.section === section);
+        return `
+          <h3 style="font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-4); text-transform: capitalize;">${section}</h3>
+          ${endpoints.map(endpoint => `
+            <div class="help-api-endpoint">
+              <div class="help-api-endpoint-header">
+                <span class="help-api-method ${endpoint.method.toLowerCase()}">${endpoint.method}</span>
+                <code class="help-api-path">${endpoint.path}</code>
+              </div>
+              <div class="help-api-endpoint-body">
+                <p>${endpoint.description}</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <span>cURL</span>
+                    <button class="copy-code-btn" onclick="copyCode(this)"><i class="ph ph-copy"></i> Copy</button>
+                  </div>
+                  <pre><code>curl -X ${endpoint.method} https://api.oneplace.com/v1${endpoint.path.replace('{id}', '123')} \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json"</code></pre>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        `;
+      }).join('');
+    }
+
+    renderEndpoints();
+
+    // Load user
+    const session = OP.auth.getSession();
+    if (session) {
+      document.getElementById('user-name').textContent = session.fullName || 'User';
+      const initials = (session.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('user-avatar').textContent = initials;
+    }
+  </script>
+</body>
+</html>

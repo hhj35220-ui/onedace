@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/settings.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item"><i class="ph ph-chat-circle-dots"></i><span>Unified Inbox</span><span class="nav-badge">14</span></a>
+          <a href="../crm/" class="nav-item"><i class="ph ph-users"></i><span>CRM</span></a>
+        </div>
+        
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../gmail/" class="nav-item"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a>
+          <a href="../whatsapp/" class="nav-item"><i class="ph ph-chat-circle-text"></i><span>WhatsApp</span></a>
+          <a href="../instagram/" class="nav-item"><i class="ph ph-camera"></i><span>Instagram</span></a>
+          <a href="../tiktok/" class="nav-item"><i class="ph ph-music-notes"></i><span>TikTok</span></a>
+          <a href="../x/" class="nav-item"><i class="ph ph-x-logo"></i><span>X (Twitter)</span></a>
+          <a href="../linkedin/" class="nav-item"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></a>
+        </div>
+        
+        <div class="nav-section">
+          <span class="nav-section-label">Management</span>
+          <a href="../support/" class="nav-item"><i class="ph ph-headset"></i><span>Support</span></a>
+          <a href="../calendar/" class="nav-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+          <a href="../tasks/" class="nav-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+          <a href="../team/" class="nav-item"><i class="ph ph-users-three"></i><span>Team</span></a>
+          <a href="../workflow/" class="nav-item"><i class="ph ph-git-branch"></i><span>Automation</span></a>
+          <a href="../ai/" class="nav-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+        </div>
+        
+        <div class="nav-section">
+          <span class="nav-section-label">System</span>
+          <a href="../notifications/notifications.html" class="nav-item"><i class="ph ph-bell"></i><span>Notifications</span></a>
+          <a href="../reports/" class="nav-item"><i class="ph ph-chart-bar"></i><span>Analytics</span></a>
+          <a href="../files/" class="nav-item"><i class="ph ph-folder"></i><span>Files</span></a>
+          <a href="../search/" class="nav-item"><i class="ph ph-magnifying-glass"></i><span>Search</span></a>
+          <a href="../integrations/" class="nav-item"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+          <a href="../billing/" class="nav-item"><i class="ph ph-credit-card"></i><span>Billing</span></a>
+          <a href="./" class="nav-item active"><i class="ph ph-gear"></i><span>Settings</span></a>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-mini-avatar" id="userMiniAvatar">AM</div>
+          <div class="user-mini-info">
+            <span class="user-mini-name" id="userMiniName">Alex Morgan</span>
+            <span class="user-mini-role" id="userMiniRole">Administrator</span>
+          </div>
+          <button class="user-mini-menu" aria-label="User menu"><i class="ph ph-dots-three-vertical"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+          <h1 class="header-title">Settings Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search settings... (⌘K)" id="settingsSearch">
+          </div>
+          <button class="header-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="header-badge">3</span></button>
+          <button class="header-btn" aria-label="Help"><i class="ph ph-question"></i></button>
+          <div class="header-avatar" id="headerAvatar">AM</div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="app-content">
+        <!-- Settings Dashboard -->
+        <div class="settings-dashboard" id="settingsDashboard">
+          <!-- Workspace Info Card -->
+          <div class="dashboard-card workspace-info-card">
+            <div class="workspace-info-header">
+              <div class="workspace-info-icon"><i class="ph ph-buildings"></i></div>
+              <div class="workspace-info-details">
+                <h3 id="workspaceName">OnePlace HQ</h3>
+                <span class="workspace-info-plan" id="workspacePlan">Business Plan</span>
+                <span class="workspace-info-price" id="workspacePrice">$79 / month</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="location.href='general.html'">Manage</button>
+            </div>
+            <div class="workspace-info-meta">
+              <span><i class="ph ph-calendar"></i> Active since Jan 15, 2026</span>
+              <span><i class="ph ph-users"></i> View all members</span>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="dashboard-card quick-actions-card">
+            <h4>Quick Actions</h4>
+            <div class="quick-actions-list">
+              <a href="../team/index.html" class="quick-action-item">
+                <div class="quick-action-icon"><i class="ph ph-user-plus"></i></div>
+                <span>Invite Team Members</span>
+                <i class="ph ph-caret-right"></i>
+              </a>
+              <a href="../billing/index.html" class="quick-action-item">
+                <div class="quick-action-icon"><i class="ph ph-credit-card"></i></div>
+                <span>Manage Billing</span>
+                <i class="ph ph-caret-right"></i>
+              </a>
+              <a href="audit-logs.html" class="quick-action-item">
+                <div class="quick-action-icon"><i class="ph ph-scroll"></i></div>
+                <span>View Audit Logs</span>
+                <i class="ph ph-caret-right"></i>
+              </a>
+              <a href="../integrations/index.html" class="quick-action-item">
+                <div class="quick-action-icon"><i class="ph ph-plugs-connected"></i></div>
+                <span>Configure Integrations</span>
+                <i class="ph ph-caret-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Storage Card -->
+          <div class="dashboard-card storage-card">
+            <div class="storage-header">
+              <div class="storage-icon"><i class="ph ph-hard-drives"></i></div>
+              <div class="storage-info">
+                <h4>Storage</h4>
+                <span class="storage-usage" id="storageUsage">34.6 GB / 100 GB</span>
+              </div>
+              <span class="storage-percent" id="storagePercent">34% used</span>
+            </div>
+            <div class="storage-bar">
+              <div class="storage-bar-fill" id="storageBarFill" style="width: 34%"></div>
+            </div>
+            <div class="storage-legend">
+              <span><span class="legend-dot files"></span>Files <span id="filesSize">16.2 GB</span></span>
+              <span><span class="legend-dot messages"></span>Messages <span id="messagesSize">10.4 GB</span></span>
+              <span><span class="legend-dot others"></span>Others <span id="othersSize">4.0 GB</span></span>
+            </div>
+          </div>
+
+          <!-- Members Card -->
+          <div class="dashboard-card members-card">
+            <div class="members-header">
+              <h4>Members</h4>
+              <span class="members-count" id="membersCount">12 / 25</span>
+            </div>
+            <div class="members-avatars" id="membersAvatars">
+              <div class="member-avatar">JD</div>
+              <div class="member-avatar">SK</div>
+              <div class="member-avatar">MW</div>
+              <div class="member-avatar">+9</div>
+            </div>
+          </div>
+
+          <!-- Security Card -->
+          <div class="dashboard-card security-card">
+            <div class="security-header">
+              <div class="security-icon"><i class="ph ph-shield-check"></i></div>
+              <div class="security-info">
+                <h4>Security</h4>
+                <span class="security-status good" id="securityStatus">Good</span>
+              </div>
+            </div>
+            <div class="security-score" id="securityScore">87/100</div>
+            <div class="security-checks">
+              <span class="security-check pass"><i class="ph ph-check-circle"></i> No issues found</span>
+            </div>
+          </div>
+
+          <!-- Recent Changes -->
+          <div class="dashboard-card recent-changes-card">
+            <div class="recent-header">
+              <h4>Recent Changes</h4>
+              <a href="audit-logs.html" class="view-all">View All</a>
+            </div>
+            <div class="recent-list" id="recentList">
+              <div class="recent-item">
+                <div class="recent-icon"><i class="ph ph-gear"></i></div>
+                <div class="recent-info">
+                  <span class="recent-title">You updated workspace settings</span>
+                  <span class="recent-time">2 hours ago</span>
+                </div>
+              </div>
+              <div class="recent-item">
+                <div class="recent-icon"><i class="ph ph-users"></i></div>
+                <div class="recent-info">
+                  <span class="recent-title">Sarah Johnson imported 320 contacts</span>
+                  <span class="recent-time">5 hours ago</span>
+                </div>
+              </div>
+              <div class="recent-item">
+                <div class="recent-icon"><i class="ph ph-shield"></i></div>
+                <div class="recent-info">
+                  <span class="recent-title">Mike Wilson changed user role permissions</span>
+                  <span class="recent-time">1 day ago</span>
+                </div>
+              </div>
+              <div class="recent-item">
+                <div class="recent-icon"><i class="ph ph-sparkle"></i></div>
+                <div class="recent-info">
+                  <span class="recent-title">AI preferences updated</span>
+                  <span class="recent-time">2 days ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/settings.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      SettingsApp.init();
+    });
+  </script>
+</body>
+</html>

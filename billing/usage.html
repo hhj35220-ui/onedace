@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usage & Limits — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/billing.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar (same as index.html) -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item"><i class="ph ph-chat-circle-dots"></i><span>Unified Inbox</span><span class="nav-badge">24</span></a>
+          <a href="../crm/contacts.html" class="nav-item"><i class="ph ph-users"></i><span>Contacts</span></a>
+          <a href="../team/" class="nav-item"><i class="ph ph-users-three"></i><span>Teams</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../integrations/" class="nav-item"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+          <a href="../workflow/" class="nav-item"><i class="ph ph-flow-arrow"></i><span>Automation Center</span></a>
+          <a href="../ai/" class="nav-item"><i class="ph ph-sparkle"></i><span>AI Assistant</span></a>
+          <a href="../reports/" class="nav-item"><i class="ph ph-chart-bar"></i><span>Analytics</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Developer</span>
+          <a href="../settings/api-developer.html" class="nav-item"><i class="ph ph-code"></i><span>Developer Center</span><span class="nav-badge badge-beta">Beta</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Billing</span>
+          <a href="index.html" class="nav-item active"><i class="ph ph-credit-card"></i><span>Billing & Subscription</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Settings</span>
+          <a href="../settings/" class="nav-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+          <a href="../help/" class="nav-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Alex Morgan</span>
+            <span class="sidebar-user-role">Administrator</span>
+          </div>
+          <button class="sidebar-user-menu" aria-label="User menu"><i class="ph ph-caret-up"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-menu-toggle" id="menuToggle"><i class="ph ph-list"></i></button>
+          <div class="header-title">
+            <h1>Usage & Limits</h1>
+            <p>Monitor your resource consumption and plan limits.</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search...">
+            <span class="search-kbd">⌘ K</span>
+          </div>
+          <div class="header-actions">
+            <button class="header-action-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="header-action-dot"></span></button>
+            <button class="header-action-btn" aria-label="Settings" onclick="OP.theme.toggle()"><i class="ph ph-gear"></i></button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=32" alt="Alex Morgan">
+              <div class="header-user-info">
+                <span class="header-user-name">Alex Morgan</span>
+                <span class="header-user-role">Administrator</span>
+              </div>
+              <i class="ph ph-caret-down"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="billing-content">
+        <div class="usage-page-grid">
+          <!-- Usage Overview Large -->
+          <div class="billing-card usage-overview-large">
+            <div class="billing-card-header">
+              <h3>Usage Overview</h3>
+              <span class="usage-period">Current Billing Period</span>
+            </div>
+            <div class="usage-bars-large">
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-plugs-connected"></i>
+                    <span>Integrations</span>
+                  </div>
+                  <span class="usage-bar-value">8 / 15</span>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill" style="width: 53%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>53% used</span>
+                  <span class="usage-bar-remaining">7 remaining</span>
+                </div>
+              </div>
+
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-users"></i>
+                    <span>Team Members</span>
+                  </div>
+                  <span class="usage-bar-value">2 / 3</span>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill usage-fill-warning" style="width: 67%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>67% used</span>
+                  <span class="usage-bar-remaining">1 remaining</span>
+                </div>
+              </div>
+
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-chat-circle-text"></i>
+                    <span>Monthly Messages</span>
+                  </div>
+                  <span class="usage-bar-value">18,540 / 50,000                  </div>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill" style="width: 37%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>37% used</span>
+                  <span class="usage-bar-remaining">31,460 remaining</span>
+                </div>
+              </div>
+
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-hard-drives"></i>
+                    <span>Storage</span>
+                  </div>
+                  <span class="usage-bar-value">3.4 GB / 10 GB</span>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill" style="width: 34%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>34% used</span>
+                  <span class="usage-bar-remaining">6.6 GB remaining</span>
+                </div>
+              </div>
+
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-sparkle"></i>
+                    <span>AI Replies Generated</span>
+                  </div>
+                  <span class="usage-bar-value">2,486</span>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill usage-fill-unlimited" style="width: 15%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>Unlimited</span>
+                  <span class="usage-bar-trend usage-trend-up"><i class="ph ph-trend-up"></i> +14% from last month</span>
+                </div>
+              </div>
+
+              <div class="usage-bar-large">
+                <div class="usage-bar-header">
+                  <div class="usage-bar-title">
+                    <i class="ph ph-lightning"></i>
+                    <span>Automation Runs</span>
+                  </div>
+                  <span class="usage-bar-value">4,320</span>
+                </div>
+                <div class="usage-bar-track">
+                  <div class="usage-bar-fill usage-fill-unlimited" style="width: 20%"></div>
+                </div>
+                <div class="usage-bar-footer">
+                  <span>Unlimited</span>
+                  <span class="usage-bar-trend usage-trend-up"><i class="ph ph-trend-up"></i> +18% from last month</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan Limits Comparison -->
+          <div class="billing-card">
+            <div class="billing-card-header">
+              <h3>Plan Limits Comparison</h3>
+            </div>
+            <div class="limits-table-wrapper">
+              <table class="limits-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>Starter</th>
+                    <th>Business</th>
+                    <th>Enterprise</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Integrations</td>
+                    <td>15</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>Team Members</td>
+                    <td>3</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>Monthly Messages</td>
+                    <td>50,000</td>
+                    <td class="limit-highlight">500,000</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>Storage</td>
+                    <td>10 GB</td>
+                    <td class="limit-highlight">100 GB</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>AI Replies</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>Automation Runs</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                    <td class="limit-highlight">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td>API Access</td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Webhooks</td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                  </tr>
+                  <tr>
+                    <td>SSO</td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Audit Logs</td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-x limit-no"></i></td>
+                    <td><i class="ph ph-check limit-yes"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Usage History Chart -->
+          <div class="billing-card">
+            <div class="billing-card-header">
+              <h3>Usage History</h3>
+              <select class="form-input form-select usage-chart-filter">
+                <option>Last 30 Days</option>
+                <option>Last 90 Days</option>
+                <option>This Year</option>
+              </select>
+            </div>
+            <div class="usage-chart-container">
+              <div class="usage-chart-bars">
+                <div class="usage-chart-bar" style="height: 35%">
+                  <span class="usage-chart-label">Jun 1</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 42%">
+                  <span class="usage-chart-label">Jun 5</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 28%">
+                  <span class="usage-chart-label">Jun 10</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 55%">
+                  <span class="usage-chart-label">Jun 15</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 48%">
+                  <span class="usage-chart-label">Jun 20</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 62%">
+                  <span class="usage-chart-label">Jun 25</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 45%">
+                  <span class="usage-chart-label">Jun 30</span>
+                </div>
+                <div class="usage-chart-bar active" style="height: 37%">
+                  <span class="usage-chart-label">Jul 5</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 50%">
+                  <span class="usage-chart-label">Jul 10</span>
+                </div>
+                <div class="usage-chart-bar" style="height: 58%">
+                  <span class="usage-chart-label">Today</span>
+                </div>
+              </div>
+              <div class="usage-chart-legend">
+                <div class="usage-chart-legend-item">
+                  <span class="legend-dot legend-messages"></span>
+                  <span>Messages</span>
+                </div>
+                <div class="usage-chart-legend-item">
+                  <span class="legend-dot legend-ai"></span>
+                  <span>AI Replies</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/billing.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      billingApp.initMobileMenu();
+      billingApp.initKeyboardShortcuts();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Email — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="verify-page page-transition">
+    <div class="verify-container">
+      <a href="index.html" class="logo" style="margin-bottom: var(--space-8); display: inline-flex;">
+        <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="logo-text">
+          <span class="logo-brand">OnePlace</span>
+          <span class="logo-sub">Enterprise</span>
+        </div>
+      </a>
+
+      <div class="verify-icon">
+        <i class="ph ph-envelope-simple"></i>
+      </div>
+
+      <h1 class="auth-title">Verify your email</h1>
+      <p class="auth-subtitle" style="margin-bottom: var(--space-6);">
+        We've sent a verification link to <span class="verify-email-display" id="display-email">your email</span>.<br>
+        Click the link in the email to verify your account.
+      </p>
+
+      <!-- Simulated Email -->
+      <div class="verify-simulated" id="simulated-email">
+        <div class="verify-simulated-header">
+          <i class="ph ph-envelope-simple"></i>
+          Simulated Email (for frontend development)
+        </div>
+        <div class="verify-simulated-box">
+          <div class="verify-simulated-from">From: noreply@oneplace.com</div>
+          <div class="verify-simulated-subject">Verify your OnePlace account</div>
+          <div class="verify-simulated-body">
+            <p>Hi there,</p>
+            <p style="margin-top: var(--space-2);">Please use the verification code below to verify your email address:</p>
+            <p style="margin-top: var(--space-3); font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--primary-600); letter-spacing: var(--space-2);" id="verification-code">------</p>
+            <p style="margin-top: var(--space-2); color: var(--gray-400); font-size: var(--text-xs);">
+              This code expires in 30 minutes. If you didn't request this, you can safely ignore this email.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Input -->
+      <form id="verify-form" style="margin-top: var(--space-8);">
+        <div class="verify-code-inputs" id="code-inputs">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" aria-label="Digit 2">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" aria-label="Digit 3">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" aria-label="Digit 4">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" aria-label="Digit 5">
+          <input type="text" class="verify-code-input" maxlength="1" inputmode="numeric" aria-label="Digit 6">
+        </div>
+        <div class="form-error" id="code-error" style="display: none; justify-content: center; margin-bottom: var(--space-4);"></div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn">
+          Verify Email
+        </button>
+      </form>
+
+      <p style="margin-top: var(--space-6); font-size: var(--text-sm); color: var(--gray-500);">
+        Didn't receive the email? 
+        <button type="button" id="resend-btn" class="btn-ghost" style="font-size: var(--text-sm); color: var(--primary-600); font-weight: var(--font-medium);">Resend</button>
+      </p>
+      <p style="margin-top: var(--space-2);">
+        <a href="signup.html" style="font-size: var(--text-sm);">Wrong email? Change</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = OP.auth.getSession();
+      if (!session) {
+        window.location.href = 'signup.html';
+        return;
+      }
+
+      // Display email
+      document.getElementById('display-email').textContent = session.email;
+
+      // Display simulated code
+      const displayCode = sessionStorage.getItem('op_verification_code_display') || '------';
+      document.getElementById('verification-code').textContent = displayCode;
+
+      const inputs = document.querySelectorAll('.verify-code-input');
+      const form = document.getElementById('verify-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const resendBtn = document.getElementById('resend-btn');
+
+      // Auto-focus and auto-advance inputs
+      inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+          const val = e.target.value;
+          if (val && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+          // Clear error on input
+          document.getElementById('code-error').style.display = 'none';
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+          if (e.key === 'ArrowLeft' && index > 0) {
+            inputs[index - 1].focus();
+          }
+          if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+          paste.split('').forEach((char, i) => {
+            if (inputs[i]) inputs[i].value = char;
+          });
+          if (inputs[paste.length - 1]) inputs[paste.length - 1].focus();
+        });
+      });
+
+      // Focus first input
+      inputs[0].focus();
+
+      function getCode() {
+        return Array.from(inputs).map(i => i.value).join('');
+      }
+
+      function showError(message) {
+        const errorEl = document.getElementById('code-error');
+        errorEl.textContent = message;
+        errorEl.style.display = 'flex';
+        inputs.forEach(i => i.classList.add('error'));
+      }
+
+      function clearErrors() {
+        document.getElementById('code-error').style.display = 'none';
+        inputs.forEach(i => i.classList.remove('error'));
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearErrors();
+
+        const code = getCode();
+        if (code.length !== 6) {
+          showError('Please enter all 6 digits.');
+          return;
+        }
+
+        OP.loading.show();
+        submitBtn.disabled = true;
+        submitBtn.classList.add('btn-loading');
+        submitBtn.textContent = '';
+
+        await new Promise(r => setTimeout(r, 800));
+
+        const result = OP.auth.verifyEmail(code);
+
+        OP.loading.hide();
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.textContent = 'Verify Email';
+
+        if (result.success) {
+          OP.toast.show(result.message, 'success');
+          setTimeout(() => {
+            window.location.href = 'workspace-create.html';
+          }, 1000);
+        } else {
+          showError(result.message);
+          OP.toast.show(result.message, 'error');
+          inputs.forEach(i => {
+            i.value = '';
+            i.classList.add('animate-shake');
+          });
+          setTimeout(() => inputs.forEach(i => i.classList.remove('animate-shake')), 300);
+          inputs[0].focus();
+        }
+      });
+
+      // Resend code
+      resendBtn.addEventListener('click', async () => {
+        resendBtn.disabled = true;
+        const result = OP.auth.resendVerificationCode();
+        if (result.success) {
+          sessionStorage.setItem('op_verification_code_display', result.code);
+          document.getElementById('verification-code').textContent = result.code;
+          OP.toast.show('New code sent!', 'success');
+        } else {
+          OP.toast.show(result.message, 'error');
+        }
+        setTimeout(() => resendBtn.disabled = false, 30000);
+      });
+    });
+  </script>
+</body>
+</html>

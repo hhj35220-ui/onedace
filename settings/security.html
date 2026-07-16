@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/settings.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <a href="../dashboard/main-dashboard.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="../dashboard/unified-inbox.html" class="nav-item"><i class="ph ph-chat-circle-dots"></i><span>Unified Inbox</span><span class="nav-badge">14</span></a>
+          <a href="../crm/" class="nav-item"><i class="ph ph-users"></i><span>CRM</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Channels</span>
+          <a href="../gmail/" class="nav-item"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a>
+          <a href="../whatsapp/" class="nav-item"><i class="ph ph-chat-circle-text"></i><span>WhatsApp</span></a>
+          <a href="../instagram/" class="nav-item"><i class="ph ph-camera"></i><span>Instagram</span></a>
+          <a href="../tiktok/" class="nav-item"><i class="ph ph-music-notes"></i><span>TikTok</span></a>
+          <a href="../x/" class="nav-item"><i class="ph ph-x-logo"></i><span>X (Twitter)</span></a>
+          <a href="../linkedin/" class="nav-item"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">Management</span>
+          <a href="../support/" class="nav-item"><i class="ph ph-headset"></i><span>Support</span></a>
+          <a href="../calendar/" class="nav-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+          <a href="../tasks/" class="nav-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+          <a href="../team/" class="nav-item"><i class="ph ph-users-three"></i><span>Team</span></a>
+          <a href="../workflow/" class="nav-item"><i class="ph ph-git-branch"></i><span>Automation</span></a>
+          <a href="../ai/" class="nav-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+        </div>
+        <div class="nav-section">
+          <span class="nav-section-label">System</span>
+          <a href="../notifications/notifications.html" class="nav-item"><i class="ph ph-bell"></i><span>Notifications</span></a>
+          <a href="../reports/" class="nav-item"><i class="ph ph-chart-bar"></i><span>Analytics</span></a>
+          <a href="../files/" class="nav-item"><i class="ph ph-folder"></i><span>Files</span></a>
+          <a href="../search/" class="nav-item"><i class="ph ph-magnifying-glass"></i><span>Search</span></a>
+          <a href="../integrations/" class="nav-item"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+          <a href="../billing/" class="nav-item"><i class="ph ph-credit-card"></i><span>Billing</span></a>
+          <a href="./" class="nav-item active"><i class="ph ph-gear"></i><span>Settings</span></a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-mini-avatar" id="userMiniAvatar">AM</div>
+          <div class="user-mini-info">
+            <span class="user-mini-name" id="userMiniName">Alex Morgan</span>
+            <span class="user-mini-role" id="userMiniRole">Administrator</span>
+          </div>
+          <button class="user-mini-menu" aria-label="User menu"><i class="ph ph-dots-three-vertical"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle"><i class="ph ph-list"></i></button>
+          <h1 class="header-title">Security</h1>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search settings...">
+          </div>
+          <button class="header-btn"><i class="ph ph-bell"></i><span class="header-badge">3</span></button>
+          <button class="header-btn"><i class="ph ph-question"></i></button>
+          <div class="header-avatar" id="headerAvatar">AM</div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="settings-page-layout">
+          <div class="settings-tabs">
+            <a href="general.html" class="settings-tab">General</a>
+            <a href="workspace.html" class="settings-tab">Workspace</a>
+            <a href="profile.html" class="settings-tab">User Profile</a>
+            <a href="appearance.html" class="settings-tab">Appearance</a>
+            <a href="theme.html" class="settings-tab">Theme</a>
+            <a href="language.html" class="settings-tab">Language</a>
+            <a href="security.html" class="settings-tab active">Security</a>
+            <a href="notifications.html" class="settings-tab">Notifications</a>
+            <a href="integrations-settings.html" class="settings-tab">Integrations</a>
+            <a href="data-import.html" class="settings-tab">Data Import</a>
+            <a href="data-export.html" class="settings-tab">Data Export</a>
+            <a href="backup-restore.html" class="settings-tab">Backup & Restore</a>
+            <a href="audit-logs.html" class="settings-tab">Audit Logs</a>
+            <a href="connected-devices.html" class="settings-tab">Connected Devices</a>
+            <a href="api-developer.html" class="settings-tab">API & Developer</a>
+            <a href="organization.html" class="settings-tab">Organization</a>
+            <a href="roles-permissions.html" class="settings-tab">Roles & Permissions</a>
+            <a href="ai-preferences.html" class="settings-tab">AI Preferences</a>
+            <a href="storage.html" class="settings-tab">Storage</a>
+          </div>
+
+          <div class="settings-content">
+            <div class="security-score-card">
+              <div class="security-score-header">
+                <div class="security-score-icon">
+                  <i class="ph ph-shield-check"></i>
+                </div>
+                <div class="security-score-info">
+                  <h3>Security Score</h3>
+                  <span class="security-score-rating">Very Good</span>
+                </div>
+              </div>
+              <div class="security-score-value">87<span>/100</span></div>
+              <div class="security-score-bar">
+                <div class="security-score-fill" style="width: 87%"></div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2 class="settings-section-title">Password</h2>
+              <div class="security-item">
+                <div class="security-item-info">
+                  <h4>Change Password</h4>
+                  <p>Change your account password regularly to keep your account secure.</p>
+                </div>
+                <button class="btn btn-secondary" id="changePasswordBtn">Change Password</button>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2 class="settings-section-title">Two-Factor Authentication</h2>
+              <div class="security-item">
+                <div class="security-item-info">
+                  <h4>Two-Factor Authentication</h4>
+                  <p>Add an extra layer of security to your account.</p>
+                </div>
+                <div class="security-item-status enabled">
+                  <i class="ph ph-check-circle"></i> Enabled
+                </div>
+                <button class="btn btn-secondary" id="manage2FABtn">Manage 2FA</button>
+              </div>
+              <div class="security-item">
+                <div class="security-item-info">
+                  <h4>Recovery Email</h4>
+                  <p>Add a recovery email to regain access if you lose your 2FA device.</p>
+                </div>
+                <div class="security-item-status enabled">
+                  <i class="ph ph-check-circle"></i> Set
+                </div>
+                <button class="btn btn-secondary" id="manageRecoveryBtn">Manage</button>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2 class="settings-section-title">Login Alerts</h2>
+              <div class="security-item">
+                <div class="security-item-info">
+                  <h4>Login Alerts</h4>
+                  <p>Get notified when someone signs in to your account.</p>
+                </div>
+                <div class="security-item-status enabled">
+                  <i class="ph ph-check-circle"></i> Enabled
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="loginAlertsToggle" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-actions">
+              <button class="btn btn-primary" id="saveSecuritySettings">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Change Password</h3>
+        <button class="modal-close" id="closePasswordModal"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+          <div class="strength-meter" id="passwordStrengthMeter">
+            <div class="strength-segment"></div>
+            <div class="strength-segment"></div>
+            <div class="strength-segment"></div>
+            <div class="strength-segment"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" class="form-input" id="confirmNewPassword" placeholder="Confirm new password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelPasswordChange">Cancel</button>
+        <button class="btn btn-primary" id="confirmPasswordChange">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/settings.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      SettingsApp.init();
+      SettingsApp.initSecuritySettings();
+    });
+  </script>
+</body>
+</html>

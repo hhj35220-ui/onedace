@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/instagram.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Instagram sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header" role="banner"></header>
+
+      <!-- Instagram Content -->
+      <div class="ig-layout">
+        <!-- Instagram Sidebar -->
+        <div class="ig-sidebar">
+          <div class="ig-account-header">
+            <div class="ig-account-icon"><i class="ph ph-instagram-logo"></i></div>
+            <div class="ig-account-info">
+              <span class="ig-account-name">@acmesolutions</span>
+              <span class="ig-account-detail">Business Account</span>
+              <span class="ig-account-phone">Connected on May 12, 2024</span>
+            </div>
+            <div class="ig-account-status">
+              <span class="ig-status-dot"></span>
+              <span>Connected</span>
+            </div>
+            <button class="ig-view-integration">View Integration</button>
+          </div>
+
+          <nav class="ig-nav" id="ig-nav">
+            <a href="#overview" class="ig-nav-item active" data-page="overview">
+              <i class="ph ph-chart-pie-slice"></i>
+              <span>Overview</span>
+            </a>
+            <a href="#conversations" class="ig-nav-item" data-page="conversations">
+              <i class="ph ph-chat-circle-text"></i>
+              <span>Conversations</span>
+              <span class="ig-nav-badge">12</span>
+            </a>
+            <a href="#comments" class="ig-nav-item" data-page="comments">
+              <i class="ph ph-chat-teardrop-text"></i>
+              <span>Comments</span>
+              <span class="ig-nav-badge">8</span>
+            </a>
+            <a href="#mentions" class="ig-nav-item" data-page="mentions">
+              <i class="ph ph-at"></i>
+              <span>Mentions</span>
+              <span class="ig-nav-badge">6</span>
+            </a>
+            <a href="#saved-replies" class="ig-nav-item" data-page="saved-replies">
+              <i class="ph ph-lightning"></i>
+              <span>Saved Replies</span>
+            </a>
+            <a href="#integration" class="ig-nav-item" data-page="integration">
+              <i class="ph ph-plugs-connected"></i>
+              <span>Integration</span>
+            </a>
+            <a href="#settings" class="ig-nav-item" data-page="settings">
+              <i class="ph ph-gear"></i>
+              <span>Settings</span>
+            </a>
+          </nav>
+
+          <div class="ig-overview-card">
+            <div class="ig-overview-header">
+              <span class="ig-overview-title">Today's Overview</span>
+              <a href="../reports/index.html" class="ig-overview-link">View Report</a>
+            </div>
+            <div class="ig-overview-stats">
+              <div class="ig-overview-stat">
+                <span class="ig-stat-label">DMs Received</span>
+                <div class="ig-stat-value-row">
+                  <span class="ig-stat-value">56</span>
+                  <span class="ig-stat-change ig-stat-up"><i class="ph ph-trend-up"></i> 12.4%</span>
+                </div>
+              </div>
+              <div class="ig-overview-stat">
+                <span class="ig-stat-label">Comments</span>
+                <div class="ig-stat-value-row">
+                  <span class="ig-stat-value">42</span>
+                  <span class="ig-stat-change ig-stat-up"><i class="ph ph-trend-up"></i> 8.3%</span>
+                </div>
+              </div>
+              <div class="ig-overview-stat">
+                <span class="ig-stat-label">New Followers</span>
+                <div class="ig-stat-value-row">
+                  <span class="ig-stat-value">128</span>
+                  <span class="ig-stat-change ig-stat-up"><i class="ph ph-trend-up"></i> 18.5%</span>
+                </div>
+              </div>
+              <div class="ig-overview-stat">
+                <span class="ig-stat-label">Response Rate</span>
+                <div class="ig-stat-value-row">
+                  <span class="ig-stat-value">92.6%</span>
+                  <span class="ig-stat-change ig-stat-up"><i class="ph ph-trend-up"></i> 6.7%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram Main -->
+        <div class="ig-main" id="ig-main">
+          <!-- Page content injected by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/instagram.js"></script>
+</body>
+</html>

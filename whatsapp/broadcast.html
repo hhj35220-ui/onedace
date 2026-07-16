@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broadcast Messages — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+  <base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Broadcast Messages</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Create and send mass WhatsApp broadcasts to your audience.</p>
+              </div>
+              <button class="btn btn-primary" type="button">New Broadcast</button>
+            </div>
+
+            <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); padding: var(--space-6);">
+              <div style="display: grid; gap: var(--space-5);">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                  <div style="width: 40px; height: 40px; display: grid; place-items: center; border-radius: 14px; background: var(--primary-100); color: var(--primary-700);">
+                    <i class="ph ph-broadcast" style="font-size: 1.25rem;"></i>
+                  </div>
+                  <div>
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin: 0;">WhatsApp Broadcasts</h3>
+                    <p style="margin: 0; color: var(--gray-500);">Send updates, announcements and promotions to customers at scale.</p>
+                  </div>
+                </div>
+
+                <div style="display: grid; gap: var(--space-4);">
+                  <div style="padding: var(--space-5); border-radius: var(--radius-xl); background: var(--white); border: 1px solid var(--gray-200);">
+                    <h4 style="font-size: var(--text-base); margin-bottom: var(--space-3); color: var(--gray-900);">Create your first broadcast</h4>
+                    <p style="margin: 0; color: var(--gray-500);">Use this page to build broadcast campaigns that reach WhatsApp subscribers instantly.</p>
+                  </div>
+
+                  <div style="padding: var(--space-5); border-radius: var(--radius-xl); background: var(--gray-50); border: 1px dashed var(--gray-200); text-align: center;">
+                    <p style="margin: 0; color: var(--gray-500); font-size: var(--text-sm);">Broadcast functionality is available in your WhatsApp workspace. Click the button to get started.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+</body>
+</html>

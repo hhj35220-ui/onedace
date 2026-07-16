@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Gallery — WhatsApp Business — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/whatsapp.css">
+<base target="_blank">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="whatsapp-layout">
+        <div class="whatsapp-sidebar">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="whatsapp-main">
+          <div style="padding: var(--space-5) var(--space-6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+              <div>
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Media Gallery</h2>
+                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Manage images, videos, and documents shared via WhatsApp.</p>
+              </div>
+              <button class="btn btn-primary" id="upload-btn">
+                <i class="ph ph-upload-simple"></i>
+                <span>Upload Media</span>
+              </button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+              <div style="flex: 1; display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--gray-100); border-radius: var(--radius-lg);">
+                <i class="ph ph-magnifying-glass" style="color: var(--gray-400);"></i>
+                <input type="text" id="media-search" placeholder="Search media..." style="border: none; background: transparent; outline: none; font-size: var(--text-sm); color: var(--gray-800); width: 100%;">
+              </div>
+              <div style="display: flex; gap: var(--space-2);">
+                <button class="btn btn-sm btn-secondary media-filter active" data-type="all">All</button>
+                <button class="btn btn-sm btn-ghost media-filter" data-type="image">Images</button>
+                <button class="btn btn-sm btn-ghost media-filter" data-type="video">Videos</button>
+                <button class="btn btn-sm btn-ghost media-filter" data-type="document">Documents</button>
+              </div>
+            </div>
+
+            <div id="media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-4);">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const app = new WhatsAppApp();
+
+      // Sample media data (simulated)
+      const mediaItems = [
+        { id: 1, type: 'image', name: 'product-photo-1.jpg', size: '2.4 MB', date: '2024-04-28', icon: 'ph-image' },
+        { id: 2, type: 'image', name: 'product-photo-2.jpg', size: '1.8 MB', date: '2024-04-27', icon: 'ph-image' },
+        { id: 3, type: 'video', name: 'demo-video.mp4', size: '15.2 MB', date: '2024-04-26', icon: 'ph-video' },
+        { id: 4, type: 'document', name: 'price-list.pdf', size: '856 KB', date: '2024-04-25', icon: 'ph-file-pdf' },
+        { id: 5, type: 'image', name: 'screenshot-1.png', size: '1.1 MB', date: '2024-04-24', icon: 'ph-image' },
+        { id: 6, type: 'document', name: 'invoice-001.pdf', size: '340 KB', date: '2024-04-23', icon: 'ph-file-pdf' },
+        { id: 7, type: 'image', name: 'team-photo.jpg', size: '3.2 MB', date: '2024-04-22', icon: 'ph-image' },
+        { id: 8, type: 'video', name: 'tutorial.mp4', size: '22.1 MB', date: '2024-04-21', icon: 'ph-video' },
+      ];
+
+      let currentFilter = 'all';
+
+      function renderMedia() {
+        const container = document.getElementById('media-grid');
+        let filtered = mediaItems;
+        if (currentFilter !== 'all') {
+          filtered = mediaItems.filter(m => m.type === currentFilter);
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="wa-empty-state" style="grid-column: 1 / -1;">
+              <div class="wa-empty-state-icon"><i class="ph ph-images"></i></div>
+              <div class="wa-empty-state-title">No media found</div>
+              <div class="wa-empty-state-desc">Upload media files to see them here.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        filtered.forEach(item => {
+          const bgColors = {
+            image: 'background: linear-gradient(135deg, #E0F2FE, #DBEAFE);',
+            video: 'background: linear-gradient(135deg, #FEF3C7, #FDE68A);',
+            document: 'background: linear-gradient(135deg, #F3E8FF, #E9D5FF);'
+          };
+
+          html += `
+            <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); transition: all var(--transition-fast);" 
+                 onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
+              <div style="height: 140px; ${bgColors[item.type]} display: flex; align-items: center; justify-content: center; color: var(--gray-500); font-size: var(--text-4xl);">
+                <i class="ph ${item.icon}"></i>
+              </div>
+              <div style="padding: var(--space-4);">
+                <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.name}">${item.name}</div>
+                <div style="display: flex; justify-content: space-between; margin-top: var(--space-1);">
+                  <span style="font-size: 11px; color: var(--gray-400);">${item.size}</span>
+                  <span style="font-size: 11px; color: var(--gray-400);">${item.date}</span>
+                </div>
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                  <button class="btn btn-secondary btn-sm" style="flex: 1;">
+                    <i class="ph ph-download-simple"></i> Download
+                  </button>
+                  <button class="btn btn-ghost btn-sm" style="color: var(--error-500);">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      renderMedia();
+
+      // Filter buttons
+      document.querySelectorAll('.media-filter').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.media-filter').forEach(b => {
+            b.classList.remove('btn-secondary', 'active');
+            b.classList.add('btn-ghost');
+          });
+          e.target.classList.remove('btn-ghost');
+          e.target.classList.add('btn-secondary', 'active');
+          currentFilter = e.target.dataset.type;
+          renderMedia();
+        });
+      });
+
+      // Upload button
+      document.getElementById('upload-btn').addEventListener('click', () => {
+        OP.toast.show('Upload functionality would open a file picker', 'info');
+      });
+    });
+  </script>
+</body>
+</html>

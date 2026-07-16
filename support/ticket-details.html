@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket Details — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header support-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="support-header-icon"><i class="ph ph-headset"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">Ticket Details</h1>
+              <p class="header-subtitle">View and manage ticket information</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="notification-dot" id="notif-dot"></span></button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="support-tabs" aria-label="Support sections">
+        <div class="support-tabs-inner">
+          <a href="index.html" class="support-tab" data-page="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="tickets.html" class="support-tab" data-page="tickets"><i class="ph ph-ticket"></i><span>Tickets</span></a>
+          <a href="open-tickets.html" class="support-tab" data-page="open"><i class="ph ph-envelope-open"></i><span>Open</span></a>
+          <a href="pending-tickets.html" class="support-tab" data-page="pending"><i class="ph ph-clock"></i><span>Pending</span></a>
+          <a href="closed-tickets.html" class="support-tab" data-page="closed"><i class="ph ph-check-circle"></i><span>Closed</span></a>
+          <a href="sla-management.html" class="support-tab" data-page="sla"><i class="ph ph-shield-check"></i><span>SLA</span></a>
+          <a href="saved-replies.html" class="support-tab" data-page="replies"><i class="ph ph-floppy-disk"></i><span>Replies</span></a>
+          <a href="knowledge-base.html" class="support-tab" data-page="kb"><i class="ph ph-book-open"></i><span>KB</span></a>
+        </div>
+      </nav>
+
+      <div class="dashboard-content support-content">
+        <div class="ticket-detail-breadcrumb">
+          <a href="tickets.html" class="breadcrumb-link"><i class="ph ph-arrow-left"></i> Back to Tickets</a>
+        </div>
+
+        <div class="ticket-detail-layout">
+          <!-- Left: Conversation -->
+          <div class="ticket-detail-main">
+            <div class="ticket-detail-header" id="ticket-detail-header"></div>
+
+            <div class="ticket-detail-tabs">
+              <button class="ticket-detail-tab active" data-tab="conversation"><i class="ph ph-chat-circle-text"></i> Conversation</button>
+              <button class="ticket-detail-tab" data-tab="customer"><i class="ph ph-user"></i> Customer Info</button>
+              <button class="ticket-detail-tab" data-tab="timeline"><i class="ph ph-clock-counter-clockwise"></i> Timeline</button>
+              <button class="ticket-detail-tab" data-tab="notes"><i class="ph ph-notebook"></i> Notes</button>
+              <button class="ticket-detail-tab" data-tab="attachments"><i class="ph ph-paperclip"></i> Attachments</button>
+            </div>
+
+            <div class="ticket-detail-body" id="ticket-detail-body">
+              <!-- Conversation Tab -->
+              <div class="detail-tab-content active" id="tab-conversation">
+                <div class="conversation-thread" id="conversation-thread"></div>
+                <div class="reply-composer">
+                  <div class="composer-toolbar">
+                    <button class="composer-tool" title="Bold"><i class="ph ph-text-b"></i></button>
+                    <button class="composer-tool" title="Italic"><i class="ph ph-text-italic"></i></button>
+                    <button class="composer-tool" title="Link"><i class="ph ph-link"></i></button>
+                    <button class="composer-tool" title="Attachment"><i class="ph ph-paperclip"></i></button>
+                    <button class="composer-tool" title="Saved Reply"><i class="ph ph-floppy-disk"></i></button>
+                    <div class="composer-divider"></div>
+                    <button class="composer-tool" title="Internal Note" id="note-toggle"><i class="ph ph-note"></i> Internal Note</button>
+                  </div>
+                  <textarea class="composer-textarea" id="reply-text" placeholder="Type your reply..."></textarea>
+                  <div class="composer-footer">
+                    <div class="composer-actions-left">
+                      <button class="btn btn-ghost btn-sm" id="attach-btn"><i class="ph ph-paperclip"></i> Attach</button>
+                      <button class="btn btn-ghost btn-sm" id="saved-reply-btn"><i class="ph ph-floppy-disk"></i> Saved Reply</button>
+                    </div>
+                    <div class="composer-actions-right">
+                      <button class="btn btn-secondary btn-sm" id="reply-cancel">Cancel</button>
+                      <button class="btn btn-primary btn-sm" id="reply-send"><i class="ph ph-paper-plane-right"></i> Send Reply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Customer Info Tab -->
+              <div class="detail-tab-content" id="tab-customer">
+                <div class="customer-info-card" id="customer-info-card"></div>
+              </div>
+
+              <!-- Timeline Tab -->
+              <div class="detail-tab-content" id="tab-timeline">
+                <div class="timeline-list" id="timeline-list"></div>
+              </div>
+
+              <!-- Notes Tab -->
+              <div class="detail-tab-content" id="tab-notes">
+                <div class="notes-list" id="notes-list"></div>
+                <div class="add-note-box">
+                  <textarea class="form-input" id="new-note-text" rows="3" placeholder="Add an internal note..."></textarea>
+                  <button class="btn btn-primary btn-sm" id="add-note-btn" style="margin-top:var(--space-3);"><i class="ph ph-plus"></i> Add Note</button>
+                </div>
+              </div>
+
+              <!-- Attachments Tab -->
+              <div class="detail-tab-content" id="tab-attachments">
+                <div class="attachments-grid" id="attachments-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Sidebar -->
+          <div class="ticket-detail-sidebar">
+            <div class="detail-sidebar-card">
+              <h4 class="sidebar-card-title">Ticket Properties</h4>
+              <div class="property-list" id="ticket-properties"></div>
+            </div>
+
+            <div class="detail-sidebar-card">
+              <h4 class="sidebar-card-title">Customer Details</h4>
+              <div class="customer-mini" id="customer-mini"></div>
+            </div>
+
+            <div class="detail-sidebar-card">
+              <h4 class="sidebar-card-title">Tags</h4>
+              <div class="tag-cloud" id="ticket-tags"></div>
+              <button class="btn btn-ghost btn-sm" id="add-tag-btn" style="margin-top:var(--space-2);"><i class="ph ph-plus"></i> Add Tag</button>
+            </div>
+
+            <div class="detail-sidebar-card">
+              <h4 class="sidebar-card-title">Related Tickets</h4>
+              <div class="related-tickets" id="related-tickets"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Saved Replies Modal -->
+  <div class="modal-overlay" id="saved-replies-modal" style="display:none;">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        <h3 class="modal-title">Insert Saved Reply</h3>
+        <button class="modal-close" id="saved-replies-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="saved-replies-search">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" class="form-input" id="saved-replies-search" placeholder="Search saved replies...">
+        </div>
+        <div class="saved-replies-list" id="saved-replies-list-modal"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assign Modal -->
+  <div class="modal-overlay" id="assign-modal" style="display:none;">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Assign Ticket</h3>
+        <button class="modal-close" id="assign-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="agent-list" id="agent-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/support.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) { window.location.href = '../auth/signin.html'; return; }
+      window.supportApp = new SupportApp();
+      supportApp.initTicketDetailsPage();
+    });
+  </script>
+</body>
+</html>

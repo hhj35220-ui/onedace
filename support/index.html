@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Support Dashboard — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="ph ph-list"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header support-header">
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="support-header-icon"><i class="ph ph-headset"></i></div>
+            <div class="header-brand-text">
+              <h1 class="header-title">Customer Support Dashboard</h1>
+              <p class="header-subtitle">Overview of all your support operations and performance</p>
+            </div>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="header-search support-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="support-search" placeholder="Search tickets, customers, or anything..." autocomplete="off">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot" id="notif-dot"></span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-user">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+            <div class="header-user-info">
+              <span class="header-user-name">Alex Morgan</span>
+              <span class="header-user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Support Tabs -->
+      <nav class="support-tabs" aria-label="Support sections">
+        <div class="support-tabs-inner">
+          <a href="index.html" class="support-tab active" data-page="dashboard">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="tickets.html" class="support-tab" data-page="tickets">
+            <i class="ph ph-ticket"></i>
+            <span>Tickets</span>
+            <span class="tab-badge" id="tickets-badge">1,248</span>
+          </a>
+          <a href="open-tickets.html" class="support-tab" data-page="open">
+            <i class="ph ph-envelope-open"></i>
+            <span>Open Tickets</span>
+            <span class="tab-badge" id="open-badge">342</span>
+          </a>
+          <a href="pending-tickets.html" class="support-tab" data-page="pending">
+            <i class="ph ph-clock"></i>
+            <span>Pending Tickets</span>
+            <span class="tab-badge" id="pending-badge">237</span>
+          </a>
+          <a href="closed-tickets.html" class="support-tab" data-page="closed">
+            <i class="ph ph-check-circle"></i>
+            <span>Closed Tickets</span>
+            <span class="tab-badge" id="closed-badge">669</span>
+          </a>
+          <a href="sla-management.html" class="support-tab" data-page="sla">
+            <i class="ph ph-shield-check"></i>
+            <span>SLA Management</span>
+          </a>
+          <a href="saved-replies.html" class="support-tab" data-page="replies">
+            <i class="ph ph-floppy-disk"></i>
+            <span>Saved Replies</span>
+          </a>
+          <a href="knowledge-base.html" class="support-tab" data-page="kb">
+            <i class="ph ph-book-open"></i>
+            <span>Knowledge Base</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="dashboard-content support-content">
+        <!-- Stats Row -->
+        <div class="support-stats-row" id="support-stats-row">
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Total Tickets</span>
+              <div class="stat-icon-wrap primary"><i class="ph ph-ticket"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-total">1,248</div>
+            <div class="stat-card-trend up"><i class="ph ph-trend-up"></i> <span>18.6%</span> vs last 7 days</div>
+          </div>
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Open Tickets</span>
+              <div class="stat-icon-wrap warning"><i class="ph ph-envelope-open"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-open">342</div>
+            <div class="stat-card-trend up"><i class="ph ph-trend-up"></i> <span>12.4%</span> vs last 7 days</div>
+          </div>
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Pending Tickets</span>
+              <div class="stat-icon-wrap info"><i class="ph ph-clock"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-pending">237</div>
+            <div class="stat-card-trend up"><i class="ph ph-trend-up"></i> <span>8.7%</span> vs last 7 days</div>
+          </div>
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Closed Tickets</span>
+              <div class="stat-icon-wrap success"><i class="ph ph-check-circle"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-closed">669</div>
+            <div class="stat-card-trend up"><i class="ph ph-trend-up"></i> <span>15.6%</span> vs last 7 days</div>
+          </div>
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Avg. Response Time</span>
+              <div class="stat-icon-wrap primary"><i class="ph ph-clock-counter-clockwise"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-response">2h 45m</div>
+            <div class="stat-card-trend down"><i class="ph ph-trend-down"></i> <span>5.6%</span> vs last 7 days</div>
+          </div>
+          <div class="support-stat-card">
+            <div class="stat-card-header">
+              <span class="stat-label">Customer Satisfaction</span>
+              <div class="stat-icon-wrap success"><i class="ph ph-smiley"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-satisfaction">4.8 / 5</div>
+            <div class="stat-card-trend up"><i class="ph ph-trend-up"></i> <span>6.3%</span> vs last 7 days</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="support-charts-row">
+          <!-- Tickets Overview (Line Chart) -->
+          <div class="support-chart-card wide">
+            <div class="widget-header">
+              <h3 class="widget-title">Tickets Overview</h3>
+              <div class="widget-actions">
+                <select class="period-select" id="tickets-period">
+                  <option value="7">Last 7 days</option>
+                  <option value="30">Last 30 days</option>
+                  <option value="90">Last 90 days</option>
+                </select>
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+            </div>
+            <div class="widget-body">
+              <div class="line-chart-legend">
+                <span class="legend-item"><span class="legend-dot blue"></span> New Tickets</span>
+                <span class="legend-item"><span class="legend-dot green"></span> Resolved Tickets</span>
+              </div>
+              <div class="line-chart-container" id="tickets-line-chart"></div>
+            </div>
+          </div>
+
+          <!-- Tickets by Status (Donut) -->
+          <div class="support-chart-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Tickets by Status</h3>
+              <div class="widget-actions">
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+            </div>
+            <div class="widget-body">
+              <div class="donut-chart-container" id="status-donut-chart">
+                <div class="donut-chart-svg" id="status-donut-svg"></div>
+                <div class="donut-center">
+                  <span class="donut-value" id="status-donut-total">1,248</span>
+                  <span class="donut-label">Total Tickets</span>
+                </div>
+              </div>
+              <div class="donut-legend" id="status-donut-legend"></div>
+            </div>
+          </div>
+
+          <!-- Tickets by Priority (Horizontal Bars) -->
+          <div class="support-chart-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Tickets by Priority</h3>
+              <div class="widget-actions">
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+            </div>
+            <div class="widget-body">
+              <div class="priority-bars" id="priority-bars"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Row -->
+        <div class="support-mid-row">
+          <!-- Open Tickets List -->
+          <div class="support-mid-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Open Tickets</h3>
+              <a href="open-tickets.html" class="view-all-link">View All</a>
+            </div>
+            <div class="widget-body">
+              <div class="ticket-list" id="open-tickets-list"></div>
+            </div>
+          </div>
+
+          <!-- Top Ticket Sources (Donut) -->
+          <div class="support-mid-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Top Ticket Sources</h3>
+              <div class="widget-actions">
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+            </div>
+            <div class="widget-body">
+              <div class="donut-chart-container" id="sources-donut-chart">
+                <div class="donut-chart-svg" id="sources-donut-svg"></div>
+                <div class="donut-center">
+                  <span class="donut-value" id="sources-donut-total">1,248</span>
+                  <span class="donut-label">Total Tickets</span>
+                </div>
+              </div>
+              <div class="donut-legend" id="sources-donut-legend"></div>
+            </div>
+          </div>
+
+          <!-- Satisfaction Overview (Gauge) -->
+          <div class="support-mid-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Satisfaction Overview</h3>
+              <div class="widget-actions">
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+            </div>
+            <div class="widget-body">
+              <div class="gauge-chart-container" id="satisfaction-gauge"></div>
+              <div class="gauge-stars" id="gauge-stars">
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star-half"></i>
+              </div>
+              <div class="gauge-trend up"><i class="ph ph-trend-up"></i> <span>6.3%</span> vs last 7 days</div>
+            </div>
+          </div>
+
+          <!-- Unassigned Tickets -->
+          <div class="support-mid-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Unassigned Tickets</h3>
+              <a href="tickets.html?filter=unassigned" class="view-all-link">View All</a>
+            </div>
+            <div class="widget-body">
+              <div class="ticket-list" id="unassigned-tickets-list"></div>
+            </div>
+          </div>
+
+          <!-- Top Performers -->
+          <div class="support-mid-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Top Performers</h3>
+              <a href="#" class="view-all-link">View All</a>
+            </div>
+            <div class="widget-body">
+              <div class="performer-list" id="top-performers"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLA Overview -->
+        <div class="support-sla-row">
+          <div class="support-sla-card">
+            <div class="widget-header">
+              <h3 class="widget-title">SLA Overview</h3>
+              <a href="sla-management.html" class="view-all-link">View All</a>
+            </div>
+            <div class="widget-body">
+              <div class="sla-donut-container">
+                <div class="sla-donut" id="sla-donut"></div>
+                <div class="sla-donut-center">
+                  <span class="sla-donut-value">92%</span>
+                  <span class="sla-donut-label">SLA Met</span>
+                </div>
+              </div>
+              <div class="sla-legend" id="sla-legend"></div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="support-activity-card">
+            <div class="widget-header">
+              <h3 class="widget-title">Recent Activity</h3>
+              <a href="#" class="view-all-link">View All</a>
+            </div>
+            <div class="widget-body">
+              <div class="activity-list" id="recent-activity"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/support.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.auth.isAuthenticated()) {
+        window.location.href = '../auth/signin.html';
+        return;
+      }
+      window.supportApp = new SupportApp();
+      supportApp.initDashboardPage();
+    });
+  </script>
+</body>
+</html>

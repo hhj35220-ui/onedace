@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Dashboard — OnePlace Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <div class="sidebar-overlay"></div>
+    <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header" role="banner"></header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-page-title">
+          <h1>Team Performance</h1>
+          <p>Track your team's performance across all platforms</p>
+        </div>
+
+        <!-- Team Stats -->
+        <div class="exec-stat-grid" id="team-stats">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Conversations by Platform -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Conversations by Platform</span>
+              </div>
+              <div class="widget-body">
+                <div class="bar-chart-container" id="team-platform-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversations by Status -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Conversations by Status</span>
+              </div>
+              <div class="widget-body">
+                <div id="status-donut-chart"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Team Members -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Top Team Members</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn" title="Add member"><i class="ph ph-plus"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="team-member-list" id="top-team-members">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Workload -->
+          <div class="dashboard-col-6">
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Team Workload</span>
+              </div>
+              <div class="widget-body">
+                <div class="team-member-list" id="team-workload">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!OP.nav.requireAuth()) return;
+
+      const app = new DashboardApp();
+      const storage = app.storage;
+
+      // Render team stats
+      function renderTeamStats() {
+        const stats = storage.getDashboardStats();
+        const container = document.getElementById('team-stats');
+
+        const metrics = [
+          { label: 'Total Team Members', value: stats.teamSize, trend: 0, suffix: '' },
+          { label: 'Conversations', value: stats.totalConversations, trend: 12.5, suffix: '' },
+          { label: 'Resolved', value: stats.resolvedToday, trend: 8.2, suffix: '' },
+          { label: 'Response Rate', value: stats.responseRate, trend: 2.1, suffix: '%' },
+          { label: 'Avg. Response', value: stats.avgResponseTime, trend: -5.3, suffix: 'm' }
+        ];
+
+        let html = '';
+        metrics.forEach(m => {
+          const trendClass = m.trend >= 0 ? 'up' : 'down';
+          const trendIcon = m.trend >= 0 ? 'ph-trend-up' : 'ph-trend-down';
+          html += `
+            <div class="exec-stat-card">
+              <div class="exec-stat-value">${m.value}${m.suffix}</div>
+              <div class="exec-stat-label">${m.label}</div>
+              <span class="exec-stat-trend ${trendClass}"><i class="ph ${trendIcon}"></i> ${Math.abs(m.trend)}%</span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render platform bar chart
+      function renderPlatformChart() {
+        const stats = storage.getPlatformStats();
+        const data = [
+          { platform: 'gmail', label: 'Gmail', value: stats.gmail?.conversations || 0 },
+          { platform: 'whatsapp', label: 'WhatsApp', value: stats.whatsapp?.conversations || 0 },
+          { platform: 'instagram', label: 'Instagram', value: stats.instagram?.conversations || 0 },
+          { platform: 'tiktok', label: 'TikTok', value: stats.tiktok?.conversations || 0 },
+          { platform: 'x', label: 'X', value: stats.x?.conversations || 0 },
+          { platform: 'linkedin', label: 'LinkedIn', value: stats.linkedin?.conversations || 0 }
+        ];
+
+        app.createBarChart('team-platform-chart', data);
+      }
+
+      // Render status donut
+      function renderStatusDonut() {
+        const conversations = storage.getConversations();
+        const open = conversations.filter(c => c.status === 'open').length;
+        const inProgress = conversations.filter(c => c.status === 'in-progress').length;
+        const pending = conversations.filter(c => c.status === 'pending').length;
+        const resolved = conversations.filter(c => c.status === 'resolved').length;
+
+        const data = [
+          { label: 'Open', value: open, color: '#6366f1' },
+          { label: 'In Progress', value: inProgress, color: '#f59e0b' },
+          { label: 'Pending', value: pending, color: '#9ca3af' },
+          { label: 'Resolved', value: resolved, color: '#10b981' }
+        ].filter(d => d.value > 0);
+
+        app.createDonutChart('status-donut-chart', data, 'Total');
+      }
+
+      // Render top team members
+      function renderTopTeamMembers() {
+        const members = storage.getTeamMembers();
+        const container = document.getElementById('top-team-members');
+
+        let html = '';
+        members.forEach(m => {
+          html += `
+            <div class="team-member-item">
+              <div class="team-member-avatar" style="background: ${m.color}">${m.avatar}</div>
+              <div class="team-member-info">
+                <div class="team-member-name">${m.name}</div>
+                <div class="team-member-role">${m.role}</div>
+              </div>
+              <div class="team-member-stats">
+                <div class="team-member-stat">
+                  <div class="team-member-stat-value">${m.conversations}</div>
+                  <div class="team-member-stat-label">Conv.</div>
+                </div>
+                <div class="team-member-stat">
+                  <div class="team-member-stat-value">${m.resolved}</div>
+                  <div class="team-member-stat-label">Resolved</div>
+                </div>
+                <div class="team-member-stat">
+                  <div class="team-member-stat-value">${m.responseRate}%</div>
+                  <div class="team-member-stat-label">Rate</div>
+                </div>
+                <div class="team-member-rating">
+                  <i class="ph ph-star-fill"></i> ${m.rating}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Render team workload
+      function renderTeamWorkload() {
+        const members = storage.getTeamMembers();
+        const container = document.getElementById('team-workload');
+
+        let html = '';
+        members.forEach(m => {
+          const workloadClass = m.workload > 80 ? 'high' : m.workload > 60 ? 'medium' : '';
+          html += `
+            <div class="team-member-item">
+              <div class="team-member-avatar" style="background: ${m.color}">${m.avatar}</div>
+              <div class="team-member-info">
+                <div class="team-member-name">${m.name}</div>
+                <div class="team-member-role">${m.role}</div>
+              </div>
+              <div class="team-member-workload">
+                <div class="team-member-workload-bar">
+                  <div class="team-member-workload-fill ${workloadClass}" style="width: ${m.workload}%"></div>
+                </div>
+                <div style="font-size: 10px; color: var(--gray-400); text-align: right; margin-top: 2px;">${m.workload}%</div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      renderTeamStats();
+      renderPlatformChart();
+      renderStatusDonut();
+      renderTopTeamMembers();
+      renderTeamWorkload();
+    });
+  </script>
+</body>
+</html>
