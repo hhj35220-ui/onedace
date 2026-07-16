@@ -8,7 +8,7 @@
       const storageKey = 'op_theme';
       const savedTheme = localStorage.getItem(storageKey);
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const theme = savedTheme || systemTheme;
+      const theme = (savedTheme === 'system') ? systemTheme : (savedTheme || systemTheme);
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.style.colorScheme = theme;
       if (!savedTheme) localStorage.setItem(storageKey, theme);

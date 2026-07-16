@@ -386,8 +386,8 @@
       }
 
       // Handle search/filter events
-      document.addEventListener('dashboard:search', () => renderConversations());
-      document.addEventListener('dashboard:filter', () => renderConversations());
+      document.addEventListener('dashboard:search', (e) => { app.currentSearch = e?.detail || ''; renderConversations(); });
+      document.addEventListener('dashboard:filter', (e) => { app.currentFilter = e?.detail || 'all'; renderConversations(); });
 
       // Initial render
       renderPlatformStats();
