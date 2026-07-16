@@ -83,9 +83,9 @@
       if (OP.auth.isAuthenticated()) {
         const workspaces = OP.workspace.getUserWorkspaces();
         if (workspaces.length > 0) {
-          window.location.href = 'auth/workspace-select.html';
+          window.location.href = 'workspace-select.html';
         } else {
-          window.location.href = 'auth/workspace-create.html';
+          window.location.href = 'workspace-create.html';
         }
       }
     });
