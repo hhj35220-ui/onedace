@@ -80,15 +80,42 @@
 
   <script src="js/app.js"></script>
   <script>
-    // Check if already authenticated
+    function isRootLandingPage() {
+      const path = window.location.pathname.replace(/\\/g, '/').toLowerCase();
+      return path === '/' || path === '/index.html';
+    }
+
+    function clearStaleOnboardingState() {
+      if (!window.OP || !window.OP.auth) return;
+      const session = window.OP.auth.getSession();
+      if (!session) return;
+
+      const hasValidExpiry = session.expiresAt && new Date(session.expiresAt) > new Date();
+      const isFullyVerified = session.verified === true && hasValidExpiry;
+      if (isFullyVerified) return;
+
+      window.OP.auth.clearSession();
+      localStorage.removeItem('op_verification_code');
+      localStorage.removeItem('op_reset_token');
+      localStorage.removeItem('op_current_workspace');
+      localStorage.removeItem('op_profile');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      if (OP.auth.isAuthenticated()) {
-        const workspaces = OP.workspace.getUserWorkspaces();
-        if (workspaces.length > 0) {
-          window.location.href = 'auth/workspace-select.html';
-        } else {
-          window.location.href = 'auth/workspace-create.html';
-        }
+      if (!isRootLandingPage()) return;
+
+      clearStaleOnboardingState();
+
+      if (!window.OP || !window.OP.workspace || !window.OP.auth) return;
+      const session = window.OP.auth.getSession();
+      if (!session || session.verified !== true) return;
+      if (session.expiresAt && new Date(session.expiresAt) < new Date()) return;
+
+      const workspaces = window.OP.workspace.getUserWorkspaces();
+      if (workspaces.length > 0) {
+        window.location.href = 'auth/workspace-select.html';
+      } else {
+        window.location.href = 'auth/workspace-create.html';
       }
     });
   </script>
