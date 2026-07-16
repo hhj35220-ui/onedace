@@ -277,7 +277,17 @@ class DashboardApp {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    if (!Array.isArray(data) || data.length === 0) {
+      container.innerHTML = '<div class="chart-empty">No chart data available.</div>';
+      return;
+    }
+
     const total = data.reduce((sum, d) => sum + d.value, 0);
+    if (total <= 0) {
+      container.innerHTML = '<div class="chart-empty">No chart data available.</div>';
+      return;
+    }
+
     let cumulativePercent = 0;
     const segments = [];
 

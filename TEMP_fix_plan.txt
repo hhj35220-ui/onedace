@@ -1,0 +1,7 @@
+Plan: Fix theme init, inbox tabs, email verification, and UI contrast.
+1. Ensure shared theme storage keys are consistent and not overwritten by multiple modules.
+2. Add safe theme init in app.js before any render.
+3. Fix inbox filter tab click handling or URL filter parsing.
+4. Add first-run verification code normalization and preserve code compare.
+5. Add fallback contrast CSS for dark mode and light mode backgrounds.
+6. Improve empty chart placeholders in dashboard.

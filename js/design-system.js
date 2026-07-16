@@ -5,7 +5,7 @@
   if (!window.OP) window.OP = {};
   if (window.OP.designInstance) return;
 
-  const DS_KEY = 'op_design_theme';
+  const DS_KEY = 'op_theme';
   const ICON_SPRITE_ID = 'op-icons-sprite';
 
   class DesignSystem {
@@ -21,6 +21,7 @@
       if (this._inited) return;
       this._inited = true;
       this._applyStoredTheme();
+      document.documentElement.style.colorScheme = this.getCurrentTheme();
       this._injectIcons();
 
       // register built-in base components (modal, toast, dropdown)
@@ -105,6 +106,7 @@
     setTheme(theme){
       if (!theme) return;
       document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.colorScheme = theme;
       localStorage.setItem(DS_KEY, theme);
     }
 
@@ -116,7 +118,12 @@
 
     getCurrentTheme(){
       const stored = localStorage.getItem(DS_KEY);
-      if (stored) return stored;
+      if (stored) {
+        if (stored === 'system') {
+          return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        return stored;
+      }
       return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 

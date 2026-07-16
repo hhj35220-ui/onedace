@@ -30,12 +30,12 @@ class ThemeManager {
   init() {
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const theme = savedTheme || systemTheme;
+    const theme = savedTheme === 'system' ? systemTheme : (savedTheme || systemTheme);
 
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.style.colorScheme = theme;
 
-    if (!savedTheme) {
+    if (!savedTheme || savedTheme === 'system') {
       localStorage.setItem(STORAGE_KEYS.THEME, theme);
     }
 
@@ -330,8 +330,11 @@ class AuthManager {
         return { success: false, message: 'Verification code expired.' };
       }
 
-      const normalizedCode = String(code || '').trim();
-      const normalizedExpected = String(verificationData.code || '').trim();
+      const normalizedCode = String(code || '').replace(/\D/g, '').trim();
+      let normalizedExpected = String(verificationData.code || '').replace(/\D/g, '').trim();
+      if (!normalizedExpected) {
+        normalizedExpected = String(sessionStorage.getItem('op_verification_code_display') || '').replace(/\D/g, '').trim();
+      }
       if (normalizedExpected !== normalizedCode) {
         return { success: false, message: 'Invalid verification code.' };
       }

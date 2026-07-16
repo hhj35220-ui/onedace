@@ -186,6 +186,70 @@ body {
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
+/* Improve theme contrast for cards and containers */
+.widget-card,
+.widget-body,
+.widget-header,
+.inbox-sidebar,
+.inbox-filter-tabs,
+.conversation-view,
+.details-panel,
+.inbox-conversation-item,
+.conversation-item,
+.stat-card,
+.ai-suggestion-item,
+.platform-mini-item,
+.message-bubble,
+.message-content,
+.message-meta,
+.dashboard-main,
+.dashboard-header,
+.dashboard-content {
+  background: var(--gray-0);
+  color: var(--gray-900);
+}
+
+[data-theme="dark"] .widget-card,
+[data-theme="dark"] .widget-body,
+[data-theme="dark"] .widget-header,
+[data-theme="dark"] .inbox-sidebar,
+[data-theme="dark"] .inbox-filter-tabs,
+[data-theme="dark"] .conversation-view,
+[data-theme="dark"] .details-panel,
+[data-theme="dark"] .inbox-conversation-item,
+[data-theme="dark"] .conversation-item,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .ai-suggestion-item,
+[data-theme="dark"] .platform-mini-item,
+[data-theme="dark"] .message-bubble,
+[data-theme="dark"] .message-content,
+[data-theme="dark"] .message-meta,
+[data-theme="dark"] .dashboard-main,
+[data-theme="dark"] .dashboard-header,
+[data-theme="dark"] .dashboard-content {
+  background: var(--gray-900);
+  color: var(--gray-100);
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  color: var(--gray-500);
+  background: rgba(0,0,0,0.02);
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+[data-theme="dark"] .chart-empty {
+  background: rgba(255,255,255,0.05);
+  color: var(--gray-300);
+  border-color: rgba(255,255,255,0.12);
+}
+
 @media (min-width: 768px) {
   body {
     padding-bottom: 0;

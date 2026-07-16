@@ -21,8 +21,16 @@ class UnifiedInbox {
   init() {
     this.teamMembers = this.storage.getTeamMembers();
     this.conversations = this.storage.getConversations();
-    this.renderConversationList();
+
+    const params = new URLSearchParams(window.location.search);
+    const filter = params.get('filter');
+    const validFilters = ['all', 'unread', 'starred', 'assigned', 'archived', 'spam', 'trash', 'gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin'];
+    if (filter && validFilters.includes(filter)) {
+      this.currentFilter = filter;
+    }
+
     this.bindEvents();
+    this.renderConversationList();
 
     // Select first unread or first conversation
     const firstUnread = this.conversations.find(c => c.unread);
@@ -107,6 +115,7 @@ class UnifiedInbox {
   // Render Conversation List
   // ============================================
   renderConversationList() {
+    this.updateActiveFilterTab();
     const container = document.getElementById('inbox-conversation-list');
     const filtered = this.getFilteredConversations();
 
@@ -234,6 +243,12 @@ class UnifiedInbox {
       if (countEl && counts[filter] !== undefined) {
         countEl.textContent = counts[filter];
       }
+    });
+  }
+
+  updateActiveFilterTab() {
+    document.querySelectorAll('.inbox-filter-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.filter === this.currentFilter);
     });
   }
 

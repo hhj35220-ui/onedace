@@ -381,13 +381,12 @@ class SettingsApp {
         document.querySelectorAll('.display-mode-option input').forEach(i => i.checked = false);
         input.checked = true;
         const mode = input.value;
-        if (mode === 'system') {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-        } else {
-          document.documentElement.setAttribute('data-theme', mode);
-        }
-        localStorage.setItem('op_theme', mode === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode);
+        const theme = mode === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : mode;
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.colorScheme = theme;
+        localStorage.setItem('op_theme', theme);
       });
     });
 
