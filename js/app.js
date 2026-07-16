@@ -930,16 +930,54 @@ function registerServiceWorkerStub() {
   if (!('serviceWorker' in navigator)) return;
   // Do not fail if SW files are absent; attempt registration if available
   try {
-    navigator.serviceWorker.register('/sw.js').then(() => {
-      // registration succeeded
+    // Check that the service worker file exists before registering (avoid 404s)
+    fetch('/sw.js', { method: 'HEAD' }).then(resp => {
+      if (resp && resp.ok) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
     }).catch(() => {
-      // ignore registration errors
+      // ignore fetch/register errors
     });
   } catch (e) { /* ignore */ }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   try { registerServiceWorkerStub(); } catch (e) { /* ignore */ }
+});
+
+// On public entry pages (landing, auth), attempt to unregister any legacy service
+// workers and clear caches to prevent stale SW-based redirects on mobile.
+function isPublicEntryPage() {
+  try {
+    const p = window.location.pathname || '/';
+    const file = p.split('/').pop().toLowerCase();
+    if (p === '/' || file === '' || file === 'index.html') return true;
+    if (p.includes('/auth/') || file === 'signin.html' || file === 'signup.html') return true;
+    return false;
+  } catch (e) { return false; }
+}
+
+function cleanupLegacyServiceWorkers() {
+  if (!('serviceWorker' in navigator)) return;
+  if (!isPublicEntryPage()) return;
+  try {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(r => {
+        try { r.unregister(); } catch (e) { /* ignore */ }
+      });
+    }).catch(() => {});
+  } catch (e) { /* ignore */ }
+
+  // Clear caches (best-effort) so old navigation responses don't persist.
+  if (window.caches && typeof window.caches.keys === 'function') {
+    try {
+      window.caches.keys().then(keys => Promise.all(keys.map(k => window.caches.delete(k)))).catch(() => {});
+    } catch (e) { /* ignore */ }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  try { cleanupLegacyServiceWorkers(); } catch (e) { /* ignore */ }
 });
 
 // ============================================
