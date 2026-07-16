@@ -142,7 +142,8 @@ class AuthManager {
   // --- User Storage ---
   getUsers() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
+      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS));
+      return Array.isArray(users) ? users : [];
     } catch {
       return [];
     }
@@ -403,7 +404,8 @@ class WorkspaceManager {
 
   getWorkspaces() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES)) || [];
+      const workspaces = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
+      return Array.isArray(workspaces) ? workspaces : [];
     } catch {
       return [];
     }
