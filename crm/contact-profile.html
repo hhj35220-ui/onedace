@@ -3,182 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRM Contact Profile — OnePlace Enterprise</title>
+  <title>John Smith — OnePlace CRM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/crm.css">
+  <link rel="stylesheet" href="crm.css">
+<base target="_blank">
 </head>
 <body>
-  <div class="dashboard-layout">
-    <aside class="dashboard-sidebar"></aside>
-    <div class="sidebar-overlay"></div>
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="ph ph-list"></i>
-    </button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">OnePlace</span>
+          <span class="sidebar-brand-version">Enterprise v3.0</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <a href="../dashboard/main-dashboard.html" class="sidebar-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+        <a href="../inbox/unified-inbox.html" class="sidebar-item"><i class="ph ph-inbox"></i><span>Unified Inbox</span><span class="sidebar-badge">84</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Channels</div>
+        <a href="../channels/gmail/" class="sidebar-item"><span class="sidebar-platform-icon gmail"><i class="ph ph-envelope-simple" style="color:white;font-size:9px;"></i></span><span>Gmail</span></a>
+        <a href="../channels/whatsapp/inbox.html" class="sidebar-item"><span class="sidebar-platform-icon whatsapp"><i class="ph ph-chat-circle-text" style="color:white;font-size:9px;"></i></span><span>WhatsApp Business</span><span class="sidebar-badge red">8</span></a>
+        <a href="../channels/instagram/" class="sidebar-item"><span class="sidebar-platform-icon instagram"><i class="ph ph-camera" style="color:white;font-size:9px;"></i></span><span>Instagram</span><span class="sidebar-badge">16</span></a>
+        <a href="../channels/tiktok/" class="sidebar-item"><span class="sidebar-platform-icon tiktok"><i class="ph ph-music-note" style="color:white;font-size:9px;"></i></span><span>TikTok</span><span class="sidebar-badge">23</span></a>
+        <a href="../channels/x/" class="sidebar-item"><span class="sidebar-platform-icon x"><i class="ph ph-x-logo" style="color:white;font-size:9px;"></i></span><span>X (Twitter)</span><span class="sidebar-badge">54</span></a>
+        <a href="../channels/linkedin/" class="sidebar-item"><span class="sidebar-platform-icon linkedin"><i class="ph ph-linkedin-logo" style="color:white;font-size:9px;"></i></span><span>LinkedIn</span><span class="sidebar-badge">36</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Business</div>
+        <a href="index.html" class="sidebar-item active"><i class="ph ph-users"></i><span>CRM</span></a>
+        <a href="../tasks/tasks.html" class="sidebar-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+        <a href="../calendar/calendar.html" class="sidebar-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+        <a href="../reports/reports.html" class="sidebar-item"><i class="ph ph-chart-bar"></i><span>Reports</span></a>
+        <a href="../automation/automation-center.html" class="sidebar-item"><i class="ph ph-lightning"></i><span>Automation</span></a>
+        <a href="../ai/assistant.html" class="sidebar-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Settings</div>
+        <a href="../settings/profile.html" class="sidebar-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+        <a href="../settings/integrations.html" class="sidebar-item"><i class="ph ph-plugs"></i><span>Integrations</span></a>
+        <a href="../help/help-center.html" class="sidebar-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info"><span class="sidebar-user-name">Alex Morgan</span><span class="sidebar-user-role">Admin</span></div>
+          <div class="sidebar-user-menu"><i class="ph ph-caret-down"></i></div>
+        </div>
+      </div>
+    </aside>
 
-    <main class="dashboard-main">
-      <header class="dashboard-header crm-header">
-        <div class="header-left">
-          <div class="header-brand">
-            <div class="crm-header-icon"><i class="ph ph-users"></i></div>
-            <div class="header-brand-text">
-              <h1 class="header-title">CRM</h1>
-              <p class="header-subtitle">Track your sales pipeline, leads, and customer relationships</p>
-            </div>
+    <main class="main-content">
+      <header class="crm-top-header">
+        <div class="crm-header-left">
+          <div class="crm-header-icon-wrap"><i class="ph ph-address-book"></i></div>
+          <div class="crm-header-title-group">
+            <span class="crm-header-title">Contact Profile</span>
+            <span class="crm-header-subtitle">View and manage contact details</span>
           </div>
         </div>
-        <div class="header-center">
-          <div class="header-search crm-search">
+        <div class="crm-header-center">
+          <div class="crm-search">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="crm-search" placeholder="Search..." autocomplete="off">
-            <span class="search-shortcut">⌘K</span>
+            <input type="text" placeholder="Search...">
+            <span class="crm-search-shortcut">⌘K</span>
           </div>
         </div>
-        <div class="header-right">
-          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
-            <i class="ph ph-bell"></i>
-            <span class="notification-dot" id="notif-dot"></span>
-          </button>
-          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
-            <i class="ph ph-moon"></i>
-          </button>
+        <div class="crm-header-right">
+          <button class="header-action-btn"><i class="ph ph-bell"></i><span class="notif-dot"></span></button>
+          <button class="header-action-btn"><i class="ph ph-moon"></i></button>
           <div class="header-user">
-            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
-            <div class="header-user-info">
-              <span class="header-user-name">Alex Morgan</span>
-              <span class="header-user-role">Admin</span>
-            </div>
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-user-avatar">
+            <div class="header-user-info"><span class="header-user-name">Alex Morgan</span><span class="header-user-role">Admin</span></div>
+            <i class="ph ph-caret-down" style="color:var(--gray-400);font-size:12px;"></i>
           </div>
         </div>
       </header>
 
-      <nav class="crm-tabs" aria-label="CRM sections">
+      <nav class="crm-tabs-bar">
         <div class="crm-tabs-inner">
-          <a href="index.html" class="crm-tab" data-page="dashboard">
-            <i class="ph ph-squares-four"></i>
-            <span>Dashboard</span>
-          </a>
-          <a href="leads.html" class="crm-tab" data-page="leads">
-            <i class="ph ph-target"></i>
-            <span>Leads</span>
-            <span class="tab-badge" id="leads-badge">1,248</span>
-          </a>
-          <a href="contacts.html" class="crm-tab" data-page="contacts">
-            <i class="ph ph-address-book"></i>
-            <span>Contacts</span>
-            <span class="tab-badge" id="contacts-badge">986</span>
-          </a>
-          <a href="companies.html" class="crm-tab" data-page="companies">
-            <i class="ph ph-buildings"></i>
-            <span>Companies</span>
-            <span class="tab-badge" id="companies-badge">420</span>
-          </a>
-          <a href="deals.html" class="crm-tab" data-page="deals">
-            <i class="ph ph-handshake"></i>
-            <span>Deals</span>
-            <span class="tab-badge" id="deals-badge">312</span>
-          </a>
-          <a href="pipelines.html" class="crm-tab" data-page="pipelines">
-            <i class="ph ph-kanban"></i>
-            <span>Pipelines</span>
-          </a>
-          <a href="opportunities.html" class="crm-tab" data-page="opportunities">
-            <i class="ph ph-lightning"></i>
-            <span>Opportunities</span>
-          </a>
-          <a href="settings.html" class="crm-tab" data-page="settings">
-            <i class="ph ph-gear"></i>
-            <span>Settings</span>
-          </a>
+          <a href="index.html" class="crm-tab"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="leads.html" class="crm-tab"><i class="ph ph-target"></i><span>Leads</span><span class="crm-tab-badge">1,248</span></a>
+          <a href="contacts.html" class="crm-tab active"><i class="ph ph-address-book"></i><span>Contacts</span><span class="crm-tab-badge">986</span></a>
+          <a href="companies.html" class="crm-tab"><i class="ph ph-buildings"></i><span>Companies</span><span class="crm-tab-badge">420</span></a>
+          <a href="deals.html" class="crm-tab"><i class="ph ph-handshake"></i><span>Deals</span><span class="crm-tab-badge">312</span></a>
+          <a href="pipelines.html" class="crm-tab"><i class="ph ph-kanban"></i><span>Pipelines</span></a>
+          <a href="opportunities.html" class="crm-tab"><i class="ph ph-lightning"></i><span>Opportunities</span></a>
+          <a href="settings.html" class="crm-tab"><i class="ph ph-gear"></i><span>Settings</span></a>
         </div>
       </nav>
 
-      <div class="dashboard-content crm-content">
-        <div class="profile-page">
-          <div class="profile-sidebar">
-            <div class="profile-card">
-              <div class="profile-header">
-                <img src="https://ui-avatars.com/api/?name=John+Smith&background=6366f1&color=fff&size=128" alt="John Smith" class="profile-avatar-large">
-                <h2 class="profile-name">John Smith</h2>
-                <p class="profile-title">CTO at Tech Solutions Inc.</p>
-                <div class="profile-actions">
-                  <button class="btn btn-primary btn-sm"><i class="ph ph-envelope"></i> Message</button>
-                  <button class="btn btn-outline btn-sm"><i class="ph ph-pencil"></i> Edit</button>
-                </div>
+      <div class="page-content">
+        <!-- Contact Header -->
+        <div class="contact-profile-header">
+          <img src="https://ui-avatars.com/api/?name=John+Smith&background=6366f1&color=fff&size=128" alt="John Smith" class="contact-profile-avatar">
+          <div class="contact-profile-info">
+            <div class="contact-profile-name">John Smith</div>
+            <div class="contact-profile-role">CTO at Tech Solutions Inc.</div>
+            <div class="contact-profile-meta">
+              <div class="contact-profile-meta-item"><i class="ph ph-envelope"></i> john.smith@techsolutions.com</div>
+              <div class="contact-profile-meta-item"><i class="ph ph-phone"></i> +1 (555) 123-4567</div>
+              <div class="contact-profile-meta-item"><i class="ph ph-buildings"></i> Tech Solutions Inc.</div>
+              <div class="contact-profile-meta-item"><i class="ph ph-map-pin"></i> San Francisco, CA</div>
+            </div>
+          </div>
+          <div class="contact-profile-actions">
+            <button class="btn-secondary"><i class="ph ph-envelope"></i> Email</button>
+            <button class="btn-secondary"><i class="ph ph-phone"></i> Call</button>
+            <button class="btn-primary"><i class="ph ph-pencil"></i> Edit</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+          <!-- Left Column -->
+          <div>
+            <!-- Deals -->
+            <div class="widget-card" style="margin-bottom:20px;">
+              <div class="widget-header">
+                <span class="widget-title">Associated Deals</span>
+                <a href="deals.html" class="view-all-link">View All</a>
               </div>
-              <div class="profile-info">
-                <div class="profile-info-item">
-                  <i class="ph ph-envelope"></i>
-                  <span>john.smith@techsolutions.com</span>
-                </div>
-                <div class="profile-info-item">
-                  <i class="ph ph-phone"></i>
-                  <span>+1 (555) 888-9999</span>
-                </div>
-                <div class="profile-info-item">
-                  <i class="ph ph-map-pin"></i>
-                  <span>San Francisco, CA</span>
-                </div>
-                <div class="profile-info-item">
-                  <i class="ph ph-buildings"></i>
-                  <span>Tech Solutions Inc.</span>
-                </div>
-                <div class="profile-info-item">
-                  <i class="ph ph-briefcase"></i>
-                  <span>Technology</span>
-                </div>
-                <div class="profile-info-item">
-                  <i class="ph ph-users"></i>
-                  <span>Department: Engineering</span>
-                </div>
+              <div class="widget-body" style="padding:0;">
+                <table class="data-table" style="border:none;">
+                  <thead>
+                    <tr>
+                      <th>Deal Name</th>
+                      <th>Value</th>
+                      <th>Stage</th>
+                      <th>Close Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="table-name">Enterprise Software License</span></td>
+                      <td><strong>$45,000</strong></td>
+                      <td><span class="badge badge-negotiation">Negotiation</span></td>
+                      <td>Jul 30, 2026</td>
+                    </tr>
+                    <tr>
+                      <td><span class="table-name">Support Contract Renewal</span></td>
+                      <td><strong>$12,000</strong></td>
+                      <td><span class="badge badge-won">Won</span></td>
+                      <td>Jun 15, 2026</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="profile-tags">
-                <h4>Tags</h4>
-                <div class="tag-list">
-                  <span class="tag hot-lead">Hot Lead</span>
-                  <span class="tag enterprise">Enterprise</span>
-                  <span class="tag decision-maker">Decision Maker</span>
-                  <button class="tag add-tag"><i class="ph ph-plus"></i> Add Tag</button>
-                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Activity Timeline</span>
               </div>
-              <div class="profile-owner">
-                <h4>Contact Owner</h4>
-                <div class="owner-info">
-                  <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="owner-avatar">
-                  <div>
-                    <span class="owner-name">Alex Morgan</span>
-                    <span class="owner-email">alex.morgan@oneplace.com</span>
+              <div class="widget-body">
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-dot" style="background:#22c55e;"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Deal Won — Support Contract Renewal</div>
+                      <div class="timeline-desc">Won $12,000 support contract renewal</div>
+                      <div class="timeline-time">Jun 15, 2026 at 2:30 PM</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot" style="background:#6366f1;"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Email Sent</div>
+                      <div class="timeline-desc">Follow-up email regarding Enterprise Software License proposal</div>
+                      <div class="timeline-time">Jul 10, 2026 at 10:15 AM</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot" style="background:#f97316;"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Meeting Scheduled</div>
+                      <div class="timeline-desc">Product demo call scheduled for next week</div>
+                      <div class="timeline-time">Jul 8, 2026 at 3:00 PM</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot" style="background:#ec4899;"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Lead Created</div>
+                      <div class="timeline-desc">John Smith was added as a new lead from website</div>
+                      <div class="timeline-time">Jul 1, 2026 at 9:00 AM</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="profile-main">
-            <div class="profile-tabs">
-              <button class="profile-tab active" data-tab="overview">Overview</button>
-              <button class="profile-tab" data-tab="timeline">Timeline</button>
-              <button class="profile-tab" data-tab="deals">Deals</button>
-              <button class="profile-tab" data-tab="tasks">Tasks</button>
-              <button class="profile-tab" data-tab="notes">Notes</button>
-              <button class="profile-tab" data-tab="files">Files</button>
-            </div>
-            <div class="profile-tab-content" id="profile-content">
-              <!-- Overview -->
-              <div class="profile-section" id="tab-overview">
-                <h3>About</h3>
-                <p>John Smith is the CTO at Tech Solutions Inc., a leading technology company specializing in cloud infrastructure and enterprise software solutions. He has over 15 years of experience in software engineering and technical leadership.</p>
-                <h3>Company</h3>
-                <div class="company-card-mini">
-                  <img src="https://ui-avatars.com/api/?name=Tech+Solutions&background=0A66C2&color=fff&size=64" alt="Tech Solutions" class="company-mini-logo">
+
+          <!-- Right Column -->
+          <div>
+            <!-- Contact Info -->
+            <div class="widget-card" style="margin-bottom:20px;">
+              <div class="widget-header">
+                <span class="widget-title">Contact Information</span>
+              </div>
+              <div class="widget-body">
+                <div style="display:flex;flex-direction:column;gap:14px;">
                   <div>
-                    <span class="company-mini-name">Tech Solutions Inc.</span>
-                    <span class="company-mini-industry">Technology</span>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Email</div>
+                    <div style="font-size:13px;color:#374151;">john.smith@techsolutions.com</div>
                   </div>
-                  <a href="#" class="view-company-link">View Company</a>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Phone</div>
+                    <div style="font-size:13px;color:#374151;">+1 (555) 123-4567</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Company</div>
+                    <div style="font-size:13px;color:#374151;">Tech Solutions Inc.</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Job Title</div>
+                    <div style="font-size:13px;color:#374151;">Chief Technology Officer</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Location</div>
+                    <div style="font-size:13px;color:#374151;">San Francisco, CA, USA</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Source</div>
+                    <div style="font-size:13px;color:#374151;">Website</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Owner</div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" style="width:24px;height:24px;border-radius:50%;">
+                      <span style="font-size:13px;color:#374151;">Alex Morgan</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Tags</span>
+              </div>
+              <div class="widget-body">
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                  <span class="badge badge-new">VIP</span>
+                  <span class="badge badge-contacted">Enterprise</span>
+                  <span class="badge badge-qualified">Tech</span>
+                  <span class="badge badge-proposal">USA</span>
                 </div>
               </div>
             </div>
@@ -187,20 +263,5 @@
       </div>
     </main>
   </div>
-
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/crm.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        window.location.href = '../auth/signin.html';
-        return;
-      }
-      window.crmApp = new CRMApp();
-      window.crmApp.initContactProfilePage();
-    });
-  </script>
 </body>
 </html>

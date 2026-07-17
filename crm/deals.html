@@ -3,186 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRM Deals — OnePlace Enterprise</title>
+  <title>Deals — OnePlace CRM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/crm.css">
+  <link rel="stylesheet" href="crm.css">
+<base target="_blank">
 </head>
 <body>
-  <div class="dashboard-layout">
-    <aside class="dashboard-sidebar"></aside>
-    <div class="sidebar-overlay"></div>
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="ph ph-list"></i>
-    </button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">OnePlace</span>
+          <span class="sidebar-brand-version">Enterprise v3.0</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <a href="../dashboard/main-dashboard.html" class="sidebar-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+        <a href="../inbox/unified-inbox.html" class="sidebar-item"><i class="ph ph-inbox"></i><span>Unified Inbox</span><span class="sidebar-badge">84</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Channels</div>
+        <a href="../channels/gmail/" class="sidebar-item"><span class="sidebar-platform-icon gmail"><i class="ph ph-envelope-simple" style="color:white;font-size:9px;"></i></span><span>Gmail</span></a>
+        <a href="../channels/whatsapp/inbox.html" class="sidebar-item"><span class="sidebar-platform-icon whatsapp"><i class="ph ph-chat-circle-text" style="color:white;font-size:9px;"></i></span><span>WhatsApp Business</span><span class="sidebar-badge red">8</span></a>
+        <a href="../channels/instagram/" class="sidebar-item"><span class="sidebar-platform-icon instagram"><i class="ph ph-camera" style="color:white;font-size:9px;"></i></span><span>Instagram</span><span class="sidebar-badge">16</span></a>
+        <a href="../channels/tiktok/" class="sidebar-item"><span class="sidebar-platform-icon tiktok"><i class="ph ph-music-note" style="color:white;font-size:9px;"></i></span><span>TikTok</span><span class="sidebar-badge">23</span></a>
+        <a href="../channels/x/" class="sidebar-item"><span class="sidebar-platform-icon x"><i class="ph ph-x-logo" style="color:white;font-size:9px;"></i></span><span>X (Twitter)</span><span class="sidebar-badge">54</span></a>
+        <a href="../channels/linkedin/" class="sidebar-item"><span class="sidebar-platform-icon linkedin"><i class="ph ph-linkedin-logo" style="color:white;font-size:9px;"></i></span><span>LinkedIn</span><span class="sidebar-badge">36</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Business</div>
+        <a href="index.html" class="sidebar-item active"><i class="ph ph-users"></i><span>CRM</span></a>
+        <a href="../tasks/tasks.html" class="sidebar-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+        <a href="../calendar/calendar.html" class="sidebar-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+        <a href="../reports/reports.html" class="sidebar-item"><i class="ph ph-chart-bar"></i><span>Reports</span></a>
+        <a href="../automation/automation-center.html" class="sidebar-item"><i class="ph ph-lightning"></i><span>Automation</span></a>
+        <a href="../ai/assistant.html" class="sidebar-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Settings</div>
+        <a href="../settings/profile.html" class="sidebar-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+        <a href="../settings/integrations.html" class="sidebar-item"><i class="ph ph-plugs"></i><span>Integrations</span></a>
+        <a href="../help/help-center.html" class="sidebar-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info"><span class="sidebar-user-name">Alex Morgan</span><span class="sidebar-user-role">Admin</span></div>
+          <div class="sidebar-user-menu"><i class="ph ph-caret-down"></i></div>
+        </div>
+      </div>
+    </aside>
 
-    <main class="dashboard-main">
-      <header class="dashboard-header crm-header">
-        <div class="header-left">
-          <div class="header-brand">
-            <div class="crm-header-icon"><i class="ph ph-users"></i></div>
-            <div class="header-brand-text">
-              <h1 class="header-title">CRM</h1>
-              <p class="header-subtitle">Track your sales pipeline, leads, and customer relationships</p>
-            </div>
+    <main class="main-content">
+      <header class="crm-top-header">
+        <div class="crm-header-left">
+          <div class="crm-header-icon-wrap"><i class="ph ph-handshake"></i></div>
+          <div class="crm-header-title-group">
+            <span class="crm-header-title">Deals</span>
+            <span class="crm-header-subtitle">Track and manage your sales deals</span>
           </div>
         </div>
-        <div class="header-center">
-          <div class="header-search crm-search">
+        <div class="crm-header-center">
+          <div class="crm-search">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="crm-search" placeholder="Search deals..." autocomplete="off">
-            <span class="search-shortcut">⌘K</span>
+            <input type="text" placeholder="Search deals...">
+            <span class="crm-search-shortcut">⌘K</span>
           </div>
         </div>
-        <div class="header-right">
-          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
-            <i class="ph ph-bell"></i>
-            <span class="notification-dot" id="notif-dot"></span>
-          </button>
-          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
-            <i class="ph ph-moon"></i>
-          </button>
+        <div class="crm-header-right">
+          <button class="header-action-btn"><i class="ph ph-bell"></i><span class="notif-dot"></span></button>
+          <button class="header-action-btn"><i class="ph ph-moon"></i></button>
           <div class="header-user">
-            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
-            <div class="header-user-info">
-              <span class="header-user-name">Alex Morgan</span>
-              <span class="header-user-role">Admin</span>
-            </div>
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-user-avatar">
+            <div class="header-user-info"><span class="header-user-name">Alex Morgan</span><span class="header-user-role">Admin</span></div>
+            <i class="ph ph-caret-down" style="color:var(--gray-400);font-size:12px;"></i>
           </div>
         </div>
       </header>
 
-      <nav class="crm-tabs" aria-label="CRM sections">
+      <nav class="crm-tabs-bar">
         <div class="crm-tabs-inner">
-          <a href="index.html" class="crm-tab" data-page="dashboard">
-            <i class="ph ph-squares-four"></i>
-            <span>Dashboard</span>
-          </a>
-          <a href="leads.html" class="crm-tab" data-page="leads">
-            <i class="ph ph-target"></i>
-            <span>Leads</span>
-            <span class="tab-badge" id="leads-badge">1,248</span>
-          </a>
-          <a href="contacts.html" class="crm-tab" data-page="contacts">
-            <i class="ph ph-address-book"></i>
-            <span>Contacts</span>
-            <span class="tab-badge" id="contacts-badge">986</span>
-          </a>
-          <a href="companies.html" class="crm-tab" data-page="companies">
-            <i class="ph ph-buildings"></i>
-            <span>Companies</span>
-            <span class="tab-badge" id="companies-badge">420</span>
-          </a>
-          <a href="deals.html" class="crm-tab active" data-page="deals">
-            <i class="ph ph-handshake"></i>
-            <span>Deals</span>
-            <span class="tab-badge" id="deals-badge">312</span>
-          </a>
-          <a href="pipelines.html" class="crm-tab" data-page="pipelines">
-            <i class="ph ph-kanban"></i>
-            <span>Pipelines</span>
-          </a>
-          <a href="opportunities.html" class="crm-tab" data-page="opportunities">
-            <i class="ph ph-lightning"></i>
-            <span>Opportunities</span>
-          </a>
-          <a href="settings.html" class="crm-tab" data-page="settings">
-            <i class="ph ph-gear"></i>
-            <span>Settings</span>
-          </a>
+          <a href="index.html" class="crm-tab"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="leads.html" class="crm-tab"><i class="ph ph-target"></i><span>Leads</span><span class="crm-tab-badge">1,248</span></a>
+          <a href="contacts.html" class="crm-tab"><i class="ph ph-address-book"></i><span>Contacts</span><span class="crm-tab-badge">986</span></a>
+          <a href="companies.html" class="crm-tab"><i class="ph ph-buildings"></i><span>Companies</span><span class="crm-tab-badge">420</span></a>
+          <a href="deals.html" class="crm-tab active"><i class="ph ph-handshake"></i><span>Deals</span><span class="crm-tab-badge">312</span></a>
+          <a href="pipelines.html" class="crm-tab"><i class="ph ph-kanban"></i><span>Pipelines</span></a>
+          <a href="opportunities.html" class="crm-tab"><i class="ph ph-lightning"></i><span>Opportunities</span></a>
+          <a href="settings.html" class="crm-tab"><i class="ph ph-gear"></i><span>Settings</span></a>
         </div>
       </nav>
 
-      <div class="dashboard-content crm-content">
-        <div class="crm-deals-page">
-          <div class="deals-header">
-            <div class="deals-stats-bar">
-              <div class="deals-stat">
-                <span class="deals-stat-value">312</span>
-                <span class="deals-stat-label">Total Deals</span>
-              </div>
-              <div class="deals-stat">
-                <span class="deals-stat-value">$124,850</span>
-                <span class="deals-stat-label">Total Value</span>
-              </div>
-              <div class="deals-stat">
-                <span class="deals-stat-value">68</span>
-                <span class="deals-stat-label">Won</span>
-              </div>
-              <div class="deals-stat">
-                <span class="deals-stat-value">$68,450</span>
-                <span class="deals-stat-label">Won Value</span>
-              </div>
-            </div>
-            <div class="list-actions">
-              <button class="btn btn-outline btn-sm" id="filter-deals-btn"><i class="ph ph-funnel"></i> Filter</button>
-              <button class="btn btn-primary btn-sm" id="add-deal-btn"><i class="ph ph-plus"></i> Add Deal</button>
-            </div>
-          </div>
-          <div class="kanban-board" id="deals-kanban">
-            <div class="kanban-column" data-stage="new">
-              <div class="kanban-header">
-                <span class="kanban-title">New Lead</span>
-                <span class="kanban-count">1,248</span>
-                <span class="kanban-value">$0</span>
-              </div>
-              <div class="kanban-cards" id="kanban-new"></div>
-            </div>
-            <div class="kanban-column" data-stage="contact">
-              <div class="kanban-header">
-                <span class="kanban-title">Contact Made</span>
-                <span class="kanban-count">986</span>
-                <span class="kanban-value">$0</span>
-              </div>
-              <div class="kanban-cards" id="kanban-contact"></div>
-            </div>
-            <div class="kanban-column" data-stage="proposal">
-              <div class="kanban-header">
-                <span class="kanban-title">Proposal Sent</span>
-                <span class="kanban-count">642</span>
-                <span class="kanban-value">$0</span>
-              </div>
-              <div class="kanban-cards" id="kanban-proposal"></div>
-            </div>
-            <div class="kanban-column" data-stage="negotiation">
-              <div class="kanban-header">
-                <span class="kanban-title">Negotiation</span>
-                <span class="kanban-count">312</span>
-                <span class="kanban-value">$0</span>
-              </div>
-              <div class="kanban-cards" id="kanban-negotiation"></div>
-            </div>
-            <div class="kanban-column" data-stage="won">
-              <div class="kanban-header">
-                <span class="kanban-title won">Won</span>
-                <span class="kanban-count">68</span>
-                <span class="kanban-value">$68,450</span>
-              </div>
-              <div class="kanban-cards" id="kanban-won"></div>
-            </div>
+      <div class="page-content">
+        <div class="page-header">
+          <h1 class="page-title">All Deals</h1>
+          <div class="page-actions">
+            <button class="btn-secondary"><i class="ph ph-export"></i> Export</button>
+            <button class="btn-primary"><i class="ph ph-plus"></i> Add Deal</button>
           </div>
         </div>
+
+        <div class="filters-bar">
+          <input type="text" class="filter-input" placeholder="Search deals..." style="min-width:200px;">
+          <select class="filter-select"><option>All Stages</option><option>New Lead</option><option>Contact Made</option><option>Proposal Sent</option><option>Negotiation</option><option>Won</option><option>Lost</option></select>
+          <select class="filter-select"><option>All Owners</option><option>Alex Morgan</option><option>Sophia Martinez</option><option>Daniel Harris</option></select>
+          <button class="btn-secondary" style="margin-left:auto;"><i class="ph ph-faders"></i> Filters</button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>Deal Name</th>
+              <th>Company</th>
+              <th>Value</th>
+              <th>Stage</th>
+              <th>Probability</th>
+              <th>Owner</th>
+              <th>Close Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="table-name">Enterprise Software License</span></td>
+              <td>Tech Solutions Inc.</td>
+              <td><strong>$45,000</strong></td>
+              <td><span class="badge badge-negotiation">Negotiation</span></td>
+              <td>75%</td>
+              <td>Alex Morgan</td>
+              <td>Jul 30, 2026</td>
+              <td><button class="widget-action-btn"><i class="ph ph-dots-three-vertical"></i></button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="table-name">Annual Consulting Contract</span></td>
+              <td>Global Corp</td>
+              <td><strong>$32,500</strong></td>
+              <td><span class="badge badge-proposal">Proposal Sent</span></td>
+              <td>60%</td>
+              <td>Sophia Martinez</td>
+              <td>Aug 15, 2026</td>
+              <td><button class="widget-action-btn"><i class="ph ph-dots-three-vertical"></i></button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="table-name">Cloud Migration Project</span></td>
+              <td>InnovateTech Systems</td>
+              <td><strong>$28,750</strong></td>
+              <td><span class="badge badge-negotiation">Negotiation</span></td>
+              <td>70%</td>
+              <td>Daniel Harris</td>
+              <td>Aug 1, 2026</td>
+              <td><button class="widget-action-btn"><i class="ph ph-dots-three-vertical"></i></button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="table-name">Digital Marketing Package</span></td>
+              <td>Bright Future Ltd.</td>
+              <td><strong>$18,600</strong></td>
+              <td><span class="badge badge-contacted">Contact Made</span></td>
+              <td>40%</td>
+              <td>James Wilson</td>
+              <td>Sep 1, 2026</td>
+              <td><button class="widget-action-btn"><i class="ph ph-dots-three-vertical"></i></button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="table-name">Mobile App Development</span></td>
+              <td>NextGen Apps</td>
+              <td><strong>$15,000</strong></td>
+              <td><span class="badge badge-proposal">Proposal Sent</span></td>
+              <td>55%</td>
+              <td>Olivia Rodriguez</td>
+              <td>Aug 20, 2026</td>
+              <td><button class="widget-action-btn"><i class="ph ph-dots-three-vertical"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </div>
-
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/crm.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        window.location.href = '../auth/signin.html';
-        return;
-      }
-      window.crmApp = new CRMApp();
-      window.crmApp.initDealsPage();
-    });
-  </script>
 </body>
 </html>

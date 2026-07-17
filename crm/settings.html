@@ -3,246 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRM Settings — OnePlace Enterprise</title>
+  <title>Settings — OnePlace CRM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/crm.css">
+  <link rel="stylesheet" href="crm.css">
+<base target="_blank">
 </head>
 <body>
-  <div class="dashboard-layout">
-    <aside class="dashboard-sidebar"></aside>
-    <div class="sidebar-overlay"></div>
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="ph ph-list"></i>
-    </button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">OnePlace</span>
+          <span class="sidebar-brand-version">Enterprise v3.0</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <a href="../dashboard/main-dashboard.html" class="sidebar-item"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+        <a href="../inbox/unified-inbox.html" class="sidebar-item"><i class="ph ph-inbox"></i><span>Unified Inbox</span><span class="sidebar-badge">84</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Channels</div>
+        <a href="../channels/gmail/" class="sidebar-item"><span class="sidebar-platform-icon gmail"><i class="ph ph-envelope-simple" style="color:white;font-size:9px;"></i></span><span>Gmail</span></a>
+        <a href="../channels/whatsapp/inbox.html" class="sidebar-item"><span class="sidebar-platform-icon whatsapp"><i class="ph ph-chat-circle-text" style="color:white;font-size:9px;"></i></span><span>WhatsApp Business</span><span class="sidebar-badge red">8</span></a>
+        <a href="../channels/instagram/" class="sidebar-item"><span class="sidebar-platform-icon instagram"><i class="ph ph-camera" style="color:white;font-size:9px;"></i></span><span>Instagram</span><span class="sidebar-badge">16</span></a>
+        <a href="../channels/tiktok/" class="sidebar-item"><span class="sidebar-platform-icon tiktok"><i class="ph ph-music-note" style="color:white;font-size:9px;"></i></span><span>TikTok</span><span class="sidebar-badge">23</span></a>
+        <a href="../channels/x/" class="sidebar-item"><span class="sidebar-platform-icon x"><i class="ph ph-x-logo" style="color:white;font-size:9px;"></i></span><span>X (Twitter)</span><span class="sidebar-badge">54</span></a>
+        <a href="../channels/linkedin/" class="sidebar-item"><span class="sidebar-platform-icon linkedin"><i class="ph ph-linkedin-logo" style="color:white;font-size:9px;"></i></span><span>LinkedIn</span><span class="sidebar-badge">36</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Business</div>
+        <a href="index.html" class="sidebar-item active"><i class="ph ph-users"></i><span>CRM</span></a>
+        <a href="../tasks/tasks.html" class="sidebar-item"><i class="ph ph-check-circle"></i><span>Tasks</span></a>
+        <a href="../calendar/calendar.html" class="sidebar-item"><i class="ph ph-calendar"></i><span>Calendar</span></a>
+        <a href="../reports/reports.html" class="sidebar-item"><i class="ph ph-chart-bar"></i><span>Reports</span></a>
+        <a href="../automation/automation-center.html" class="sidebar-item"><i class="ph ph-lightning"></i><span>Automation</span></a>
+        <a href="../ai/assistant.html" class="sidebar-item"><i class="ph ph-sparkle"></i><span>AI</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Settings</div>
+        <a href="../settings/profile.html" class="sidebar-item"><i class="ph ph-gear"></i><span>Settings</span></a>
+        <a href="../settings/integrations.html" class="sidebar-item"><i class="ph ph-plugs"></i><span>Integrations</span></a>
+        <a href="../help/help-center.html" class="sidebar-item"><i class="ph ph-question"></i><span>Help & Support</span></a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info"><span class="sidebar-user-name">Alex Morgan</span><span class="sidebar-user-role">Admin</span></div>
+          <div class="sidebar-user-menu"><i class="ph ph-caret-down"></i></div>
+        </div>
+      </div>
+    </aside>
 
-    <main class="dashboard-main">
-      <header class="dashboard-header crm-header">
-        <div class="header-left">
-          <div class="header-brand">
-            <div class="crm-header-icon"><i class="ph ph-users"></i></div>
-            <div class="header-brand-text">
-              <h1 class="header-title">CRM</h1>
-              <p class="header-subtitle">Track your sales pipeline, leads, and customer relationships</p>
-            </div>
+    <main class="main-content">
+      <header class="crm-top-header">
+        <div class="crm-header-left">
+          <div class="crm-header-icon-wrap"><i class="ph ph-gear"></i></div>
+          <div class="crm-header-title-group">
+            <span class="crm-header-title">CRM Settings</span>
+            <span class="crm-header-subtitle">Configure your CRM preferences and settings</span>
           </div>
         </div>
-        <div class="header-center">
-          <div class="header-search crm-search">
+        <div class="crm-header-center">
+          <div class="crm-search">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="crm-search" placeholder="Search..." autocomplete="off">
-            <span class="search-shortcut">⌘K</span>
+            <input type="text" placeholder="Search settings...">
+            <span class="crm-search-shortcut">⌘K</span>
           </div>
         </div>
-        <div class="header-right">
-          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
-            <i class="ph ph-bell"></i>
-            <span class="notification-dot" id="notif-dot"></span>
-          </button>
-          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
-            <i class="ph ph-moon"></i>
-          </button>
+        <div class="crm-header-right">
+          <button class="header-action-btn"><i class="ph ph-bell"></i><span class="notif-dot"></span></button>
+          <button class="header-action-btn"><i class="ph ph-moon"></i></button>
           <div class="header-user">
-            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
-            <div class="header-user-info">
-              <span class="header-user-name">Alex Morgan</span>
-              <span class="header-user-role">Admin</span>
-            </div>
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-user-avatar">
+            <div class="header-user-info"><span class="header-user-name">Alex Morgan</span><span class="header-user-role">Admin</span></div>
+            <i class="ph ph-caret-down" style="color:var(--gray-400);font-size:12px;"></i>
           </div>
         </div>
       </header>
 
-      <nav class="crm-tabs" aria-label="CRM sections">
+      <nav class="crm-tabs-bar">
         <div class="crm-tabs-inner">
-          <a href="index.html" class="crm-tab" data-page="dashboard">
-            <i class="ph ph-squares-four"></i>
-            <span>Dashboard</span>
-          </a>
-          <a href="leads.html" class="crm-tab" data-page="leads">
-            <i class="ph ph-target"></i>
-            <span>Leads</span>
-            <span class="tab-badge" id="leads-badge">1,248</span>
-          </a>
-          <a href="contacts.html" class="crm-tab" data-page="contacts">
-            <i class="ph ph-address-book"></i>
-            <span>Contacts</span>
-            <span class="tab-badge" id="contacts-badge">986</span>
-          </a>
-          <a href="companies.html" class="crm-tab" data-page="companies">
-            <i class="ph ph-buildings"></i>
-            <span>Companies</span>
-            <span class="tab-badge" id="companies-badge">420</span>
-          </a>
-          <a href="deals.html" class="crm-tab" data-page="deals">
-            <i class="ph ph-handshake"></i>
-            <span>Deals</span>
-            <span class="tab-badge" id="deals-badge">312</span>
-          </a>
-          <a href="pipelines.html" class="crm-tab" data-page="pipelines">
-            <i class="ph ph-kanban"></i>
-            <span>Pipelines</span>
-          </a>
-          <a href="opportunities.html" class="crm-tab" data-page="opportunities">
-            <i class="ph ph-lightning"></i>
-            <span>Opportunities</span>
-          </a>
-          <a href="settings.html" class="crm-tab active" data-page="settings">
-            <i class="ph ph-gear"></i>
-            <span>Settings</span>
-          </a>
+          <a href="index.html" class="crm-tab"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+          <a href="leads.html" class="crm-tab"><i class="ph ph-target"></i><span>Leads</span><span class="crm-tab-badge">1,248</span></a>
+          <a href="contacts.html" class="crm-tab"><i class="ph ph-address-book"></i><span>Contacts</span><span class="crm-tab-badge">986</span></a>
+          <a href="companies.html" class="crm-tab"><i class="ph ph-buildings"></i><span>Companies</span><span class="crm-tab-badge">420</span></a>
+          <a href="deals.html" class="crm-tab"><i class="ph ph-handshake"></i><span>Deals</span><span class="crm-tab-badge">312</span></a>
+          <a href="pipelines.html" class="crm-tab"><i class="ph ph-kanban"></i><span>Pipelines</span></a>
+          <a href="opportunities.html" class="crm-tab"><i class="ph ph-lightning"></i><span>Opportunities</span></a>
+          <a href="settings.html" class="crm-tab active"><i class="ph ph-gear"></i><span>Settings</span></a>
         </div>
       </nav>
 
-      <div class="dashboard-content crm-content">
-        <div class="settings-page">
-          <div class="settings-card">
-            <div class="settings-section">
-              <h3 class="settings-section-title">Pipeline Settings</h3>
-              <div class="settings-row">
-                <div class="settings-item">
-                  <label class="settings-label">Default Pipeline</label>
-                  <select class="settings-select" id="default-pipeline">
-                    <option value="sales" selected>Sales Pipeline</option>
-                    <option value="marketing">Marketing Pipeline</option>
-                    <option value="support">Support Pipeline</option>
-                  </select>
+      <div class="page-content">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+          <div class="widget-card">
+            <div class="widget-header">
+              <span class="widget-title">Pipeline Stages</span>
+              <button class="btn-primary" style="padding:4px 12px;font-size:12px;"><i class="ph ph-plus"></i> Add Stage</button>
+            </div>
+            <div class="widget-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#6366f1;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">New Lead</span>
+                  <span style="font-size:11px;color:#9ca3af;">1,248 deals</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
                 </div>
-                <div class="settings-item">
-                  <label class="settings-label">Currency</label>
-                  <select class="settings-select" id="currency">
-                    <option value="USD" selected>USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                  </select>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#8b5cf6;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Contact Made</span>
+                  <span style="font-size:11px;color:#9ca3af;">986 deals</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#ec4899;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Proposal Sent</span>
+                  <span style="font-size:11px;color:#9ca3af;">642 deals</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#f43f5e;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Negotiation</span>
+                  <span style="font-size:11px;color:#9ca3af;">312 deals</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Won</span>
+                  <span style="font-size:11px;color:#9ca3af;">68 deals</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="settings-section">
-              <h3 class="settings-section-title">Lead Settings</h3>
-              <div class="settings-toggles">
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Auto-assign Leads</span>
-                    <span class="toggle-desc">Automatically assign new leads to team members</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="auto-assign" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+          <div class="widget-card">
+            <div class="widget-header">
+              <span class="widget-title">Lead Sources</span>
+              <button class="btn-primary" style="padding:4px 12px;font-size:12px;"><i class="ph ph-plus"></i> Add Source</button>
+            </div>
+            <div class="widget-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#6366f1;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Website</span>
+                  <span style="font-size:11px;color:#9ca3af;">40%</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
                 </div>
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Lead Scoring</span>
-                    <span class="toggle-desc">Enable AI-powered lead scoring</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="lead-scoring" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#8b5cf6;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Social Media</span>
+                  <span style="font-size:11px;color:#9ca3af;">25%</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
                 </div>
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Duplicate Detection</span>
-                    <span class="toggle-desc">Warn when creating duplicate leads</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="duplicate-detection" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#ec4899;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Referral</span>
+                  <span style="font-size:11px;color:#9ca3af;">18%</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#f43f5e;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Email Campaign</span>
+                  <span style="font-size:11px;color:#9ca3af;">10%</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#9ca3af;"></div>
+                  <span style="flex:1;font-size:13px;font-weight:500;">Other</span>
+                  <span style="font-size:11px;color:#9ca3af;">7%</span>
+                  <button class="widget-action-btn"><i class="ph ph-pencil"></i></button>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="settings-section">
-              <h3 class="settings-section-title">Deal Settings</h3>
-              <div class="settings-toggles">
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Probability Auto-calculation</span>
-                    <span class="toggle-desc">Auto-calculate deal probability based on stage</span>
+          <div class="widget-card">
+            <div class="widget-header">
+              <span class="widget-title">Team Members</span>
+              <button class="btn-primary" style="padding:4px 12px;font-size:12px;"><i class="ph ph-plus"></i> Invite</button>
+            </div>
+            <div class="widget-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" style="width:32px;height:32px;border-radius:50%;">
+                  <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:600;">Alex Morgan</div>
+                    <div style="font-size:11px;color:#9ca3af;">Admin</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="auto-probability" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                  <span class="badge badge-new">Admin</span>
                 </div>
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Revenue Forecasting</span>
-                    <span class="toggle-desc">Enable AI revenue forecasting</span>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <img src="https://ui-avatars.com/api/?name=Sophia+Martinez&background=ec4899&color=fff&size=64" style="width:32px;height:32px;border-radius:50%;">
+                  <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:600;">Sophia Martinez</div>
+                    <div style="font-size:11px;color:#9ca3af;">Sales Manager</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="revenue-forecast" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                  <span class="badge badge-contacted">Manager</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                  <img src="https://ui-avatars.com/api/?name=Daniel+Harris&background=f97316&color=fff&size=64" style="width:32px;height:32px;border-radius:50%;">
+                  <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:600;">Daniel Harris</div>
+                    <div style="font-size:11px;color:#9ca3af;">Sales Rep</div>
+                  </div>
+                  <span class="badge badge-qualified">Rep</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="settings-section">
-              <h3 class="settings-section-title">Notifications</h3>
-              <div class="settings-toggles">
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Deal Stage Changes</span>
-                    <span class="toggle-desc">Notify when deals move to a new stage</span>
+          <div class="widget-card">
+            <div class="widget-header">
+              <span class="widget-title">Notifications</span>
+            </div>
+            <div class="widget-body">
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:13px;font-weight:500;">Email Notifications</div>
+                    <div style="font-size:11px;color:#9ca3af;">Receive email alerts for new leads</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="notify-stage" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                  <div style="width:40px;height:22px;border-radius:999px;background:#4f46e5;position:relative;cursor:pointer;">
+                    <div style="width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:2px;right:2px;"></div>
+                  </div>
                 </div>
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">New Lead Alerts</span>
-                    <span class="toggle-desc">Notify when new leads are assigned to you</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:13px;font-weight:500;">Deal Updates</div>
+                    <div style="font-size:11px;color:#9ca3af;">Get notified when deals change stage</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="notify-leads" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                  <div style="width:40px;height:22px;border-radius:999px;background:#4f46e5;position:relative;cursor:pointer;">
+                    <div style="width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:2px;right:2px;"></div>
+                  </div>
                 </div>
-                <div class="settings-toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label">Task Reminders</span>
-                    <span class="toggle-desc">Send reminders for upcoming tasks</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:13px;font-weight:500;">Task Reminders</div>
+                    <div style="font-size:11px;color:#9ca3af;">Daily reminder for pending tasks</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="notify-tasks" checked>
-                    <span class="toggle-slider"></span>
-                  </label>
+                  <div style="width:40px;height:22px;border-radius:999px;background:#d1d5db;position:relative;cursor:pointer;">
+                    <div style="width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="settings-actions">
-              <button class="btn btn-primary btn-lg" id="save-crm-settings"><i class="ph ph-floppy-disk"></i> Save Changes</button>
-              <button class="btn btn-outline btn-lg" id="reset-crm-settings"><i class="ph ph-arrow-counter-clockwise"></i> Reset to Default</button>
             </div>
           </div>
         </div>
       </div>
     </main>
   </div>
-
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/crm.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        window.location.href = '../auth/signin.html';
-        return;
-      }
-      window.crmApp = new CRMApp();
-      window.crmApp.initSettingsPage();
-    });
-  </script>
 </body>
 </html>

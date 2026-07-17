@@ -8,55 +8,161 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/crm.css">
+  <link rel="stylesheet" href="crm.css">
+<base target="_blank">
 </head>
 <body>
-  <div class="dashboard-layout">
-    <aside class="dashboard-sidebar"></aside>
-    <div class="sidebar-overlay"></div>
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="ph ph-list"></i>
-    </button>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">OnePlace</span>
+          <span class="sidebar-brand-version">Enterprise v3.0</span>
+        </div>
+      </div>
 
-    <main class="dashboard-main">
-      <header class="dashboard-header crm-header">
-        <div class="header-left">
-          <div class="header-brand">
-            <div class="crm-header-icon"><i class="ph ph-users"></i></div>
-            <div class="header-brand-text">
-              <h1 class="header-title">CRM Dashboard</h1>
-              <p class="header-subtitle">Track your sales pipeline, leads, and customer relationships</p>
-            </div>
+      <div class="sidebar-section">
+        <a href="../dashboard/main-dashboard.html" class="sidebar-item" data-page="dashboard">
+          <i class="ph ph-squares-four"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="../inbox/unified-inbox.html" class="sidebar-item" data-page="inbox">
+          <i class="ph ph-inbox"></i>
+          <span>Unified Inbox</span>
+          <span class="sidebar-badge">84</span>
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Channels</div>
+        <a href="../channels/gmail/" class="sidebar-item" data-page="gmail">
+          <span class="sidebar-platform-icon gmail"><i class="ph ph-envelope-simple" style="color:white;font-size:9px;"></i></span>
+          <span>Gmail</span>
+        </a>
+        <a href="../channels/whatsapp/inbox.html" class="sidebar-item" data-page="whatsapp">
+          <span class="sidebar-platform-icon whatsapp"><i class="ph ph-chat-circle-text" style="color:white;font-size:9px;"></i></span>
+          <span>WhatsApp Business</span>
+          <span class="sidebar-badge red">8</span>
+        </a>
+        <a href="../channels/instagram/" class="sidebar-item" data-page="instagram">
+          <span class="sidebar-platform-icon instagram"><i class="ph ph-camera" style="color:white;font-size:9px;"></i></span>
+          <span>Instagram</span>
+          <span class="sidebar-badge">16</span>
+        </a>
+        <a href="../channels/tiktok/" class="sidebar-item" data-page="tiktok">
+          <span class="sidebar-platform-icon tiktok"><i class="ph ph-music-note" style="color:white;font-size:9px;"></i></span>
+          <span>TikTok</span>
+          <span class="sidebar-badge">23</span>
+        </a>
+        <a href="../channels/x/" class="sidebar-item" data-page="x">
+          <span class="sidebar-platform-icon x"><i class="ph ph-x-logo" style="color:white;font-size:9px;"></i></span>
+          <span>X (Twitter)</span>
+          <span class="sidebar-badge">54</span>
+        </a>
+        <a href="../channels/linkedin/" class="sidebar-item" data-page="linkedin">
+          <span class="sidebar-platform-icon linkedin"><i class="ph ph-linkedin-logo" style="color:white;font-size:9px;"></i></span>
+          <span>LinkedIn</span>
+          <span class="sidebar-badge">36</span>
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Business</div>
+        <a href="index.html" class="sidebar-item active" data-page="crm">
+          <i class="ph ph-users"></i>
+          <span>CRM</span>
+        </a>
+        <a href="../tasks/tasks.html" class="sidebar-item" data-page="tasks">
+          <i class="ph ph-check-circle"></i>
+          <span>Tasks</span>
+        </a>
+        <a href="../calendar/calendar.html" class="sidebar-item" data-page="calendar">
+          <i class="ph ph-calendar"></i>
+          <span>Calendar</span>
+        </a>
+        <a href="../reports/reports.html" class="sidebar-item" data-page="reports">
+          <i class="ph ph-chart-bar"></i>
+          <span>Reports</span>
+        </a>
+        <a href="../automation/automation-center.html" class="sidebar-item" data-page="automation">
+          <i class="ph ph-lightning"></i>
+          <span>Automation</span>
+        </a>
+        <a href="../ai/assistant.html" class="sidebar-item" data-page="ai">
+          <i class="ph ph-sparkle"></i>
+          <span>AI</span>
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Settings</div>
+        <a href="../settings/profile.html" class="sidebar-item" data-page="settings">
+          <i class="ph ph-gear"></i>
+          <span>Settings</span>
+        </a>
+        <a href="../settings/integrations.html" class="sidebar-item" data-page="integrations">
+          <i class="ph ph-plugs"></i>
+          <span>Integrations</span>
+        </a>
+        <a href="../help/help-center.html" class="sidebar-item" data-page="help">
+          <i class="ph ph-question"></i>
+          <span>Help & Support</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="sidebar-user-avatar">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Alex Morgan</span>
+            <span class="sidebar-user-role">Admin</span>
+          </div>
+          <div class="sidebar-user-menu" id="user-menu-toggle"><i class="ph ph-caret-down"></i></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="crm-top-header">
+        <div class="crm-header-left">
+          <div class="crm-header-icon-wrap"><i class="ph ph-users"></i></div>
+          <div class="crm-header-title-group">
+            <span class="crm-header-title">CRM Dashboard</span>
+            <span class="crm-header-subtitle">Track your sales pipeline, leads, and customer relationships</span>
           </div>
         </div>
-        <div class="header-center">
-          <div class="header-search crm-search">
+        <div class="crm-header-center">
+          <div class="crm-search">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="crm-search" placeholder="Search anything..." autocomplete="off">
-            <span class="search-shortcut">⌘K</span>
+            <input type="text" placeholder="Search anything..." id="global-search">
+            <span class="crm-search-shortcut">⌘K</span>
           </div>
         </div>
-        <div class="header-right">
-          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+        <div class="crm-header-right">
+          <button class="header-action-btn" id="notifications-btn" aria-label="Notifications">
             <i class="ph ph-bell"></i>
-            <span class="notification-dot" id="notif-dot"></span>
+            <span class="notif-dot"></span>
           </button>
-          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+          <button class="header-action-btn" id="theme-toggle" aria-label="Toggle theme">
             <i class="ph ph-moon"></i>
           </button>
-          <div class="header-user">
-            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+          <div class="header-user" id="header-user-menu">
+            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-user-avatar">
             <div class="header-user-info">
               <span class="header-user-name">Alex Morgan</span>
               <span class="header-user-role">Admin</span>
             </div>
+            <i class="ph ph-caret-down" style="color:var(--gray-400);font-size:12px;"></i>
           </div>
         </div>
       </header>
 
-      <nav class="crm-tabs" aria-label="CRM sections">
+      <!-- Tabs -->
+      <nav class="crm-tabs-bar" aria-label="CRM sections">
         <div class="crm-tabs-inner">
           <a href="index.html" class="crm-tab active" data-page="dashboard">
             <i class="ph ph-squares-four"></i>
@@ -65,22 +171,22 @@
           <a href="leads.html" class="crm-tab" data-page="leads">
             <i class="ph ph-target"></i>
             <span>Leads</span>
-            <span class="tab-badge" id="leads-badge">1,248</span>
+            <span class="crm-tab-badge">1,248</span>
           </a>
           <a href="contacts.html" class="crm-tab" data-page="contacts">
             <i class="ph ph-address-book"></i>
             <span>Contacts</span>
-            <span class="tab-badge" id="contacts-badge">986</span>
+            <span class="crm-tab-badge">986</span>
           </a>
           <a href="companies.html" class="crm-tab" data-page="companies">
             <i class="ph ph-buildings"></i>
             <span>Companies</span>
-            <span class="tab-badge" id="companies-badge">420</span>
+            <span class="crm-tab-badge">420</span>
           </a>
           <a href="deals.html" class="crm-tab" data-page="deals">
             <i class="ph ph-handshake"></i>
             <span>Deals</span>
-            <span class="tab-badge" id="deals-badge">312</span>
+            <span class="crm-tab-badge">312</span>
           </a>
           <a href="pipelines.html" class="crm-tab" data-page="pipelines">
             <i class="ph ph-kanban"></i>
@@ -97,202 +203,496 @@
         </div>
       </nav>
 
-      <div class="dashboard-content crm-content">
-        <!-- Stats Row -->
-        <div class="crm-stats-row">
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Total Leads</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>15.6%</span>
+      <!-- Dashboard Body -->
+      <div class="dashboard-body">
+        <div class="dashboard-main-area">
+          <!-- Stats Row -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Leads</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 15.6%</span>
               </div>
+              <div class="stat-value">1,248</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
-            <div class="stat-card-value">1,248</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Total Contacts</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>14.3%</span>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Contacts</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 14.3%</span>
               </div>
+              <div class="stat-value">986</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
-            <div class="stat-card-value">986</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Total Deals</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>21.7%</span>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Deals</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 21.7%</span>
               </div>
+              <div class="stat-value">312</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
-            <div class="stat-card-value">312</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Won Deals</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>18.2%</span>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Won Deals</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 18.2%</span>
               </div>
+              <div class="stat-value">68</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
-            <div class="stat-card-value">68</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Revenue</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>23.8%</span>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 23.8%</span>
               </div>
+              <div class="stat-value">$124,850</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
-            <div class="stat-card-value">$124,850</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-          <div class="crm-stat-card">
-            <div class="stat-card-header">
-              <span class="stat-label">Conversion Rate</span>
-              <div class="stat-trend up">
-                <i class="ph ph-trend-up"></i>
-                <span>6.4%</span>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Conversion Rate</span>
+                <span class="stat-trend up"><i class="ph ph-trend-up"></i> 6.4%</span>
               </div>
-            </div>
-            <div class="stat-card-value">24.6%</div>
-            <div class="stat-card-sub">vs last 7 days</div>
-          </div>
-        </div>
-
-        <!-- Middle Row: Pipeline + Charts -->
-        <div class="crm-mid-row">
-          <!-- Pipeline Overview -->
-          <div class="crm-pipeline-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Pipeline Overview</h3>
-              <div class="widget-actions">
-                <select class="pipeline-select">
-                  <option>Sales Pipeline</option>
-                  <option>Marketing Pipeline</option>
-                </select>
-                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
-              </div>
-            </div>
-            <div class="widget-body pipeline-body">
-              <div class="funnel-chart" id="pipeline-funnel"></div>
-              <div class="pipeline-legend" id="pipeline-legend"></div>
-              <div class="conversion-rate">Overall Conversion Rate: <strong>5.4%</strong></div>
+              <div class="stat-value">24.6%</div>
+              <div class="stat-sub">vs last 7 days</div>
             </div>
           </div>
 
-          <!-- Deals by Stage -->
-          <div class="crm-deals-stage-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Deals by Stage</h3>
-              <div class="widget-actions">
-                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
-              </div>
-            </div>
-            <div class="widget-body">
-              <div class="donut-chart-container">
-                <div class="donut-chart-wrapper" id="deals-donut"></div>
-                <div class="donut-center">
-                  <span class="donut-value">312</span>
-                  <span class="donut-label">Total Deals</span>
+          <!-- Middle Row: Charts -->
+          <div class="charts-row">
+            <!-- Pipeline Overview -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Pipeline Overview</span>
+                <div class="widget-actions">
+                  <select class="widget-select">
+                    <option>Sales Pipeline</option>
+                    <option>Marketing Pipeline</option>
+                  </select>
+                  <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
                 </div>
               </div>
-              <div class="deals-legend" id="deals-legend"></div>
+              <div class="widget-body">
+                <div class="pipeline-funnel-wrap">
+                  <div class="funnel-chart" id="pipeline-funnel"></div>
+                  <div class="pipeline-legend" id="pipeline-legend"></div>
+                  <div class="conversion-rate-line">Overall Conversion Rate: <strong>5.4%</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deals by Stage -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Deals by Stage</span>
+                <div class="widget-actions">
+                  <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="donut-wrap">
+                  <div class="donut-svg-wrap" id="deals-donut"></div>
+                  <div class="donut-center">
+                    <div class="donut-center-val">312</div>
+                    <div class="donut-center-label">Total Deals</div>
+                  </div>
+                </div>
+                <div class="deals-legend" id="deals-legend"></div>
+              </div>
+            </div>
+
+            <!-- Revenue Overview -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Revenue Overview</span>
+                <div class="widget-actions">
+                  <div class="revenue-header-extra">
+                    <span class="revenue-val">$124,850</span>
+                    <span class="revenue-trend"><i class="ph ph-trend-up"></i> 23.8%</span>
+                  </div>
+                  <select class="widget-select">
+                    <option>This Month</option>
+                    <option>Last Month</option>
+                  </select>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="revenue-chart-area" id="revenue-chart"></div>
+              </div>
             </div>
           </div>
 
-          <!-- Revenue Overview -->
-          <div class="crm-revenue-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Revenue Overview</h3>
-              <div class="widget-actions">
-                <span class="revenue-value">$124,850</span>
-                <span class="revenue-trend up"><i class="ph ph-trend-up"></i> 23.8%</span>
-                <select class="period-select">
-                  <option>This Month</option>
-                  <option>Last Month</option>
-                </select>
+          <!-- Bottom Row -->
+          <div class="bottom-row">
+            <!-- Top Performing Sales -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Top Performing Sales</span>
+                <div class="widget-actions">
+                  <select class="widget-select">
+                    <option>This Month</option>
+                  </select>
+                </div>
+              </div>
+              <div class="widget-body" style="padding:0;">
+                <div class="sales-list" id="top-sales"></div>
               </div>
             </div>
-            <div class="widget-body">
-              <div class="revenue-chart" id="revenue-chart"></div>
+
+            <!-- Recent Leads -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Recent Leads</span>
+                <div class="widget-actions">
+                  <a href="leads.html" class="view-all-link">View All</a>
+                </div>
+              </div>
+              <div class="widget-body" style="padding:0;">
+                <div class="recent-leads-list" id="recent-leads"></div>
+              </div>
+            </div>
+
+            <!-- Tasks Overview -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Tasks Overview</span>
+                <div class="widget-actions">
+                  <a href="../tasks/tasks.html" class="view-all-link">View All</a>
+                </div>
+              </div>
+              <div class="widget-body" style="padding:0;">
+                <div class="tasks-list" id="tasks-overview"></div>
+              </div>
+            </div>
+
+            <!-- Lead Sources -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <span class="widget-title">Lead Sources</span>
+              </div>
+              <div class="widget-body" style="padding:0;">
+                <div class="sources-chart-wrap" id="lead-sources-chart"></div>
+                <div class="sources-legend" id="lead-sources-legend"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Bottom Row -->
-        <div class="crm-bottom-row">
-          <!-- Top Performing Sales -->
-          <div class="crm-sales-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Top Performing Sales</h3>
-              <div class="widget-actions">
-                <select class="period-select">
-                  <option>This Month</option>
-                </select>
-              </div>
+        <!-- Right Panel -->
+        <div class="dashboard-right-panel">
+          <!-- Recent Activity -->
+          <div class="right-panel-card">
+            <div class="right-panel-header">
+              <span class="right-panel-title">Recent Activity</span>
+              <a href="#" class="view-all-link">View All</a>
             </div>
-            <div class="widget-body">
-              <div class="sales-list" id="top-sales"></div>
-            </div>
+            <div class="activity-list" id="recent-activity"></div>
           </div>
 
-          <!-- Recent Leads -->
-          <div class="crm-recent-leads-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Recent Leads</h3>
-              <a href="leads.html" class="view-all-link">View All</a>
+          <!-- Top Deals -->
+          <div class="right-panel-card">
+            <div class="right-panel-header">
+              <span class="right-panel-title">Top Deals</span>
+              <a href="deals.html" class="view-all-link">View All</a>
             </div>
-            <div class="widget-body">
-              <div class="recent-leads-list" id="recent-leads"></div>
-            </div>
-          </div>
-
-          <!-- Tasks Overview -->
-          <div class="crm-tasks-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Tasks Overview</h3>
-              <a href="../tasks/index.html" class="view-all-link">View All</a>
-            </div>
-            <div class="widget-body">
-              <div class="tasks-list" id="tasks-overview"></div>
-            </div>
-          </div>
-
-          <!-- Lead Sources -->
-          <div class="crm-sources-card">
-            <div class="widget-header">
-              <h3 class="widget-title">Lead Sources</h3>
-            </div>
-            <div class="widget-body">
-              <div class="sources-chart" id="lead-sources-chart"></div>
-              <div class="sources-legend" id="lead-sources-legend"></div>
-            </div>
+            <div class="top-deals-list" id="top-deals"></div>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/crm.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        window.location.href = '../auth/signin.html';
-        return;
+    const PIPELINE_STAGES = [
+      { name: 'New Lead', count: 1248, percent: 100, color: '#6366f1', width: 200, top: 0 },
+      { name: 'Contact Made', count: 986, percent: 79.2, color: '#8b5cf6', width: 170, top: 34 },
+      { name: 'Proposal Sent', count: 642, percent: 51.4, color: '#ec4899', width: 140, top: 68 },
+      { name: 'Negotiation', count: 312, percent: 25.0, color: '#f43f5e', width: 110, top: 102 },
+      { name: 'Won', count: 68, percent: 5.4, color: '#22c55e', width: 80, top: 136 }
+    ];
+
+    const DEALS_BY_STAGE = [
+      { label: 'New Lead', value: 1248, color: '#6366f1' },
+      { label: 'Contact Made', value: 986, color: '#8b5cf6' },
+      { label: 'Proposal Sent', value: 642, color: '#ec4899' },
+      { label: 'Negotiation', value: 312, color: '#f43f5e' },
+      { label: 'Won', value: 68, color: '#22c55e' }
+    ];
+
+    const REVENUE_DATA = [
+      { month: 'May 1', value: 15000 },
+      { month: 'May 7', value: 22000 },
+      { month: 'May 14', value: 18000 },
+      { month: 'May 21', value: 35000 },
+      { month: 'May 28', value: 28000 },
+      { month: 'Jun 4', value: 124850 }
+    ];
+
+    const TOP_SALES = [
+      { name: 'Alex Morgan', avatar: 'https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64', value: '$28,450', trend: '+18.2%' },
+      { name: 'Sophia Martinez', avatar: 'https://ui-avatars.com/api/?name=Sophia+Martinez&background=ec4899&color=fff&size=64', value: '$22,180', trend: '+15.7%' },
+      { name: 'Daniel Harris', avatar: 'https://ui-avatars.com/api/?name=Daniel+Harris&background=f97316&color=fff&size=64', value: '$18,920', trend: '+12.5%' },
+      { name: 'James Wilson', avatar: 'https://ui-avatars.com/api/?name=James+Wilson&background=22c55e&color=fff&size=64', value: '$16,340', trend: '+10.3%' },
+      { name: 'Olivia Rodriguez', avatar: 'https://ui-avatars.com/api/?name=Olivia+Rodriguez&background=8b5cf6&color=fff&size=64', value: '$12,860', trend: '+8.1%' }
+    ];
+
+    const RECENT_LEADS = [
+      { name: 'Tech Solutions Inc.', source: 'Website', time: '2 min ago', status: 'New', avatar: 'https://ui-avatars.com/api/?name=Tech+Solutions&background=0A66C2&color=fff&size=64' },
+      { name: 'Growth Marketing Co.', source: 'Referral', time: '15 min ago', status: 'New', avatar: 'https://ui-avatars.com/api/?name=Growth+Marketing&background=22c55e&color=fff&size=64' },
+      { name: 'InnovateTech Systems', source: 'LinkedIn', time: '1 hour ago', status: 'New', avatar: 'https://ui-avatars.com/api/?name=InnovateTech&background=f97316&color=fff&size=64' },
+      { name: 'Bright Future Ltd.', source: 'Email Campaign', time: '2 hours ago', status: 'New', avatar: 'https://ui-avatars.com/api/?name=Bright+Future&background=8b5cf6&color=fff&size=64' },
+      { name: 'NextGen Apps', source: 'Website', time: '3 hours ago', status: 'New', avatar: 'https://ui-avatars.com/api/?name=NextGen+Apps&background=ec4899&color=fff&size=64' }
+    ];
+
+    const TASKS_OVERVIEW = [
+      { name: 'Follow Ups', icon: 'ph-arrow-u-up-left', type: 'follow-up', count: 24 },
+      { name: 'Calls', icon: 'ph-phone', type: 'call', count: 18 },
+      { name: 'Meetings', icon: 'ph-calendar', type: 'meeting', count: 8 },
+      { name: 'Emails', icon: 'ph-envelope', type: 'email', count: 34 },
+      { name: 'Overdue Tasks', icon: 'ph-warning', type: 'overdue', count: 5 }
+    ];
+
+    const LEAD_SOURCES = [
+      { label: 'Website', value: 40, color: '#6366f1' },
+      { label: 'Social Media', value: 25, color: '#8b5cf6' },
+      { label: 'Referral', value: 18, color: '#ec4899' },
+      { label: 'Email Campaign', value: 10, color: '#f43f5e' },
+      { label: 'Other', value: 7, color: '#9ca3af' }
+    ];
+
+    const ACTIVITIES = [
+      { avatar: 'https://ui-avatars.com/api/?name=Sophia+Martinez&background=ec4899&color=fff&size=64', text: '<strong>Sophia Martinez</strong> won deal with Tech Solutions Inc.', desc: 'Won deal', time: '2 min ago', color: '#ec4899' },
+      { avatar: 'https://ui-avatars.com/api/?name=Daniel+Harris&background=f97316&color=fff&size=64', text: '<strong>Daniel Harris</strong> added new contact: John Smith', desc: 'New contact', time: '15 min ago', color: '#f97316' },
+      { avatar: 'https://ui-avatars.com/api/?name=Olivia+Rodriguez&background=8b5cf6&color=fff&size=64', text: '<strong>Olivia Rodriguez</strong> scheduled meeting with Client', desc: 'Meeting', time: '1 hour ago', color: '#8b5cf6' },
+      { avatar: 'https://ui-avatars.com/api/?name=James+Wilson&background=22c55e&color=fff&size=64', text: '<strong>James Wilson</strong> updated deal status to Negotiation', desc: 'Deal update', time: '1 hour ago', color: '#22c55e' },
+      { avatar: 'https://ui-avatars.com/api/?name=Michael+Brown&background=0A66C2&color=fff&size=64', text: '<strong>Michael Brown</strong> added new note to Global Corp deal', desc: 'Note added', time: '2 hours ago', color: '#0A66C2' }
+    ];
+
+    const TOP_DEALS = [
+      { name: 'Tech Solutions Inc.', value: '$45,000', stage: 'Negotiation', avatar: 'https://ui-avatars.com/api/?name=Tech+Solutions&background=0A66C2&color=fff&size=64', color: '#0A66C2' },
+      { name: 'Global Corp', value: '$32,500', stage: 'Proposal Sent', avatar: 'https://ui-avatars.com/api/?name=Global+Corp&background=22c55e&color=fff&size=64', color: '#22c55e' },
+      { name: 'InnovateTech Systems', value: '$28,750', stage: 'Negotiation', avatar: 'https://ui-avatars.com/api/?name=InnovateTech&background=f97316&color=fff&size=64', color: '#f97316' },
+      { name: 'Bright Future Ltd.', value: '$18,600', stage: 'Contact Made', avatar: 'https://ui-avatars.com/api/?name=Bright+Future&background=8b5cf6&color=fff&size=64', color: '#8b5cf6' },
+      { name: 'NextGen Apps', value: '$15,000', stage: 'Proposal Sent', avatar: 'https://ui-avatars.com/api/?name=NextGen+Apps&background=ec4899&color=fff&size=64', color: '#ec4899' }
+    ];
+
+    function renderPipelineFunnel() {
+      const container = document.getElementById('pipeline-funnel');
+      if (!container) return;
+      container.innerHTML = PIPELINE_STAGES.map(stage => `
+        <div class="funnel-seg" style="top:${stage.top}px;width:${stage.width}px;height:28px;background:${stage.color};">${stage.count}</div>
+      `).join('');
+      const legend = document.getElementById('pipeline-legend');
+      if (legend) {
+        legend.innerHTML = PIPELINE_STAGES.map(stage => `
+          <div class="pipeline-leg-item">
+            <span class="pipeline-leg-dot" style="background:${stage.color}"></span>
+            <span class="pipeline-leg-label">${stage.name}</span>
+            <span class="pipeline-leg-value">${stage.count}</span>
+            <span class="pipeline-leg-pct">${stage.percent}%</span>
+          </div>
+        `).join('');
       }
-      window.crmApp = new CRMApp();
+    }
+
+    function renderDealsDonut() {
+      const container = document.getElementById('deals-donut');
+      if (!container) return;
+      const total = DEALS_BY_STAGE.reduce((s, d) => s + d.value, 0);
+      let acc = 0;
+      const segs = DEALS_BY_STAGE.map(d => {
+        const pct = d.value / total;
+        const start = acc;
+        acc += pct;
+        return { ...d, pct, start };
+      });
+      const size = 140, cx = size/2, cy = size/2, r = (size - 24)/2;
+      const circ = 2 * Math.PI * r;
+      let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`;
+      segs.forEach(s => {
+        const len = Math.max(s.pct * circ - 1, 0.5);
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="18" stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-s.start * circ}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+      });
+      svg += '</svg>';
+      container.innerHTML = svg;
+      const legend = document.getElementById('deals-legend');
+      if (legend) {
+        legend.innerHTML = segs.map(s => `
+          <div class="deals-leg-item">
+            <span class="deals-leg-dot" style="background:${s.color}"></span>
+            <span class="deals-leg-label">${s.label}</span>
+            <span class="deals-leg-value">${s.value}</span>
+            <span class="deals-leg-pct">${((s.value/total)*100).toFixed(1)}%</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderRevenueChart() {
+      const container = document.getElementById('revenue-chart');
+      if (!container) return;
+      const data = REVENUE_DATA;
+      const max = Math.max(...data.map(d => d.value));
+      const w = container.clientWidth || 380;
+      const h = 180;
+      const pad = { t: 10, r: 10, b: 30, l: 50 };
+      const cw = w - pad.l - pad.r;
+      const ch = h - pad.t - pad.b;
+      let svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}">`;
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.t + (ch/4) * i;
+        const val = Math.round(max * (1 - i/4));
+        svg += `<line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="#e5e7eb" stroke-dasharray="3" stroke-width="1"/>`;
+        svg += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" font-size="9" fill="#9ca3af">$${(val/1000).toFixed(0)}k</text>`;
+      }
+      const pts = data.map((d, i) => ({
+        x: pad.l + (i / (data.length - 1)) * cw,
+        y: pad.t + ch - (d.value / max) * ch
+      }));
+      let path = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 1; i < pts.length; i++) {
+        const p0 = pts[i-1], p1 = pts[i];
+        const mx = (p0.x + p1.x) / 2;
+        path += ` C ${mx} ${p0.y}, ${mx} ${p1.y}, ${p1.x} ${p1.y}`;
+      }
+      svg += `<path d="${path}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/>`;
+      svg += `<path d="${path} L ${pts[pts.length-1].x} ${pad.t+ch} L ${pts[0].x} ${pad.t+ch} Z" fill="url(#revGrad)" opacity="0.15"/>`;
+      svg += `<defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>`;
+      pts.forEach(p => {
+        svg += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#6366f1" stroke="white" stroke-width="2"/>`;
+      });
+      data.forEach((d, i) => {
+        const x = pad.l + (i / (data.length - 1)) * cw;
+        svg += `<text x="${x}" y="${h-8}" text-anchor="middle" font-size="9" fill="#9ca3af">${d.month}</text>`;
+      });
+      svg += '</svg>';
+      container.innerHTML = svg;
+    }
+
+    function renderTopSales() {
+      const container = document.getElementById('top-sales');
+      if (!container) return;
+      container.innerHTML = TOP_SALES.map((p, i) => `
+        <div class="sales-item">
+          <span class="sales-rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+          <img src="${p.avatar}" alt="${p.name}" class="sales-avatar">
+          <div class="sales-info">
+            <span class="sales-name">${p.name}</span>
+          </div>
+          <span class="sales-value-display">${p.value}</span>
+          <span class="sales-trend-mini"><i class="ph ph-trend-up"></i> ${p.trend}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderRecentLeads() {
+      const container = document.getElementById('recent-leads');
+      if (!container) return;
+      container.innerHTML = RECENT_LEADS.map(lead => `
+        <div class="recent-lead-item">
+          <img src="${lead.avatar}" alt="${lead.name}" class="recent-lead-avatar">
+          <div class="recent-lead-info">
+            <span class="recent-lead-name">${lead.name}</span>
+            <span class="recent-lead-source">${lead.source} · ${lead.time}</span>
+          </div>
+          <div class="recent-lead-meta">
+            <span class="recent-lead-time">${lead.time}</span>
+            <span class="recent-lead-badge ${lead.status.toLowerCase()}">${lead.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTasksOverview() {
+      const container = document.getElementById('tasks-overview');
+      if (!container) return;
+      container.innerHTML = TASKS_OVERVIEW.map(task => `
+        <div class="task-item-row">
+          <div class="task-icon-wrap ${task.type}">
+            <i class="ph ${task.icon}"></i>
+          </div>
+          <div class="task-info">
+            <span class="task-name">${task.name}</span>
+            <span class="task-count">${task.count} pending</span>
+          </div>
+          <span class="task-count-badge ${task.type === 'overdue' ? 'overdue' : ''}">${task.count}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderLeadSources() {
+      const chartContainer = document.getElementById('lead-sources-chart');
+      const legendContainer = document.getElementById('lead-sources-legend');
+      if (!chartContainer || !legendContainer) return;
+      const total = LEAD_SOURCES.reduce((s, d) => s + d.value, 0);
+      let acc = 0;
+      const segs = LEAD_SOURCES.map(d => {
+        const pct = d.value / total;
+        const start = acc;
+        acc += pct;
+        return { ...d, pct, start };
+      });
+      const size = 110, cx = size/2, cy = size/2, r = (size - 16)/2;
+      const circ = 2 * Math.PI * r;
+      let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`;
+      segs.forEach(s => {
+        const len = Math.max(s.pct * circ - 1, 0.5);
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="14" stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-s.start * circ}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+      });
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r*0.5}" fill="white"/>`;
+      svg += `<text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">${total}%</text>`;
+      svg += `<text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="8" fill="#9ca3af">Sources</text>`;
+      svg += '</svg>';
+      chartContainer.innerHTML = svg;
+      legendContainer.innerHTML = segs.map(s => `
+        <div class="sources-leg-item">
+          <span class="sources-leg-dot" style="background:${s.color}"></span>
+          <span class="sources-leg-label">${s.label}</span>
+          <span class="sources-leg-pct">${s.value}%</span>
+        </div>
+      `).join('');
+    }
+
+    function renderActivity() {
+      const container = document.getElementById('recent-activity');
+      if (!container) return;
+      container.innerHTML = ACTIVITIES.map(act => `
+        <div class="activity-item">
+          <img src="${act.avatar}" alt="" class="activity-avatar" style="background:${act.color}20;">
+          <div class="activity-content">
+            <div class="activity-text">${act.text}</div>
+            <div class="activity-desc">${act.desc}</div>
+          </div>
+          <span class="activity-time">${act.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderTopDeals() {
+      const container = document.getElementById('top-deals');
+      if (!container) return;
+      container.innerHTML = TOP_DEALS.map(deal => `
+        <div class="top-deal-item">
+          <img src="${deal.avatar}" alt="${deal.name}" class="top-deal-avatar" style="background:${deal.color}20;">
+          <div class="top-deal-info">
+            <span class="top-deal-name">${deal.name}</span>
+          </div>
+          <span class="top-deal-value">${deal.value}</span>
+          <span class="top-deal-stage ${deal.stage.toLowerCase().replace(' ', '-')}">${deal.stage}</span>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPipelineFunnel();
+      renderDealsDonut();
+      renderRevenueChart();
+      renderTopSales();
+      renderRecentLeads();
+      renderTasksOverview();
+      renderLeadSources();
+      renderActivity();
+      renderTopDeals();
     });
   </script>
 </body>
