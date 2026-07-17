@@ -172,11 +172,11 @@
       nav.id = 'op-mobile-nav';
       nav.className = 'op-mobile-nav';
       nav.innerHTML = `
-        <button data-route="/" class="op-mobile-btn" aria-label="Home">Home</button>
-        <button data-route="/inbox/" class="op-mobile-btn" aria-label="Inbox">Inbox</button>
-        <button data-route="/crm/" class="op-mobile-btn" aria-label="CRM">CRM</button>
-        <button data-route="/calendar/" class="op-mobile-btn" aria-label="Calendar">Calendar</button>
-        <button data-route="/notifications/" class="op-mobile-btn" aria-label="Notifications">Notifications</button>
+        <button data-route="/dashboard/main-dashboard.html" class="op-mobile-btn" aria-label="Dashboard">Dashboard</button>
+        <button data-route="/inbox/unified-inbox.html" class="op-mobile-btn" aria-label="Inbox">Inbox</button>
+        <button data-route="/crm/index.html" class="op-mobile-btn" aria-label="CRM">CRM</button>
+        <button data-route="/calendar/index.html" class="op-mobile-btn" aria-label="Calendar">Calendar</button>
+        <button data-route="/notifications/notifications.html" class="op-mobile-btn" aria-label="Notifications">Notifications</button>
       `;
       document.body.appendChild(nav);
       this._highlightActiveMobileNav();

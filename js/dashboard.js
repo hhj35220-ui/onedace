@@ -107,6 +107,8 @@ class DashboardApp {
     const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
     let currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'main-dashboard';
+    const searchParams = new URLSearchParams(window.location.search);
+    const selectedPlatform = searchParams.get('platform');
 
     const stats = this.storage.getPlatformStats();
     const totalMessages = Object.values(stats).reduce((sum, s) => sum + (s.messages || 0), 0);
@@ -132,11 +134,11 @@ class DashboardApp {
       </div>
       <nav class="sidebar-nav" aria-label="Dashboard navigation">
         <div class="sidebar-section">
-          <a href="main-dashboard.html" class="sidebar-item ${currentPage === 'main-dashboard' ? 'active' : ''}" data-page="main-dashboard">
+          <a href="../dashboard/main-dashboard.html" class="sidebar-item ${currentPage === 'main-dashboard' ? 'active' : ''}" data-page="main-dashboard">
             <i class="ph ph-squares-four"></i>
             <span>Dashboard</span>
           </a>
-          <a href="../inbox/unified-inbox.html" class="sidebar-item ${currentPage === 'unified-inbox' ? 'active' : ''}" data-page="unified-inbox">
+          <a href="../inbox/unified-inbox.html" class="sidebar-item ${currentPage === 'unified-inbox' && !selectedPlatform ? 'active' : ''}" data-page="unified-inbox">
             <i class="ph ph-inbox"></i>
             <span>All Inbox</span>
             <span class="sidebar-badge">${totalMessages}</span>
@@ -152,8 +154,9 @@ class DashboardApp {
 
     platforms.forEach(p => {
       const unread = stats[p.id]?.unread || 0;
+      const isPlatformActive = currentPage === 'unified-inbox' && selectedPlatform === p.id;
       html += `
-        <a href="../inbox/unified-inbox.html?platform=${p.id}" class="sidebar-item sidebar-platform" data-page="${p.id}">
+        <a href="../inbox/unified-inbox.html?platform=${p.id}" class="sidebar-item sidebar-platform ${isPlatformActive ? 'active' : ''}" data-page="${p.id}">
           <span class="sidebar-brand-icon">${opBrandIcon(p.id, 'tile', 20)}</span>
           <span>${p.label}</span>
           <span class="sidebar-badge">${unread}</span>
