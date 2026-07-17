@@ -466,7 +466,7 @@ class WhatsAppApp {
       { section: 'WhatsApp', items: [
         { id: 'index', label: 'Dashboard', icon: 'ph-squares-four', href: 'index.html' },
         { id: 'conversations', label: 'Conversations', icon: 'ph-chat-circle-text', href: 'conversations.html' },
-        { id: 'contacts', label: 'Contacts', icon: 'ph-users', href: 'contacts.html' },
+        { id: 'contacts', label: 'Contacts', icon: 'ph-users', href: '../crm/contacts.html' },
         { id: 'broadcast', label: 'Broadcast Messages', icon: 'ph-broadcast', href: 'broadcast.html' },
         { id: 'templates', label: 'Message Templates', icon: 'ph-file-text', href: 'templates.html' },
         { id: 'quick-replies', label: 'Quick Replies', icon: 'ph-lightning', href: 'quick-replies.html' },
@@ -743,7 +743,7 @@ class WhatsAppApp {
           <span class="wa-stat-card-label">New Contacts</span>
           <span class="wa-stat-card-value">${stats.newContacts || 32}</span>
         </div>
-        <a href="contacts.html" class="wa-stat-card-link">View contacts →</a>
+        <a href="../crm/contacts.html" class="wa-stat-card-link">View contacts →</a>
       </div>
       <div class="wa-stat-card">
         <div class="wa-stat-card-icon wa-stat-blue">
@@ -933,7 +933,7 @@ class WhatsAppApp {
             <i class="ph ph-clock"></i>
             <span>Local time: ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</span>
           </div>
-          <a href="contacts.html?id=${contact.id}" class="wa-view-profile-link">View Full Profile →</a>
+          <a href="../crm/contacts.html?id=${contact.id}" class="wa-view-profile-link">View Full Profile →</a>
         </div>
       </div>
 
