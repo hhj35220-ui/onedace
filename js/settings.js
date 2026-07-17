@@ -57,7 +57,7 @@ class SettingsApp {
   static initUserData() {
     const session = OP.auth.getSession();
     if (!session) {
-      window.location.href = '../signin.html';
+      window.location.href = '../auth/signin.html';
       return;
     }
 

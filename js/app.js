@@ -617,7 +617,7 @@ class NavigationGuard {
 
   requireAuth() {
     if (!this.auth.isAuthenticated()) {
-      window.location.href = '../auth/login.html';
+      window.location.href = '../auth/signin.html';
       return false;
     }
     return true;

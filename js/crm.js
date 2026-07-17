@@ -1127,7 +1127,7 @@ class DashboardApp {
             <i class="ph ph-users"></i>
             <span>CRM</span>
           </a>
-          <a href="../projects/index.html" class="nav-link ${isActive('projects')}">
+          <a href="../workflow/index.html" class="nav-link ${isActive('projects')}">
             <i class="ph ph-kanban"></i>
             <span>Projects</span>
           </a>

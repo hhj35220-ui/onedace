@@ -408,7 +408,7 @@ class TasksApp {
         <div class="sidebar-section">
           <div class="sidebar-section-title">Business</div>
           <a href="../crm/index.html" class="sidebar-item"><i class="ph ph-users"></i> CRM</a>
-          <a href="../customer-support/index.html" class="sidebar-item"><i class="ph ph-headset"></i> Customer Support</a>
+          <a href="../support/index.html" class="sidebar-item"><i class="ph ph-headset"></i> Customer Support</a>
           <a href="../calendar/index.html" class="sidebar-item"><i class="ph ph-calendar-blank"></i> Calendar</a>
           <a href="../tasks/index.html" class="sidebar-item active"><i class="ph ph-check-square"></i> Tasks</a>
           <a href="../workflow/index.html" class="sidebar-item"><i class="ph ph-git-merge"></i> Workflow</a>
@@ -435,7 +435,7 @@ class TasksApp {
 
     document.getElementById('sidebar-logout')?.addEventListener('click', () => {
       OP.auth.signOut();
-      window.location.href = '../signin.html';
+      window.location.href = '../auth/signin.html';
     });
   }
 

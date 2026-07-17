@@ -46,7 +46,7 @@ const SAMPLE_NOTIFICATIONS = [
     timestamp: Date.now() - 900000,
     read: false,
     sender: { name: 'Jake Cooper', avatar: 'JC', color: '#8b5cf6' },
-    actionUrl: '../tasks/tasks.html',
+    actionUrl: '../tasks/index.html',
     actionLabel: 'View Task'
   },
   {
@@ -136,7 +136,7 @@ const SAMPLE_NOTIFICATIONS = [
     timestamp: Date.now() - 10800000,
     read: false,
     sender: { name: 'Security', avatar: 'SC', color: '#ef4444' },
-    actionUrl: '../settings/settings.html',
+    actionUrl: '../settings/index.html',
     actionLabel: 'Review Security'
   },
   {

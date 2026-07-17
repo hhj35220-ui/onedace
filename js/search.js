@@ -923,7 +923,7 @@ class SearchModule {
     document.getElementById('signOutLink')?.addEventListener('click', (e) => {
       e.preventDefault();
       OP.auth.signOut();
-      window.location.href = '../signin.html';
+      window.location.href = '../auth/signin.html';
     });
 
     // Keyboard shortcuts

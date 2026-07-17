@@ -171,11 +171,11 @@ class DashboardApp {
             <i class="ph ph-users"></i>
             <span>CRM</span>
           </a>
-          <a href="../ai/assistant.html" class="sidebar-item" data-page="ai-assistant">
+          <a href="../ai/index.html" class="sidebar-item" data-page="ai-assistant">
             <i class="ph ph-sparkle"></i>
             <span>AI Assistant</span>
           </a>
-          <a href="../reports/reports.html" class="sidebar-item" data-page="reports">
+          <a href="../reports/index.html" class="sidebar-item" data-page="reports">
             <i class="ph ph-chart-bar"></i>
             <span>Reports</span>
           </a>
@@ -203,7 +203,7 @@ class DashboardApp {
     sidebar.querySelector('.sidebar-user-menu')?.addEventListener('click', () => {
       if (confirm('Sign out of OnePlace Enterprise?')) {
         OP.auth.signOut();
-        window.location.href = '../auth/login.html';
+        window.location.href = '../auth/signin.html';
       }
     });
   }

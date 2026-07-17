@@ -895,7 +895,7 @@ class LinkedInApp {
         if (confirm('Are you sure you want to disconnect LinkedIn?')) {
           OP.toast.show('LinkedIn disconnected', 'warning');
           setTimeout(() => {
-            window.location.href = '../settings/integrations.html';
+            window.location.href = '../integrations/index.html';
           }, 1000);
         }
       });
