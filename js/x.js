@@ -1487,7 +1487,7 @@
 
     let html = `
       <div class="sidebar-header">
-        <a href="../dashboard/index.html" class="logo">
+        <a href="../dashboard/main-dashboard.html" class="logo">
           <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
           <div class="logo-text">
             <span class="logo-brand">OnePlace</span>
@@ -1499,11 +1499,11 @@
       <div class="sidebar-nav">
         <div class="sidebar-section">
           <div class="sidebar-section-title">Main</div>
-          <a href="../dashboard/index.html" class="sidebar-item">
+          <a href="../dashboard/main-dashboard.html" class="sidebar-item">
             <i class="ph ph-squares-four"></i>
             <span>Dashboard</span>
           </a>
-          <a href="../dashboard/unified-inbox.html" class="sidebar-item">
+          <a href="../inbox/unified-inbox.html" class="sidebar-item">
             <i class="ph ph-inbox"></i>
             <span>Unified Inbox</span>
             <span class="sidebar-badge">24</span>

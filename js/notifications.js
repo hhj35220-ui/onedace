@@ -121,7 +121,7 @@ const SAMPLE_NOTIFICATIONS = [
     timestamp: Date.now() - 7200000,
     read: false,
     sender: { name: 'Auto Assign', avatar: 'AA', color: '#10b981' },
-    actionUrl: '../dashboard/unified-inbox.htmlinbox.html',
+    actionUrl: '../inbox/unified-inbox.html',
     actionLabel: 'Open Conversation'
   },
   {

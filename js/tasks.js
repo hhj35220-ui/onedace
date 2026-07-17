@@ -394,7 +394,7 @@ class TasksApp {
         <div class="sidebar-section">
           <div class="sidebar-section-title">Main</div>
           <a href="../dashboard/main-dashboard.html" class="sidebar-item"><i class="ph ph-squares-four"></i> Dashboard</a>
-          <a href="../dashboard/unified-inbox.html" class="sidebar-item"><i class="ph ph-envelope"></i> Unified Inbox <span class="sidebar-badge">24</span></a>
+          <a href="../inbox/unified-inbox.html" class="sidebar-item"><i class="ph ph-envelope"></i> Unified Inbox <span class="sidebar-badge">24</span></a>
         </div>
         <div class="sidebar-section">
           <div class="sidebar-section-title">Channels</div>

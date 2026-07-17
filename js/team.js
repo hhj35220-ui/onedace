@@ -337,11 +337,11 @@ class TeamApp {
     const navItems = [
       { section: 'Core', items: [
         { id: 'main-dashboard', label: 'Dashboard', icon: 'ph-squares-four', href: '../dashboard/main-dashboard.html' },
-        { id: 'unified-inbox', label: 'Unified Inbox', icon: 'ph-inbox', href: '../dashboard/unified-inbox.html' },
+        { id: 'unified-inbox', label: 'Unified Inbox', icon: 'ph-inbox', href: '../inbox/unified-inbox.html' },
       ]},
       { section: 'Inbox', items: [
-        { id: 'all-conversations', label: 'All Conversations', icon: 'ph-chat-circle-text', href: '../dashboard/unified-inbox.html?filter=all' },
-        { id: 'unread', label: 'Unread', icon: 'ph-envelope-open', href: '../dashboard/unified-inbox.html?filter=unread' },
+        { id: 'all-conversations', label: 'All Conversations', icon: 'ph-chat-circle-text', href: '../inbox/unified-inbox.html?filter=all' },
+        { id: 'unread', label: 'Unread', icon: 'ph-envelope-open', href: '../inbox/unified-inbox.html?filter=unread' },
       ]},
       { section: 'Platforms', items: [
         { id: 'gmail', label: 'Gmail', icon: 'ph-envelope-simple', href: '../gmail/index.html', platform: true },

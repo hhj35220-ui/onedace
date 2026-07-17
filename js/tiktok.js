@@ -421,7 +421,7 @@ class TikTokApp {
     const navItems = [
       { section: 'Core', items: [
         { id: 'main-dashboard', label: 'Dashboard', icon: 'ph-squares-four', href: '../dashboard/main-dashboard.html' },
-        { id: 'unified-inbox', label: 'Unified Inbox', icon: 'ph-inbox', href: '../dashboard/unified-inbox.html' },
+        { id: 'unified-inbox', label: 'Unified Inbox', icon: 'ph-inbox', href: '../inbox/unified-inbox.html' },
       ]},
       { section: 'TikTok', items: [
         { id: 'tiktok-overview', label: 'Overview', icon: 'ph-chart-pie-slice', href: 'index.html?page=overview', badge: 0 },

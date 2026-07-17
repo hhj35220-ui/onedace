@@ -1108,7 +1108,7 @@ class DashboardApp {
       <nav class="sidebar-nav">
         <div class="nav-section">
           <span class="nav-section-title">Main</span>
-          <a href="../dashboard/index.html" class="nav-link ${isActive('dashboard/index')}">
+          <a href="../dashboard/main-dashboard.html" class="nav-link ${isActive('dashboard/index')}">
             <i class="ph ph-house"></i>
             <span>Dashboard</span>
           </a>
