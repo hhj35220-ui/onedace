@@ -25,7 +25,40 @@
 <body>
   <div class="dashboard-layout">
     <!-- Sidebar -->
-    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar"></aside>
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="ph ph-chat-centered-text"></i></div>
+        <div class="sidebar-brand-text">OnePlace</div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Main</div>
+          <a href="main-dashboard.html" class="sidebar-item active" data-page="dashboard">
+            <i class="ph ph-house"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../inbox/unified-inbox.html" class="sidebar-item" data-page="inbox">
+            <i class="ph ph-envelope"></i>
+            <span>All Inbox</span>
+          </a>
+          <a href="../reports/index.html" class="sidebar-item" data-page="reports">
+            <i class="ph ph-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Quick Links</div>
+          <a href="../ai/index.html" class="sidebar-item" data-page="ai">
+            <i class="ph ph-sparkle"></i>
+            <span>AI</span>
+          </a>
+          <a href="../help/index.html" class="sidebar-item" data-page="help">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </div>
+    </aside>
     <div class="sidebar-overlay"></div>
     <button class="sidebar-toggle" aria-label="Open menu"><i class="ph ph-list"></i></button>
 

@@ -1,0 +1,2719 @@
+{
+  "project": {
+    "name": "OnePlace Enterprise",
+    "location": "c:\\Users\\speed\\Desktop\\OnePlace Enterprise",
+    "audit_date": "2026-07-20"
+  },
+  "summary": {
+    "total_files": 132,
+    "files_with_nav": 106,
+    "files_with_empty_nav": 50,
+    "css_issues": 0,
+    "broken_paths": 0,
+    "critical_issues": 2
+  },
+  "pages_by_category": {
+    "root": [
+      {
+        "file": "NAVIGATION_AUDIT_REPORT.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "companies.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/companies.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "contact-profile.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/contact-profile.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "contacts.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/contacts.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "deals.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/deals.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "index.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "auth/signin.html",
+          "auth/signup.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "leads.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/leads.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "opportunities.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/opportunities.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "pipelines.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/pipelines.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "/crm/settings.html"
+        ],
+        "css_files": [],
+        "has_empty_nav": false
+      }
+    ],
+    "ai": [
+      {
+        "file": "ai/index.html",
+        "nav_links_count": 23,
+        "nav_links": [
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/ai.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "auth": [
+      {
+        "file": "auth/forgot-password.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "signin.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/index.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "signin.html",
+          "signup.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/profile-setup.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/reset-password.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "signin.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/signin.html",
+        "nav_links_count": 3,
+        "nav_links": [
+          "forgot-password.html",
+          "index.html",
+          "signup.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/signup.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "signin.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/verify-email.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "signup.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/workspace-create.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "workspace-select.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/workspace-join.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "index.html",
+          "workspace-select.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "auth/workspace-select.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "billing": [
+      {
+        "file": "billing/billing-history.html",
+        "nav_links_count": 9,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "billing/index.html",
+        "nav_links_count": 10,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html",
+          "invoices.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "billing/invoices.html",
+        "nav_links_count": 9,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "billing/payment-methods.html",
+        "nav_links_count": 9,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "billing/subscription.html",
+        "nav_links_count": 9,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "billing/usage.html",
+        "nav_links_count": 9,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../settings/api-developer.html",
+          "../support/index.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/billing.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "calendar": [
+      {
+        "file": "calendar/index.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/calendar.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "crm": [
+      {
+        "file": "crm/companies.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/contact-profile.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/contacts.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/deals.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/index.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/leads.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/opportunities.html",
+        "nav_links_count": 19,
+        "nav_links": [
+          "../ai/assistant.html",
+          "../automation/automation-center.html",
+          "../calendar/calendar.html",
+          "../channels/whatsapp/inbox.html",
+          "../dashboard/main-dashboard.html",
+          "../help/help-center.html",
+          "../inbox/unified-inbox.html",
+          "../reports/reports.html",
+          "../settings/integrations.html",
+          "../settings/profile.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/pipelines.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "crm/settings.html",
+        "nav_links_count": 29,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html",
+          "../integrations/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/crm.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "dashboard": [
+      {
+        "file": "dashboard/activity-feed.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/analytics-dashboard.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/executive-dashboard.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/main-dashboard.html",
+        "nav_links_count": 2,
+        "nav_links": [
+          "../ai/index.html",
+          "../inbox/unified-inbox.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/quick-actions.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/team-dashboard.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "dashboard/unified-inbox.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/unified-inbox.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "files": [
+      {
+        "file": "files/index.html",
+        "nav_links_count": 23,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../index.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/files.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "gmail": [
+      {
+        "file": "gmail/compose.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "conversations.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/conversations.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/details.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "conversations.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/index.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "conversations.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/integration.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/settings.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "gmail/templates.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/gmail.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "help": [
+      {
+        "file": "help/about.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/api-documentation.html",
+        "nav_links_count": 21,
+        "nav_links": [
+          "../billing/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../index.html",
+          "../search/index.html",
+          "../support/index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/community.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/contact-support.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/documentation.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../billing/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../index.html",
+          "../notifications/notifications.html",
+          "../search/index.html",
+          "../support/index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/faq.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/feature-requests.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/index.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/keyboard-shortcuts.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/live-chat.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/release-notes.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/submit-ticket.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/system-status.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/ticket-history.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "help/tutorials.html",
+        "nav_links_count": 17,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../index.html",
+          "about.html",
+          "api-documentation.html",
+          "community.html",
+          "contact-support.html",
+          "documentation.html",
+          "faq.html",
+          "feature-requests.html",
+          "index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/help.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "inbox": [
+      {
+        "file": "inbox/unified-inbox.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/unified-inbox.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "instagram": [
+      {
+        "file": "instagram/index.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "../reports/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/instagram.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "integrations": [
+      {
+        "file": "integrations/gmail.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/index.html",
+        "nav_links_count": 23,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/instagram.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/linkedin.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/tiktok.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/whatsapp.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "integrations/x.html",
+        "nav_links_count": 24,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/integrations.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "linkedin": [
+      {
+        "file": "linkedin/company-inbox.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/connection-requests.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/index.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/integration.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/mentions.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/messages.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/post-engagements.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "linkedin/settings.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "company-inbox.html",
+          "connection-requests.html",
+          "index.html",
+          "integration.html",
+          "mentions.html",
+          "messages.html",
+          "post-engagements.html",
+          "settings.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/linkedin.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "notifications": [
+      {
+        "file": "notifications/notifications.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../ai/index.html",
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/notifications.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "reports": [
+      {
+        "file": "reports/index.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/reports.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "search": [
+      {
+        "file": "search/index.html",
+        "nav_links_count": 4,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "../support/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/search.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "settings": [
+      {
+        "file": "settings/ai-preferences.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/api-developer.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/appearance.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/audit-logs.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/backup-restore.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/connected-devices.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/data-export.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/data-import.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/general.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/index.html",
+        "nav_links_count": 7,
+        "nav_links": [
+          "../billing/index.html",
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../integrations/index.html",
+          "../notifications/notifications.html",
+          "../team/index.html",
+          "audit-logs.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/integrations-settings.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/language.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/notifications.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/organization.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/profile.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/roles-permissions.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/security.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/storage.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/theme.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      },
+      {
+        "file": "settings/workspace.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../dashboard/main-dashboard.html",
+          "../inbox/unified-inbox.html",
+          "../notifications/notifications.html",
+          "ai-preferences.html",
+          "api-developer.html",
+          "appearance.html",
+          "audit-logs.html",
+          "backup-restore.html",
+          "connected-devices.html",
+          "data-export.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/settings.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "support": [
+      {
+        "file": "support/closed-tickets.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/customer-timeline.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/index.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/knowledge-base.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/open-tickets.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/pending-tickets.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/saved-replies.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/sla-management.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/ticket-details.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "support/tickets.html",
+        "nav_links_count": 8,
+        "nav_links": [
+          "closed-tickets.html",
+          "index.html",
+          "knowledge-base.html",
+          "open-tickets.html",
+          "pending-tickets.html",
+          "saved-replies.html",
+          "sla-management.html",
+          "tickets.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/support.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "tasks": [
+      {
+        "file": "tasks/index.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/tasks.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "team": [
+      {
+        "file": "team/index.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/team.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "tiktok": [
+      {
+        "file": "tiktok/index.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/tiktok.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "whatsapp": [
+      {
+        "file": "whatsapp/broadcast.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/catalog.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/contacts.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/conversations.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/index.html",
+        "nav_links_count": 5,
+        "nav_links": [
+          "../crm/contacts.html",
+          "../reports/index.html",
+          "broadcast.html",
+          "conversations.html",
+          "templates.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/media-gallery.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/quick-replies.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/settings.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "whatsapp/templates.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/whatsapp.css"
+        ],
+        "has_empty_nav": true
+      }
+    ],
+    "workflow": [
+      {
+        "file": "workflow/index.html",
+        "nav_links_count": 22,
+        "nav_links": [
+          "../billing/index.html",
+          "../calendar/index.html",
+          "../crm/index.html",
+          "../dashboard/main-dashboard.html",
+          "../files/index.html",
+          "../gmail/index.html",
+          "../help/index.html",
+          "../inbox/unified-inbox.html",
+          "../index.html",
+          "../instagram/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/workflow.css"
+        ],
+        "has_empty_nav": false
+      }
+    ],
+    "x": [
+      {
+        "file": "x/index.html",
+        "nav_links_count": 1,
+        "nav_links": [
+          "../reports/index.html"
+        ],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/x.css"
+        ],
+        "has_empty_nav": true
+      },
+      {
+        "file": "x/mentions.html",
+        "nav_links_count": 0,
+        "nav_links": [],
+        "css_files": [
+          "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css",
+          "../css/styles.css",
+          "../css/dashboard.css",
+          "../css/x.css"
+        ],
+        "has_empty_nav": true
+      }
+    ]
+  },
+  "pages_with_empty_nav": [
+    "calendar/index.html",
+    "dashboard/activity-feed.html",
+    "dashboard/analytics-dashboard.html",
+    "dashboard/executive-dashboard.html",
+    "dashboard/main-dashboard.html",
+    "dashboard/quick-actions.html",
+    "dashboard/team-dashboard.html",
+    "dashboard/unified-inbox.html",
+    "gmail/compose.html",
+    "gmail/conversations.html",
+    "gmail/details.html",
+    "gmail/index.html",
+    "gmail/integration.html",
+    "gmail/settings.html",
+    "gmail/templates.html",
+    "inbox/unified-inbox.html",
+    "instagram/index.html",
+    "linkedin/company-inbox.html",
+    "linkedin/connection-requests.html",
+    "linkedin/index.html",
+    "linkedin/integration.html",
+    "linkedin/mentions.html",
+    "linkedin/messages.html",
+    "linkedin/post-engagements.html",
+    "linkedin/settings.html",
+    "reports/index.html",
+    "support/closed-tickets.html",
+    "support/customer-timeline.html",
+    "support/index.html",
+    "support/knowledge-base.html",
+    "support/open-tickets.html",
+    "support/pending-tickets.html",
+    "support/saved-replies.html",
+    "support/sla-management.html",
+    "support/ticket-details.html",
+    "support/tickets.html",
+    "tasks/index.html",
+    "team/index.html",
+    "tiktok/index.html",
+    "whatsapp/broadcast.html",
+    "whatsapp/catalog.html",
+    "whatsapp/contacts.html",
+    "whatsapp/conversations.html",
+    "whatsapp/index.html",
+    "whatsapp/media-gallery.html",
+    "whatsapp/quick-replies.html",
+    "whatsapp/settings.html",
+    "whatsapp/templates.html",
+    "x/index.html",
+    "x/mentions.html"
+  ],
+  "critical_findings": [
+    {
+      "id": 1,
+      "title": "Missing Dashboard-Reports Bidirectional Links",
+      "severity": "CRITICAL",
+      "files_affected": [
+        "dashboard/main-dashboard.html",
+        "reports/index.html"
+      ],
+      "description": "Dashboard and Reports pages don't have hardcoded links to each other. Both rely on dynamic sidebars.",
+      "impact": "Users can't navigate between key pages if JavaScript fails. SEO impact."
+    },
+    {
+      "id": 2,
+      "title": "25 Pages Rely Entirely on Dynamic Navigation",
+      "severity": "CRITICAL",
+      "count": 50,
+      "files_affected": [
+        "calendar/index.html",
+        "dashboard/activity-feed.html",
+        "dashboard/analytics-dashboard.html",
+        "dashboard/executive-dashboard.html",
+        "dashboard/main-dashboard.html",
+        "dashboard/quick-actions.html",
+        "dashboard/team-dashboard.html",
+        "dashboard/unified-inbox.html",
+        "gmail/compose.html",
+        "gmail/conversations.html",
+        "gmail/details.html",
+        "gmail/index.html",
+        "gmail/integration.html",
+        "gmail/settings.html",
+        "gmail/templates.html",
+        "inbox/unified-inbox.html",
+        "instagram/index.html",
+        "linkedin/company-inbox.html",
+        "linkedin/connection-requests.html",
+        "linkedin/index.html",
+        "linkedin/integration.html",
+        "linkedin/mentions.html",
+        "linkedin/messages.html",
+        "linkedin/post-engagements.html",
+        "linkedin/settings.html",
+        "reports/index.html",
+        "support/closed-tickets.html",
+        "support/customer-timeline.html",
+        "support/index.html",
+        "support/knowledge-base.html",
+        "support/open-tickets.html",
+        "support/pending-tickets.html",
+        "support/saved-replies.html",
+        "support/sla-management.html",
+        "support/ticket-details.html",
+        "support/tickets.html",
+        "tasks/index.html",
+        "team/index.html",
+        "tiktok/index.html",
+        "whatsapp/broadcast.html",
+        "whatsapp/catalog.html",
+        "whatsapp/contacts.html",
+        "whatsapp/conversations.html",
+        "whatsapp/index.html",
+        "whatsapp/media-gallery.html",
+        "whatsapp/quick-replies.html",
+        "whatsapp/settings.html",
+        "whatsapp/templates.html",
+        "x/index.html",
+        "x/mentions.html"
+      ],
+      "description": "These pages have empty navigation placeholders populated only by JavaScript.",
+      "impact": "No navigation fallback if JavaScript fails. Accessibility concerns."
+    }
+  ],
+  "css_analysis": {
+    "all_css_files": [
+      "../css/ai.css",
+      "../css/billing.css",
+      "../css/calendar.css",
+      "../css/crm.css",
+      "../css/dashboard.css",
+      "../css/files.css",
+      "../css/gmail.css",
+      "../css/help.css",
+      "../css/instagram.css",
+      "../css/integrations.css",
+      "../css/linkedin.css",
+      "../css/notifications.css",
+      "../css/reports.css",
+      "../css/search.css",
+      "../css/settings.css",
+      "../css/styles.css",
+      "../css/support.css",
+      "../css/tasks.css",
+      "../css/team.css",
+      "../css/tiktok.css",
+      "../css/unified-inbox.css",
+      "../css/whatsapp.css",
+      "../css/workflow.css",
+      "../css/x.css",
+      "css/styles.css",
+      "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    ],
+    "files_by_css_count": {
+      "0": [
+        "NAVIGATION_AUDIT_REPORT.html",
+        "companies.html",
+        "contact-profile.html",
+        "contacts.html",
+        "deals.html",
+        "leads.html",
+        "opportunities.html",
+        "pipelines.html",
+        "settings.html"
+      ],
+      "3": [
+        "ai/index.html",
+        "billing/billing-history.html",
+        "billing/index.html",
+        "billing/invoices.html",
+        "billing/payment-methods.html",
+        "billing/subscription.html",
+        "billing/usage.html",
+        "crm/companies.html",
+        "crm/contact-profile.html",
+        "crm/contacts.html",
+        "crm/deals.html",
+        "crm/index.html",
+        "crm/leads.html",
+        "crm/opportunities.html",
+        "crm/pipelines.html",
+        "crm/settings.html",
+        "dashboard/activity-feed.html",
+        "dashboard/analytics-dashboard.html",
+        "dashboard/executive-dashboard.html",
+        "dashboard/main-dashboard.html",
+        "dashboard/quick-actions.html",
+        "dashboard/team-dashboard.html",
+        "files/index.html",
+        "help/about.html",
+        "help/api-documentation.html",
+        "help/community.html",
+        "help/contact-support.html",
+        "help/documentation.html",
+        "help/faq.html",
+        "help/feature-requests.html",
+        "help/index.html",
+        "help/keyboard-shortcuts.html",
+        "help/live-chat.html",
+        "help/release-notes.html",
+        "help/submit-ticket.html",
+        "help/system-status.html",
+        "help/ticket-history.html",
+        "help/tutorials.html",
+        "instagram/index.html",
+        "integrations/gmail.html",
+        "integrations/index.html",
+        "integrations/instagram.html",
+        "integrations/linkedin.html",
+        "integrations/tiktok.html",
+        "integrations/whatsapp.html",
+        "integrations/x.html",
+        "notifications/notifications.html",
+        "reports/index.html",
+        "search/index.html",
+        "settings/ai-preferences.html",
+        "settings/api-developer.html",
+        "settings/appearance.html",
+        "settings/audit-logs.html",
+        "settings/backup-restore.html",
+        "settings/connected-devices.html",
+        "settings/data-export.html",
+        "settings/data-import.html",
+        "settings/general.html",
+        "settings/index.html",
+        "settings/integrations-settings.html",
+        "settings/language.html",
+        "settings/notifications.html",
+        "settings/organization.html",
+        "settings/profile.html",
+        "settings/roles-permissions.html",
+        "settings/security.html",
+        "settings/storage.html",
+        "settings/theme.html",
+        "settings/workspace.html",
+        "whatsapp/broadcast.html",
+        "whatsapp/catalog.html",
+        "whatsapp/contacts.html",
+        "whatsapp/conversations.html",
+        "whatsapp/index.html",
+        "whatsapp/media-gallery.html",
+        "whatsapp/quick-replies.html",
+        "whatsapp/settings.html",
+        "whatsapp/templates.html",
+        "workflow/index.html",
+        "x/index.html"
+      ],
+      "2": [
+        "auth/forgot-password.html",
+        "auth/index.html",
+        "auth/profile-setup.html",
+        "auth/reset-password.html",
+        "auth/signin.html",
+        "auth/signup.html",
+        "auth/verify-email.html",
+        "auth/workspace-create.html",
+        "auth/workspace-join.html",
+        "auth/workspace-select.html",
+        "index.html"
+      ],
+      "4": [
+        "calendar/index.html",
+        "dashboard/unified-inbox.html",
+        "gmail/compose.html",
+        "gmail/conversations.html",
+        "gmail/details.html",
+        "gmail/index.html",
+        "gmail/integration.html",
+        "gmail/settings.html",
+        "gmail/templates.html",
+        "inbox/unified-inbox.html",
+        "linkedin/company-inbox.html",
+        "linkedin/connection-requests.html",
+        "linkedin/index.html",
+        "linkedin/integration.html",
+        "linkedin/mentions.html",
+        "linkedin/messages.html",
+        "linkedin/post-engagements.html",
+        "linkedin/settings.html",
+        "support/closed-tickets.html",
+        "support/customer-timeline.html",
+        "support/index.html",
+        "support/knowledge-base.html",
+        "support/open-tickets.html",
+        "support/pending-tickets.html",
+        "support/saved-replies.html",
+        "support/sla-management.html",
+        "support/ticket-details.html",
+        "support/tickets.html",
+        "tasks/index.html",
+        "team/index.html",
+        "tiktok/index.html",
+        "x/mentions.html"
+      ]
+    }
+  },
+  "navigation_patterns": [
+    {
+      "dashboard_nav_links": [
+        "../ai/index.html",
+        "../inbox/unified-inbox.html"
+      ],
+      "dashboard_has_reports": false
+    },
+    {
+      "reports_nav_links": [],
+      "reports_has_dashboard": false
+    }
+  ],
+  "dashboard_reports_status": {
+    "dashboard_file": "dashboard/main-dashboard.html",
+    "reports_file": "reports/index.html",
+    "dashboard_links_count": 2,
+    "reports_links_count": 0,
+    "dashboard_to_reports": false,
+    "reports_to_dashboard": false
+  }
+}
