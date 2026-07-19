@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/notifications.css">
+<base target="_blank">
 </head>
 <body>
   <div class="app-layout">
@@ -172,16 +173,20 @@
       <header class="app-header">
         <div class="header-left">
           <h1 class="header-title">Notifications</h1>
-          <p class="header-subtitle">Stay informed with real-time updates and alerts</p>
+          <p class="header-subtitle">Stay updated with everything happening in your workspace</p>
         </div>
         <div class="header-center">
           <div class="header-search">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="headerSearch" placeholder="Search anything or ask AI...">
+            <input type="text" id="headerSearch" placeholder="Search notifications...">
             <span class="search-shortcut">⌘K</span>
           </div>
         </div>
         <div class="header-right">
+          <button class="header-btn btn-mark-read" id="markAllReadBtn">
+            <i class="ph ph-check-circle"></i>
+            <span>Mark all as read</span>
+          </button>
           <button class="header-btn btn-icon" id="headerNotificationsBtn" aria-label="Notifications">
             <i class="ph ph-bell"></i>
             <span class="notification-dot" id="headerNotificationDot"></span>
@@ -200,676 +205,271 @@
         </div>
       </header>
 
-      <!-- Stats Row -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">Total Notifications</span>
-            <div class="stat-icon stat-icon-purple">
-              <i class="ph ph-bell"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statTotal">1,248</div>
-          <div class="stat-change stat-change-up">
-            <i class="ph ph-trend-up"></i>
-            <span>12%</span>
-            <span class="stat-change-label">vs last 7 days</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">Unread</span>
-            <div class="stat-icon stat-icon-orange">
-              <i class="ph ph-envelope-open"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statUnread">24</div>
-          <div class="stat-change stat-change-up">
-            <i class="ph ph-trend-up"></i>
-            <span>5</span>
-            <span class="stat-change-label">new today</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">Mentions</span>
-            <div class="stat-icon stat-icon-blue">
-              <i class="ph ph-at"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statMentions">18</div>
-          <div class="stat-change stat-change-up">
-            <i class="ph ph-trend-up"></i>
-            <span>3</span>
-            <span class="stat-change-label">new today</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">Assignments</span>
-            <div class="stat-icon stat-icon-green">
-              <i class="ph ph-user-plus"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statAssignments">7</div>
-          <div class="stat-change stat-change-up">
-            <i class="ph ph-trend-up"></i>
-            <span>2</span>
-            <span class="stat-change-label">new today</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">System Alerts</span>
-            <div class="stat-icon stat-icon-pink">
-              <i class="ph ph-warning-circle"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statSystem">3</div>
-          <div class="stat-change">
-            <span class="stat-change-label">Requires attention</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <span class="stat-label">Email Notifications</span>
-            <div class="stat-icon stat-icon-indigo">
-              <i class="ph ph-envelope"></i>
-            </div>
-          </div>
-          <div class="stat-value" id="statEmail">156</div>
-          <div class="stat-change stat-change-up">
-            <i class="ph ph-trend-up"></i>
-            <span>8%</span>
-            <span class="stat-change-label">vs last 7 days</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Notification Tabs -->
       <div class="notification-tabs-wrapper">
-        <div class="notification-tabs">
-          <button class="notification-tab active" data-tab="center">
-            <i class="ph ph-bell"></i>
-            <span>Notification Center</span>
-            <span class="tab-badge" id="tabBadgeCenter">24</span>
+        <div class="notification-tabs" id="notificationTabs">
+          <button class="notification-tab active" data-tab="all">
+            <span>All</span>
+            <span class="tab-badge" id="tabBadgeAll">128</span>
+          </button>
+          <button class="notification-tab" data-tab="unread">
+            <span>Unread</span>
+            <span class="tab-badge" id="tabBadgeUnread">12</span>
           </button>
           <button class="notification-tab" data-tab="mentions">
-            <i class="ph ph-at"></i>
             <span>Mentions</span>
-            <span class="tab-badge" id="tabBadgeMentions">18</span>
+            <span class="tab-badge" id="tabBadgeMentions">8</span>
           </button>
           <button class="notification-tab" data-tab="assignments">
-            <i class="ph ph-user-plus"></i>
             <span>Assignments</span>
-            <span class="tab-badge" id="tabBadgeAssignments">7</span>
+            <span class="tab-badge" id="tabBadgeAssignments">15</span>
           </button>
           <button class="notification-tab" data-tab="system">
-            <i class="ph ph-warning-circle"></i>
             <span>System</span>
-            <span class="tab-badge" id="tabBadgeSystem">3</span>
+            <span class="tab-badge" id="tabBadgeSystem">28</span>
           </button>
-          <button class="notification-tab" data-tab="email">
-            <i class="ph ph-envelope"></i>
-            <span>Email</span>
-            <span class="tab-badge" id="tabBadgeEmail">156</span>
+          <button class="notification-tab" data-tab="crm">
+            <span>CRM</span>
+            <span class="tab-badge" id="tabBadgeCRM">18</span>
           </button>
-          <button class="notification-tab" data-tab="history">
-            <i class="ph ph-clock-counter-clockwise"></i>
-            <span>History</span>
+          <button class="notification-tab" data-tab="calendar">
+            <span>Calendar</span>
+            <span class="tab-badge" id="tabBadgeCalendar">10</span>
           </button>
-          <button class="notification-tab" data-tab="settings">
-            <i class="ph ph-gear"></i>
-            <span>Settings</span>
+          <button class="notification-tab" data-tab="workflow">
+            <span>Workflow</span>
+            <span class="tab-badge" id="tabBadgeWorkflow">12</span>
+          </button>
+          <button class="notification-tab" data-tab="ai">
+            <span>AI</span>
+            <span class="tab-badge" id="tabBadgeAI">5</span>
           </button>
         </div>
       </div>
 
-      <!-- Notification Content -->
-      <div class="notification-content">
-        <!-- Notification Center Panel -->
-        <div class="notification-panel active" data-panel="center">
-          <div class="notification-layout">
-            <!-- Left: Filters & Categories -->
-            <div class="notification-left">
-              <div class="filter-card">
-                <div class="filter-header">
-                  <h3>Filters</h3>
-                  <button class="filter-clear" id="clearFiltersBtn">Clear all</button>
-                </div>
-                <div class="filter-section">
-                  <h4>Status</h4>
-                  <div class="filter-options">
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="status" value="unread" checked>
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Unread</span>
-                      <span class="filter-count" id="filterCountUnread">24</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="status" value="read">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Read</span>
-                      <span class="filter-count" id="filterCountRead">1,224</span>
-                    </label>
-                  </div>
-                </div>
-                <div class="filter-section">
-                  <h4>Priority</h4>
-                  <div class="filter-options">
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="priority" value="high">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">High</span>
-                      <span class="filter-count" id="filterCountHigh">12</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="priority" value="medium">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Medium</span>
-                      <span class="filter-count" id="filterCountMedium">45</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="priority" value="low">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Low</span>
-                      <span class="filter-count" id="filterCountLow">1,191</span>
-                    </label>
-                  </div>
-                </div>
-                <div class="filter-section">
-                  <h4>Category</h4>
-                  <div class="filter-options">
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="category" value="message">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Messages</span>
-                      <span class="filter-count" id="filterCountMessages">342</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="category" value="mention">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Mentions</span>
-                      <span class="filter-count" id="filterCountMentions">18</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="category" value="assignment">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Assignments</span>
-                      <span class="filter-count" id="filterCountAssignments">7</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="category" value="system">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">System</span>
-                      <span class="filter-count" id="filterCountSystem">3</span>
-                    </label>
-                    <label class="filter-option">
-                      <input type="checkbox" class="filter-checkbox" data-filter="category" value="email">
-                      <span class="filter-checkmark"></span>
-                      <span class="filter-label">Email</span>
-                      <span class="filter-count" id="filterCountEmailCat">156</span>
-                    </label>
-                  </div>
-                </div>
+      <!-- Notification Content Area -->
+      <div class="notification-content-area">
+        <!-- Left: Notification List -->
+        <div class="notification-list-section">
+          <!-- Toolbar -->
+          <div class="notification-toolbar">
+            <div class="toolbar-left">
+              <div class="select-dropdown">
+                <button class="select-btn" id="selectAllBtn">
+                  <i class="ph ph-check-square"></i>
+                  <span>Select All</span>
+                  <i class="ph ph-caret-down"></i>
+                </button>
               </div>
-
-              <div class="category-card">
-                <h3>Notification Categories</h3>
-                <div class="category-list">
-                  <div class="category-list-item active" data-category="all">
-                    <div class="category-list-icon" style="background: var(--primary-50); color: var(--primary-600);">
-                      <i class="ph ph-bell"></i>
-                    </div>
-                    <span class="category-list-name">All Notifications</span>
-                    <span class="category-list-count">1,248</span>
-                  </div>
-                  <div class="category-list-item" data-category="message">
-                    <div class="category-list-icon" style="background: #dbeafe; color: #2563eb;">
-                      <i class="ph ph-chat-circle-text"></i>
-                    </div>
-                    <span class="category-list-name">Messages</span>
-                    <span class="category-list-count">342</span>
-                  </div>
-                  <div class="category-list-item" data-category="mention">
-                    <div class="category-list-icon" style="background: #fce7f3; color: #db2777;">
-                      <i class="ph ph-at"></i>
-                    </div>
-                    <span class="category-list-name">Mentions</span>
-                    <span class="category-list-count">18</span>
-                  </div>
-                  <div class="category-list-item" data-category="assignment">
-                    <div class="category-list-icon" style="background: #d1fae5; color: #059669;">
-                      <i class="ph ph-user-plus"></i>
-                    </div>
-                    <span class="category-list-name">Assignments</span>
-                    <span class="category-list-count">7</span>
-                  </div>
-                  <div class="category-list-item" data-category="system">
-                    <div class="category-list-icon" style="background: #fef3c7; color: #d97706;">
-                      <i class="ph ph-warning-circle"></i>
-                    </div>
-                    <span class="category-list-name">System</span>
-                    <span class="category-list-count">3</span>
-                  </div>
-                  <div class="category-list-item" data-category="email">
-                    <div class="category-list-icon" style="background: #e0e7ff; color: #4f46e5;">
-                      <i class="ph ph-envelope"></i>
-                    </div>
-                    <span class="category-list-name">Email</span>
-                    <span class="category-list-count">156</span>
-                  </div>
-                </div>
-              </div>
+              <button class="toolbar-action-btn" id="filterBtn">
+                <i class="ph ph-funnel"></i>
+                <span>Filter</span>
+              </button>
+              <button class="toolbar-action-btn" id="sortBtn">
+                <i class="ph ph-sort-ascending"></i>
+                <span>Sort</span>
+              </button>
+              <button class="toolbar-action-btn" id="moreOptionsBtn">
+                <i class="ph ph-dots-three-vertical"></i>
+              </button>
             </div>
+          </div>
 
-            <!-- Center: Notification List -->
-            <div class="notification-center">
-              <div class="notification-toolbar">
-                <div class="toolbar-left">
-                  <div class="search-box">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" id="notificationSearch" placeholder="Search notifications...">
-                  </div>
-                </div>
-                <div class="toolbar-right">
-                  <button class="toolbar-btn" id="markAllReadBtn">
-                    <i class="ph ph-check-circle"></i>
-                    <span>Mark all read</span>
-                  </button>
-                  <button class="toolbar-btn" id="deleteSelectedBtn">
-                    <i class="ph ph-trash"></i>
-                    <span>Delete selected</span>
-                  </button>
-                  <div class="sort-dropdown">
-                    <button class="toolbar-btn" id="sortBtn">
-                      <i class="ph ph-sort-descending"></i>
-                      <span>Newest first</span>
-                      <i class="ph ph-caret-down"></i>
-                    </button>
-                    <div class="sort-menu" id="sortMenu">
-                      <div class="sort-option active" data-sort="newest">Newest first</div>
-                      <div class="sort-option" data-sort="oldest">Oldest first</div>
-                      <div class="sort-option" data-sort="priority">Priority</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <!-- Notification List -->
+          <div class="notification-list" id="notificationList">
+            <!-- Rendered by JS -->
+          </div>
 
-              <div class="notification-list" id="notificationList">
-                <!-- Notifications rendered by JS -->
-              </div>
-
-              <div class="notification-pagination">
-                <button class="pagination-btn" id="prevPageBtn" disabled>
-                  <i class="ph ph-caret-left"></i>
-                  Previous
-                </button>
-                <div class="pagination-info">
-                  <span id="paginationStart">1</span>
-                  <span>-</span>
-                  <span id="paginationEnd">20</span>
-                  <span>of</span>
-                  <span id="paginationTotal">1,248</span>
-                </div>
-                <button class="pagination-btn" id="nextPageBtn">
-                  Next
-                  <i class="ph ph-caret-right"></i>
-                </button>
-              </div>
+          <!-- Pagination -->
+          <div class="notification-pagination">
+            <div class="pagination-info">
+              Showing <span id="paginationStart">1</span> to <span id="paginationEnd">10</span> of <span id="paginationTotal">128</span> notifications
             </div>
-
-            <!-- Right: Activity Timeline -->
-            <div class="notification-right">
-              <div class="activity-card">
-                <div class="activity-header">
-                  <h3>Activity Timeline</h3>
-                  <a href="#" class="view-details-link" id="viewAllActivity">View All</a>
-                </div>
-                <div class="activity-timeline" id="activityTimeline">
-                  <!-- Activity items rendered by JS -->
-                </div>
-              </div>
-
-              <div class="quick-stats-card">
-                <h3>Quick Stats</h3>
-                <div class="quick-stats-grid">
-                  <div class="quick-stat">
-                    <div class="quick-stat-value" id="quickStatToday">12</div>
-                    <div class="quick-stat-label">Today</div>
-                  </div>
-                  <div class="quick-stat">
-                    <div class="quick-stat-value" id="quickStatWeek">89</div>
-                    <div class="quick-stat-label">This Week</div>
-                  </div>
-                  <div class="quick-stat">
-                    <div class="quick-stat-value" id="quickStatMonth">342</div>
-                    <div class="quick-stat-label">This Month</div>
-                  </div>
-                  <div class="quick-stat">
-                    <div class="quick-stat-value" id="quickStatResponse">2m</div>
-                    <div class="quick-stat-label">Avg Response</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="preferences-card">
-                <h3>Preferences</h3>
-                <p>Customize how you receive notifications</p>
-                <button class="btn btn-primary btn-sm" id="openPreferencesBtn" style="margin-top: var(--space-3);">
-                  <i class="ph ph-sliders"></i>
-                  Manage Preferences
-                </button>
-              </div>
+            <div class="pagination-controls">
+              <button class="pagination-btn" id="prevPageBtn" disabled>
+                <i class="ph ph-caret-left"></i>
+              </button>
+              <button class="pagination-btn page-num active" data-page="1">1</button>
+              <button class="pagination-btn page-num" data-page="2">2</button>
+              <button class="pagination-btn page-num" data-page="3">3</button>
+              <button class="pagination-btn page-num" data-page="4">4</button>
+              <button class="pagination-btn page-num" data-page="5">5</button>
+              <span class="pagination-ellipsis">...</span>
+              <button class="pagination-btn page-num" data-page="13">13</button>
+              <button class="pagination-btn" id="nextPageBtn">
+                <i class="ph ph-caret-right"></i>
+              </button>
+            </div>
+            <div class="pagination-per-page">
+              <span>10</span> / page
+              <i class="ph ph-caret-down"></i>
             </div>
           </div>
         </div>
 
-        <!-- Mentions Panel -->
-        <div class="notification-panel" data-panel="mentions">
-          <div class="panel-header">
-            <h2>Mentions</h2>
-            <p>Notifications where you were mentioned</p>
+        <!-- Right: Sidebar -->
+        <div class="notification-sidebar">
+          <!-- Overview Chart -->
+          <div class="sidebar-card overview-card">
+            <div class="sidebar-card-header">
+              <h3>Notification Overview</h3>
+              <a href="#" class="view-all-link" id="viewAllOverview">View All</a>
+            </div>
+            <div class="overview-chart-container">
+              <div class="donut-chart" id="overviewChart">
+                <svg viewBox="0 0 120 120" class="donut-svg">
+                  <!-- Background circle -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="var(--gray-100)" stroke-width="12"/>
+                  <!-- Unread segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#6366f1" stroke-width="12"
+                    stroke-dasharray="28.27 254.47" stroke-dashoffset="0"
+                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                  <!-- Mentions segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="12"
+                    stroke-dasharray="21.2 261.54" stroke-dashoffset="-28.27"
+                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                  <!-- Assignments segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#f59e0b" stroke-width="12"
+                    stroke-dasharray="35.34 247.4" stroke-dashoffset="-49.47"
+                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                  <!-- System segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#ef4444" stroke-width="12"
+                    stroke-dasharray="66.03 216.71" stroke-dashoffset="-84.81"
+                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                  <!-- Others segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#e5e7eb" stroke-width="12"
+                    stroke-dasharray="150.8 131.94" stroke-dashoffset="-150.84"
+                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="donut-center">
+                  <span class="donut-total" id="overviewTotal">128</span>
+                  <span class="donut-label">Total</span>
+                </div>
+              </div>
+              <div class="overview-legend">
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #6366f1;"></span>
+                  <span class="legend-label">Unread</span>
+                  <span class="legend-count">12 (9.4%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #3b82f6;"></span>
+                  <span class="legend-label">Mentions</span>
+                  <span class="legend-count">8 (6.3%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #f59e0b;"></span>
+                  <span class="legend-label">Assignments</span>
+                  <span class="legend-count">15 (11.7%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #ef4444;"></span>
+                  <span class="legend-label">System</span>
+                  <span class="legend-count">28 (21.9%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #e5e7eb;"></span>
+                  <span class="legend-label">Others</span>
+                  <span class="legend-count">65 (50.8%)</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="panel-content" id="mentionsContent">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
 
-        <!-- Assignments Panel -->
-        <div class="notification-panel" data-panel="assignments">
-          <div class="panel-header">
-            <h2>Assignments</h2>
-            <p>Tasks and conversations assigned to you</p>
-          </div>
-          <div class="panel-content" id="assignmentsContent">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- System Panel -->
-        <div class="notification-panel" data-panel="system">
-          <div class="panel-header">
-            <h2>System Notifications</h2>
-            <p>Alerts about system events and updates</p>
-          </div>
-          <div class="panel-content" id="systemContent">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- Email Panel -->
-        <div class="notification-panel" data-panel="email">
-          <div class="panel-header">
-            <h2>Email Notifications</h2>
-            <p>Email alerts and digests</p>
-          </div>
-          <div class="panel-content" id="emailContent">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- History Panel -->
-        <div class="notification-panel" data-panel="history">
-          <div class="panel-header">
-            <h2>Notification History</h2>
-            <p>Complete log of all past notifications</p>
-          </div>
-          <div class="panel-content" id="historyContent">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- Settings Panel -->
-        <div class="notification-panel" data-panel="settings">
-          <div class="settings-layout">
-            <div class="settings-sidebar">
-              <h3>Notification Settings</h3>
-              <div class="settings-nav">
-                <button class="settings-nav-item active" data-settings="general">
+          <!-- Quick Actions -->
+          <div class="sidebar-card quick-actions-card">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions-grid">
+              <button class="quick-action-btn" id="qaMarkRead">
+                <div class="quick-action-icon" style="background: #eef2ff; color: #4f46e5;">
+                  <i class="ph ph-check-circle"></i>
+                </div>
+                <span>Mark all as read</span>
+              </button>
+              <button class="quick-action-btn" id="qaSettings">
+                <div class="quick-action-icon" style="background: #fef3c7; color: #d97706;">
                   <i class="ph ph-gear"></i>
-                  <span>General</span>
-                </button>
-                <button class="settings-nav-item" data-settings="channels">
-                  <i class="ph ph-broadcast"></i>
-                  <span>Channels</span>
-                </button>
-                <button class="settings-nav-item" data-settings="preferences">
-                  <i class="ph ph-sliders"></i>
-                  <span>Preferences</span>
-                </button>
-                <button class="settings-nav-item" data-settings="digest">
-                  <i class="ph ph-envelope"></i>
-                  <span>Email Digest</span>
-                </button>
-                <button class="settings-nav-item" data-settings="mobile">
-                  <i class="ph ph-device-mobile"></i>
-                  <span>Mobile Push</span>
-                </button>
+                </div>
+                <span>Notification Settings</span>
+              </button>
+              <button class="quick-action-btn" id="qaMentions">
+                <div class="quick-action-icon" style="background: #ecfdf5; color: #059669;">
+                  <i class="ph ph-at"></i>
+                </div>
+                <span>View Mentions</span>
+              </button>
+              <button class="quick-action-btn" id="qaAssignments">
+                <div class="quick-action-icon" style="background: #fff7ed; color: #ea580c;">
+                  <i class="ph ph-clipboard-text"></i>
+                </div>
+                <span>View Assignments</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Notification Settings Toggles -->
+          <div class="sidebar-card settings-toggles-card">
+            <h3>Notification Settings</h3>
+            <div class="settings-toggles-list">
+              <div class="settings-toggle-item">
+                <div class="toggle-info">
+                  <div class="toggle-icon" style="background: #fef2f2; color: #dc2626;">
+                    <i class="ph ph-envelope"></i>
+                  </div>
+                  <div class="toggle-text">
+                    <span class="toggle-name">Email Notifications</span>
+                    <span class="toggle-desc">Receive updates via email</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleEmail" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="settings-toggle-item">
+                <div class="toggle-info">
+                  <div class="toggle-icon" style="background: #eff6ff; color: #2563eb;">
+                    <i class="ph ph-desktop"></i>
+                  </div>
+                  <div class="toggle-text">
+                    <span class="toggle-name">Browser Notifications</span>
+                    <span class="toggle-desc">Show desktop notifications</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleBrowser" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="settings-toggle-item">
+                <div class="toggle-info">
+                  <div class="toggle-icon" style="background: #f0fdf4; color: #16a34a;">
+                    <i class="ph ph-speaker-high"></i>
+                  </div>
+                  <div class="toggle-text">
+                    <span class="toggle-name">Sound Alerts</span>
+                    <span class="toggle-desc">Play sound for new notifications</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleSound" checked>
+                  <span class="toggle-slider"></span>
+                </label>
               </div>
             </div>
-            <div class="settings-main">
-              <!-- General Settings -->
-              <div class="settings-section active" data-settings-section="general">
-                <h2>General Settings</h2>
-                <div class="settings-group">
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Enable Notifications</span>
-                      <span class="setting-desc">Receive all notification types</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingEnableAll" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Sound Alerts</span>
-                      <span class="setting-desc">Play sound when new notifications arrive</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingSound" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Desktop Notifications</span>
-                      <span class="setting-desc">Show browser desktop notifications</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingDesktop" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Auto-mark as read</span>
-                      <span class="setting-desc">Automatically mark notifications as read after viewing</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingAutoRead">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
+            <button class="manage-preferences-btn" id="managePreferencesBtn">
+              Manage Preferences <i class="ph ph-arrow-right"></i>
+            </button>
+          </div>
 
-              <!-- Channels Settings -->
-              <div class="settings-section" data-settings-section="channels">
-                <h2>Channel Notifications</h2>
-                <div class="settings-group">
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Gmail</span>
-                      <span class="setting-desc">New emails and thread updates</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelGmail" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">WhatsApp Business</span>
-                      <span class="setting-desc">New messages and status updates</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelWhatsapp" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Instagram</span>
-                      <span class="setting-desc">DMs, comments, and mentions</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelInstagram" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">TikTok</span>
-                      <span class="setting-desc">Comments, mentions, and messages</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelTiktok" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">X (Twitter)</span>
-                      <span class="setting-desc">Mentions, DMs, and replies</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelX" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">LinkedIn</span>
-                      <span class="setting-desc">Messages and connection updates</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingChannelLinkedin" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Preferences Settings -->
-              <div class="settings-section" data-settings-section="preferences">
-                <h2>Notification Preferences</h2>
-                <div class="settings-group">
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Show Preview</span>
-                      <span class="setting-desc">Display message preview in notifications</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingPreview" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Group Similar</span>
-                      <span class="setting-desc">Group notifications from same source</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingGroup" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Quiet Hours</span>
-                      <span class="setting-desc">Pause notifications during set hours</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingQuiet">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row quiet-hours-row" style="display: none;" id="quietHoursRow">
-                    <div class="setting-info">
-                      <span class="setting-name">Quiet Hours Range</span>
-                    </div>
-                    <div class="time-range">
-                      <input type="time" class="form-input" value="22:00" id="quietStart">
-                      <span>to</span>
-                      <input type="time" class="form-input" value="07:00" id="quietEnd">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Digest Settings -->
-              <div class="settings-section" data-settings-section="digest">
-                <h2>Email Digest</h2>
-                <div class="settings-group">
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Daily Digest</span>
-                      <span class="setting-desc">Receive a daily summary of notifications</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingDailyDigest" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Weekly Digest</span>
-                      <span class="setting-desc">Receive a weekly summary every Monday</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingWeeklyDigest">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Digest Time</span>
-                      <span class="setting-desc">What time to send the digest</span>
-                    </div>
-                    <input type="time" class="form-input" value="09:00" id="digestTime" style="width: 120px;">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Mobile Settings -->
-              <div class="settings-section" data-settings-section="mobile">
-                <h2>Mobile Push Notifications</h2>
-                <div class="settings-group">
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Push Notifications</span>
-                      <span class="setting-desc">Send notifications to mobile devices</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingPush" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  <div class="setting-row">
-                    <div class="setting-info">
-                      <span class="setting-name">Vibration</span>
-                      <span class="setting-desc">Vibrate on new notifications</span>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="settingVibrate" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
+          <!-- Recent Activity -->
+          <div class="sidebar-card recent-activity-card">
+            <div class="sidebar-card-header">
+              <h3>Recent Activity</h3>
+              <a href="#" class="view-all-link" id="viewAllActivity">View All</a>
+            </div>
+            <div class="recent-activity-list" id="recentActivityList">
+              <!-- Rendered by JS -->
             </div>
           </div>
         </div>
@@ -911,86 +511,6 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
         <button class="btn btn-primary" id="confirmDeleteBtn" style="background: var(--error-600);">Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Preferences Modal -->
-  <div class="modal-overlay" id="preferencesModal" style="display: none;">
-    <div class="modal modal-large">
-      <div class="modal-header">
-        <h3>Notification Preferences</h3>
-        <button class="modal-close" id="closePreferencesModal">
-          <i class="ph ph-x"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="preferences-grid">
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">Real-time Updates</span>
-              <span class="preference-desc">Instant notifications for critical events</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">Email Summaries</span>
-              <span class="preference-desc">Daily email with all notifications</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">Browser Alerts</span>
-              <span class="preference-desc">Show popup alerts in browser</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">Mention Alerts</span>
-              <span class="preference-desc">Special alert when mentioned</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">Assignment Alerts</span>
-              <span class="preference-desc">Alert when task is assigned</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="preference-item">
-            <div class="preference-info">
-              <span class="preference-name">System Alerts</span>
-              <span class="preference-desc">Critical system notifications</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancelPreferencesBtn">Cancel</button>
-        <button class="btn btn-primary" id="savePreferencesBtn">Save Preferences</button>
       </div>
     </div>
   </div>
