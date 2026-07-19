@@ -184,6 +184,41 @@ class DashboardApp {
             <span>Settings</span>
           </a>
         </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">More</div>
+          <a href="../support/index.html" class="sidebar-item" data-page="support">
+            <i class="ph ph-headset"></i>
+            <span>Support</span>
+          </a>
+          <a href="../billing/index.html" class="sidebar-item" data-page="billing">
+            <i class="ph ph-credit-card"></i>
+            <span>Billing</span>
+          </a>
+          <a href="../files/index.html" class="sidebar-item" data-page="files">
+            <i class="ph ph-folder"></i>
+            <span>Files</span>
+          </a>
+          <a href="../search/index.html" class="sidebar-item" data-page="search">
+            <i class="ph ph-magnifying-glass"></i>
+            <span>Search</span>
+          </a>
+          <a href="../notifications/notifications.html" class="sidebar-item" data-page="notifications">
+            <i class="ph ph-bell"></i>
+            <span>Notifications</span>
+          </a>
+          <a href="../workflow/index.html" class="sidebar-item" data-page="workflow">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Workflow</span>
+          </a>
+          <a href="../integrations/index.html" class="sidebar-item" data-page="integrations">
+            <i class="ph ph-plugs-connected"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../help/index.html" class="sidebar-item" data-page="help">
+            <i class="ph ph-question"></i>
+            <span>Help</span>
+          </a>
+        </div>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user">

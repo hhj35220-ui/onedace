@@ -821,12 +821,12 @@ class CommandPalette {
 
     // Add some predefined quick actions
     this.quickActions = [
-      { id: 'open_inbox', title: 'Open Unified Inbox', href: '../inbox/' },
+      { id: 'open_inbox', title: 'Open Unified Inbox', href: '../inbox/unified-inbox.html' },
       { id: 'new_contact', title: 'Create New Contact', action: () => { window.location.href = '../crm/contacts.html'; } },
-      { id: 'new_task', title: 'Create New Task', href: '../tasks/' },
-      { id: 'open_search', title: 'Open Search Page', href: '../search/' },
-      { id: 'open_billing', title: 'Open Billing', href: '../billing/' },
-      { id: 'open_ai', title: 'Open AI Assistant', href: '../ai/' }
+      { id: 'new_task', title: 'Create New Task', href: '../tasks/index.html' },
+      { id: 'open_search', title: 'Open Search Page', href: '../search/index.html' },
+      { id: 'open_billing', title: 'Open Billing', href: '../billing/index.html' },
+      { id: 'open_ai', title: 'Open AI Assistant', href: '../ai/index.html' }
     ];
   }
 

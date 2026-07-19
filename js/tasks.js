@@ -420,6 +420,15 @@ class TasksApp {
           <a href="../integrations/index.html" class="sidebar-item"><i class="ph ph-plugs-connected"></i> Integrations</a>
           <a href="../help/index.html" class="sidebar-item"><i class="ph ph-question"></i> Help & Support</a>
         </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">More</div>
+          <a href="../support/index.html" class="sidebar-item"><i class="ph ph-headset"></i> Support</a>
+          <a href="../billing/index.html" class="sidebar-item"><i class="ph ph-credit-card"></i> Billing</a>
+          <a href="../files/index.html" class="sidebar-item"><i class="ph ph-folder"></i> Files</a>
+          <a href="../search/index.html" class="sidebar-item"><i class="ph ph-magnifying-glass"></i> Search</a>
+          <a href="../notifications/notifications.html" class="sidebar-item"><i class="ph ph-bell"></i> Notifications</a>
+          <a href="../workflow/index.html" class="sidebar-item"><i class="ph ph-git-merge"></i> Workflow</a>
+        </div>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user">

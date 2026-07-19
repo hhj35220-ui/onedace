@@ -230,36 +230,44 @@ class ReportsApp {
 
     const navItems = [
       { section: 'MAIN', items: [
-        { icon: 'ph-squares-four', label: 'Dashboard', href: '../dashboard/', badge: null },
-        { icon: 'ph-inbox', label: 'Unified Inbox', href: '../inbox/', badge: 24 }
+        { icon: 'ph-squares-four', label: 'Dashboard', href: '../dashboard/main-dashboard.html', badge: null },
+        { icon: 'ph-inbox', label: 'Unified Inbox', href: '../inbox/unified-inbox.html', badge: 24 }
       ]},
       { section: 'CHANNELS', items: [
-        { icon: 'ph-envelope-simple', label: 'Gmail', href: '../gmail/', badge: null },
-        { icon: 'ph-chat-circle-text', label: 'WhatsApp Business', href: '../whatsapp/', badge: 8 },
-        { icon: 'ph-camera', label: 'Instagram', href: '../instagram/', badge: 16 },
-        { icon: 'ph-music-notes', label: 'TikTok', href: '../tiktok/', badge: 23 },
-        { icon: 'ph-x-logo', label: 'X (Twitter)', href: '../x/', badge: 34 },
-        { icon: 'ph-linkedin-logo', label: 'LinkedIn', href: '../linkedin/', badge: 26 }
+        { icon: 'ph-envelope-simple', label: 'Gmail', href: '../gmail/index.html', badge: null },
+        { icon: 'ph-chat-circle-text', label: 'WhatsApp Business', href: '../whatsapp/index.html', badge: 8 },
+        { icon: 'ph-camera', label: 'Instagram', href: '../instagram/index.html', badge: 16 },
+        { icon: 'ph-music-notes', label: 'TikTok', href: '../tiktok/index.html', badge: 23 },
+        { icon: 'ph-x-logo', label: 'X (Twitter)', href: '../x/index.html', badge: 34 },
+        { icon: 'ph-linkedin-logo', label: 'LinkedIn', href: '../linkedin/index.html', badge: 26 }
       ]},
       { section: 'BUSINESS', items: [
-        { icon: 'ph-users', label: 'CRM', href: '../crm/', badge: null },
-        { icon: 'ph-headset', label: 'Customer Support', href: '../support/', badge: null },
-        { icon: 'ph-calendar-blank', label: 'Calendar', href: '../calendar/', badge: null },
-        { icon: 'ph-check-square', label: 'Tasks', href: '../tasks/', badge: null },
-        { icon: 'ph-users-three', label: 'Team Management', href: '../team/', badge: null },
-        { icon: 'ph-git-branch', label: 'Workflow', href: '../workflow/', badge: null }
+        { icon: 'ph-users', label: 'CRM', href: '../crm/index.html', badge: null },
+        { icon: 'ph-headset', label: 'Customer Support', href: '../support/index.html', badge: null },
+        { icon: 'ph-calendar-blank', label: 'Calendar', href: '../calendar/index.html', badge: null },
+        { icon: 'ph-check-square', label: 'Tasks', href: '../tasks/index.html', badge: null },
+        { icon: 'ph-users-three', label: 'Team Management', href: '../team/index.html', badge: null },
+        { icon: 'ph-git-branch', label: 'Workflow', href: '../workflow/index.html', badge: null }
       ]},
       { section: 'INTELLIGENCE', items: [
-        { icon: 'ph-sparkle', label: 'AI', href: '../ai/', badge: null },
-        { icon: 'ph-bell', label: 'Notifications', href: '../notifications/', badge: 12 }
+        { icon: 'ph-sparkle', label: 'AI', href: '../ai/index.html', badge: null },
+        { icon: 'ph-bell', label: 'Notifications', href: '../notifications/notifications.html', badge: 12 }
       ]},
       { section: 'ANALYTICS', items: [
-        { icon: 'ph-chart-bar', label: 'Reports', href: '../reports/', badge: null, active: true }
+        { icon: 'ph-chart-bar', label: 'Reports', href: '../reports/index.html', badge: null, active: true }
       ]},
       { section: 'SETTINGS', items: [
-        { icon: 'ph-gear', label: 'Settings', href: '../settings/', badge: null },
-        { icon: 'ph-puzzle-piece', label: 'Integrations', href: '../integrations/', badge: null },
-        { icon: 'ph-question', label: 'Help & Support', href: '../help/', badge: null }
+        { icon: 'ph-gear', label: 'Settings', href: '../settings/index.html', badge: null },
+        { icon: 'ph-puzzle-piece', label: 'Integrations', href: '../integrations/index.html', badge: null },
+        { icon: 'ph-question', label: 'Help & Support', href: '../help/index.html', badge: null }
+      ]},
+      { section: 'MORE', items: [
+        { icon: 'ph-headset', label: 'Support', href: '../support/index.html', badge: null },
+        { icon: 'ph-credit-card', label: 'Billing', href: '../billing/index.html', badge: null },
+        { icon: 'ph-folder', label: 'Files', href: '../files/index.html', badge: null },
+        { icon: 'ph-magnifying-glass', label: 'Search', href: '../search/index.html', badge: null },
+        { icon: 'ph-bell', label: 'Notifications', href: '../notifications/notifications.html', badge: null },
+        { icon: 'ph-flow-arrow', label: 'Workflow', href: '../workflow/index.html', badge: null }
       ]}
     ];
 

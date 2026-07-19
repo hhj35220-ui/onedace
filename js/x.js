@@ -1578,6 +1578,34 @@
             <span>Help & Support</span>
           </a>
         </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">More</div>
+          <a href="../support/index.html" class="sidebar-item">
+            <i class="ph ph-headset"></i>
+            <span>Support</span>
+          </a>
+          <a href="../billing/index.html" class="sidebar-item">
+            <i class="ph ph-credit-card"></i>
+            <span>Billing</span>
+          </a>
+          <a href="../files/index.html" class="sidebar-item">
+            <i class="ph ph-folder"></i>
+            <span>Files</span>
+          </a>
+          <a href="../search/index.html" class="sidebar-item">
+            <i class="ph ph-magnifying-glass"></i>
+            <span>Search</span>
+          </a>
+          <a href="../notifications/notifications.html" class="sidebar-item">
+            <i class="ph ph-bell"></i>
+            <span>Notifications</span>
+          </a>
+          <a href="../workflow/index.html" class="sidebar-item">
+            <i class="ph ph-flow-arrow"></i>
+            <span>Workflow</span>
+          </a>
+        </div>
       </div>
 
       <div class="sidebar-footer">

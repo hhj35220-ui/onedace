@@ -473,6 +473,14 @@ class WhatsAppApp {
         { id: 'catalog', label: 'Catalog', icon: 'ph-shopping-bag', href: 'catalog.html' },
         { id: 'media-gallery', label: 'Media Gallery', icon: 'ph-images', href: 'media-gallery.html' },
         { id: 'settings', label: 'WhatsApp Settings', icon: 'ph-gear', href: 'settings.html' },
+      ]},
+      { section: 'More', items: [
+        { id: 'support', label: 'Support', icon: 'ph-headset', href: '../support/index.html' },
+        { id: 'billing', label: 'Billing', icon: 'ph-credit-card', href: '../billing/index.html' },
+        { id: 'files', label: 'Files', icon: 'ph-folder', href: '../files/index.html' },
+        { id: 'search', label: 'Search', icon: 'ph-magnifying-glass', href: '../search/index.html' },
+        { id: 'notifications', label: 'Notifications', icon: 'ph-bell', href: '../notifications/notifications.html' },
+        { id: 'workflow', label: 'Workflow', icon: 'ph-git-merge', href: '../workflow/index.html' },
       ]}
     ];
 

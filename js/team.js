@@ -365,6 +365,14 @@ class TeamApp {
       { section: 'System', items: [
         { id: 'settings', label: 'Settings', icon: 'ph-gear', href: '../settings/index.html' },
         { id: 'help', label: 'Help Center', icon: 'ph-question', href: '../help/index.html' },
+      ]},
+      { section: 'More', items: [
+        { id: 'support', label: 'Support', icon: 'ph-headset', href: '../support/index.html' },
+        { id: 'billing', label: 'Billing', icon: 'ph-credit-card', href: '../billing/index.html' },
+        { id: 'files', label: 'Files', icon: 'ph-folder', href: '../files/index.html' },
+        { id: 'search', label: 'Search', icon: 'ph-magnifying-glass', href: '../search/index.html' },
+        { id: 'notifications', label: 'Notifications', icon: 'ph-bell', href: '../notifications/notifications.html' },
+        { id: 'workflow', label: 'Workflow', icon: 'ph-arrows-left-right', href: '../workflow/index.html' },
       ]}
     ];
 
