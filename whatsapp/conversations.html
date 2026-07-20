@@ -14,25 +14,226 @@
 </head>
 <body>
   <div class="dashboard-layout">
-    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <!-- Global Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <a href="../index.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="sidebar-section">
+          <a href="../index.html" class="sidebar-nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../inbox/index.html" class="sidebar-nav-item">
+            <i class="ph ph-chat-teardrop-text"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">12</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Channels</div>
+          <a href="../email/index.html" class="sidebar-nav-item">
+            <i class="ph ph-envelope-simple"></i>
+            <span>Gmail</span>
+          </a>
+          <a href="index.html" class="sidebar-nav-item active">
+            <i class="ph ph-whatsapp-logo"></i>
+            <span>WhatsApp Business</span>
+            <span class="nav-badge wa">8</span>
+          </a>
+          <a href="../instagram/index.html" class="sidebar-nav-item">
+            <i class="ph ph-instagram-logo"></i>
+            <span>Instagram</span>
+          </a>
+          <a href="../tiktok/index.html" class="sidebar-nav-item">
+            <i class="ph ph-tiktok-logo"></i>
+            <span>TikTok</span>
+          </a>
+          <a href="../x/index.html" class="sidebar-nav-item">
+            <i class="ph ph-x-logo"></i>
+            <span>X (Twitter)</span>
+          </a>
+          <a href="../linkedin/index.html" class="sidebar-nav-item">
+            <i class="ph ph-linkedin-logo"></i>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Business</div>
+          <a href="../crm/index.html" class="sidebar-nav-item">
+            <i class="ph ph-users"></i>
+            <span>CRM</span>
+          </a>
+          <a href="../tasks/index.html" class="sidebar-nav-item">
+            <i class="ph ph-check-square"></i>
+            <span>Tasks</span>
+          </a>
+          <a href="../calendar/index.html" class="sidebar-nav-item">
+            <i class="ph ph-calendar"></i>
+            <span>Calendar</span>
+          </a>
+          <a href="../contacts/index.html" class="sidebar-nav-item">
+            <i class="ph ph-address-book"></i>
+            <span>Contacts</span>
+          </a>
+          <a href="../reports/index.html" class="sidebar-nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="../automation/index.html" class="sidebar-nav-item">
+            <i class="ph ph-gear-fine"></i>
+            <span>Automation</span>
+          </a>
+          <a href="../ai/index.html" class="sidebar-nav-item">
+            <i class="ph ph-sparkle"></i>
+            <span>AI</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Settings</div>
+          <a href="../settings/index.html" class="sidebar-nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../integrations/index.html" class="sidebar-nav-item">
+            <i class="ph ph-plugs"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../help/index.html" class="sidebar-nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan" class="sidebar-user-avatar-img">
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Alex Morgan</div>
+            <div class="sidebar-user-role">Admin</div>
+          </div>
+          <button class="sidebar-user-menu"><i class="ph ph-caret-up"></i></button>
+        </div>
+      </div>
+    </aside>
+
     <div class="sidebar-overlay"></div>
 
     <main class="dashboard-main">
-      <header class="dashboard-header" role="banner"></header>
+      <header class="dashboard-header" role="banner">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i class="ph ph-list"></i>
+          </button>
+          <h1 class="header-title">Conversations</h1>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything...">
+          </div>
+          <button class="header-btn" id="create-btn" aria-label="Create new">
+            <i class="ph ph-plus"></i>
+          </button>
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-avatar" id="user-menu-btn">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan">
+          </div>
+        </div>
+      </header>
 
       <div class="whatsapp-layout">
-        <div class="whatsapp-sidebar">
-          <!-- Rendered by JS -->
+        <div class="wa-left-panel">
+          <div class="wa-account-card">
+            <div class="wa-account-card-header">
+              <div class="wa-account-icon">
+                <i class="ph ph-whatsapp-logo"></i>
+              </div>
+              <div class="wa-account-info">
+                <span class="wa-account-title">WhatsApp Account</span>
+                <span class="wa-account-name">Acme Solutions</span>
+                <span class="wa-account-phone">+1 (555) 123-4567</span>
+              </div>
+            </div>
+            <div class="wa-account-status">
+              <span class="wa-status-dot"></span>
+              <span>Connected</span>
+            </div>
+            <button class="wa-view-integration-btn">View Integration</button>
+          </div>
+
+          <div class="wa-overview-card">
+            <div class="wa-overview-header">
+              <span class="wa-overview-title">Today's Overview</span>
+              <a href="../reports/index.html" class="wa-overview-link">View Report</a>
+            </div>
+            <div class="wa-overview-stats">
+              <div class="wa-overview-stat">
+                <span class="wa-overview-stat-label">Messages Received</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">248</span>
+                  <span class="wa-overview-stat-change up">
+                    <i class="ph ph-trend-up"></i> 18.5%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-overview-stat-label">Messages Sent</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">216</span>
+                  <span class="wa-overview-stat-change up">
+                    <i class="ph ph-trend-up"></i> 12.4%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-overview-stat-label">New Contacts</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">32</span>
+                  <span class="wa-overview-stat-change up">
+                    <i class="ph ph-trend-up"></i> 8.3%
+                  </span>
+                </div>
+              </div>
+              <div class="wa-overview-stat">
+                <span class="wa-overview-stat-label">Response Rate</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">94.2%</span>
+                  <span class="wa-overview-stat-change up">
+                    <i class="ph ph-trend-up"></i> 6.7%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="whatsapp-main">
-          <div style="padding: var(--space-5) var(--space-6);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+          <div style="padding: 20px 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
               <div>
-                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); color: var(--gray-900);">Conversations</h2>
-                <p style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1);">Manage all your WhatsApp conversations in one place.</p>
+                <h2 style="font-size: 20px; font-weight: 600; color: var(--gray-900);">Conversations</h2>
+                <p style="font-size: 13px; color: var(--gray-500); margin-top: 4px;">Manage all your WhatsApp conversations in one place.</p>
               </div>
-              <div style="display: flex; gap: var(--space-3);">
+              <div style="display: flex; gap: 8px;">
                 <button class="btn btn-secondary" id="filter-all">All</button>
                 <button class="btn btn-ghost" id="filter-open">Open</button>
                 <button class="btn btn-ghost" id="filter-resolved">Resolved</button>
@@ -40,27 +241,27 @@
               </div>
             </div>
 
-            <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm);">
-              <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--gray-200);">
-                <div style="flex: 1; display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--gray-100); border-radius: var(--radius-lg);">
+            <div style="background: var(--gray-0); border: 1px solid var(--gray-200); border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--gray-200);">
+                <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--gray-100); border-radius: 10px;">
                   <i class="ph ph-magnifying-glass" style="color: var(--gray-400);"></i>
-                  <input type="text" id="conv-search" placeholder="Search conversations..." style="border: none; background: transparent; outline: none; font-size: var(--text-sm); color: var(--gray-800); width: 100%;">
+                  <input type="text" id="conv-search" placeholder="Search conversations..." style="border: none; background: transparent; outline: none; font-size: 13px; color: var(--gray-800); width: 100%;">
                 </div>
-                <select id="label-filter" style="padding: var(--space-2) var(--space-4); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm);">
+                <select id="label-filter" style="padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 10px; background: var(--gray-0); color: var(--gray-700); font-size: 13px;">
                   <option value="">All Labels</option>
                   <option value="customer-support">Customer Support</option>
                   <option value="sales">Sales</option>
                   <option value="order-status">Order Status</option>
                   <option value="returns">Returns</option>
                 </select>
-                <select id="agent-filter" style="padding: var(--space-2) var(--space-4); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-0); color: var(--gray-700); font-size: var(--text-sm);">
+                <select id="agent-filter" style="padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 10px; background: var(--gray-0); color: var(--gray-700); font-size: 13px;">
                   <option value="">All Agents</option>
                   <option value="tm1">Alex Morgan</option>
                   <option value="tm2">Jake Cooper</option>
                   <option value="tm3">Cody Fisher</option>
                 </select>
               </div>
-              <div id="conversations-table" style="padding: var(--space-2);">
+              <div id="conversations-table" style="padding: 8px;">
                 <!-- Injected by JS -->
               </div>
             </div>
@@ -75,12 +276,13 @@
   <script src="../js/whatsapp.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.nav.requireAuth()) return;
+      if (typeof OP !== 'undefined' && OP.nav && OP.nav.requireAuth) {
+        if (!OP.nav.requireAuth()) return;
+      }
 
       const waStorage = new WhatsAppStorage();
       const app = new WhatsAppApp();
 
-      // Override to render full conversation table
       function renderTable() {
         const container = document.getElementById('conversations-table');
         const conversations = waStorage.getConversations();
@@ -100,13 +302,13 @@
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="border-bottom: 1px solid var(--gray-200);">
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Contact</th>
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Message</th>
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Label</th>
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Status</th>
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Assigned</th>
-                <th style="text-align: left; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Time</th>
-                <th style="text-align: right; padding: var(--space-3) var(--space-4); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Actions</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Contact</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Message</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Label</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Status</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Assigned</th>
+                <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Time</th>
+                <th style="text-align: right; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -117,41 +319,41 @@
           const timeAgo = app.formatTimeAgo(conv.timestamp);
 
           html += `
-            <tr style="border-bottom: 1px solid var(--gray-100); transition: background var(--transition-fast);" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
-              <td style="padding: var(--space-3) var(--space-4);">
-                <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <tr style="border-bottom: 1px solid var(--gray-100); transition: background 0.15s ease;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
+              <td style="padding: 12px 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
                   <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=80" 
-                       alt="${contact.name}" style="width: 36px; height: 36px; border-radius: var(--radius-full); object-fit: cover;">
+                       alt="${contact.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
                   <div>
-                    <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);">${contact.name || 'Unknown'}</div>
+                    <div style="font-size: 13px; font-weight: 500; color: var(--gray-900);">${contact.name || 'Unknown'}</div>
                     <div style="font-size: 11px; color: var(--gray-400);">${contact.phone || ''}</div>
                   </div>
                 </div>
               </td>
-              <td style="padding: var(--space-3) var(--space-4);">
-                <div style="font-size: var(--text-sm); color: var(--gray-700); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${conv.lastMessage || 'No messages'}</div>
+              <td style="padding: 12px 16px;">
+                <div style="font-size: 13px; color: var(--gray-700); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${conv.lastMessage || 'No messages'}</div>
               </td>
-              <td style="padding: var(--space-3) var(--space-4);">
-                ${conv.tag ? `<span class="wa-conv-tag ${conv.tag}">${conv.tag.replace('-', ' ')}</span>` : '<span style="color: var(--gray-400); font-size: var(--text-xs);">—</span>'}
+              <td style="padding: 12px 16px;">
+                ${conv.tag ? '<span class="wa-conv-tag ' + conv.tag + '">' + conv.tag.replace('-', ' ') + '</span>' : '<span style="color: var(--gray-400); font-size: 12px;">—</span>'}
               </td>
-              <td style="padding: var(--space-3) var(--space-4);">
-                <span style="padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: var(--font-semibold); text-transform: uppercase;
+              <td style="padding: 12px 16px;">
+                <span style="padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase;
                   ${conv.status === 'open' ? 'background: var(--success-50); color: var(--success-600);' : 'background: var(--gray-100); color: var(--gray-500);'}">${conv.status}</span>
               </td>
-              <td style="padding: var(--space-3) var(--space-4);">
-                <div style="display: flex; align-items: center; gap: var(--space-2);">
-                  <div style="width: 24px; height: 24px; border-radius: var(--radius-full); background: var(--primary-500); color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">AM</div>
-                  <span style="font-size: var(--text-xs); color: var(--gray-600);">Alex Morgan</span>
+              <td style="padding: 12px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary-500); color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">AM</div>
+                  <span style="font-size: 12px; color: var(--gray-600);">Alex Morgan</span>
                 </div>
               </td>
-              <td style="padding: var(--space-3) var(--space-4);">
-                <span style="font-size: var(--text-xs); color: var(--gray-400);">${timeAgo}</span>
+              <td style="padding: 12px 16px;">
+                <span style="font-size: 12px; color: var(--gray-400);">${timeAgo}</span>
               </td>
-              <td style="padding: var(--space-3) var(--space-4); text-align: right;">
-                <button style="width: 28px; height: 28px; border: none; border-radius: var(--radius-md); background: transparent; color: var(--gray-400); cursor: pointer;" title="View">
+              <td style="padding: 12px 16px; text-align: right;">
+                <button style="width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent; color: var(--gray-400); cursor: pointer;" title="View">
                   <i class="ph ph-eye"></i>
                 </button>
-                <button style="width: 28px; height: 28px; border: none; border-radius: var(--radius-md); background: transparent; color: var(--gray-400); cursor: pointer;" title="More">
+                <button style="width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent; color: var(--gray-400); cursor: pointer;" title="More">
                   <i class="ph ph-dots-three-vertical"></i>
                 </button>
               </td>
@@ -166,7 +368,7 @@
       renderTable();
 
       // Search
-      document.getElementById('conv-search').addEventListener('input', (e) => {
+      document.getElementById('conv-search').addEventListener('input', () => {
         renderTable();
       });
 

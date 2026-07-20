@@ -14,21 +14,176 @@
 </head>
 <body>
   <div class="dashboard-layout">
-    <!-- Sidebar -->
-    <aside class="dashboard-sidebar" role="navigation" aria-label="WhatsApp sidebar"></aside>
+    <!-- Global Sidebar -->
+    <aside class="dashboard-sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <a href="../index.html" class="logo">
+          <div class="logo-mark"><i class="ph ph-hexagon"></i></div>
+          <div class="logo-text">
+            <span class="logo-brand">OnePlace</span>
+            <span class="logo-sub">Enterprise v3.0</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="sidebar-section">
+          <a href="../index.html" class="sidebar-nav-item">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="../inbox/index.html" class="sidebar-nav-item">
+            <i class="ph ph-chat-teardrop-text"></i>
+            <span>Unified Inbox</span>
+            <span class="nav-badge">12</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Channels</div>
+          <a href="../email/index.html" class="sidebar-nav-item">
+            <i class="ph ph-envelope-simple"></i>
+            <span>Gmail</span>
+          </a>
+          <a href="index.html" class="sidebar-nav-item active">
+            <i class="ph ph-whatsapp-logo"></i>
+            <span>WhatsApp Business</span>
+            <span class="nav-badge wa">8</span>
+          </a>
+          <a href="../instagram/index.html" class="sidebar-nav-item">
+            <i class="ph ph-instagram-logo"></i>
+            <span>Instagram</span>
+          </a>
+          <a href="../tiktok/index.html" class="sidebar-nav-item">
+            <i class="ph ph-tiktok-logo"></i>
+            <span>TikTok</span>
+          </a>
+          <a href="../x/index.html" class="sidebar-nav-item">
+            <i class="ph ph-x-logo"></i>
+            <span>X (Twitter)</span>
+          </a>
+          <a href="../linkedin/index.html" class="sidebar-nav-item">
+            <i class="ph ph-linkedin-logo"></i>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Business</div>
+          <a href="../crm/index.html" class="sidebar-nav-item">
+            <i class="ph ph-users"></i>
+            <span>CRM</span>
+          </a>
+          <a href="../tasks/index.html" class="sidebar-nav-item">
+            <i class="ph ph-check-square"></i>
+            <span>Tasks</span>
+          </a>
+          <a href="../calendar/index.html" class="sidebar-nav-item">
+            <i class="ph ph-calendar"></i>
+            <span>Calendar</span>
+          </a>
+          <a href="../contacts/index.html" class="sidebar-nav-item">
+            <i class="ph ph-address-book"></i>
+            <span>Contacts</span>
+          </a>
+          <a href="../reports/index.html" class="sidebar-nav-item">
+            <i class="ph ph-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="../automation/index.html" class="sidebar-nav-item">
+            <i class="ph ph-gear-fine"></i>
+            <span>Automation</span>
+          </a>
+          <a href="../ai/index.html" class="sidebar-nav-item">
+            <i class="ph ph-sparkle"></i>
+            <span>AI</span>
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Settings</div>
+          <a href="../settings/index.html" class="sidebar-nav-item">
+            <i class="ph ph-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a href="../integrations/index.html" class="sidebar-nav-item">
+            <i class="ph ph-plugs"></i>
+            <span>Integrations</span>
+          </a>
+          <a href="../help/index.html" class="sidebar-nav-item">
+            <i class="ph ph-question"></i>
+            <span>Help & Support</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan" class="sidebar-user-avatar-img">
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Alex Morgan</div>
+            <div class="sidebar-user-role">Admin</div>
+          </div>
+          <button class="sidebar-user-menu"><i class="ph ph-caret-up"></i></button>
+        </div>
+      </div>
+    </aside>
+
     <div class="sidebar-overlay"></div>
 
     <!-- Main Content -->
     <main class="dashboard-main">
       <!-- Header -->
-      <header class="dashboard-header" role="banner"></header>
+      <header class="dashboard-header" role="banner">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i class="ph ph-list"></i>
+          </button>
+          <h1 class="header-title">WhatsApp Business</h1>
+        </div>
+        <div class="header-right">
+          <div class="header-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search anything...">
+          </div>
+          <button class="header-btn" id="create-btn" aria-label="Create new">
+            <i class="ph ph-plus"></i>
+          </button>
+          <button class="header-btn" id="notifications-btn" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
+            <i class="ph ph-moon"></i>
+          </button>
+          <div class="header-avatar" id="user-menu-btn">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan">
+          </div>
+        </div>
+      </header>
 
       <!-- WhatsApp Content -->
       <div class="whatsapp-layout">
-        <!-- WhatsApp Sidebar -->
-        <div class="whatsapp-sidebar">
-          <!-- Account Header rendered by JS -->
-          <!-- Navigation rendered by JS -->
+        <!-- Left Panel: WhatsApp Account + Overview -->
+        <div class="wa-left-panel">
+          <!-- WhatsApp Account Card -->
+          <div class="wa-account-card">
+            <div class="wa-account-card-header">
+              <div class="wa-account-icon">
+                <i class="ph ph-whatsapp-logo"></i>
+              </div>
+              <div class="wa-account-info">
+                <span class="wa-account-title">WhatsApp Account</span>
+                <span class="wa-account-name">Acme Solutions</span>
+                <span class="wa-account-phone">+1 (555) 123-4567</span>
+              </div>
+            </div>
+            <div class="wa-account-status">
+              <span class="wa-status-dot"></span>
+              <span>Connected</span>
+            </div>
+            <button class="wa-view-integration-btn">View Integration</button>
+          </div>
 
           <!-- Today's Overview -->
           <div class="wa-overview-card">
@@ -38,37 +193,37 @@
             </div>
             <div class="wa-overview-stats">
               <div class="wa-overview-stat">
-                <span class="wa-stat-label">Messages Received</span>
-                <div class="wa-stat-value-row">
-                  <span class="wa-stat-value">248</span>
-                  <span class="wa-stat-change wa-stat-up">
+                <span class="wa-overview-stat-label">Messages Received</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">248</span>
+                  <span class="wa-overview-stat-change up">
                     <i class="ph ph-trend-up"></i> 18.5%
                   </span>
                 </div>
               </div>
               <div class="wa-overview-stat">
-                <span class="wa-stat-label">Messages Sent</span>
-                <div class="wa-stat-value-row">
-                  <span class="wa-stat-value">216</span>
-                  <span class="wa-stat-change wa-stat-up">
+                <span class="wa-overview-stat-label">Messages Sent</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">216</span>
+                  <span class="wa-overview-stat-change up">
                     <i class="ph ph-trend-up"></i> 12.4%
                   </span>
                 </div>
               </div>
               <div class="wa-overview-stat">
-                <span class="wa-stat-label">New Contacts</span>
-                <div class="wa-stat-value-row">
-                  <span class="wa-stat-value">32</span>
-                  <span class="wa-stat-change wa-stat-up">
+                <span class="wa-overview-stat-label">New Contacts</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">32</span>
+                  <span class="wa-overview-stat-change up">
                     <i class="ph ph-trend-up"></i> 8.3%
                   </span>
                 </div>
               </div>
               <div class="wa-overview-stat">
-                <span class="wa-stat-label">Response Rate</span>
-                <div class="wa-stat-value-row">
-                  <span class="wa-stat-value">94.2%</span>
-                  <span class="wa-stat-change wa-stat-up">
+                <span class="wa-overview-stat-label">Response Rate</span>
+                <div class="wa-overview-stat-row">
+                  <span class="wa-overview-stat-value">94.2%</span>
+                  <span class="wa-overview-stat-change up">
                     <i class="ph ph-trend-up"></i> 6.7%
                   </span>
                 </div>
@@ -77,14 +232,53 @@
           </div>
         </div>
 
-        <!-- WhatsApp Main -->
+        <!-- Main Area: Stats + Conversations -->
         <div class="whatsapp-main">
           <!-- Stats Row -->
           <div class="wa-stats-row" id="wa-stats-row">
-            <!-- Injected by JS -->
+            <div class="wa-stat-card">
+              <div class="wa-stat-card-header">
+                <span class="wa-stat-card-label">Active Conversations</span>
+                <div class="wa-stat-card-icon green">
+                  <i class="ph ph-chat-circle-text"></i>
+                </div>
+              </div>
+              <span class="wa-stat-card-value">8</span>
+              <a href="conversations.html" class="wa-stat-card-link">View all conversations →</a>
+            </div>
+            <div class="wa-stat-card">
+              <div class="wa-stat-card-header">
+                <span class="wa-stat-card-label">Unread Messages</span>
+                <div class="wa-stat-card-icon red">
+                  <i class="ph ph-bell"></i>
+                </div>
+              </div>
+              <span class="wa-stat-card-value">5</span>
+              <a href="conversations.html" class="wa-stat-card-link">View unread →</a>
+            </div>
+            <div class="wa-stat-card">
+              <div class="wa-stat-card-header">
+                <span class="wa-stat-card-label">New Contacts</span>
+                <div class="wa-stat-card-icon purple">
+                  <i class="ph ph-users"></i>
+                </div>
+              </div>
+              <span class="wa-stat-card-value">32</span>
+              <a href="../crm/contacts.html" class="wa-stat-card-link">View contacts →</a>
+            </div>
+            <div class="wa-stat-card">
+              <div class="wa-stat-card-header">
+                <span class="wa-stat-card-label">Messages Sent</span>
+                <div class="wa-stat-card-icon blue">
+                  <i class="ph ph-chart-line-up"></i>
+                </div>
+              </div>
+              <span class="wa-stat-card-value">94.2%</span>
+              <a href="../reports/index.html" class="wa-stat-card-link">View analytics →</a>
+            </div>
           </div>
 
-          <!-- Conversations Section -->
+          <!-- Conversations Section (3-panel) -->
           <div class="wa-conversations-section">
             <!-- Conversation List -->
             <div class="wa-conversation-list-panel">
@@ -93,8 +287,11 @@
                   <i class="ph ph-magnifying-glass"></i>
                   <input type="text" placeholder="Search conversations..." id="conversation-search">
                 </div>
-                <button class="wa-filter-btn" data-filter="" title="Filter"><i class="ph ph-funnel"></i></button>
-                <button class="wa-sort-btn" id="sort-btn"><i class="ph ph-sort-descending"></i><span>Latest</span></button>
+                <button class="wa-filter-btn" title="Filter"><i class="ph ph-funnel"></i></button>
+                <button class="wa-sort-btn" id="sort-btn">
+                  <i class="ph ph-caret-down"></i>
+                  <span>Latest</span>
+                </button>
                 <button class="wa-more-btn" title="More"><i class="ph ph-dots-three"></i></button>
               </div>
               <div class="wa-conversation-list" id="conversation-list">
@@ -106,7 +303,7 @@
                 <button class="wa-page-btn">3</button>
                 <span class="wa-page-dots">...</span>
                 <button class="wa-page-btn">12</button>
-                <button class="wa-page-btn wa-page-next"><i class="ph ph-caret-right"></i></button>
+                <button class="wa-page-btn"><i class="ph ph-caret-right"></i></button>
               </div>
             </div>
 

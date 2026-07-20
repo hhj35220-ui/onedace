@@ -1,7 +1,7 @@
 /**
  * OnePlace Enterprise v3.0 — WhatsApp Business Module
  * Vanilla JavaScript (ES6+)
- * Integrates with existing DashboardApp, DashboardStorage, OP global
+ * Matches the design photo exactly
  */
 
 const WA_STORAGE_KEYS = {
@@ -18,7 +18,7 @@ const WA_STORAGE_KEYS = {
 };
 
 // ============================================
-// Sample Data
+// Sample Data (matches the photo exactly)
 // ============================================
 
 const WA_SAMPLE_CONTACTS = [
@@ -190,7 +190,7 @@ class WhatsAppStorage {
 
   addContact(contact) {
     const contacts = this.getContacts();
-    contact.id = `wa_c${Date.now()}`;
+    contact.id = 'wa_c' + Date.now();
     contact.createdAt = new Date().toISOString();
     contacts.push(contact);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
@@ -218,7 +218,6 @@ class WhatsAppStorage {
     let conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
     const contacts = this.getContacts();
 
-    // Enrich with contact data
     conversations = conversations.map(conv => {
       const contact = contacts.find(c => c.id === conv.contactId);
       return { ...conv, contact: contact || {} };
@@ -254,7 +253,7 @@ class WhatsAppStorage {
     const allMessages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
     if (!allMessages[conversationId]) allMessages[conversationId] = [];
 
-    message.id = `m_${Date.now()}`;
+    message.id = 'm_' + Date.now();
     message.time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     allMessages[conversationId].push(message);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(allMessages));
@@ -290,7 +289,7 @@ class WhatsAppStorage {
 
   addTemplate(template) {
     const templates = this.getTemplates();
-    template.id = `wa_t${Date.now()}`;
+    template.id = 'wa_t' + Date.now();
     templates.push(template);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES, JSON.stringify(templates));
     return template;
@@ -308,7 +307,7 @@ class WhatsAppStorage {
 
   addQuickReply(qr) {
     const qrs = this.getQuickReplies();
-    qr.id = `wa_qr${Date.now()}`;
+    qr.id = 'wa_qr' + Date.now();
     qrs.push(qr);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES, JSON.stringify(qrs));
     return qr;
@@ -326,7 +325,7 @@ class WhatsAppStorage {
 
   addProduct(product) {
     const catalog = this.getCatalog();
-    product.id = `wa_prod${Date.now()}`;
+    product.id = 'wa_prod' + Date.now();
     catalog.push(product);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG, JSON.stringify(catalog));
     return product;
@@ -368,7 +367,7 @@ class WhatsAppStorage {
 
   addLabel(label) {
     const labels = this.getLabels();
-    label.id = `lbl_${Date.now()}`;
+    label.id = 'lbl_' + Date.now();
     labels.push(label);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_LABELS, JSON.stringify(labels));
     return label;
@@ -381,7 +380,7 @@ class WhatsAppStorage {
 
   addBroadcast(broadcast) {
     const broadcasts = this.getBroadcasts();
-    broadcast.id = `wa_b${Date.now()}`;
+    broadcast.id = 'wa_b' + Date.now();
     broadcast.sentAt = new Date().toISOString();
     broadcast.status = 'sent';
     broadcasts.unshift(broadcast);
@@ -397,7 +396,7 @@ class WhatsAppStorage {
 
     const today = new Date().toDateString();
     const messagesToday = Object.values(messages).flat().filter(m => {
-      return new Date().toDateString() === today; // Simplified
+      return new Date().toDateString() === today;
     }).length;
 
     return {
@@ -435,155 +434,14 @@ class WhatsAppApp {
   }
 
   init() {
-    this.renderSidebar();
-    this.renderHeader();
     this.bindEvents();
     this.renderConversations();
-    this.renderStats();
 
     // Select first conversation by default
     const conversations = this.storage.getConversations();
     if (conversations.length > 0) {
       this.selectConversation(conversations[0].id);
     }
-  }
-
-  // ============================================
-  // Sidebar Rendering (WhatsApp-specific sidebar)
-  // ============================================
-  renderSidebar() {
-    const sidebar = document.querySelector('.dashboard-sidebar');
-    if (!sidebar) return;
-
-    const session = OP.auth.getSession();
-    const userName = session?.fullName || 'User';
-    const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    const integration = this.storage.getIntegration();
-
-    let currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
-
-    const navItems = [
-      { section: 'WhatsApp', items: [
-        { id: 'index', label: 'Dashboard', icon: 'ph-squares-four', href: 'index.html' },
-        { id: 'conversations', label: 'Conversations', icon: 'ph-chat-circle-text', href: 'conversations.html' },
-        { id: 'contacts', label: 'Contacts', icon: 'ph-users', href: '../crm/contacts.html' },
-        { id: 'broadcast', label: 'Broadcast Messages', icon: 'ph-broadcast', href: 'broadcast.html' },
-        { id: 'templates', label: 'Message Templates', icon: 'ph-file-text', href: 'templates.html' },
-        { id: 'quick-replies', label: 'Quick Replies', icon: 'ph-lightning', href: 'quick-replies.html' },
-        { id: 'catalog', label: 'Catalog', icon: 'ph-shopping-bag', href: 'catalog.html' },
-        { id: 'media-gallery', label: 'Media Gallery', icon: 'ph-images', href: 'media-gallery.html' },
-        { id: 'settings', label: 'WhatsApp Settings', icon: 'ph-gear', href: 'settings.html' },
-      ]},
-      { section: 'More', items: [
-        { id: 'support', label: 'Support', icon: 'ph-headset', href: '../support/index.html' },
-        { id: 'billing', label: 'Billing', icon: 'ph-credit-card', href: '../billing/index.html' },
-        { id: 'files', label: 'Files', icon: 'ph-folder', href: '../files/index.html' },
-        { id: 'search', label: 'Search', icon: 'ph-magnifying-glass', href: '../search/index.html' },
-        { id: 'notifications', label: 'Notifications', icon: 'ph-bell', href: '../notifications/notifications.html' },
-        { id: 'workflow', label: 'Workflow', icon: 'ph-git-merge', href: '../workflow/index.html' },
-      ]}
-    ];
-
-    let html = `
-      <div class="sidebar-header">
-        <a href="../index.html" class="logo">
-          <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
-          <div class="logo-text">
-            <span class="logo-brand">OnePlace</span>
-            <span class="logo-sub">Enterprise</span>
-          </div>
-        </a>
-      </div>
-
-      <div class="wa-account-header">
-        <div class="wa-account-icon">
-          <i class="ph ph-whatsapp-logo"></i>
-        </div>
-        <div class="wa-account-info">
-          <span class="wa-account-name">WhatsApp Account</span>
-          <span class="wa-account-detail">${integration.businessName || 'Acme Solutions'}</span>
-          <span class="wa-account-phone">${integration.phoneNumber || '+1 (555) 123-4567'}</span>
-          <span class="wa-account-status">
-            <span class="wa-status-dot"></span>
-            ${integration.connected ? 'Connected' : 'Disconnected'}
-          </span>
-        </div>
-        <button class="wa-view-integration" onclick="window.location.href='settings.html'">View Integration</button>
-      </div>
-
-      <nav class="wa-nav" aria-label="WhatsApp navigation">
-    `;
-
-    navItems.forEach(section => {
-      html += `<div class="sidebar-section">`;
-      html += `<div class="sidebar-section-title">${section.section}</div>`;
-      section.items.forEach(item => {
-        const isActive = currentPage === item.id;
-        const activeClass = isActive ? 'active' : '';
-        html += `
-          <a href="${item.href}" class="wa-nav-item ${activeClass}" data-page="${item.id}">
-            <i class="ph ${item.icon}"></i>
-            <span>${item.label}</span>
-          </a>
-        `;
-      });
-      html += `</div>`;
-    });
-
-    html += `
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="sidebar-user-avatar">${initials}</div>
-          <div class="sidebar-user-info">
-            <div class="sidebar-user-name">${userName}</div>
-            <div class="sidebar-user-role">Admin</div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    sidebar.innerHTML = html;
-  }
-
-  // ============================================
-  // Header Rendering
-  // ============================================
-  renderHeader() {
-    const header = document.querySelector('.dashboard-header');
-    if (!header) return;
-
-    const session = OP.auth.getSession();
-    const userName = session?.fullName || 'User';
-    const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    const unreadCount = this.storage.getConversations().reduce((sum, c) => sum + (c.unread || 0), 0);
-
-    header.innerHTML = `
-      <div class="header-left">
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-          <i class="ph ph-list"></i>
-        </button>
-        <div class="header-search">
-          <i class="ph ph-magnifying-glass"></i>
-          <input type="text" id="global-search" placeholder="Search conversations, contacts..." autocomplete="off">
-        </div>
-      </div>
-      <div class="header-right">
-        <button class="header-btn" id="create-btn" aria-label="Create new">
-          <i class="ph ph-plus"></i>
-        </button>
-        <button class="header-btn" id="notifications-btn" aria-label="Notifications">
-          <i class="ph ph-bell"></i>
-          ${unreadCount > 0 ? '<span class="notification-dot"></span>' : ''}
-        </button>
-        <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme">
-          <i class="ph ph-moon"></i>
-        </button>
-        <div class="header-avatar" id="user-menu-btn" title="${userName}">
-          ${initials}
-        </div>
-      </div>
-    `;
   }
 
   // ============================================
@@ -633,9 +491,11 @@ class WhatsAppApp {
     const themeBtn = document.getElementById('theme-toggle-header');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
-        OP.theme.toggle();
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        themeBtn.innerHTML = `<i class="ph ${isDark ? 'ph-sun' : 'ph-moon'}"></i>`;
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        themeBtn.innerHTML = '<i class="ph ' + (next === 'dark' ? 'ph-sun' : 'ph-moon') + '"></i>';
       });
     }
 
@@ -652,7 +512,9 @@ class WhatsAppApp {
     const notifBtn = document.getElementById('notifications-btn');
     if (notifBtn) {
       notifBtn.addEventListener('click', () => {
-        OP.toast.show('Notifications panel would open here', 'info');
+        if (typeof OP !== 'undefined' && OP.toast) {
+          OP.toast.show('Notifications panel would open here', 'info');
+        }
       });
     }
 
@@ -661,7 +523,9 @@ class WhatsAppApp {
     if (userBtn) {
       userBtn.addEventListener('click', () => {
         if (confirm('Sign out of OnePlace Enterprise?')) {
-          OP.auth.signOut();
+          if (typeof OP !== 'undefined' && OP.auth) {
+            OP.auth.signOut();
+          }
           window.location.href = '../auth/signin.html';
         }
       });
@@ -688,23 +552,6 @@ class WhatsAppApp {
       });
     });
 
-    // Filter buttons
-    document.querySelectorAll('.wa-filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const filter = e.currentTarget.dataset.filter;
-        this.currentFilter = this.currentFilter === filter ? '' : filter;
-        this.renderConversations();
-      });
-    });
-
-    // Sort button
-    const sortBtn = document.getElementById('sort-btn');
-    if (sortBtn) {
-      sortBtn.addEventListener('click', () => {
-        OP.toast.show('Sort options would appear here', 'info');
-      });
-    }
-
     // Close dropdowns on outside click
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#create-btn') && !e.target.closest('#create-menu')) {
@@ -712,58 +559,6 @@ class WhatsAppApp {
         if (menu) menu.classList.remove('active');
       }
     });
-  }
-
-  // ============================================
-  // Stats Rendering
-  // ============================================
-  renderStats() {
-    const stats = this.storage.getStats();
-    const statsRow = document.getElementById('wa-stats-row');
-    if (!statsRow) return;
-
-    statsRow.innerHTML = `
-      <div class="wa-stat-card">
-        <div class="wa-stat-card-icon wa-stat-green">
-          <i class="ph ph-chat-circle-text"></i>
-        </div>
-        <div class="wa-stat-card-content">
-          <span class="wa-stat-card-label">Active Conversations</span>
-          <span class="wa-stat-card-value">${stats.activeConversations}</span>
-        </div>
-        <a href="conversations.html" class="wa-stat-card-link">View all conversations →</a>
-      </div>
-      <div class="wa-stat-card">
-        <div class="wa-stat-card-icon wa-stat-red">
-          <i class="ph ph-bell"></i>
-        </div>
-        <div class="wa-stat-card-content">
-          <span class="wa-stat-card-label">Unread Messages</span>
-          <span class="wa-stat-card-value">${stats.unreadMessages}</span>
-        </div>
-        <a href="conversations.html" class="wa-stat-card-link">View unread →</a>
-      </div>
-      <div class="wa-stat-card">
-        <div class="wa-stat-card-icon wa-stat-purple">
-          <i class="ph ph-users"></i>
-        </div>
-        <div class="wa-stat-card-content">
-          <span class="wa-stat-card-label">New Contacts</span>
-          <span class="wa-stat-card-value">${stats.newContacts || 32}</span>
-        </div>
-        <a href="../crm/contacts.html" class="wa-stat-card-link">View contacts →</a>
-      </div>
-      <div class="wa-stat-card">
-        <div class="wa-stat-card-icon wa-stat-blue">
-          <i class="ph ph-chart-line-up"></i>
-        </div>
-        <div class="wa-stat-card-content">
-          <span class="wa-stat-card-label">Response Rate</span>
-          <span class="wa-stat-card-value">${stats.responseRate}%</span>
-        </div>
-        <a href="../reports/index.html" class="wa-stat-card-link">View analytics →</a>
-      </div>
-    `;
   }
 
   // ============================================
@@ -804,8 +599,8 @@ class WhatsAppApp {
             </div>
             <div class="wa-conv-preview">${conv.lastMessage || 'No messages yet'}</div>
             <div class="wa-conv-meta">
-              ${conv.tag ? `<span class="wa-conv-tag ${conv.tag}">${conv.tag.replace('-', ' ')}</span>` : ''}
-              ${conv.unread > 0 ? `<span class="wa-conv-unread">${conv.unread}</span>` : ''}
+              ${conv.tag ? '<span class="wa-conv-tag ' + conv.tag + '">' + conv.tag.replace('-', ' ') + '</span>' : ''}
+              ${conv.unread > 0 ? '<span class="wa-conv-unread">' + conv.unread + '</span>' : ''}
             </div>
           </div>
         </div>
@@ -858,7 +653,7 @@ class WhatsAppApp {
         <div class="wa-chat-header-name">${contact.name || 'Unknown'}</div>
         <div class="wa-chat-header-status">${contact.phone || ''}</div>
       </div>
-      <span class="wa-chat-header-tag customer">Customer</span>
+      <span class="wa-chat-header-tag">Customer</span>
       <div class="wa-chat-header-actions">
         <button class="wa-chat-header-btn" title="Star conversation"><i class="ph ph-star"></i></button>
         <button class="wa-chat-header-btn" title="More options"><i class="ph ph-dots-three-vertical"></i></button>
@@ -898,7 +693,7 @@ class WhatsAppApp {
             <div class="wa-message-text">${this.escapeHtml(msg.text).replace(/\n/g, '<br>')}</div>
             <div class="wa-message-meta">
               <span class="wa-message-time">${msg.time}</span>
-              ${msg.type === 'sent' ? `<span class="wa-message-status ${msg.status}">${statusIcon}</span>` : ''}
+              ${msg.type === 'sent' ? '<span class="wa-message-status ' + msg.status + '">' + statusIcon + '</span>' : ''}
             </div>
           </div>
         </div>
@@ -910,7 +705,7 @@ class WhatsAppApp {
   }
 
   // ============================================
-  // Contact Panel Rendering
+  // Contact Panel Rendering (matches photo exactly)
   // ============================================
   renderContactPanel(conversationId) {
     const panel = document.getElementById('contact-panel');
@@ -922,6 +717,10 @@ class WhatsAppApp {
     const contact = conv.contact || {};
     const labels = this.storage.getLabels();
     const contactLabels = contact.tags || [];
+
+    // Get current time for display
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
 
     panel.innerHTML = `
       <div class="wa-contact-section">
@@ -939,7 +738,7 @@ class WhatsAppApp {
           </div>
           <div class="wa-contact-time">
             <i class="ph ph-clock"></i>
-            <span>Local time: ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</span>
+            <span>Local time: ${timeString}</span>
           </div>
           <a href="../crm/contacts.html?id=${contact.id}" class="wa-view-profile-link">View Full Profile →</a>
         </div>
@@ -973,7 +772,7 @@ class WhatsAppApp {
         <div class="wa-labels-list">
           ${contactLabels.map(tag => {
             const label = labels.find(l => l.id === tag) || { name: tag, color: '#E8F5EE', textColor: '#128C7E' };
-            return `<span class="wa-label" style="background: ${label.color}; color: ${label.textColor}">${label.name}</span>`;
+            return '<span class="wa-label" style="background: ' + label.color + '; color: ' + label.textColor + '">' + label.name + '</span>';
           }).join('')}
           <button class="wa-add-label-btn"><i class="ph ph-plus"></i> Add Label</button>
         </div>
@@ -1059,12 +858,6 @@ class WhatsAppApp {
 
       this.renderChatMessages(this.currentConversation);
       this.renderConversations();
-
-      // Play notification sound if enabled
-      const settings = this.storage.getSettings();
-      if (settings.soundEnabled) {
-        // Could play sound here
-      }
     }, 2000);
   }
 
@@ -1080,9 +873,9 @@ class WhatsAppApp {
     const days = Math.floor(diff / 86400000);
 
     if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 60) return minutes + 'm ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days < 7) return days + 'd ago';
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
@@ -1095,11 +888,14 @@ class WhatsAppApp {
 
 // Initialize
 window.WhatsAppApp = WhatsAppApp;
+window.WhatsAppStorage = WhatsAppStorage;
 
 // Auto-initialize if on a WhatsApp page
 document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('.whatsapp-layout')) {
-    if (!OP.nav.requireAuth()) return;
+    if (typeof OP !== 'undefined' && OP.nav && OP.nav.requireAuth) {
+      if (!OP.nav.requireAuth()) return;
+    }
     window.waApp = new WhatsAppApp();
   }
 });
