@@ -983,3 +983,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!window.OP) window.OP = {};
   window.OP.notifications = nm;
 });
+
+// Standalone theme toggle fallback (if app.js is not loaded)
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggle = document.getElementById('themeToggleSidebar');
+  if (themeToggle && (!window.OP || !window.OP.theme)) {
+    themeToggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      const span = themeToggle.querySelector('span');
+      const icon = themeToggle.querySelector('i');
+      if (span) span.textContent = next === 'light' ? 'Light Mode' : 'Dark Mode';
+      if (icon) icon.className = next === 'light' ? 'ph ph-moon' : 'ph ph-sun';
+    });
+  }
+});

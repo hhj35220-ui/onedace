@@ -7,8 +7,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <style>
+    /* Base reset — from missing styles.css */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 1rem; line-height: 1.5; color: #334155;
+      background: #f8fafc; min-height: 100dvh; width: 100%; overflow-x: hidden;
+    }
+    a { color: #4f46e5; text-decoration: none; }
+    img { max-width: 100%; height: auto; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input { font-family: inherit; font-size: inherit; }
+  </style>
   <link rel="stylesheet" href="../css/notifications.css">
 <base target="_blank">
 </head>
@@ -318,26 +331,20 @@
             <div class="overview-chart-container">
               <div class="donut-chart" id="overviewChart">
                 <svg viewBox="0 0 120 120" class="donut-svg">
-                  <!-- Background circle -->
-                  <circle cx="60" cy="60" r="45" fill="none" stroke="var(--gray-100)" stroke-width="12"/>
-                  <!-- Unread segment -->
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#e2e8f0" stroke-width="12"/>
                   <circle cx="60" cy="60" r="45" fill="none" stroke="#6366f1" stroke-width="12"
                     stroke-dasharray="28.27 254.47" stroke-dashoffset="0"
                     stroke-linecap="round" transform="rotate(-90 60 60)"/>
-                  <!-- Mentions segment -->
                   <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="12"
                     stroke-dasharray="21.2 261.54" stroke-dashoffset="-28.27"
                     stroke-linecap="round" transform="rotate(-90 60 60)"/>
-                  <!-- Assignments segment -->
                   <circle cx="60" cy="60" r="45" fill="none" stroke="#f59e0b" stroke-width="12"
                     stroke-dasharray="35.34 247.4" stroke-dashoffset="-49.47"
                     stroke-linecap="round" transform="rotate(-90 60 60)"/>
-                  <!-- System segment -->
                   <circle cx="60" cy="60" r="45" fill="none" stroke="#ef4444" stroke-width="12"
                     stroke-dasharray="66.03 216.71" stroke-dashoffset="-84.81"
                     stroke-linecap="round" transform="rotate(-90 60 60)"/>
-                  <!-- Others segment -->
-                  <circle cx="60" cy="60" r="45" fill="none" stroke="#e5e7eb" stroke-width="12"
+                  <circle cx="60" cy="60" r="45" fill="none" stroke="#e2e8f0" stroke-width="12"
                     stroke-dasharray="150.8 131.94" stroke-dashoffset="-150.84"
                     stroke-linecap="round" transform="rotate(-90 60 60)"/>
                 </svg>
@@ -368,7 +375,7 @@
                   <span class="legend-count">28 (21.9%)</span>
                 </div>
                 <div class="legend-item">
-                  <span class="legend-dot" style="background: #e5e7eb;"></span>
+                  <span class="legend-dot" style="background: #e2e8f0;"></span>
                   <span class="legend-label">Others</span>
                   <span class="legend-count">65 (50.8%)</span>
                 </div>
