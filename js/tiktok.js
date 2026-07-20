@@ -1219,12 +1219,27 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (error) {
     console.error('TikTok initialization failed', error);
     if (container) {
+      // Show a more helpful fallback that includes the error message and stack.
+      const safeMessage = (error && error.message) ? String(error.message) : 'Unknown error';
+      const safeStack = (error && error.stack) ? String(error.stack) : '';
       container.innerHTML = `
         <div style="padding:24px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,0.06);">
-          <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#0f172a;">TikTok Overview</h1>
-          <p style="margin:0;font-size:14px;color:#64748b;">The TikTok workspace loaded with a fallback view. Refresh to retry the full experience.</p>
+          <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#0f172a;">TikTok Overview (Fallback)</h1>
+          <p style="margin:0 0 12px;font-size:14px;color:#64748b;">The TikTok workspace failed to initialize. See error details below.</p>
+          <div style="background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;max-height:240px;overflow:auto;font-family:monospace;font-size:12px;color:#0f172a;white-space:pre-wrap;">${escapeHtml(safeMessage + '\n\n' + safeStack)}</div>
+          <p style="margin:12px 0 0;font-size:12px;color:#64748b;">Open the browser console (F12) and network tab to inspect missing files or JS errors.</p>
         </div>
       `;
     }
   }
 });
+
+// Utility: escape HTML for safe insertion into fallback area
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
