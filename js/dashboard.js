@@ -122,6 +122,15 @@ class DashboardApp {
       { id: 'linkedin', label: 'LinkedIn' }
     ];
 
+    const platformRoutes = {
+      gmail: '../gmail/index.html',
+      whatsapp: '../whatsapp/index.html',
+      instagram: '../instagram/index.html',
+      tiktok: '../tiktok/index.html',
+      x: '../x/index.html',
+      linkedin: '../linkedin/index.html'
+    };
+
     const nestedPages = [
       { href: '../dashboard/analytics-dashboard.html', label: 'Analytics', page: 'analytics-dashboard', icon: 'ph ph-chart-bar' },
       { href: '../dashboard/executive-dashboard.html', label: 'Executive', page: 'executive-dashboard', icon: 'ph ph-chart-line-up' },
@@ -191,8 +200,9 @@ class DashboardApp {
     platforms.forEach(p => {
       const unread = stats[p.id]?.unread || 0;
       const isPlatformActive = currentPage === 'unified-inbox' && selectedPlatform === p.id;
+      const route = platformRoutes[p.id] || '../inbox/unified-inbox.html?platform=' + p.id;
       html += `
-        <a href="../inbox/unified-inbox.html?platform=${p.id}" class="sidebar-item sidebar-platform ${isPlatformActive ? 'active' : ''}" data-page="${p.id}">
+        <a href="${route}" class="sidebar-item sidebar-platform ${isPlatformActive ? 'active' : ''}" data-page="${p.id}">
           <span class="sidebar-brand-icon">${opBrandIcon(p.id, 'tile', 20)}</span>
           <span>${p.label}</span>
           <span class="sidebar-badge">${unread}</span>
