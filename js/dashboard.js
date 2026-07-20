@@ -122,6 +122,42 @@ class DashboardApp {
       { id: 'linkedin', label: 'LinkedIn' }
     ];
 
+    const nestedPages = [
+      { href: '../dashboard/analytics-dashboard.html', label: 'Analytics', page: 'analytics-dashboard', icon: 'ph ph-chart-bar' },
+      { href: '../dashboard/executive-dashboard.html', label: 'Executive', page: 'executive-dashboard', icon: 'ph ph-chart-line-up' },
+      { href: '../dashboard/activity-feed.html', label: 'Activity Feed', page: 'activity-feed', icon: 'ph ph-chat-circle-text' },
+      { href: '../dashboard/quick-actions.html', label: 'Quick Actions', page: 'quick-actions', icon: 'ph ph-squares-four' },
+      { href: '../dashboard/team-dashboard.html', label: 'Team Dashboard', page: 'team-dashboard', icon: 'ph ph-users' },
+      { href: '../crm/contacts.html', label: 'Contacts', page: 'contacts', icon: 'ph ph-users' },
+      { href: '../crm/companies.html', label: 'Companies', page: 'companies', icon: 'ph ph-buildings' },
+      { href: '../crm/deals.html', label: 'Deals', page: 'deals', icon: 'ph ph-handshake' },
+      { href: '../crm/leads.html', label: 'Leads', page: 'leads', icon: 'ph ph-target' },
+      { href: '../crm/opportunities.html', label: 'Opportunities', page: 'opportunities', icon: 'ph ph-trend-up' },
+      { href: '../crm/pipelines.html', label: 'Pipelines', page: 'pipelines', icon: 'ph ph-funnel' },
+      { href: '../support/tickets.html', label: 'Tickets', page: 'tickets', icon: 'ph ph-headset' },
+      { href: '../support/knowledge-base.html', label: 'Knowledge Base', page: 'knowledge-base', icon: 'ph ph-book-open' },
+      { href: '../billing/invoices.html', label: 'Invoices', page: 'invoices', icon: 'ph ph-file-text' },
+      { href: '../billing/subscription.html', label: 'Subscription', page: 'subscription', icon: 'ph ph-credit-card' },
+      { href: '../billing/payment-methods.html', label: 'Payment Methods', page: 'payment-methods', icon: 'ph ph-credit-card' },
+      { href: '../billing/usage.html', label: 'Usage', page: 'usage', icon: 'ph ph-chart-pie' },
+      { href: '../help/documentation.html', label: 'Docs', page: 'documentation', icon: 'ph ph-book' },
+      { href: '../help/faq.html', label: 'FAQ', page: 'faq', icon: 'ph ph-question' },
+      { href: '../help/tutorials.html', label: 'Tutorials', page: 'tutorials', icon: 'ph ph-video' },
+      { href: '../help/release-notes.html', label: 'Release Notes', page: 'release-notes', icon: 'ph ph-note' },
+      { href: '../settings/profile.html', label: 'Profile', page: 'profile', icon: 'ph ph-user' },
+      { href: '../settings/security.html', label: 'Security', page: 'security', icon: 'ph ph-shield' },
+      { href: '../settings/notifications.html', label: 'Notifications', page: 'notifications-settings', icon: 'ph ph-bell' },
+      { href: '../settings/integrations-settings.html', label: 'Integrations', page: 'integrations-settings', icon: 'ph ph-plugs-connected' },
+      { href: '../files/index.html', label: 'Files', page: 'files', icon: 'ph ph-folder' },
+      { href: '../search/index.html', label: 'Search', page: 'search', icon: 'ph ph-magnifying-glass' },
+      { href: '../team/index.html', label: 'Team', page: 'team', icon: 'ph ph-users-three' },
+      { href: '../calendar/index.html', label: 'Calendar', page: 'calendar', icon: 'ph ph-calendar-blank' },
+      { href: '../tasks/index.html', label: 'Tasks', page: 'tasks', icon: 'ph ph-check-square' },
+      { href: '../workflow/index.html', label: 'Workflow', page: 'workflow', icon: 'ph ph-flow-arrow' },
+      { href: '../reports/index.html', label: 'Reports', page: 'reports', icon: 'ph ph-chart-bar' },
+      { href: '../ai/index.html', label: 'AI Assistant', page: 'ai-assistant', icon: 'ph ph-sparkle' }
+    ];
+
     let html = `
       <div class="sidebar-header">
         <a href="../index.html" class="logo">
@@ -265,6 +301,15 @@ class DashboardApp {
             <i class="ph ph-question"></i>
             <span>Help</span>
           </a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">All Pages</div>
+          ${nestedPages.map(page => `
+            <a href="${page.href}" class="sidebar-item ${currentPage === page.page ? 'active' : ''}" data-page="${page.page}">
+              <i class="${page.icon}"></i>
+              <span>${page.label}</span>
+            </a>
+          `).join('')}
         </div>
       </nav>
       <div class="sidebar-footer">
