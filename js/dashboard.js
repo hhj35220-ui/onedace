@@ -185,6 +185,53 @@ class DashboardApp {
           </a>
         </div>
         <div class="sidebar-section">
+          <div class="sidebar-section-title">Workspace</div>
+          <a href="../dashboard/analytics-dashboard.html" class="sidebar-item ${currentPage === 'analytics-dashboard' ? 'active' : ''}" data-page="analytics-dashboard">
+            <i class="ph ph-chart-bar"></i>
+            <span>Analytics</span>
+          </a>
+          <a href="../dashboard/executive-dashboard.html" class="sidebar-item ${currentPage === 'executive-dashboard' ? 'active' : ''}" data-page="executive-dashboard">
+            <i class="ph ph-chart-bar"></i>
+            <span>Executive</span>
+          </a>
+          <a href="../dashboard/activity-feed.html" class="sidebar-item ${currentPage === 'activity-feed' ? 'active' : ''}" data-page="activity-feed">
+            <i class="ph ph-chat-circle-text"></i>
+            <span>Activity Feed</span>
+          </a>
+          <a href="../dashboard/quick-actions.html" class="sidebar-item ${currentPage === 'quick-actions' ? 'active' : ''}" data-page="quick-actions">
+            <i class="ph ph-squares-four"></i>
+            <span>Quick Actions</span>
+          </a>
+          <a href="../dashboard/team-dashboard.html" class="sidebar-item ${currentPage === 'team-dashboard' ? 'active' : ''}" data-page="team-dashboard">
+            <i class="ph ph-users"></i>
+            <span>Team Dashboard</span>
+          </a>
+          <a href="../crm/contacts.html" class="sidebar-item ${currentPage === 'contacts' ? 'active' : ''}" data-page="contacts">
+            <i class="ph ph-users"></i>
+            <span>Contacts</span>
+          </a>
+          <a href="../crm/companies.html" class="sidebar-item ${currentPage === 'companies' ? 'active' : ''}" data-page="companies">
+            <i class="ph ph-buildings"></i>
+            <span>Companies</span>
+          </a>
+          <a href="../crm/deals.html" class="sidebar-item ${currentPage === 'deals' ? 'active' : ''}" data-page="deals">
+            <i class="ph ph-handshake"></i>
+            <span>Deals</span>
+          </a>
+          <a href="../support/tickets.html" class="sidebar-item ${currentPage === 'tickets' ? 'active' : ''}" data-page="tickets">
+            <i class="ph ph-headset"></i>
+            <span>Tickets</span>
+          </a>
+          <a href="../support/knowledge-base.html" class="sidebar-item ${currentPage === 'knowledge-base' ? 'active' : ''}" data-page="knowledge-base">
+            <i class="ph ph-book-open"></i>
+            <span>Knowledge Base</span>
+          </a>
+          <a href="../billing/invoices.html" class="sidebar-item ${currentPage === 'invoices' ? 'active' : ''}" data-page="invoices">
+            <i class="ph ph-file-text"></i>
+            <span>Invoices</span>
+          </a>
+        </div>
+        <div class="sidebar-section">
           <div class="sidebar-section-title">More</div>
           <a href="../support/index.html" class="sidebar-item" data-page="support">
             <i class="ph ph-headset"></i>
