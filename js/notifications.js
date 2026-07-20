@@ -216,28 +216,57 @@ class NotificationsModule {
   }
 
   init() {
-    this.loadData();
-    this.bindEvents();
-    this.renderAll();
-    this.updateStats();
+    try {
+      this.loadData();
+      this.bindEvents();
+      this.renderAll();
+      this.updateStats();
+    } catch (err) {
+      console.error('Failed to initialize notifications module:', err);
+      // Fallback: render with sample data
+      this.notifications = [...SAMPLE_NOTIFICATIONS];
+      this.activity = [...SAMPLE_ACTIVITY];
+      this.settings = { emailNotifications: true, browserNotifications: true, soundAlerts: true };
+      this.renderAll();
+      this.updateStats();
+    }
   }
 
   // ============================================
   // Data Management
   // ============================================
   loadData() {
-    const savedNotifications = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATIONS);
-    this.notifications = savedNotifications ? JSON.parse(savedNotifications) : [...SAMPLE_NOTIFICATIONS];
+    try {
+      const savedNotifications = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATIONS);
+      this.notifications = savedNotifications ? JSON.parse(savedNotifications) : [...SAMPLE_NOTIFICATIONS];
+    } catch (e) {
+      console.warn('Failed to load notifications from localStorage, using defaults.', e);
+      this.notifications = [...SAMPLE_NOTIFICATIONS];
+    }
 
-    const savedActivity = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATION_HISTORY);
-    this.activity = savedActivity ? JSON.parse(savedActivity) : [...SAMPLE_ACTIVITY];
+    try {
+      const savedActivity = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATION_HISTORY);
+      this.activity = savedActivity ? JSON.parse(savedActivity) : [...SAMPLE_ACTIVITY];
+    } catch (e) {
+      console.warn('Failed to load activity from localStorage, using defaults.', e);
+      this.activity = [...SAMPLE_ACTIVITY];
+    }
 
-    const savedSettings = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATION_SETTINGS);
-    this.settings = savedSettings ? JSON.parse(savedSettings) : {
-      emailNotifications: true,
-      browserNotifications: true,
-      soundAlerts: true
-    };
+    try {
+      const savedSettings = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATION_SETTINGS);
+      this.settings = savedSettings ? JSON.parse(savedSettings) : {
+        emailNotifications: true,
+        browserNotifications: true,
+        soundAlerts: true
+      };
+    } catch (e) {
+      console.warn('Failed to load settings from localStorage, using defaults.', e);
+      this.settings = {
+        emailNotifications: true,
+        browserNotifications: true,
+        soundAlerts: true
+      };
+    }
 
     this.saveData();
   }
@@ -498,10 +527,14 @@ class NotificationsModule {
   // Rendering
   // ============================================
   renderAll() {
-    this.renderNotificationList();
-    this.renderActivityTimeline();
-    this.updateStats();
-    this.updateBadges();
+    try {
+      this.renderNotificationList();
+      this.renderActivityTimeline();
+      this.updateStats();
+      this.updateBadges();
+    } catch (err) {
+      console.error('Error in renderAll:', err);
+    }
   }
 
   getFilteredNotifications() {
@@ -529,7 +562,12 @@ class NotificationsModule {
 
   renderNotificationList() {
     const list = document.getElementById('notificationList');
-    if (!list) return;
+    if (!list) {
+      console.warn('Notification list container not found');
+      return;
+    }
+
+    try {
 
     let filtered = this.getFilteredNotifications();
 
@@ -596,6 +634,16 @@ class NotificationsModule {
         this.confirmDeleteSingle(id);
       });
     });
+    } catch (err) {
+      console.error('Error rendering notification list:', err);
+      list.innerHTML = `
+        <div class="empty-state">
+          <i class="ph ph-warning-circle"></i>
+          <h3>Error loading notifications</h3>
+          <p>Please refresh the page to try again</p>
+        </div>
+      `;
+    }
   }
 
   renderNotificationItem(notif) {
@@ -839,6 +887,13 @@ class NotificationsModule {
     const headerDot = document.getElementById('headerNotificationDot');
     if (headerDot) {
       headerDot.style.display = unread > 0 ? 'block' : 'none';
+    }
+
+    // Sidebar badge
+    const sidebarBadge = document.getElementById('sidebarNotifBadge');
+    if (sidebarBadge) {
+      sidebarBadge.textContent = unread.toString();
+      sidebarBadge.style.display = unread > 0 ? 'inline-block' : 'none';
     }
   }
 
