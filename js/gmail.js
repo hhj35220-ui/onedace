@@ -1,6 +1,7 @@
 /**
  * OnePlace Enterprise v3.0 — Gmail Module
  * Vanilla JavaScript (ES6+)
+ * EXACT MATCH to Reference Design
  */
 
 class GmailApp {
@@ -27,29 +28,41 @@ class GmailApp {
   }
 
   // ============================================
-  // Sidebar Rendering
+  // Sidebar Rendering — LIGHT THEME (matches reference)
   // ============================================
   renderSidebar() {
     const sidebar = document.querySelector('.gmail-sidebar');
     if (!sidebar) return;
 
     const session = OP.auth.getSession();
-    const userName = session?.fullName || 'User';
+    const userName = session?.fullName || 'Alex Morgan';
     const userRole = 'Admin';
     const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
     const unreadCount = this.storage.getUnreadCount();
 
     const navItems = [
+      { section: '', items: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'ph-house', href: '../dashboard/main-dashboard.html' },
+        { id: 'inbox', label: 'Unified Inbox', icon: 'ph-envelope', href: '../inbox/unified-inbox.html', badge: 12 },
+      ]},
       { section: 'Gmail', items: [
         { id: 'index', label: 'Gmail Overview', icon: 'ph-chart-line-up', href: 'index.html' },
         { id: 'conversations', label: 'Gmail Conversations', icon: 'ph-chat-circle-text', href: 'conversations.html', badge: unreadCount },
         { id: 'compose', label: 'Compose Email', icon: 'ph-pencil-simple', href: 'compose.html' },
         { id: 'templates', label: 'Email Templates', icon: 'ph-files', href: 'templates.html' },
-      ]},
-      { section: 'Configuration', items: [
         { id: 'integration', label: 'Gmail Integration', icon: 'ph-plugs-connected', href: 'integration.html' },
         { id: 'settings', label: 'Gmail Settings', icon: 'ph-gear', href: 'settings.html' },
+      ]},
+      { section: '', items: [
+        { id: 'crm', label: 'CRM', icon: 'ph-users', href: '../crm/index.html' },
+        { id: 'ai', label: 'AI', icon: 'ph-sparkle', href: '../ai/index.html' },
+        { id: 'reports', label: 'Reports', icon: 'ph-chart-bar', href: '../reports/index.html' },
+        { id: 'calendar', label: 'Calendar', icon: 'ph-calendar', href: '../calendar/index.html' },
+        { id: 'tasks', label: 'Tasks', icon: 'ph-check-square', href: '../tasks/index.html' },
+        { id: 'team', label: 'Team', icon: 'ph-users-three', href: '../team/index.html' },
+        { id: 'settings_main', label: 'Settings', icon: 'ph-gear', href: '../settings/index.html' },
+        { id: 'help', label: 'Help & Support', icon: 'ph-question', href: '../help/index.html' },
       ]}
     ];
 
@@ -59,20 +72,20 @@ class GmailApp {
           <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
           <div class="logo-text">
             <span class="logo-brand">OnePlace</span>
-            <span class="logo-sub">Enterprise</span>
+            <span class="logo-sub">Enterprise v3.0</span>
           </div>
         </a>
       </div>
-      <a href="../dashboard/main-dashboard.html" class="gmail-back-link">
-        <i class="ph ph-arrow-left"></i>
-        <span>Back to Dashboard</span>
-      </a>
       <nav class="gmail-sidebar-nav" aria-label="Gmail navigation">
     `;
 
     navItems.forEach(section => {
-      html += `<div class="gmail-sidebar-section">`;
-      html += `<div class="gmail-sidebar-section-title">${section.section}</div>`;
+      if (section.section) {
+        html += `<div class="gmail-sidebar-section">`;
+        html += `<div class="gmail-sidebar-section-title">${section.section}</div>`;
+      } else {
+        html += `<div class="gmail-sidebar-section">`;
+      }
       section.items.forEach(item => {
         const isActive = this.currentPage === item.id;
         const activeClass = isActive ? 'active' : '';
@@ -98,6 +111,8 @@ class GmailApp {
             <div class="gmail-sidebar-user-name">${userName}</div>
             <div class="gmail-sidebar-user-role">${userRole}</div>
           </div>
+          <i class="ph ph-moon" style="color: #9CA3AF; cursor: pointer; font-size: 16px;" id="sidebar-theme-toggle"></i>
+          <i class="ph ph-caret-right" style="color: #9CA3AF; cursor: pointer; font-size: 14px;"></i>
         </div>
       </div>
     `;
@@ -106,14 +121,14 @@ class GmailApp {
   }
 
   // ============================================
-  // Header Rendering
+  // Header Rendering — matches reference exactly
   // ============================================
   renderHeader() {
     const header = document.querySelector('.gmail-header');
     if (!header) return;
 
     const session = OP.auth.getSession();
-    const userName = session?.fullName || 'User';
+    const userName = session?.fullName || 'Alex Morgan';
     const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     const unreadCount = this.storage.getUnreadCount();
 
@@ -141,9 +156,13 @@ class GmailApp {
       </div>
       <div class="gmail-header-search">
         <i class="ph ph-magnifying-glass"></i>
-        <input type="text" id="gmail-search" placeholder="Search emails..." autocomplete="off">
+        <input type="text" id="gmail-search" placeholder="Search anything..." autocomplete="off">
+        <span class="search-shortcut">⌘K</span>
       </div>
       <div class="gmail-header-right">
+        <button class="gmail-header-action-btn" id="gmail-new-btn" title="New" aria-label="New">
+          <i class="ph ph-plus"></i>
+        </button>
         <button class="gmail-header-btn" id="gmail-notifications-btn" aria-label="Notifications">
           <i class="ph ph-bell"></i>
           ${unreadCount > 0 ? '<span class="notification-dot"></span>' : ''}
@@ -202,11 +221,27 @@ class GmailApp {
       });
     }
 
+    // Sidebar theme toggle
+    const sidebarThemeBtn = document.getElementById('sidebar-theme-toggle');
+    if (sidebarThemeBtn) {
+      sidebarThemeBtn.addEventListener('click', () => {
+        OP.theme.toggle();
+      });
+    }
+
     // Notifications
     const notifBtn = document.getElementById('gmail-notifications-btn');
     if (notifBtn) {
       notifBtn.addEventListener('click', () => {
         OP.toast.show('Notifications panel', 'info');
+      });
+    }
+
+    // New button
+    const newBtn = document.getElementById('gmail-new-btn');
+    if (newBtn) {
+      newBtn.addEventListener('click', () => {
+        window.location.href = 'compose.html';
       });
     }
 
@@ -254,7 +289,7 @@ class GmailApp {
   }
 
   // ============================================
-  // Overview Page
+  // Overview Page — EXACT MATCH to reference
   // ============================================
   initOverviewPage() {
     this.renderStatsCards();
@@ -277,7 +312,7 @@ class GmailApp {
         iconClass: 'gmail', 
         value: 'alex.morgan@oneplace.com', 
         label: 'Connected Account',
-        sublabel: 'View Integration',
+        sublabel: 'Connected',
         isAccount: true
       },
       { 
@@ -324,15 +359,15 @@ class GmailApp {
         html += `
           <div class="gmail-stat-card">
             <div class="gmail-stat-header">
-              <div class="gmail-account-card" style="padding: 0; margin: 0; background: transparent;">
+              <div class="gmail-account-card">
                 <div class="gmail-account-avatar"><i class="ph ph-envelope-simple"></i></div>
                 <div class="gmail-account-info">
                   <div class="gmail-account-name">${card.value}</div>
-                  <div class="gmail-account-email">Connected</div>
+                  <div class="gmail-account-email">${card.sublabel}</div>
                 </div>
               </div>
             </div>
-            <div class="gmail-stat-sublabel" style="color: var(--primary-600); cursor: pointer;" onclick="window.location.href='integration.html'">${card.sublabel} <i class="ph ph-arrow-right" style="font-size: 10px;"></i></div>
+            <div class="gmail-account-link" onclick="window.location.href='integration.html'">View Integration <i class="ph ph-arrow-right" style="font-size: 10px;"></i></div>
           </div>
         `;
       } else {
@@ -374,15 +409,15 @@ class GmailApp {
     for (let i = 0; i <= 4; i++) {
       const y = padding.top + (chartHeight / 4) * i;
       const val = Math.round(maxValue * (1 - i / 4));
-      svgHtml += `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="var(--gray-200)" stroke-dasharray="4" stroke-width="1"/>`;
-      svgHtml += `<text x="${padding.left - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--gray-400)">${val}</text>`;
+      svgHtml += `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#E5E7EB" stroke-dasharray="4" stroke-width="1"/>`;
+      svgHtml += `<text x="${padding.left - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="#9CA3AF">${val}</text>`;
     }
 
     // X axis labels
     const stepX = chartWidth / (data.length - 1);
     data.forEach((d, i) => {
       const x = padding.left + i * stepX;
-      svgHtml += `<text x="${x}" y="${height - 8}" text-anchor="middle" font-size="10" fill="var(--gray-400)">${d.day}</text>`;
+      svgHtml += `<text x="${x}" y="${height - 8}" text-anchor="middle" font-size="10" fill="#9CA3AF">${d.day}</text>`;
     });
 
     // Received line (blue)
@@ -435,7 +470,6 @@ class GmailApp {
 
     const total = data.reduce((sum, d) => sum + d.value, 0);
     let cumulativePercent = 0;
-    const segments = [];
 
     // Create SVG donut
     let svgHtml = `<svg width="160" height="160" viewBox="0 0 160 160" style="transform: rotate(-90deg);">`;
@@ -463,9 +497,9 @@ class GmailApp {
     });
 
     // Inner circle
-    svgHtml += `<circle cx="80" cy="80" r="50" fill="var(--gray-0)"/>`;
-    svgHtml += `<text x="80" y="75" text-anchor="middle" font-size="20" font-weight="bold" fill="var(--gray-900)" transform="rotate(90 80 80)">${total}</text>`;
-    svgHtml += `<text x="80" y="90" text-anchor="middle" font-size="10" fill="var(--gray-500)" transform="rotate(90 80 80)">Total</text>`;
+    svgHtml += `<circle cx="80" cy="80" r="50" fill="white"/>`;
+    svgHtml += `<text x="80" y="75" text-anchor="middle" font-size="20" font-weight="bold" fill="#111827" transform="rotate(90 80 80)">${total}</text>`;
+    svgHtml += `<text x="80" y="90" text-anchor="middle" font-size="10" fill="#9CA3AF" transform="rotate(90 80 80)">Total</text>`;
     svgHtml += '</svg>';
 
     let legendHtml = '<div class="gmail-donut-legend">';
@@ -537,6 +571,7 @@ class GmailApp {
           <div class="gmail-conversation-content">
             <div class="gmail-conversation-name ${nameClass}">${conv.customer.name}</div>
             <div class="gmail-conversation-preview">${conv.message}</div>
+            <div class="gmail-conversation-subject">${conv.subject || 'Partnership Discussion'}</div>
           </div>
           <div class="gmail-conversation-meta">
             <span class="gmail-conversation-time">${timeAgo}</span>
@@ -584,15 +619,18 @@ class GmailApp {
     const container = document.getElementById('gmail-account-panel');
     if (!container) return;
 
-    const stats = this.storage.getGmailStats();
-
     container.innerHTML = `
       <div class="gmail-account-panel">
+        <div class="gmail-right-sidebar-header">
+          <span class="gmail-right-sidebar-title">Gmail Account</span>
+          <button class="gmail-account-panel-close"><i class="ph ph-x"></i></button>
+        </div>
+
         <div class="gmail-account-panel-header">
           <div class="gmail-account-panel-avatar"><i class="ph ph-envelope-simple"></i></div>
           <div class="gmail-account-panel-info">
-            <div class="gmail-account-panel-name">Gmail Account</div>
-            <div class="gmail-account-panel-email">alex.morgan@oneplace.com</div>
+            <div class="gmail-account-panel-name">alex.morgan@oneplace.com</div>
+            <div class="gmail-account-panel-email">Connected on Nov 12, 2024</div>
           </div>
           <span class="gmail-account-panel-status">Connected</span>
         </div>
@@ -606,62 +644,64 @@ class GmailApp {
             <span>Last synced: 2 min ago</span>
             <span>100%</span>
           </div>
-          <button class="btn btn-primary btn-sm" style="margin-top: var(--space-2);">Sync Now</button>
+          <button class="gmail-sync-now-btn">Sync Now</button>
         </div>
 
-        <div class="gmail-widget" style="margin-top: var(--space-4);">
-          <div class="gmail-widget-header">
+        <div class="gmail-widget" style="border: none; box-shadow: none;">
+          <div class="gmail-widget-header" style="padding: 0 0 12px; border-bottom: 1px solid #F3F4F6;">
             <span class="gmail-widget-title">Account Health</span>
           </div>
-          <div class="gmail-widget-body">
+          <div class="gmail-widget-body" style="padding: 0;">
             <div class="gmail-health-item">
-              <div class="gmail-health-icon excellent"><i class="ph ph-check-circle"></i></div>
+              <div class="gmail-health-icon excellent"><i class="ph ph-shield-check"></i></div>
               <div class="gmail-health-info">
                 <div class="gmail-health-label">Status</div>
                 <div class="gmail-health-value excellent">Excellent</div>
               </div>
-            </div>
-            <div class="gmail-health-item">
-              <div class="gmail-health-icon good"><i class="ph ph-shield-check"></i></div>
-              <div class="gmail-health-info">
-                <div class="gmail-health-label">Security</div>
-                <div class="gmail-health-value good">No issues detected</div>
-              </div>
+              <div style="font-size: 11px; color: #9CA3AF;">No issues detected</div>
             </div>
           </div>
         </div>
 
-        <div class="gmail-widget" style="margin-top: var(--space-4);">
-          <div class="gmail-widget-header">
+        <div class="gmail-widget" style="border: none; box-shadow: none;">
+          <div class="gmail-widget-header" style="padding: 0 0 12px; border-bottom: 1px solid #F3F4F6;">
             <span class="gmail-widget-title">CRM Overview</span>
           </div>
-          <div class="gmail-widget-body">
+          <div class="gmail-widget-body" style="padding: 0;">
             <div class="gmail-crm-item">
               <div class="gmail-crm-avatar" style="background: #6366f1;">SB</div>
               <div class="gmail-crm-info">
                 <div class="gmail-crm-name">Sophia Bennett</div>
-                <div class="gmail-crm-role">Active Subscriber</div>
+                <div class="gmail-crm-role">Active Solutions</div>
               </div>
               <span class="gmail-crm-action">View Profile</span>
             </div>
-            <div class="gmail-crm-item">
-              <div class="gmail-crm-avatar" style="background: #f97316;">DM</div>
-              <div class="gmail-crm-info">
-                <div class="gmail-crm-name">David Miller</div>
-                <div class="gmail-crm-role">3 Active Deals</div>
+            <div class="gmail-crm-stat">
+              <div class="gmail-crm-stat-icon deals"><i class="ph ph-currency-dollar"></i></div>
+              <div class="gmail-crm-stat-info">
+                <div class="gmail-crm-stat-value">$128,500</div>
+                <div class="gmail-crm-stat-label">In 3 Active Deals</div>
               </div>
-              <span class="gmail-crm-action">View Deals</span>
+              <span class="gmail-crm-stat-action">View Deals</span>
+            </div>
+            <div class="gmail-crm-stat">
+              <div class="gmail-crm-stat-icon tickets"><i class="ph ph-ticket"></i></div>
+              <div class="gmail-crm-stat-info">
+                <div class="gmail-crm-stat-value">7 Open Tickets</div>
+                <div class="gmail-crm-stat-label" style="color: #EF4444;">2 Urgent</div>
+              </div>
+              <span class="gmail-crm-stat-action">View Tickets</span>
             </div>
           </div>
         </div>
 
-        <div class="gmail-widget" style="margin-top: var(--space-4);">
-          <div class="gmail-widget-header">
+        <div class="gmail-widget" style="border: none; box-shadow: none;">
+          <div class="gmail-widget-header" style="padding: 0 0 12px; border-bottom: 1px solid #F3F4F6;">
             <span class="gmail-widget-title">Recent Activity</span>
           </div>
-          <div class="gmail-widget-body">
+          <div class="gmail-widget-body" style="padding: 0;">
             <div class="gmail-recent-activity-item">
-              <div class="gmail-recent-activity-icon email"><i class="ph ph-envelope"></i></div>
+              <div class="gmail-recent-activity-icon new"><i class="ph ph-envelope"></i></div>
               <div class="gmail-recent-activity-content">
                 <div class="gmail-recent-activity-text">New email from <strong>Sophia Bennett</strong></div>
               </div>
@@ -681,6 +721,14 @@ class GmailApp {
               </div>
               <span class="gmail-recent-activity-time">Yesterday</span>
             </div>
+            <div class="gmail-recent-activity-item">
+              <div class="gmail-recent-activity-icon email"><i class="ph ph-envelope"></i></div>
+              <div class="gmail-recent-activity-content">
+                <div class="gmail-recent-activity-text">New email from <strong>Olivia Parker</strong></div>
+              </div>
+              <span class="gmail-recent-activity-time">Yesterday</span>
+            </div>
+            <div class="gmail-view-all-activity">View All Activity</div>
           </div>
         </div>
       </div>
@@ -733,7 +781,6 @@ class GmailApp {
     const container = document.getElementById('gmail-conversation-detail');
     if (!container) return;
 
-    // Default empty state
     container.innerHTML = `
       <div class="empty-state" style="height: 100%; justify-content: center;">
         <div class="empty-state-icon"><i class="ph ph-envelope"></i></div>
@@ -769,7 +816,6 @@ class GmailApp {
       }, 1500);
     });
 
-    // Toolbar buttons
     document.querySelectorAll('.gmail-compose-toolbar-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const command = btn.dataset.command;
@@ -780,7 +826,6 @@ class GmailApp {
       });
     });
 
-    // Schedule send
     const scheduleBtn = document.getElementById('schedule-send-btn');
     if (scheduleBtn) {
       scheduleBtn.addEventListener('click', () => {
@@ -791,7 +836,6 @@ class GmailApp {
       });
     }
 
-    // Save draft
     const draftBtn = document.getElementById('save-draft-btn');
     if (draftBtn) {
       draftBtn.addEventListener('click', () => {
@@ -875,7 +919,7 @@ class GmailApp {
         <div class="gmail-reply-box">
           <textarea class="gmail-reply-textarea" placeholder="Write a reply..."></textarea>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; gap: var(--space-2);">
+            <div style="display: flex; gap: 8px;">
               <button class="btn btn-primary btn-sm" id="send-reply-btn"><i class="ph ph-paper-plane-right"></i> Send</button>
               <button class="btn btn-ghost btn-sm"><i class="ph ph-paperclip"></i></button>
             </div>
@@ -1010,7 +1054,6 @@ class GmailApp {
   // Settings Page
   // ============================================
   initSettingsPage() {
-    // Tab switching
     document.querySelectorAll('.gmail-settings-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         const target = tab.dataset.tab;
@@ -1023,14 +1066,12 @@ class GmailApp {
       });
     });
 
-    // Toggle switches
     document.querySelectorAll('.gmail-toggle').forEach(toggle => {
       toggle.addEventListener('click', () => {
         toggle.classList.toggle('active');
       });
     });
 
-    // Save settings
     const saveBtn = document.getElementById('save-settings-btn');
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
@@ -1076,6 +1117,9 @@ class GmailStorage {
     if (!localStorage.getItem('gmail_activity')) {
       this.seedActivity();
     }
+    if (!localStorage.getItem('gmail_conversations')) {
+      this.seedConversations();
+    }
   }
 
   seedGmailData() {
@@ -1087,6 +1131,67 @@ class GmailStorage {
       unreadCount: 8
     };
     localStorage.setItem('gmail_stats', JSON.stringify(stats));
+  }
+
+  seedConversations() {
+    const conversations = [
+      {
+        id: 'c1',
+        customer: { name: 'Sophia Bennett', email: 'sophia@activesolutions.com', avatar: 'SB', color: '#6366f1' },
+        message: 'Hi Alex, I wanted to follow up on our...',
+        subject: 'Partnership Discussion',
+        timestamp: new Date(Date.now() - 10 * 60000).toISOString(),
+        unread: true,
+        status: 'received',
+        platform: 'gmail',
+        tags: ['Partnership']
+      },
+      {
+        id: 'c2',
+        customer: { name: 'Michael Thompson', email: 'michael@projectupdate.com', avatar: 'MT', color: '#f97316' },
+        message: 'Thanks for the update, the timeline looks...',
+        subject: 'Project Update & Timeline',
+        timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
+        unread: true,
+        status: 'sent',
+        platform: 'gmail',
+        tags: ['Project']
+      },
+      {
+        id: 'c3',
+        customer: { name: 'Olivia Parker', email: 'olivia@invoice.com', avatar: 'OP', color: '#10b981' },
+        message: 'Please find attached the invoice for...',
+        subject: 'Invoice for Services',
+        timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
+        unread: false,
+        status: 'received',
+        platform: 'gmail',
+        tags: ['Billing']
+      },
+      {
+        id: 'c4',
+        customer: { name: 'Daniel Martinez', email: 'daniel@quickquestion.com', avatar: 'DM', color: '#8b5cf6' },
+        message: 'I had a quick question regarding the...',
+        subject: 'Quick Question',
+        timestamp: new Date(Date.now() - 5 * 3600000).toISOString(),
+        unread: false,
+        status: 'sent',
+        platform: 'gmail',
+        tags: ['Support']
+      },
+      {
+        id: 'c5',
+        customer: { name: 'Emma Wilson', email: 'emma@design.com', avatar: 'EW', color: '#ec4899' },
+        message: 'The designs look great! Can we schedule...',
+        subject: 'Design Review',
+        timestamp: new Date(Date.now() - 8 * 3600000).toISOString(),
+        unread: true,
+        status: 'received',
+        platform: 'gmail',
+        tags: ['Design']
+      }
+    ];
+    localStorage.setItem('gmail_conversations', JSON.stringify(conversations));
   }
 
   seedTemplates() {
@@ -1142,20 +1247,26 @@ class GmailStorage {
   }
 
   getConversations(platform = 'gmail', search = '') {
-    // Use dashboard storage for conversations
-    const ds = new DashboardStorage();
-    let convs = ds.getConversations('gmail', search);
+    let convs = JSON.parse(localStorage.getItem('gmail_conversations') || '[]');
+    if (search) {
+      const q = search.toLowerCase();
+      convs = convs.filter(c => 
+        c.customer.name.toLowerCase().includes(q) ||
+        c.message.toLowerCase().includes(q) ||
+        (c.subject && c.subject.toLowerCase().includes(q))
+      );
+    }
     return convs;
   }
 
   getConversationById(id) {
-    const ds = new DashboardStorage();
-    return ds.getConversationById(id);
+    const convs = JSON.parse(localStorage.getItem('gmail_conversations') || '[]');
+    return convs.find(c => c.id === id);
   }
 
   getUnreadCount() {
-    const ds = new DashboardStorage();
-    return ds.getConversations('unread').filter(c => c.platform === 'gmail').length;
+    const convs = JSON.parse(localStorage.getItem('gmail_conversations') || '[]');
+    return convs.filter(c => c.unread).length;
   }
 
   getTemplates() {
@@ -1176,13 +1287,19 @@ class GmailStorage {
   }
 
   archiveConversation(id) {
-    const ds = new DashboardStorage();
-    ds.archiveConversation(id);
+    const convs = JSON.parse(localStorage.getItem('gmail_conversations') || '[]');
+    const idx = convs.findIndex(c => c.id === id);
+    if (idx !== -1) {
+      convs[idx].status = 'archived';
+      convs[idx].unread = false;
+      localStorage.setItem('gmail_conversations', JSON.stringify(convs));
+    }
   }
 
   deleteConversation(id) {
-    const ds = new DashboardStorage();
-    ds.deleteConversation(id);
+    let convs = JSON.parse(localStorage.getItem('gmail_conversations') || '[]');
+    convs = convs.filter(c => c.id !== id);
+    localStorage.setItem('gmail_conversations', JSON.stringify(convs));
   }
 }
 

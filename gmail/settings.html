@@ -11,12 +11,13 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/gmail.css">
+<base target="_blank">
 </head>
 <body>
   <div class="gmail-layout">
     <aside class="gmail-sidebar" role="navigation" aria-label="Gmail navigation"></aside>
     <div class="gmail-sidebar-overlay sidebar-overlay"></div>
-    <main class="gmail-main">
+    <main class="gmail-main" style="margin-right: 0;">
       <header class="gmail-header" role="banner"></header>
       <div class="gmail-content">
         <div class="gmail-page-title">
@@ -45,7 +46,7 @@
                   <div class="gmail-settings-label">Default Sender</div>
                   <div class="gmail-settings-desc">Default email address for sending emails</div>
                 </div>
-                <input type="text" class="form-input" value="alex.morgan@oneplace.com" style="width: 250px;">
+                <input type="text" class="form-input" value="alex.morgan@oneplace.com" style="width: 250px; padding: 8px 12px; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 13px;">
               </div>
               <div class="gmail-settings-row">
                 <div>
@@ -66,7 +67,7 @@
                   <div class="gmail-settings-label">Default Email Template</div>
                   <div class="gmail-settings-desc">Select a default template for new emails</div>
                 </div>
-                <select class="form-select" style="width: 200px;">
+                <select class="form-select" style="width: 200px; padding: 8px 12px; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 13px; background: white;">
                   <option>None</option>
                   <option>Sales Follow Up</option>
                   <option>Welcome Email</option>
@@ -115,7 +116,7 @@
                 <button class="btn btn-outline btn-sm">Export</button>
               </div>
             </div>
-            <div style="margin-top: var(--space-6);">
+            <div style="margin-top: 24px;">
               <button class="btn btn-primary" id="save-settings-btn"><i class="ph ph-floppy-disk"></i> Save Settings</button>
             </div>
           </div>
