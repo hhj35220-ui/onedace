@@ -1212,6 +1212,19 @@ class TikTokApp {
 // Initialize
 let tiktokApp;
 document.addEventListener('DOMContentLoaded', () => {
-  if (!OP.nav.requireAuth()) return;
-  tiktokApp = new TikTokApp();
+  const container = document.getElementById('tiktok-content');
+  try {
+    if (!OP?.nav?.requireAuth()) return;
+    tiktokApp = new TikTokApp();
+  } catch (error) {
+    console.error('TikTok initialization failed', error);
+    if (container) {
+      container.innerHTML = `
+        <div style="padding:24px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,0.06);">
+          <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#0f172a;">TikTok Overview</h1>
+          <p style="margin:0;font-size:14px;color:#64748b;">The TikTok workspace loaded with a fallback view. Refresh to retry the full experience.</p>
+        </div>
+      `;
+    }
+  }
 });
