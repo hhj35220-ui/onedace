@@ -165,6 +165,39 @@ const TIKTOK_DEFAULT_SETTINGS = {
 // TikTok Storage Manager
 // ============================================
 
+// Safe storage parsers — handle unexpected shapes in localStorage
+function parseStorageRaw(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null || raw === undefined) return null;
+    return JSON.parse(raw);
+  } catch (err) {
+    console.warn('Failed to parse localStorage key', key, err);
+    return null;
+  }
+}
+
+function parseStorageArray(key, fallback = []) {
+  const parsed = parseStorageRaw(key);
+  if (Array.isArray(parsed)) return parsed;
+  if (parsed && typeof parsed === 'object') {
+    // If it's an object with numeric keys or a map, try to extract values
+    try {
+      return Object.values(parsed).filter(v => v !== null && v !== undefined);
+    } catch (e) {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+
+function parseStorageObject(key, fallback = {}) {
+  const parsed = parseStorageRaw(key);
+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+  return fallback;
+}
+
+
 class TikTokStorage {
   constructor() {
     this.init();
@@ -218,7 +251,7 @@ class TikTokStorage {
   }
 
   getCustomers() {
-    return JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.CUSTOMERS) || '[]');
+    return parseStorageArray(TIKTOK_STORAGE_KEYS.CUSTOMERS, TIKTOK_SAMPLE_CUSTOMERS);
   }
 
   getCustomer(id) {
@@ -226,7 +259,7 @@ class TikTokStorage {
   }
 
   getConversations(filter = 'all') {
-    let conversations = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.CONVERSATIONS) || '[]');
+    let conversations = parseStorageArray(TIKTOK_STORAGE_KEYS.CONVERSATIONS, TIKTOK_SAMPLE_CONVERSATIONS);
     const customers = this.getCustomers();
     conversations = conversations.map(conv => ({
       ...conv,
@@ -242,20 +275,22 @@ class TikTokStorage {
   }
 
   getMessages(conversationId) {
-    const messages = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.MESSAGES) || '{}');
-    return messages[conversationId] || [];
+    const messages = parseStorageObject(TIKTOK_STORAGE_KEYS.MESSAGES, {});
+    const msgs = messages[conversationId];
+    return Array.isArray(msgs) ? msgs : [];
   }
 
   addMessage(conversationId, message) {
-    const messages = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.MESSAGES) || '{}');
-    if (!messages[conversationId]) messages[conversationId] = [];
+    const messages = parseStorageObject(TIKTOK_STORAGE_KEYS.MESSAGES, {});
+    if (!Array.isArray(messages[conversationId])) messages[conversationId] = [];
     messages[conversationId].push({
       id: 'tm_' + Date.now(),
       ...message,
       time: new Date().toISOString()
     });
     localStorage.setItem(TIKTOK_STORAGE_KEYS.MESSAGES, JSON.stringify(messages));
-    const conversations = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.CONVERSATIONS) || '[]');
+
+    const conversations = parseStorageArray(TIKTOK_STORAGE_KEYS.CONVERSATIONS, TIKTOK_SAMPLE_CONVERSATIONS);
     const idx = conversations.findIndex(c => c.id === conversationId);
     if (idx !== -1) {
       conversations[idx].lastMessage = message.text;
@@ -268,7 +303,7 @@ class TikTokStorage {
   }
 
   markConversationRead(id) {
-    const conversations = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.CONVERSATIONS) || '[]');
+    const conversations = parseStorageArray(TIKTOK_STORAGE_KEYS.CONVERSATIONS, TIKTOK_SAMPLE_CONVERSATIONS);
     const idx = conversations.findIndex(c => c.id === id);
     if (idx !== -1) {
       conversations[idx].unread = false;
@@ -278,7 +313,7 @@ class TikTokStorage {
   }
 
   getComments(filter = 'all') {
-    let comments = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.COMMENTS) || '[]');
+    let comments = parseStorageArray(TIKTOK_STORAGE_KEYS.COMMENTS, TIKTOK_SAMPLE_COMMENTS);
     if (filter === 'unread') comments = comments.filter(c => c.status === 'unread');
     if (filter === 'replied') comments = comments.filter(c => c.status === 'replied');
     if (filter === 'high') comments = comments.filter(c => c.priority === 'high');
@@ -286,7 +321,7 @@ class TikTokStorage {
   }
 
   updateComment(id, updates) {
-    const comments = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.COMMENTS) || '[]');
+    const comments = parseStorageArray(TIKTOK_STORAGE_KEYS.COMMENTS, TIKTOK_SAMPLE_COMMENTS);
     const idx = comments.findIndex(c => c.id === id);
     if (idx !== -1) {
       comments[idx] = { ...comments[idx], ...updates };
@@ -296,14 +331,14 @@ class TikTokStorage {
   }
 
   getMentions(filter = 'all') {
-    let mentions = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.MENTIONS) || '[]');
+    let mentions = parseStorageArray(TIKTOK_STORAGE_KEYS.MENTIONS, TIKTOK_SAMPLE_MENTIONS);
     if (filter === 'unread') mentions = mentions.filter(m => m.status === 'unread');
     if (filter === 'read') mentions = mentions.filter(m => m.status === 'read');
     return mentions.sort((a, b) => new Date(b.time) - new Date(a.time));
   }
 
   updateMention(id, updates) {
-    const mentions = JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.MENTIONS) || '[]');
+    const mentions = parseStorageArray(TIKTOK_STORAGE_KEYS.MENTIONS, TIKTOK_SAMPLE_MENTIONS);
     const idx = mentions.findIndex(m => m.id === id);
     if (idx !== -1) {
       mentions[idx] = { ...mentions[idx], ...updates };
@@ -313,11 +348,11 @@ class TikTokStorage {
   }
 
   getVideos() {
-    return JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.VIDEO_INTERACTIONS) || '[]');
+    return parseStorageArray(TIKTOK_STORAGE_KEYS.VIDEO_INTERACTIONS, TIKTOK_SAMPLE_VIDEOS);
   }
 
   getSettings() {
-    return JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.SETTINGS) || '{}');
+    return parseStorageObject(TIKTOK_STORAGE_KEYS.SETTINGS, TIKTOK_DEFAULT_SETTINGS);
   }
 
   updateSettings(section, data) {
@@ -328,7 +363,7 @@ class TikTokStorage {
   }
 
   getIntegration() {
-    return JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.INTEGRATION) || '{}');
+    return parseStorageObject(TIKTOK_STORAGE_KEYS.INTEGRATION, {});
   }
 
   updateIntegration(data) {
@@ -357,7 +392,7 @@ class TikTokStorage {
   }
 
   getNotifications() {
-    return JSON.parse(localStorage.getItem(TIKTOK_STORAGE_KEYS.NOTIFICATIONS) || '[]');
+    return parseStorageArray(TIKTOK_STORAGE_KEYS.NOTIFICATIONS, []);
   }
 
   addNotification(notification) {
