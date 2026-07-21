@@ -928,7 +928,7 @@ class CommandPalette {
 }
 
 // Expose to window for inline handlers
-window.OP = {
+window.OP = Object.assign({
   theme: themeManager,
   auth: authManager,
   workspace: workspaceManager,
@@ -937,10 +937,10 @@ window.OP = {
   nav: navGuard,
   validator: FormValidator,
   toast: new ToastManager()
-};
+}, window.OP || {});
 
 // Initialize global command palette and expose
-window.OP.command = new CommandPalette();
+window.OP.command = window.OP.command || new CommandPalette();
 document.addEventListener('DOMContentLoaded', () => {
   try { window.OP.command.init(); } catch (e) { /* ignore */ }
 });
