@@ -246,7 +246,12 @@
           if (window.linkedinApp && typeof window.linkedinApp.initConnectionRequestsPage === 'function') return;
           const raw = localStorage.getItem('op_linkedin_data');
           const data = raw ? JSON.parse(raw) : null;
-          const connections = data && Array.isArray(data.connections) ? data.connections : [];
+          const DEFAULT_CONNECTIONS = [
+            { id: 'cr1', name: 'Christopher Lee', title: 'Senior Manager at InnovateCo', avatar: 'https://ui-avatars.com/api/?name=Christopher+Lee&background=06b6d4&color=fff&size=128', preview: 'I\'d like to add you to my professional network on LinkedIn. I came across your profile and was impressed by your work in marketing...', status: 'pending' },
+            { id: 'cr2', name: 'Amanda White', title: 'Marketing Director at BrandCo', avatar: 'https://ui-avatars.com/api/?name=Amanda+White&background=f43f5e&color=fff&size=128', preview: 'Hi Alex, I\'d like to connect with you. I\'ve been following your company\'s growth and would love to explore potential collaboration opportunities...', status: 'pending' },
+            { id: 'cr3', name: 'Daniel Harris', title: 'Product Manager at TechVentures', avatar: 'https://ui-avatars.com/api/?name=Daniel+Harris&background=eab308&color=fff&size=128', preview: 'Hello Alex, I came across your profile and was impressed by your experience. I\'d love to connect and potentially discuss how our companies could work together...', status: 'pending' }
+          ];
+          const connections = data && Array.isArray(data.connections) ? data.connections : DEFAULT_CONNECTIONS;
           const container = document.getElementById('connection-list');
           if (!container) return;
           container.innerHTML = connections.map(c => `
