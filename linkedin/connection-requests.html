@@ -237,5 +237,66 @@
       initLinkedInConnectionRequestsPage();
     }
   </script>
+  <script>
+    // Fallback renderer: if the main linkedin.js isn't loaded or fails,
+    // render connection requests from localStorage and open the first item.
+    (function(){
+      function renderFallback() {
+        try {
+          if (window.linkedinApp && typeof window.linkedinApp.initConnectionRequestsPage === 'function') return;
+          const raw = localStorage.getItem('op_linkedin_data');
+          const data = raw ? JSON.parse(raw) : null;
+          const connections = data && Array.isArray(data.connections) ? data.connections : [];
+          const container = document.getElementById('connection-list');
+          if (!container) return;
+          container.innerHTML = connections.map(c => `
+            <div class="connection-request-item" data-id="${c.id}">
+              <img src="${c.avatar||''}" alt="${c.name||''}" class="conn-req-avatar">
+              <div class="conn-req-info">
+                <div class="conn-req-name">${c.name||''}</div>
+                <div class="conn-req-title">${c.title||''}</div>
+              </div>
+              <div class="conn-req-actions">
+                <button class="conn-req-btn accept" data-action="accept" data-id="${c.id}">Accept</button>
+                <button class="conn-req-btn ignore" data-action="ignore" data-id="${c.id}">Ignore</button>
+              </div>
+            </div>
+          `).join('');
+
+          container.querySelectorAll('.connection-request-item').forEach(item => {
+            item.addEventListener('click', () => {
+              container.querySelectorAll('.connection-request-item').forEach(i=>i.classList.remove('active'));
+              item.classList.add('active');
+              openDetail(item.dataset.id);
+            });
+          });
+
+          function openDetail(id){
+            const raw = localStorage.getItem('op_linkedin_data');
+            const data = raw ? JSON.parse(raw) : null;
+            const conn = data && data.connections ? data.connections.find(x=>x.id===id) : null;
+            if (!conn) return;
+            document.getElementById('connection-detail-empty').style.display = 'none';
+            const content = document.getElementById('connection-detail-content');
+            if (content) {
+              content.style.display = 'flex';
+              document.getElementById('conn-detail-avatar').src = conn.avatar||'';
+              document.getElementById('conn-detail-name').textContent = conn.name||'';
+              document.getElementById('conn-detail-title').textContent = conn.title||'';
+              const preview = document.getElementById('connection-preview');
+              if (preview) preview.innerHTML = `<div class="connection-preview-text"><p><strong>${conn.name}</strong> would like to add you to their professional network.</p><p>${conn.preview||''}</p></div>`;
+            }
+          }
+
+          // auto-open first
+          const first = container.querySelector('.connection-request-item');
+          if (first) { first.classList.add('active'); openDetail(first.dataset.id); }
+        } catch (e) { console.warn('fallback render failed', e); }
+      }
+
+      // Run after a short delay so if the real script initializes it wins.
+      setTimeout(renderFallback, 60);
+    })();
+  </script>
 </body>
 </html>
