@@ -245,7 +245,10 @@
         try {
           if (window.linkedinApp && typeof window.linkedinApp.initConnectionRequestsPage === 'function') return;
           const raw = localStorage.getItem('op_linkedin_data');
-          const data = raw ? JSON.parse(raw) : null;
+          const parsed = raw ? JSON.parse(raw) : null;
+          const data = parsed && typeof parsed === 'object' && parsed.data && typeof parsed.data === 'object' && !Array.isArray(parsed.data)
+            ? parsed.data
+            : parsed;
           const DEFAULT_CONNECTIONS = [
             { id: 'cr1', name: 'Christopher Lee', title: 'Senior Manager at InnovateCo', avatar: 'https://ui-avatars.com/api/?name=Christopher+Lee&background=06b6d4&color=fff&size=128', preview: 'I\'d like to add you to my professional network on LinkedIn. I came across your profile and was impressed by your work in marketing...', status: 'pending' },
             { id: 'cr2', name: 'Amanda White', title: 'Marketing Director at BrandCo', avatar: 'https://ui-avatars.com/api/?name=Amanda+White&background=f43f5e&color=fff&size=128', preview: 'Hi Alex, I\'d like to connect with you. I\'ve been following your company\'s growth and would love to explore potential collaboration opportunities...', status: 'pending' },

@@ -109,6 +109,23 @@ const AI_INSIGHTS_DATA = [
   { type: 'growth', title: 'Connection Growth', desc: 'You gained 47 new connections this week (+23.6%)', icon: 'ph-users', priority: 'low' }
 ];
 
+function normalizeLinkedInData(payload) {
+  if (!payload || typeof payload !== 'object') return {};
+
+  if (payload && typeof payload === 'object' && 'data' in payload && payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data)) {
+    const nested = payload.data;
+    if (nested.contacts || nested.connections || nested.messages || nested.mentions || nested.engagements || nested.stats) {
+      return nested;
+    }
+  }
+
+  if (payload.contacts || payload.connections || payload.messages || payload.mentions || payload.engagements || payload.stats) {
+    return payload;
+  }
+
+  return {};
+}
+
 // ============================================
 // LinkedIn Storage
 // ============================================
@@ -145,14 +162,16 @@ class LinkedInStorage {
 
   getData() {
     try {
-      return JSON.parse(localStorage.getItem(LINKEDIN_STORAGE_KEYS.LINKEDIN_DATA)) || {};
+      const raw = localStorage.getItem(LINKEDIN_STORAGE_KEYS.LINKEDIN_DATA);
+      if (!raw) return {};
+      return normalizeLinkedInData(JSON.parse(raw));
     } catch {
       return {};
     }
   }
 
   saveData(data) {
-    localStorage.setItem(LINKEDIN_STORAGE_KEYS.LINKEDIN_DATA, JSON.stringify(data));
+    localStorage.setItem(LINKEDIN_STORAGE_KEYS.LINKEDIN_DATA, JSON.stringify(normalizeLinkedInData(data)));
   }
 
   getContacts() {
