@@ -1,4 +1,32 @@
 /* ============================================
+   OnePlace Enterprise — Base & Dashboard Styles
+   ============================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ============================================
    OnePlace Enterprise v3.0 — TikTok Module
    Complete rewrite to match design reference
    ============================================ */
