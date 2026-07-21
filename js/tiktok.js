@@ -202,7 +202,7 @@ class TikTokApp {
   constructor() {
     this.currentView = 'overview';
     this.container = document.getElementById('tiktok-content');
-    this.sidebar = document.getElementById('tiktokSidebarNav');
+    this.sidebar = document.querySelector('.tiktok-nav');
     this.selectedConversation = null;
     this.conversationFilter = 'all';
     this.savedReplyFilter = 'all';
