@@ -12,6 +12,132 @@ const TIKTOK_STORAGE_KEYS = {
   SETTINGS: 'op_tiktok_settings'
 };
 
+const TIKTOK_DEBUG = {
+  enabled: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.search.includes('debug=tiktok'),
+  currentStep: 'boot',
+  lastSuccessfulStep: 'boot',
+  lastFailedStep: null,
+  runtimeErrors: [],
+  missingElements: [],
+  renderingStatus: 'idle',
+  layoutMeasurements: {},
+  logs: [],
+  panel: null,
+  init() {
+    if (!this.enabled) return;
+    this.log('debug-enabled');
+    this.attachPanel();
+    this.observeResourceErrors();
+    this.logLayoutState('boot');
+  },
+  log(message, detail) {
+    const entry = { message, detail, timestamp: new Date().toISOString() };
+    this.logs.push(entry);
+    console.log(`[TikTok Debug] ${message}`, detail || '');
+    this.renderPanel();
+  },
+  warn(message, detail) {
+    const entry = { message, detail, timestamp: new Date().toISOString() };
+    this.logs.push(entry);
+    console.warn(`[TikTok Debug] ${message}`, detail || '');
+    this.renderPanel();
+  },
+  error(message, detail) {
+    const entry = { message, detail, timestamp: new Date().toISOString() };
+    this.logs.push(entry);
+    this.runtimeErrors.push(entry);
+    console.error(`[TikTok Debug] ${message}`, detail || '');
+    this.renderPanel();
+  },
+  setStep(step) {
+    this.currentStep = step;
+    this.renderPanel();
+  },
+  markSuccess(step) {
+    this.lastSuccessfulStep = step;
+    this.setStep(step);
+    this.log(`step-success:${step}`);
+  },
+  markFailure(step, detail) {
+    this.lastFailedStep = step;
+    this.setStep(step);
+    this.error(`step-failed:${step}`, detail);
+  },
+  attachPanel() {
+    if (this.panel) return;
+    this.panel = document.createElement('div');
+    this.panel.id = 'tiktok-debug-panel';
+    this.panel.style.cssText = 'position:fixed;right:16px;bottom:16px;max-width:360px;max-height:320px;overflow:auto;z-index:99999;background:rgba(15,23,42,0.95);color:#f8fafc;border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px;font-family:Inter,system-ui,sans-serif;font-size:12px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,0.25);';
+    this.panel.innerHTML = '<div style="font-weight:700;margin-bottom:8px;">TikTok Debug</div><div id="tiktok-debug-content"></div>';
+    document.body.appendChild(this.panel);
+  },
+  renderPanel() {
+    if (!this.enabled || !this.panel) return;
+    const content = document.getElementById('tiktok-debug-content');
+    if (!content) return;
+    content.innerHTML = `
+      <div><strong>Step:</strong> ${escapeHtml(this.currentStep)}</div>
+      <div><strong>Last success:</strong> ${escapeHtml(this.lastSuccessfulStep)}</div>
+      <div><strong>Last failure:</strong> ${escapeHtml(this.lastFailedStep || 'none')}</div>
+      <div><strong>Rendering:</strong> ${escapeHtml(this.renderingStatus)}</div>
+      <div><strong>Errors:</strong> ${this.runtimeErrors.length}</div>
+      <div><strong>Missing:</strong> ${this.missingElements.length}</div>
+      <div><strong>Layout:</strong> ${this.layoutMeasurements.width || 'n/a'}x${this.layoutMeasurements.height || 'n/a'}</div>
+      <div style="margin-top:8px;color:#94a3b8;white-space:pre-wrap;">${escapeHtml(this.runtimeErrors.slice(-2).map(item => item.message).join('\n') || 'No runtime errors')}</div>
+    `;
+  },
+  observeResourceErrors() {
+    window.addEventListener('error', event => {
+      this.error('window-error', event.error || event.message);
+    });
+    window.addEventListener('unhandledrejection', event => {
+      this.error('unhandled-rejection', event.reason || event);
+    });
+  },
+  logDomCheck(name, element) {
+    if (!element) {
+      this.missingElements.push(name);
+      this.warn(`missing-element:${name}`, `Expected DOM element ${name} was null.`);
+      return false;
+    }
+    this.log(`dom-found:${name}`, element);
+    return true;
+  },
+  checkLayoutState(label) {
+    const root = document.querySelector('.dashboard-layout') || document.querySelector('body');
+    const content = document.getElementById('tiktok-content');
+    const sidebar = document.querySelector('.tiktok-sidebar');
+    const mainSidebar = document.querySelector('.dashboard-sidebar');
+    const header = document.querySelector('.dashboard-header');
+    const measurements = {
+      width: content ? Math.round(content.getBoundingClientRect().width) : null,
+      height: content ? Math.round(content.getBoundingClientRect().height) : null,
+      sidebarWidth: sidebar ? Math.round(sidebar.getBoundingClientRect().width) : null,
+      mainSidebarWidth: mainSidebar ? Math.round(mainSidebar.getBoundingClientRect().width) : null,
+      headerHeight: header ? Math.round(header.getBoundingClientRect().height) : null,
+      rootDisplay: root ? window.getComputedStyle(root).display : null,
+      rootVisibility: root ? window.getComputedStyle(root).visibility : null,
+      rootOpacity: root ? window.getComputedStyle(root).opacity : null,
+      rootWidth: root ? window.getComputedStyle(root).width : null,
+      rootHeight: root ? window.getComputedStyle(root).height : null
+    };
+    this.layoutMeasurements = measurements;
+    this.log(`layout:${label}`, measurements);
+    if (root) {
+      const cs = window.getComputedStyle(root);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0' || cs.width === '0px' || cs.height === '0px') {
+        this.warn(`root-hidden:${label}`, { display: cs.display, visibility: cs.visibility, opacity: cs.opacity, width: cs.width, height: cs.height });
+      }
+    }
+    return measurements;
+  },
+  logLayoutState(label) {
+    this.checkLayoutState(label);
+  }
+};
+
+TIKTOK_DEBUG.init();
+
 // ============================================
 // Sample Data — Matches Design Reference Exactly
 // ============================================
@@ -211,22 +337,47 @@ class TikTokApp {
   }
 
   init() {
-    if (!this.container || !this.nav) return;
-    if (!(window.OP?.nav?.requireAuth && OP.nav.requireAuth())) {
-      this.showError('Authentication required to load the TikTok workspace.');
-      return;
+    try {
+      TIKTOK_DEBUG.setStep('initialize:start');
+      TIKTOK_DEBUG.log('initialize:start', 'TikTok app initialization started.');
+      TIKTOK_DEBUG.logDomCheck('tiktok-content', this.container);
+      TIKTOK_DEBUG.logDomCheck('tiktok-nav', this.nav);
+      TIKTOK_DEBUG.logDomCheck('dashboard-header', document.querySelector('.dashboard-header'));
+      if (!this.container || !this.nav) {
+        TIKTOK_DEBUG.markFailure('initialize:guard', { missing: { container: !!this.container, nav: !!this.nav } });
+        this.showError('Required TikTok DOM elements are missing.');
+        return;
+      }
+      if (!(window.OP?.nav?.requireAuth && OP.nav.requireAuth())) {
+        TIKTOK_DEBUG.markFailure('initialize:auth', 'Authentication required to load TikTok workspace.');
+        this.showError('Authentication required to load the TikTok workspace.');
+        return;
+      }
+      this.renderSidebar();
+      this.bindEvents();
+      this.render();
+      TIKTOK_DEBUG.markSuccess('initialize:finish');
+      TIKTOK_DEBUG.log('initialize:finish', 'TikTok app initialization completed.');
+      TIKTOK_DEBUG.logLayoutState('post-init');
+    } catch (error) {
+      TIKTOK_DEBUG.markFailure('initialize:error', error && error.stack ? error.stack : error);
+      this.showError(`TikTok initialization failed: ${error.message || error}`);
+      console.error(error);
     }
-    this.renderSidebar();
-    this.bindEvents();
-    this.render();
   }
 
   bindEvents() {
+    TIKTOK_DEBUG.setStep('bind-events');
+    TIKTOK_DEBUG.log('bind-events', 'Binding TikTok navigation and content events.');
     this.nav.querySelectorAll('.tiktok-nav-item').forEach(item => {
       item.addEventListener('click', event => {
         event.preventDefault();
         const page = item.dataset.page;
-        if (!page) return;
+        if (!page) {
+          TIKTOK_DEBUG.warn('nav-click-missing-page', item);
+          return;
+        }
+        TIKTOK_DEBUG.log(`nav-click:${page}`, item);
         this.navigateTo(page);
       });
     });
@@ -280,6 +431,15 @@ class TikTokApp {
   // Sidebar
   // ============================================
 
+  renderSidebar() {
+    TIKTOK_DEBUG.setStep('render:sidebar');
+    TIKTOK_DEBUG.log('render:sidebar', 'Syncing the TikTok sidebar state.');
+    this.nav?.querySelectorAll('.tiktok-nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.page === this.currentPage);
+    });
+    TIKTOK_DEBUG.logLayoutState('sidebar-render');
+  }
+
   updateActiveNav(page) {
     this.nav?.querySelectorAll('.tiktok-nav-item').forEach(item => {
       item.classList.toggle('active', item.dataset.page === page);
@@ -287,21 +447,29 @@ class TikTokApp {
   }
 
   navigateTo(page, updateHistory = true) {
-    this.currentPage = page;
-    this.selectedConversation = null;
-    this.updateActiveNav(page);
+    try {
+      TIKTOK_DEBUG.setStep(`navigate:${page}`);
+      TIKTOK_DEBUG.log(`navigate:${page}`, `Navigating to ${page}.`);
+      this.currentPage = page;
+      this.selectedConversation = null;
+      this.updateActiveNav(page);
 
-    if (updateHistory) {
-      const url = new URL(window.location.href);
-      if (page && page !== 'overview') {
-        url.hash = page;
-      } else {
-        url.hash = '';
+      if (updateHistory) {
+        const url = new URL(window.location.href);
+        if (page && page !== 'overview') {
+          url.hash = page;
+        } else {
+          url.hash = '';
+        }
+        window.history.pushState({}, '', url);
       }
-      window.history.pushState({}, '', url);
-    }
 
-    this.render();
+      this.render();
+    } catch (error) {
+      TIKTOK_DEBUG.markFailure(`navigate:${page}:error`, error && error.stack ? error.stack : error);
+      console.error(error);
+      this.showError(`Navigation failed: ${error.message || error}`);
+    }
   }
 
   // ============================================
@@ -309,14 +477,24 @@ class TikTokApp {
   // ============================================
 
   render() {
-    switch (this.currentPage) {
-      case 'conversations': return this.selectedConversation ? this.renderChat() : this.renderConversations();
-      case 'comments': return this.renderComments();
-      case 'mentions': return this.renderMentions();
-      case 'saved-replies': return this.renderSavedRepliesPage();
-      case 'integration': return this.renderIntegration();
-      case 'settings': return this.renderSettings();
-      default: return this.renderOverview();
+    try {
+      TIKTOK_DEBUG.setStep(`render:${this.currentPage}`);
+      TIKTOK_DEBUG.renderingStatus = 'rendering';
+      TIKTOK_DEBUG.log(`render:${this.currentPage}`, 'Starting render for the current page.');
+      switch (this.currentPage) {
+        case 'conversations': return this.selectedConversation ? this.renderChat() : this.renderConversations();
+        case 'comments': return this.renderComments();
+        case 'mentions': return this.renderMentions();
+        case 'saved-replies': return this.renderSavedRepliesPage();
+        case 'integration': return this.renderIntegration();
+        case 'settings': return this.renderSettings();
+        default: return this.renderOverview();
+      }
+    } catch (error) {
+      TIKTOK_DEBUG.renderingStatus = 'failed';
+      TIKTOK_DEBUG.markFailure(`render:${this.currentPage}:error`, error && error.stack ? error.stack : error);
+      console.error(error);
+      this.showError(`Render failed: ${error.message || error}`);
     }
   }
 
@@ -325,6 +503,8 @@ class TikTokApp {
   // ============================================
 
   renderOverview() {
+    TIKTOK_DEBUG.setStep('render:overview:start');
+    TIKTOK_DEBUG.log('render:overview:start', 'renderOverview() started.');
     const videos = TIKTOK_SAMPLE_VIDEOS.slice(0, 4);
     const recent = TIKTOK_SAMPLE_CONVERSATIONS.slice(0, 5);
 
@@ -589,10 +769,13 @@ class TikTokApp {
 
     this.container.querySelector('[data-action="switch-view"]')?.addEventListener('click', (e) => {
       e.preventDefault();
-      this.currentView = 'conversations';
-      this.renderSidebar();
+      this.currentPage = 'conversations';
       this.render();
     });
+    TIKTOK_DEBUG.markSuccess('render:overview:finish');
+    TIKTOK_DEBUG.renderingStatus = 'overview-rendered';
+    TIKTOK_DEBUG.log('render:overview:finish', 'renderOverview() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-overview');
   }
 
   // ============================================
@@ -600,6 +783,8 @@ class TikTokApp {
   // ============================================
 
   renderConversations() {
+    TIKTOK_DEBUG.setStep('render:conversations');
+    TIKTOK_DEBUG.log('render:conversations', 'renderConversations() started.');
     const filtered = this.getFilteredConversations();
     
     this.container.innerHTML = `
@@ -657,9 +842,15 @@ class TikTokApp {
         </div>
       </div>
     `;
+    TIKTOK_DEBUG.markSuccess('render:conversations:finish');
+    TIKTOK_DEBUG.renderingStatus = 'conversations-rendered';
+    TIKTOK_DEBUG.log('render:conversations:finish', 'renderConversations() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-conversations');
   }
 
   renderChat() {
+    TIKTOK_DEBUG.setStep('render:chat');
+    TIKTOK_DEBUG.log('render:chat', 'renderChat() started.');
     const conversation = TIKTOK_SAMPLE_CONVERSATIONS.find(c => c.id === this.selectedConversation);
     if (!conversation) { this.selectedConversation = null; return this.renderConversations(); }
     
@@ -838,6 +1029,11 @@ class TikTokApp {
       const msgContainer = document.getElementById('chatMessages');
       if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
     }, 0);
+
+    TIKTOK_DEBUG.markSuccess('render:chat:finish');
+    TIKTOK_DEBUG.renderingStatus = 'chat-rendered';
+    TIKTOK_DEBUG.log('render:chat:finish', 'renderChat() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-chat');
   }
 
   // ============================================
@@ -845,6 +1041,8 @@ class TikTokApp {
   // ============================================
 
   renderComments() {
+    TIKTOK_DEBUG.setStep('render:comments');
+    TIKTOK_DEBUG.log('render:comments', 'renderComments() started.');
     this.container.innerHTML = `
       <div class="dashboard-page-title">
         <h1>Comments Manager</h1>
@@ -913,6 +1111,10 @@ class TikTokApp {
         <span class="tiktok-pagination-info">Showing 1 to 10 of 68 comments</span>
       </div>
     `;
+    TIKTOK_DEBUG.markSuccess('render:comments:finish');
+    TIKTOK_DEBUG.renderingStatus = 'comments-rendered';
+    TIKTOK_DEBUG.log('render:comments:finish', 'renderComments() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-comments');
   }
 
   // ============================================
@@ -920,6 +1122,8 @@ class TikTokApp {
   // ============================================
 
   renderMentions() {
+    TIKTOK_DEBUG.setStep('render:mentions');
+    TIKTOK_DEBUG.log('render:mentions', 'renderMentions() started.');
     this.container.innerHTML = `
       <div class="dashboard-page-title">
         <h1>Mentions</h1>
@@ -997,6 +1201,10 @@ class TikTokApp {
         <span class="tiktok-pagination-info">Showing 1 to 10 of 34 mentions</span>
       </div>
     `;
+    TIKTOK_DEBUG.markSuccess('render:mentions:finish');
+    TIKTOK_DEBUG.renderingStatus = 'mentions-rendered';
+    TIKTOK_DEBUG.log('render:mentions:finish', 'renderMentions() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-mentions');
   }
 
   // ============================================
@@ -1004,6 +1212,8 @@ class TikTokApp {
   // ============================================
 
   renderSavedRepliesPage() {
+    TIKTOK_DEBUG.setStep('render:saved-replies');
+    TIKTOK_DEBUG.log('render:saved-replies', 'renderSavedRepliesPage() started.');
     const filtered = this.savedReplyFilter === 'all' 
       ? SAVED_REPLIES 
       : SAVED_REPLIES.filter(r => r.category.toLowerCase() === this.savedReplyFilter);
@@ -1057,6 +1267,8 @@ class TikTokApp {
   // ============================================
 
   renderIntegration() {
+    TIKTOK_DEBUG.setStep('render:integration');
+    TIKTOK_DEBUG.log('render:integration', 'renderIntegration() started.');
     const integration = safeParseStorage(TIKTOK_STORAGE_KEYS.INTEGRATION, DEFAULT_INTEGRATION);
     
     this.container.innerHTML = `
@@ -1144,6 +1356,10 @@ class TikTokApp {
         </div>
       </div>
     `;
+    TIKTOK_DEBUG.markSuccess('render:integration:finish');
+    TIKTOK_DEBUG.renderingStatus = 'integration-rendered';
+    TIKTOK_DEBUG.log('render:integration:finish', 'renderIntegration() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-integration');
   }
 
   // ============================================
@@ -1151,6 +1367,8 @@ class TikTokApp {
   // ============================================
 
   renderSettings() {
+    TIKTOK_DEBUG.setStep('render:settings');
+    TIKTOK_DEBUG.log('render:settings', 'renderSettings() started.');
     const settings = safeParseStorage(TIKTOK_STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS);
     
     const tabs = [
@@ -1300,6 +1518,10 @@ class TikTokApp {
         </div>
       </div>
     `;
+    TIKTOK_DEBUG.markSuccess('render:settings:finish');
+    TIKTOK_DEBUG.renderingStatus = 'settings-rendered';
+    TIKTOK_DEBUG.log('render:settings:finish', 'renderSettings() completed.');
+    TIKTOK_DEBUG.logLayoutState('post-render-settings');
   }
 
   renderSavedRepliesInline() {
@@ -1449,12 +1671,20 @@ class TikTokApp {
   }
 
   showError(message) {
-    this.container.innerHTML = `<div class="tiktok-error">${escapeHtml(message)}</div>`;
+    TIKTOK_DEBUG.markFailure('render:error', message);
+    if (this.container) {
+      this.container.innerHTML = `<div class="tiktok-error">${escapeHtml(message)}</div>`;
+    }
+    TIKTOK_DEBUG.logLayoutState('error-state');
   }
 }
 
 window.tiktokApp = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  TIKTOK_DEBUG.setStep('domcontentloaded');
+  TIKTOK_DEBUG.log('domcontentloaded', 'DOMContentLoaded fired.');
+  TIKTOK_DEBUG.markSuccess('domcontentloaded');
+  TIKTOK_DEBUG.logLayoutState('domcontentloaded');
   window.tiktokApp = new TikTokApp();
 });
