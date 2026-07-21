@@ -1015,12 +1015,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 function getSiteAssetUrl(assetPath) {
   const normalized = assetPath.replace(/^\/+/, '');
-  if (window.location.protocol === 'file:') {
-    const depth = window.location.pathname.split('/').filter(Boolean).length > 1 ? window.location.pathname.split('/').filter(Boolean).length - 1 : 0;
-    const prefix = depth > 0 ? '../'.repeat(depth) : '';
-    return `${prefix}${normalized}`;
+  try {
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    if (parts.length > 0) {
+      // If the site lives in a top-level folder (e.g. /OnePlace%20Enterprise/...),
+      // prefix injected asset paths with that folder so they resolve correctly
+      // when served from a subfolder on a local dev server.
+      const siteFolder = parts[0];
+      return `/${siteFolder}/${normalized}`;
+    }
+    return `/${normalized}`;
+  } catch (e) {
+    return `/${normalized}`;
   }
-  return `/${normalized}`;
 }
 
 function loadOnboardingAssets() {

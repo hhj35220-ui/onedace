@@ -11,6 +11,15 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/linkedin.css">
+  <style>
+    /* Ensure LinkedIn header is visible and matches design */
+    .linkedin-header { background: var(--bg-surface, #fff); border-bottom: 1px solid var(--border, #e5e7eb); height: 64px; display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+    .linkedin-header .header-left { display:flex; align-items:center; gap: 12px; }
+    .header-title { font-size: 18px; font-weight: 600; color: var(--text-default, #0f172a); margin: 0; }
+    .header-subtitle { font-size: 12px; color: var(--text-muted, #6b7280); margin: 0; }
+    .linkedin-tabs { top: 64px; }
+    .dashboard-main { padding-top: 0; }
+  </style>
 </head>
 <body>
   <div class="dashboard-layout">
@@ -149,57 +158,166 @@
       </nav>
 
       <div class="dashboard-content linkedin-content">
-        <div class="linkedin-page-layout">
-          <div class="page-sidebar">
-            <div class="page-sidebar-header">
-              <div class="page-filter-tabs">
-                <button class="page-filter active" data-filter="all">All</button>
-                <button class="page-filter" data-filter="new">New</button>
-                <button class="page-filter" data-filter="viewed">Viewed</button>
-                <button class="page-filter" data-filter="more-filters"><i class="ph ph-sliders-horizontal"></i> More Filters</button>
+        <div class="linkedin-overview" id="overview-page">
+          <div class="linkedin-stats-row">
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Conversations</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>18.4%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">128</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Connection Requests</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>23.6%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">47</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Messages Received</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>15.2%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">89</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">InMail Messages</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>18.8%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">35</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Profile Views</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>32.7%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">246</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+            <div class="linkedin-stat-card">
+              <div class="stat-card-header">
+                <span class="stat-label">Post Engagements</span>
+                <div class="stat-trend up">
+                  <i class="ph ph-trend-up"></i>
+                  <span>12.2%</span>
+                </div>
+              </div>
+              <div class="stat-card-value">312</div>
+              <div class="stat-card-sub">vs last 7 days</div>
+            </div>
+          </div>
+
+          <div class="linkedin-mid-row">
+            <div class="linkedin-chart-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Conversation Trend</h3>
+                <div class="widget-actions">
+                  <span class="chart-legend">
+                    <span class="legend-dot messages"></span> Messages
+                    <span class="legend-dot inmails"></span> InMails
+                  </span>
+                  <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+                </div>
+              </div>
+              <div class="widget-body">
+                <div class="linkedin-line-chart" id="conversation-trend-chart"></div>
               </div>
             </div>
-            <div class="page-list" id="connection-list"></div>
-            <div class="messages-pagination">
-              <span>Showing 1 to 6 of 47 requests</span>
-              <div class="pagination-controls">
-                <button class="page-btn" disabled><i class="ph ph-caret-left"></i></button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn">4</button>
-                <button class="page-btn">5</button>
-                <button class="page-btn">6</button>
-                <button class="page-btn">7</button>
-                <button class="page-btn">8</button>
-                <button class="page-btn"><i class="ph ph-caret-right"></i></button>
+
+            <div class="linkedin-conversations-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Top InMail Conversations</h3>
+                <a href="messages.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="top-conversation-list" id="top-conversations"></div>
+              </div>
+            </div>
+
+            <div class="linkedin-ai-card">
+              <div class="widget-header">
+                <h3 class="widget-title">AI Insights <span class="ai-beta">BETA</span></h3>
+                <button class="widget-action-btn"><i class="ph ph-dots-three"></i></button>
+              </div>
+              <div class="widget-body">
+                <div class="ai-insights-list" id="ai-insights"></div>
+                <a href="#" class="view-all-insights">View All Insights</a>
               </div>
             </div>
           </div>
-          <div class="page-detail" id="connection-detail">
-            <div class="detail-empty" id="connection-detail-empty">
-              <div class="detail-empty-icon"><i class="ph ph-user-plus"></i></div>
-              <p>Select a connection request to view details</p>
+
+          <div class="linkedin-bottom-row">
+            <div class="linkedin-recent-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Recent Conversations</h3>
+                <a href="messages.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="recent-conversation-list" id="recent-conversations"></div>
+              </div>
             </div>
-            <div class="detail-content" id="connection-detail-content" style="display:none;">
-              <div class="detail-header">
-                <div class="detail-contact">
-                  <img src="" alt="" class="detail-avatar" id="conn-detail-avatar">
-                  <div class="detail-contact-info">
-                    <h3 id="conn-detail-name"></h3>
-                    <p id="conn-detail-title"></p>
+
+            <div class="linkedin-connections-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Connection Requests</h3>
+                <a href="connection-requests.html" class="view-all-link">View All</a>
+              </div>
+              <div class="widget-body">
+                <div class="connection-request-list" id="connection-requests-list"></div>
+              </div>
+            </div>
+
+            <div class="linkedin-profile-card">
+              <div class="widget-header">
+                <h3 class="widget-title">Profile Dashboard</h3>
+                <a href="#" class="view-all-link">View Profile</a>
+              </div>
+              <div class="widget-body profile-body">
+                <div class="profile-score-ring">
+                  <svg viewBox="0 0 120 120" class="profile-ring-svg">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gray-200)" stroke-width="8"/>
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="#0A66C2" stroke-width="8" 
+                            stroke-dasharray="314" stroke-dashoffset="47" stroke-linecap="round"
+                            transform="rotate(-90 60 60)"/>
+                  </svg>
+                  <div class="profile-score-center">
+                    <span class="profile-score-value">85%</span>
+                    <span class="profile-score-label">Very Good</span>
                   </div>
                 </div>
-                <div class="detail-actions">
-                  <button class="detail-action-btn" title="Add to CRM"><i class="ph ph-user-plus"></i></button>
-                  <button class="detail-action-btn" title="View Profile"><i class="ph ph-user"></i></button>
-                  <button class="detail-action-btn" title="More"><i class="ph ph-dots-three-vertical"></i></button>
+                <div class="profile-metrics">
+                  <div class="profile-metric">
+                    <span class="profile-metric-value">246</span>
+                    <span class="profile-metric-label">Profile Views</span>
+                    <span class="profile-metric-trend up"><i class="ph ph-trend-up"></i> 32.7%</span>
+                  </div>
+                  <div class="profile-metric">
+                    <span class="profile-metric-value">512</span>
+                    <span class="profile-metric-label">Search Appearances</span>
+                    <span class="profile-metric-trend up"><i class="ph ph-trend-up"></i> 24.8%</span>
+                  </div>
                 </div>
-              </div>
-              <div class="connection-preview" id="connection-preview"></div>
-              <div class="connection-actions-bar">
-                <button class="btn btn-primary" id="accept-btn"><i class="ph ph-check"></i> Accept</button>
-                <button class="btn btn-outline" id="ignore-btn"><i class="ph ph-x"></i> Ignore</button>
               </div>
             </div>
           </div>
@@ -213,10 +331,10 @@
     window.OP = window.OP || {};
     window.OP.onboardingLoaded = true;
   </script>
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/linkedin.js"></script>
+  <script src="../js/app.js?v=linkedin"></script>
+  <script src="../js/storage.js?v=linkedin"></script>
+  <script src="../js/dashboard.js?v=linkedin"></script>
+  <script src="../js/linkedin.js?v=linkedin"></script>
   <script>
     function initLinkedInConnectionRequestsPage() {
       if (typeof OP !== 'undefined' && OP.auth && typeof OP.auth.isAuthenticated === 'function') {
@@ -226,9 +344,9 @@
       }
 
       window.linkedinApp = new LinkedInApp();
-      if (typeof window.linkedinApp.initConnectionRequestsPage === 'function') {
-        window.linkedinApp.initConnectionRequestsPage();
-      }
+        if (typeof window.linkedinApp.initOverviewPage === 'function') {
+          window.linkedinApp.initOverviewPage();
+        }
     }
 
     if (document.readyState === 'loading') {
@@ -304,6 +422,45 @@
 
       // Run after a short delay so if the real script initializes it wins.
       setTimeout(renderFallback, 60);
+    })();
+  </script>
+  <script>
+    // Ensure the LinkedIn header is visible if other scripts removed it.
+    (function ensureLinkedInHeader(){
+      try {
+        if (document.querySelector('.dashboard-header')) return;
+        const main = document.querySelector('.dashboard-main');
+        if (!main) return;
+        const header = document.createElement('header');
+        header.className = 'dashboard-header linkedin-header';
+        header.innerHTML = `
+          <div class="header-left">
+            <div class="header-brand">
+              <div class="linkedin-header-icon"><i class="ph ph-linkedin-logo"></i></div>
+              <div class="header-brand-text">
+                <h1 class="header-title">LinkedIn</h1>
+                <p class="header-subtitle">Track and manage your LinkedIn presence and conversations</p>
+              </div>
+            </div>
+          </div>
+          <div class="header-center">
+            <div class="header-search linkedin-search">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="linkedin-search" placeholder="Search requests..." autocomplete="off">
+              <span class="search-shortcut">⌘K</span>
+            </div>
+          </div>
+          <div class="header-right">
+            <button class="header-btn" id="notifications-btn" aria-label="Notifications"><i class="ph ph-bell"></i><span class="notification-dot" id="notif-dot"></span></button>
+            <button class="header-btn" id="theme-toggle-header" aria-label="Toggle theme"><i class="ph ph-moon"></i></button>
+            <div class="header-user">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=6366f1&color=fff&size=64" alt="Alex Morgan" class="header-avatar-img" id="user-menu-btn">
+              <div class="header-user-info"><span class="header-user-name">Alex Morgan</span><span class="header-user-role">Admin</span></div>
+            </div>
+          </div>
+        `;
+        main.insertBefore(header, main.firstChild);
+      } catch (e) { console.warn('ensureLinkedInHeader failed', e); }
     })();
   </script>
 </body>

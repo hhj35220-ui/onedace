@@ -332,10 +332,14 @@
     </main>
   </div>
 
-  <script src="../js/app.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/dashboard.js"></script>
-  <script src="../js/linkedin.js"></script>
+  <script>
+    window.OP = window.OP || {};
+    window.OP.onboardingLoaded = true;
+  </script>
+  <script src="../js/app.js?v=linkedin"></script>
+  <script src="../js/storage.js?v=linkedin"></script>
+  <script src="../js/dashboard.js?v=linkedin"></script>
+  <script src="../js/linkedin.js?v=linkedin"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (!OP.auth.isAuthenticated()) {

@@ -351,6 +351,13 @@ class DashboardApp {
   // ============================================
   renderHeader() {
     const header = document.querySelector('.dashboard-header');
+    // If we're on a LinkedIn module page, preserve the header so
+    // the module-specific branding (LinkedIn title) remains visible.
+    try {
+      if (window.location && window.location.pathname && window.location.pathname.includes('/linkedin/')) {
+        return;
+      }
+    } catch (e) { /* ignore */ }
     if (header) header.remove();
   }
 

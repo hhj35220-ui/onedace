@@ -6,6 +6,8 @@
    LinkedIn Header
    ============================================ */
 .linkedin-header {
+  display: flex;
+  align-items: center;
   background: var(--gray-0);
   border-bottom: 1px solid var(--gray-200);
   padding: 0 var(--space-6);
