@@ -664,14 +664,15 @@ class LinkedInApp {
 
     const connections = this.storage.getConnections();
     container.innerHTML = connections.map(c => `
-      <div class="message-list-item connection-request-item" data-id="${c.id}">
-        <img src="${c.avatar}" alt="${c.name}" class="msg-list-avatar">
-        <div class="msg-list-info">
-          <div class="msg-list-name">${c.name}</div>
-          <div class="msg-list-preview">${c.title}</div>
+      <div class="connection-request-item" data-id="${c.id}">
+        <img src="${c.avatar}" alt="${c.name}" class="conn-req-avatar">
+        <div class="conn-req-info">
+          <div class="conn-req-name">${c.name}</div>
+          <div class="conn-req-title">${c.title}</div>
+          <div class="conn-req-preview">${c.preview}</div>
         </div>
-        <div class="msg-list-meta">
-          <span class="msg-list-badge inmail">New</span>
+        <div class="conn-req-meta">
+          <span class="msg-list-badge connection">${c.status === 'pending' ? 'New' : c.status}</span>
         </div>
       </div>
     `).join('');
@@ -686,7 +687,7 @@ class LinkedInApp {
   }
 
   openConnectionDetail(id) {
-    const conn = LINKEDIN_CONNECTION_REQUESTS.find(c => c.id === id);
+    const conn = this.storage.getConnections().find(c => c.id === id);
     if (!conn) return;
 
     const emptyEl = document.getElementById('connection-detail-empty');
@@ -710,19 +711,20 @@ class LinkedInApp {
 
       const acceptBtn = document.getElementById('accept-btn');
       const ignoreBtn = document.getElementById('ignore-btn');
+      const listItem = document.querySelector(`.connection-request-item[data-id="${id}"]`);
 
       if (acceptBtn) {
         acceptBtn.onclick = () => {
           this.storage.updateConnectionStatus(id, 'accepted');
           OP.toast.show(`Connected with ${conn.name}`, 'success');
-          item.remove();
+          if (listItem) listItem.remove();
         };
       }
       if (ignoreBtn) {
         ignoreBtn.onclick = () => {
           this.storage.updateConnectionStatus(id, 'ignored');
           OP.toast.show('Request ignored', 'info');
-          item.remove();
+          if (listItem) listItem.remove();
         };
       }
     }
