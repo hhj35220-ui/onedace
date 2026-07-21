@@ -26,7 +26,10 @@ const TIKTOK_DEBUG = {
   init() {
     if (!this.enabled) return;
     this.log('debug-enabled');
-    this.attachPanel();
+    // NOTE: The on-page debug panel is disabled by default to avoid UI clutter.
+    // To re-enable the floating debug panel during development set
+    // `TIKTOK_DEBUG.panelEnabled = true` and call `TIKTOK_DEBUG.attachPanel()` manually.
+    // this.attachPanel();
     this.observeResourceErrors();
     this.logLayoutState('boot');
   },
@@ -1562,6 +1565,18 @@ class TikTokApp {
     if (conv) conv.unread = false;
     this.renderSidebar();
     this.renderChat();
+    // Ensure the message composer is focused and visible for quick replies
+    setTimeout(() => {
+      const input = document.getElementById('chatInput');
+      if (input) {
+        try {
+          input.focus({ preventScroll: true });
+          input.click();
+          input.select && input.select();
+          input.scrollIntoView({ behavior: 'auto', block: 'end' });
+        } catch (e) { /* ignore */ }
+      }
+    }, 50);
   }
 
   getFilteredConversations() {
