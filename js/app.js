@@ -1053,7 +1053,12 @@ function loadOnboardingAssets() {
 
 // Defer onboarding load slightly to prioritize critical render
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(loadOnboardingAssets, 1200);
+  if (!window.location.pathname.includes('/linkedin/')) {
+    setTimeout(loadOnboardingAssets, 1200);
+  } else {
+    window.OP = window.OP || {};
+    window.OP.onboardingLoaded = true;
+  }
 });
 
 // ============================================

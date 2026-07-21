@@ -186,7 +186,8 @@
   class Logger {
     constructor(config) {
       this.config = config;
-      this.enabled = !config.isProduction();
+      const isProduction = typeof config.isProduction === 'function' ? config.isProduction() : false;
+      this.enabled = !isProduction;
       this.prefix = '[OP.API]';
     }
 
