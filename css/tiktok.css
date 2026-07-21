@@ -1110,6 +1110,13 @@
   overflow-y: auto;
 }
 
+/* Prevent global conversation-item hover from shifting TikTok layout */
+.tiktok-main .conversation-item,
+.tiktok-main .conversation-item:hover {
+  margin: 0;
+  padding: 12px 0;
+}
+
 .tiktok-conversation-item {
   display: flex;
   align-items: center;
@@ -1310,7 +1317,8 @@
 .tiktok-message {
   display: flex;
   gap: 10px;
-  max-width: 70%;
+  max-width: 80%;
+  word-break: break-word;
 }
 
 .tiktok-message.customer {
