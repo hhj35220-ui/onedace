@@ -208,6 +208,11 @@
     </main>
   </div>
 
+  <script>
+    // Prevent onboarding assets from loading on LinkedIn pages (host may serve older app.js)
+    window.OP = window.OP || {};
+    window.OP.onboardingLoaded = true;
+  </script>
   <script src="../js/app.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/dashboard.js"></script>
