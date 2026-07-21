@@ -1,6 +1,6 @@
 /**
  * OnePlace Enterprise — TikTok Module
- * Complete rewrite to match design reference exactly.
+ * Pixel-perfect recreation of design reference.
  */
 
 const TIKTOK_STORAGE_KEYS = {
@@ -13,27 +13,27 @@ const TIKTOK_STORAGE_KEYS = {
 };
 
 // ============================================
-// Sample Data — Matches Design Exactly
+// Sample Data — Matches Design Reference Exactly
 // ============================================
 
 const TIKTOK_SAMPLE_CUSTOMERS = [
-  { id: 'tc1', name: 'Sarah Johnson', handle: '@sarahjohnson', avatar: 'SJ', color: '#fe2c55', status: 'online', leadScore: 85, customerStatus: 'Active', totalOrders: 8, totalSpent: '$1,245.00', location: 'Canada', localTime: '10:34 AM', labels: ['VIP Customer', 'New Customer'] },
-  { id: 'tc2', name: 'Michael Brown', handle: '@michaelbrown', avatar: 'MB', color: '#25f4ee', status: 'offline', leadScore: 62, customerStatus: 'Active', totalOrders: 3, totalSpent: '$450.00', location: 'USA', localTime: '1:34 PM', labels: ['New Customer'] },
-  { id: 'tc3', name: 'Olivia Rodriguez', handle: '@oliviarodriguez', avatar: 'OR', color: '#f59e0b', status: 'away', leadScore: 91, customerStatus: 'Active', totalOrders: 15, totalSpent: '$2,890.00', location: 'Mexico', localTime: '12:34 PM', labels: ['VIP Customer'] },
-  { id: 'tc4', name: 'James Wilson', handle: '@jameswilson', avatar: 'JW', color: '#8b5cf6', status: 'online', leadScore: 45, customerStatus: 'Inactive', totalOrders: 1, totalSpent: '$89.00', location: 'UK', localTime: '6:34 PM', labels: [] },
-  { id: 'tc5', name: 'Emma Davis', handle: '@emmadavis', avatar: 'ED', color: '#10b981', status: 'online', leadScore: 78, customerStatus: 'Active', totalOrders: 5, totalSpent: '$780.00', location: 'Australia', localTime: '2:34 AM', labels: ['Returning'] },
-  { id: 'tc6', name: 'Daniel Thomas', handle: '@danielthomas', avatar: 'DT', color: '#6366f1', status: 'offline', leadScore: 55, customerStatus: 'Active', totalOrders: 2, totalSpent: '$234.00', location: 'Germany', localTime: '7:34 PM', labels: [] },
-  { id: 'tc7', name: 'Sophia Martinez', handle: '@sophiamartinez', avatar: 'SM', color: '#ec4899', status: 'away', leadScore: 88, customerStatus: 'Active', totalOrders: 12, totalSpent: '$1,890.00', location: 'Spain', localTime: '7:34 PM', labels: ['VIP Customer'] }
+  { id: 'tc1', name: 'sarah.johnson', handle: '@sarahjohnson', avatar: 'SJ', color: '#fe2c55', status: 'online', leadScore: 85, customerStatus: 'Active', totalOrders: 8, totalSpent: '$1,245.00', location: 'Canada', localTime: '10:34 AM', labels: ['VIP Customer', 'New Customer'] },
+  { id: 'tc2', name: 'michael_brown', handle: '@michaelbrown', avatar: 'MB', color: '#25f4ee', status: 'offline', leadScore: 62, customerStatus: 'Active', totalOrders: 3, totalSpent: '$450.00', location: 'USA', localTime: '1:34 PM', labels: ['New Customer'] },
+  { id: 'tc3', name: 'olivia.rodriguez', handle: '@oliviarodriguez', avatar: 'OR', color: '#f59e0b', status: 'away', leadScore: 91, customerStatus: 'Active', totalOrders: 15, totalSpent: '$2,890.00', location: 'Mexico', localTime: '12:34 PM', labels: ['VIP Customer'] },
+  { id: 'tc4', name: 'james.wilson', handle: '@jameswilson', avatar: 'JW', color: '#8b5cf6', status: 'online', leadScore: 45, customerStatus: 'Inactive', totalOrders: 1, totalSpent: '$89.00', location: 'UK', localTime: '6:34 PM', labels: [] },
+  { id: 'tc5', name: 'emma.davis', handle: '@emmadavis', avatar: 'ED', color: '#10b981', status: 'online', leadScore: 78, customerStatus: 'Active', totalOrders: 5, totalSpent: '$780.00', location: 'Australia', localTime: '2:34 AM', labels: ['Returning'] },
+  { id: 'tc6', name: 'david.thomas', handle: '@davidthomas', avatar: 'DT', color: '#6366f1', status: 'offline', leadScore: 55, customerStatus: 'Active', totalOrders: 2, totalSpent: '$234.00', location: 'Germany', localTime: '7:34 PM', labels: [] },
+  { id: 'tc7', name: 'sophia.martinez', handle: '@sophiamartinez', avatar: 'SM', color: '#ec4899', status: 'away', leadScore: 88, customerStatus: 'Active', totalOrders: 12, totalSpent: '$1,890.00', location: 'Spain', localTime: '7:34 PM', labels: ['VIP Customer'] }
 ];
 
 const TIKTOK_SAMPLE_CONVERSATIONS = [
-  { id: 'tconv1', customerId: 'tc1', lastMessage: 'Hi! Do you ship to Canada?', unread: true, timestamp: new Date(Date.now() - 20 * 60000).toISOString(), priority: 'high' },
-  { id: 'tconv2', customerId: 'tc2', lastMessage: 'Love your products! Just ordered the blue hoodie.', unread: true, timestamp: new Date(Date.now() - 45 * 60000).toISOString(), priority: 'medium' },
-  { id: 'tconv3', customerId: 'tc3', lastMessage: 'Can you tell me the price?', unread: false, timestamp: new Date(Date.now() - 2 * 3600000).toISOString(), priority: 'low' },
-  { id: 'tconv4', customerId: 'tc4', lastMessage: 'When will this be back in stock?', unread: false, timestamp: new Date(Date.now() - 6 * 3600000).toISOString(), priority: 'medium' },
-  { id: 'tconv5', customerId: 'tc5', lastMessage: 'Thank you so much! 💜', unread: false, timestamp: new Date(Date.now() - 24 * 3600000).toISOString(), priority: 'low' },
-  { id: 'tconv6', customerId: 'tc6', lastMessage: 'Do you have size M?', unread: true, timestamp: new Date(Date.now() - 30 * 60000).toISOString(), priority: 'high' },
-  { id: 'tconv7', customerId: 'tc7', lastMessage: 'Love the new collection!', unread: false, timestamp: new Date(Date.now() - 5 * 3600000).toISOString(), priority: 'medium' }
+  { id: 'tconv1', customerId: 'tc1', lastMessage: 'Hi! Do you ship to Canada?', unread: true, timestamp: new Date(Date.now() - 2 * 60000).toISOString(), priority: 'high' },
+  { id: 'tconv2', customerId: 'tc2', lastMessage: 'Love your products! 🔥', unread: true, timestamp: new Date(Date.now() - 5 * 60000).toISOString(), priority: 'medium' },
+  { id: 'tconv3', customerId: 'tc3', lastMessage: 'Can you tell me the price?', unread: false, timestamp: new Date(Date.now() - 10 * 60000).toISOString(), priority: 'low' },
+  { id: 'tconv4', customerId: 'tc4', lastMessage: 'When will it be back in stock?', unread: false, timestamp: new Date(Date.now() - 15 * 60000).toISOString(), priority: 'medium' },
+  { id: 'tconv5', customerId: 'tc5', lastMessage: 'Thank you so much! 💜', unread: false, timestamp: new Date(Date.now() - 25 * 60000).toISOString(), priority: 'low' },
+  { id: 'tconv6', customerId: 'tc6', lastMessage: 'Is this product still valid?', unread: true, timestamp: new Date(Date.now() - 30 * 60000).toISOString(), priority: 'high' },
+  { id: 'tconv7', customerId: 'tc7', lastMessage: 'I love your new collection!', unread: false, timestamp: new Date(Date.now() - 60 * 60000).toISOString(), priority: 'medium' }
 ];
 
 const CHAT_MESSAGES = {
@@ -45,11 +45,11 @@ const CHAT_MESSAGES = {
     { id: 'm5', sender: 'customer', text: 'Great! I\'ll place an order today.', time: '10:24 AM' }
   ],
   tconv2: [
-    { id: 'm1', sender: 'customer', text: 'Love your products! Just ordered the blue hoodie.', time: '9:15 AM' },
+    { id: 'm1', sender: 'customer', text: 'Love your products! 🔥', time: '9:15 AM' },
     { id: 'm2', sender: 'agent', text: 'Thanks so much! Your order #12345 is confirmed. 🎉', time: '9:16 AM' }
   ],
   tconv6: [
-    { id: 'm1', sender: 'customer', text: 'Do you have size M?', time: '10:00 AM' }
+    { id: 'm1', sender: 'customer', text: 'Is this product still valid?', time: '10:00 AM' }
   ]
 };
 
@@ -63,36 +63,36 @@ const AI_REPLY_CHIPS = [
 const TIKTOK_SAMPLE_COMMENTS = [
   { id: 'tcmt1', author: 'lisa_park', authorHandle: '@lisa_park', authorAvatar: 'LP', authorColor: '#fe2c55', text: 'Love this collection! 🔥', videoTitle: 'New Product Unboxing!', likes: 24, time: new Date(Date.now() - 30 * 60000).toISOString(), priority: 'high', aiReply: 'Thank you so much! We\'re glad you love it. Which item is your favorite? 🔥' },
   { id: 'tcmt2', author: 'john_doe', authorHandle: '@johndoe', authorAvatar: 'JD', authorColor: '#25f4ee', text: 'How much is this?', videoTitle: 'How to Get More Views', likes: 12, time: new Date(Date.now() - 2 * 3600000).toISOString(), priority: 'medium', aiReply: 'Hi! The price varies by item. Check our bio link for current pricing! 💰' },
-  { id: 'tcmt3', author: 'emma_style', authorHandle: '@emmastyle', authorAvatar: 'ES', authorColor: '#f59e0b', text: 'Behind the scenes please!', videoTitle: 'Behind the Scenes', likes: 8, time: new Date(Date.now() - 4 * 3600000).toISOString(), priority: 'low', aiReply: null },
-  { id: 'tcmt4', author: 'mike_williams', authorHandle: '@mikewilliams', authorAvatar: 'MW', authorColor: '#8b5cf6', text: 'Does it come in black?', videoTitle: 'Q&A with the Team', likes: 15, time: new Date(Date.now() - 5 * 3600000).toISOString(), priority: 'high', aiReply: 'Yes! It comes in black, white, and navy. Check our store! 🖤' },
-  { id: 'tcmt5', author: 'sarah_k', authorHandle: '@sarahk', authorAvatar: 'SK', authorColor: '#10b981', text: 'Just bought one! Can\'t wait 🙌', videoTitle: 'New Product Unboxing!', likes: 32, time: new Date(Date.now() - 1 * 3600000).toISOString(), priority: 'low', aiReply: 'Yay! Thanks for your order! We\'ll ship it out ASAP 🚀' }
+  { id: 'tcmt3', author: 'emma_roberts', authorHandle: '@emmaroberts', authorAvatar: 'ER', authorColor: '#f59e0b', text: 'This is exactly what I needed! 💯', videoTitle: 'Behind the Scenes', likes: 8, time: new Date(Date.now() - 4 * 3600000).toISOString(), priority: 'low', aiReply: null },
+  { id: 'tcmt4', author: 'mike_wilson', authorHandle: '@mikewilliams', authorAvatar: 'MW', authorColor: '#8b5cf6', text: 'Can I become a reseller?', videoTitle: 'Q&A with the Team', likes: 15, time: new Date(Date.now() - 5 * 3600000).toISOString(), priority: 'high', aiReply: 'Yes! It comes in black, white, and navy. Check our store! 🖤' }
 ];
 
 const TIKTOK_SAMPLE_MENTIONS = [
-  { id: 'tmen1', author: 'fashion_daily', authorHandle: '@fashiondaily', authorAvatar: 'FD', authorColor: '#fe2c55', text: '@acmesolutions love this collection! 🔥', videoTitle: 'Fashion Week Highlights', likes: 156, time: new Date(Date.now() - 20 * 60000).toISOString(), followers: '12.4K' },
-  { id: 'tmen2', author: 'style_inspo', authorHandle: '@styleinspo', authorAvatar: 'SI', authorColor: '#25f4ee', text: 'Just tried your product! @acmesolutions', videoTitle: 'Product Review', likes: 89, time: new Date(Date.now() - 3 * 3600000).toISOString(), followers: '8.2K' },
-  { id: 'tmen3', author: 'trendy_looks', authorHandle: '@trendylooks', authorAvatar: 'TL', authorColor: '#f59e0b', text: 'any restock updates? @acmesolutions', videoTitle: 'Outfit of the Day', likes: 45, time: new Date(Date.now() - 7 * 3600000).toISOString(), followers: '24.1K' },
-  { id: 'tmen4', author: 'outfit_of_day', authorHandle: '@outfitoftheday', authorAvatar: 'OD', authorColor: '#8b5cf6', text: 'Thanks @acmesolutions! 🙌', videoTitle: 'Styling Tips', likes: 67, time: new Date(Date.now() - 12 * 3600000).toISOString(), followers: '45.6K' }
+  { id: 'tmen1', author: 'fashion.daily', authorHandle: '@fashiondaily', authorAvatar: 'FD', authorColor: '#fe2c55', text: 'Mentioned you in their story collection! 🔥', videoTitle: 'Fashion Week Highlights', likes: 156, time: new Date(Date.now() - 2 * 60000).toISOString(), followers: '12.4K' },
+  { id: 'tmen2', author: 'style.inspo', authorHandle: '@styleinspo', authorAvatar: 'SI', authorColor: '#25f4ee', text: 'Just tried your product! @acmesolutions', videoTitle: 'Product Review', likes: 89, time: new Date(Date.now() - 10 * 60000).toISOString(), followers: '8.2K' },
+  { id: 'tmen3', author: 'trendy.looks', authorHandle: '@trendylooks', authorAvatar: 'TL', authorColor: '#f59e0b', text: '@acmesolutions any restock update?', videoTitle: 'Outfit of the Day', likes: 45, time: new Date(Date.now() - 15 * 60000).toISOString(), followers: '24.1K' },
+  { id: 'tmen4', author: 'outfit_of_the_day', authorHandle: '@outfitoftheday', authorAvatar: 'OD', authorColor: '#8b5cf6', text: 'Thanks @acmesolutions! 🙌', videoTitle: 'Styling Tips', likes: 67, time: new Date(Date.now() - 20 * 60000).toISOString(), followers: '45.6K' }
 ];
 
 const TIKTOK_SAMPLE_VIDEOS = [
-  { id: 'v1', title: 'New Product Unboxing!', views: '12.4K', likes: '2.1K', comments: 156, shares: 89, date: 'May 28' },
-  { id: 'v2', title: 'How to Get More Views', views: '8.7K', likes: '1.5K', comments: 89, shares: 45, date: 'May 27' },
-  { id: 'v3', title: 'Behind the Scenes', views: '5.2K', likes: '890', comments: 67, shares: 34, date: 'May 26' },
-  { id: 'v4', title: 'Q&A with the Team', views: '3.1K', likes: '542', comments: 45, shares: 23, date: 'May 25' }
+  { id: 'v1', title: 'New Product Unboxing!', date: 'May 26, 2024', views: '2.3K', comments: 172, likes: '1.7K' },
+  { id: 'v2', title: 'How to Get More Views', date: 'May 24, 2024', views: '1.8K', comments: 156, likes: '1.6K' },
+  { id: 'v3', title: 'Behind the Scenes', date: 'May 23, 2024', views: '1.2K', comments: 108, likes: '1.1K' },
+  { id: 'v4', title: 'Q&A with the Team', date: 'May 22, 2024', views: '1.5K', comments: 133, likes: '982' }
 ];
 
 const TIKTOK_AI_RECOMMENDATIONS = [
-  { id: 'ai1', type: 'High Intent Conversations', count: 12, desc: 'Users showing purchase intent in messages', priority: 'high', action: 'Review' },
-  { id: 'ai2', type: 'Response Rate', count: 8, desc: 'Messages awaiting response for over 2 hours', priority: 'medium', action: 'Reply' },
-  { id: 'ai3', type: 'Engagement Opportunity', count: 3, desc: 'High-value comments with viral potential', priority: 'low', action: 'Engage' }
+  { id: 'ai1', type: 'High Intent Conversations', count: 12, desc: '12 conversations need attention', priority: 'high', icon: 'ph-warning-circle', iconColor: '#ef4444', bgColor: '#fef2f2' },
+  { id: 'ai2', type: 'Response Rate', count: 8, desc: 'Your response rate is excellent', priority: 'medium', icon: 'ph-check-circle', iconColor: '#fe2c55', bgColor: '#fff0f3' },
+  { id: 'ai3', type: 'Engagement Opportunity', count: 3, desc: '5 videos can get more reach', priority: 'low', icon: 'ph-trend-up', iconColor: '#10b981', bgColor: '#ecfdf5' },
+  { id: 'ai4', type: 'New Followers', count: 142, desc: '142 new followers this week', priority: 'low', icon: 'ph-users', iconColor: '#f59e0b', bgColor: '#fffbeb' }
 ];
 
 const ENGAGEMENT_DATA = [
   { label: 'Direct Messages', value: 499, color: '#6366f1', percent: 40 },
-  { label: 'Comments', value: 324, color: '#f59e0b', percent: 26 },
-  { label: 'Mentions', value: 200, color: '#10b981', percent: 16 },
-  { label: 'Video Interactions', value: 162, color: '#ef4444', percent: 13 },
+  { label: 'Comments', value: 324, color: '#f59e0b', percent: 25 },
+  { label: 'Mentions', value: 200, color: '#10b981', percent: 20 },
+  { label: 'Video Interactions', value: 162, color: '#ef4444', percent: 10 },
   { label: 'Shares', value: 63, color: '#8b5cf6', percent: 5 }
 ];
 
@@ -102,16 +102,27 @@ const ACCOUNT_STATUS = {
   following: 312,
   likes: '128K',
   connectedDate: 'May 13, 2024',
-  connectionHealth: 100
+  connectionHealth: 100,
+  followerTrend: '+ 12.5%',
+  followingTrend: '+ 5.1%',
+  likesTrend: '+ 15.3%'
 };
 
 const SAVED_REPLIES = [
   { id: 'sr1', title: 'Welcome Message', category: 'General', text: 'Hi there! Thanks for reaching out. How can we help you today?', usage: 34 },
-  { id: 'sr2', title: 'Shipping Information', category: 'General', text: 'We ship worldwide! Shipping usually takes 3-5 business days.', usage: 18 },
-  { id: 'sr3', title: 'Order Status', category: 'Orders', text: 'Sure! Let me check your order status for you.', usage: 16 },
-  { id: 'sr4', title: 'Return Policy', category: 'Returns', text: 'We accept returns within 30 days of purchase. Please check our return policy.', usage: 12 },
-  { id: 'sr5', title: 'Product Inquiry', category: 'Products', text: 'Thanks for your interest! Here are the details about this product.', usage: 8 },
-  { id: 'sr6', title: 'Payment Issue', category: 'Orders', text: 'Sorry to hear that! Let me help you resolve this payment issue.', usage: 5 }
+  { id: 'sr2', title: 'Shipping Information', category: 'General', text: 'We offer worldwide shipping! Shipping usually takes 3-5 business days.', usage: 245 },
+  { id: 'sr3', title: 'Order Status', category: 'Orders', text: 'Sure! Let me check your order status for you.', usage: 18 },
+  { id: 'sr4', title: 'Return Policy', category: 'Returns', text: 'You can return within 30 days of purchase.', usage: 82 }
+];
+
+const SAVED_REPLY_CATEGORIES = [
+  { id: 'all', label: 'All Replies', count: 12 },
+  { id: 'welcome', label: 'Welcome Message', count: 4 },
+  { id: 'shipping', label: 'Shipping', count: 3 },
+  { id: 'orders', label: 'Order Status', count: 2 },
+  { id: 'products', label: 'Products', count: 1 },
+  { id: 'returns', label: 'Returns', count: 2 },
+  { id: 'payment', label: 'Payment', count: 1 }
 ];
 
 const DEFAULT_INTEGRATION = {
@@ -168,9 +179,9 @@ function formatTimeAgo(timestamp) {
   const hours = Math.floor(diffMs / 3600000);
   const days = Math.floor(diffMs / 86400000);
   if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 60) return `${minutes}m`;
+  if (hours < 24) return `${hours}h`;
+  if (days < 7) return `${days}d`;
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
@@ -194,6 +205,7 @@ class TikTokApp {
     this.sidebar = document.getElementById('tiktokSidebarNav');
     this.selectedConversation = null;
     this.conversationFilter = 'all';
+    this.savedReplyFilter = 'all';
     this.settingsTab = 'general';
     this.init();
   }
@@ -248,10 +260,10 @@ class TikTokApp {
       if (action === 'use-saved-reply') this.useSavedReply(itemId);
       if (action === 'toggle-permission') this.togglePermission(itemId);
       if (action === 'filter-conversations') this.filterConversations(target.dataset.filter);
+      if (action === 'filter-saved-replies') this.filterSavedReplies(target.dataset.filter);
       if (action === 'settings-tab') this.switchSettingsTab(target.dataset.tab);
     });
 
-    // Chat input enter key
     this.container.addEventListener('keydown', event => {
       if (event.key === 'Enter' && event.target.id === 'chatInput') {
         this.sendMessage();
@@ -270,7 +282,7 @@ class TikTokApp {
       { view: 'conversations', label: 'Conversations', icon: 'ph-chat-centered-text', badge: stats.unreadMessages },
       { view: 'comments', label: 'Comments', icon: 'ph-chat-teardrop-text', badge: stats.totalComments },
       { view: 'mentions', label: 'Mentions', icon: 'ph-at', badge: stats.totalMentions },
-      { view: 'videos', label: 'Video Interactions', icon: 'ph-video', badge: null },
+      { view: 'saved-replies', label: 'Saved Replies', icon: 'ph-chat-circle-text', badge: null },
       { view: 'integration', label: 'Integration', icon: 'ph-plugs', badge: null },
       { view: 'settings', label: 'Settings', icon: 'ph-gear', badge: null }
     ];
@@ -293,7 +305,7 @@ class TikTokApp {
       case 'conversations': return this.selectedConversation ? this.renderChat() : this.renderConversations();
       case 'comments': return this.renderComments();
       case 'mentions': return this.renderMentions();
-      case 'videos': return this.renderVideos();
+      case 'saved-replies': return this.renderSavedRepliesPage();
       case 'integration': return this.renderIntegration();
       case 'settings': return this.renderSettings();
       default: return this.renderOverview();
@@ -305,7 +317,6 @@ class TikTokApp {
   // ============================================
 
   renderOverview() {
-    const stats = this.computeStats();
     const videos = TIKTOK_SAMPLE_VIDEOS.slice(0, 4);
     const recent = TIKTOK_SAMPLE_CONVERSATIONS.slice(0, 5);
 
@@ -319,8 +330,8 @@ class TikTokApp {
           </div>
         </div>
         <div class="tiktok-overview-actions">
-          <div class="tiktok-date-picker"><i class="ph ph-calendar-blank"></i> May 22 - May 28, 2024</div>
-          <button class="btn btn-primary" id="exportReportButton"><i class="ph ph-download-simple"></i> Export Report</button>
+          <div class="tiktok-date-picker"><i class="ph ph-calendar-blank"></i> May 20 – May 26, 2024 <i class="ph ph-caret-down" style="margin-left:4px;"></i></div>
+          <button class="header-btn" id="exportReportButton"><i class="ph ph-export"></i> Export Report</button>
         </div>
       </div>
 
@@ -328,7 +339,7 @@ class TikTokApp {
         <div class="tiktok-stat-card">
           <div class="tiktok-stat-header">
             <div class="tiktok-stat-icon conversations"><i class="ph ph-chat-centered-text"></i></div>
-            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 16.5%</span>
+            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 12.5%</span>
           </div>
           <div class="tiktok-stat-value">156</div>
           <div class="tiktok-stat-label">Total Conversations</div>
@@ -337,7 +348,7 @@ class TikTokApp {
         <div class="tiktok-stat-card">
           <div class="tiktok-stat-header">
             <div class="tiktok-stat-icon messages"><i class="ph ph-envelope-simple"></i></div>
-            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 21.3%</span>
+            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 4.3%</span>
           </div>
           <div class="tiktok-stat-value">23</div>
           <div class="tiktok-stat-label">Unread Messages</div>
@@ -345,29 +356,29 @@ class TikTokApp {
         </div>
         <div class="tiktok-stat-card">
           <div class="tiktok-stat-header">
-            <div class="tiktok-stat-icon comments"><i class="ph ph-chat-teardrop-text"></i></div>
-            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 15.2%</span>
+            <div class="tiktok-stat-icon resolved"><i class="ph ph-check-circle"></i></div>
+            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 8.7%</span>
           </div>
           <div class="tiktok-stat-value">89</div>
-          <div class="tiktok-stat-label">Comments</div>
+          <div class="tiktok-stat-label">Resolved</div>
+          <div class="tiktok-stat-vs">vs last 7 days</div>
+        </div>
+        <div class="tiktok-stat-card">
+          <div class="tiktok-stat-header">
+            <div class="tiktok-stat-icon leads"><i class="ph ph-users"></i></div>
+            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 15.2%</span>
+          </div>
+          <div class="tiktok-stat-value">34</div>
+          <div class="tiktok-stat-label">New Leads</div>
           <div class="tiktok-stat-vs">vs last 7 days</div>
         </div>
         <div class="tiktok-stat-card">
           <div class="tiktok-stat-header">
             <div class="tiktok-stat-icon mentions"><i class="ph ph-at"></i></div>
-            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 10.4%</span>
-          </div>
-          <div class="tiktok-stat-value">34</div>
-          <div class="tiktok-stat-label">Mentions</div>
-          <div class="tiktok-stat-vs">vs last 7 days</div>
-        </div>
-        <div class="tiktok-stat-card">
-          <div class="tiktok-stat-header">
-            <div class="tiktok-stat-icon interactions"><i class="ph ph-video"></i></div>
-            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 34.2%</span>
+            <span class="tiktok-stat-trend up"><i class="ph ph-trend-up"></i> 18.3%</span>
           </div>
           <div class="tiktok-stat-value">248</div>
-          <div class="tiktok-stat-label">Video Interactions</div>
+          <div class="tiktok-stat-label">Total Mentions</div>
           <div class="tiktok-stat-vs">vs last 7 days</div>
         </div>
       </div>
@@ -384,12 +395,12 @@ class TikTokApp {
               <span class="trend-legend-item"><span class="trend-dot purple"></span>Conversations</span>
               <span class="trend-legend-item"><span class="trend-dot cyan"></span>Responses</span>
             </div>
-            <svg class="trend-chart" viewBox="0 0 500 200" width="100%" height="200">
+            <svg class="trend-chart" viewBox="0 0 500 200" width="100%" height="200" preserveAspectRatio="none">
               <!-- Grid lines -->
-              <line x1="40" y1="20" x2="480" y2="20" stroke="#e2e8f0" stroke-dasharray="4"/>
-              <line x1="40" y1="60" x2="480" y2="60" stroke="#e2e8f0" stroke-dasharray="4"/>
-              <line x1="40" y1="100" x2="480" y2="100" stroke="#e2e8f0" stroke-dasharray="4"/>
-              <line x1="40" y1="140" x2="480" y2="140" stroke="#e2e8f0" stroke-dasharray="4"/>
+              <line x1="40" y1="20" x2="460" y2="20" stroke="#e2e8f0" stroke-dasharray="4"/>
+              <line x1="40" y1="60" x2="460" y2="60" stroke="#e2e8f0" stroke-dasharray="4"/>
+              <line x1="40" y1="100" x2="460" y2="100" stroke="#e2e8f0" stroke-dasharray="4"/>
+              <line x1="40" y1="140" x2="460" y2="140" stroke="#e2e8f0" stroke-dasharray="4"/>
               <!-- Y labels -->
               <text x="35" y="24" text-anchor="end" font-size="10" fill="#94a3b8">100</text>
               <text x="35" y="64" text-anchor="end" font-size="10" fill="#94a3b8">75</text>
@@ -397,23 +408,23 @@ class TikTokApp {
               <text x="35" y="144" text-anchor="end" font-size="10" fill="#94a3b8">25</text>
               <text x="35" y="184" text-anchor="end" font-size="10" fill="#94a3b8">0</text>
               <!-- X labels -->
-              <text x="40" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 22</text>
-              <text x="110" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 23</text>
-              <text x="180" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 24</text>
-              <text x="250" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 25</text>
-              <text x="320" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 26</text>
-              <text x="390" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 27</text>
-              <text x="460" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 28</text>
+              <text x="40" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 20</text>
+              <text x="110" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 21</text>
+              <text x="180" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 22</text>
+              <text x="250" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 23</text>
+              <text x="320" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 24</text>
+              <text x="390" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 25</text>
+              <text x="460" y="195" text-anchor="middle" font-size="10" fill="#94a3b8">May 26</text>
               <!-- Conversations line (purple) -->
-              <path d="M 40 140 Q 75 120, 110 80 T 180 60 T 250 100 T 320 70 T 390 90 T 460 50" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="40" cy="140" r="3" fill="#6366f1"/><circle cx="110" cy="80" r="3" fill="#6366f1"/><circle cx="180" cy="60" r="3" fill="#6366f1"/>
-              <circle cx="250" cy="100" r="3" fill="#6366f1"/><circle cx="320" cy="70" r="3" fill="#6366f1"/><circle cx="390" cy="90" r="3" fill="#6366f1"/>
-              <circle cx="460" cy="50" r="3" fill="#6366f1"/>
+              <path d="M 40 132 Q 75 116, 110 92 T 180 44 T 250 76 T 320 84 T 390 60 T 460 28" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="40" cy="132" r="3" fill="#6366f1"/><circle cx="110" cy="92" r="3" fill="#6366f1"/><circle cx="180" cy="44" r="3" fill="#6366f1"/>
+              <circle cx="250" cy="76" r="3" fill="#6366f1"/><circle cx="320" cy="84" r="3" fill="#6366f1"/><circle cx="390" cy="60" r="3" fill="#6366f1"/>
+              <circle cx="460" cy="28" r="3" fill="#6366f1"/>
               <!-- Responses line (cyan) -->
-              <path d="M 40 160 Q 75 150, 110 130 T 180 110 T 250 140 T 320 120 T 390 130 T 460 100" fill="none" stroke="#25f4ee" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="40" cy="160" r="3" fill="#25f4ee"/><circle cx="110" cy="130" r="3" fill="#25f4ee"/><circle cx="180" cy="110" r="3" fill="#25f4ee"/>
-              <circle cx="250" cy="140" r="3" fill="#25f4ee"/><circle cx="320" cy="120" r="3" fill="#25f4ee"/><circle cx="390" cy="130" r="3" fill="#25f4ee"/>
-              <circle cx="460" cy="100" r="3" fill="#25f4ee"/>
+              <path d="M 40 148 Q 75 140, 110 132 T 180 116 T 250 100 T 320 116 T 390 108 T 460 92" fill="none" stroke="#25f4ee" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="40" cy="148" r="3" fill="#25f4ee"/><circle cx="110" cy="132" r="3" fill="#25f4ee"/><circle cx="180" cy="116" r="3" fill="#25f4ee"/>
+              <circle cx="250" cy="100" r="3" fill="#25f4ee"/><circle cx="320" cy="116" r="3" fill="#25f4ee"/><circle cx="390" cy="108" r="3" fill="#25f4ee"/>
+              <circle cx="460" cy="92" r="3" fill="#25f4ee"/>
             </svg>
           </div>
         </section>
@@ -430,7 +441,12 @@ class TikTokApp {
                 <div class="tiktok-video-thumb"><i class="ph ph-play-circle"></i></div>
                 <div class="tiktok-video-info">
                   <div class="tiktok-video-title">${escapeHtml(video.title)}</div>
-                  <div class="tiktok-video-meta">${escapeHtml(video.views)} views • ${escapeHtml(video.likes)} likes</div>
+                  <div class="tiktok-video-meta">
+                    <span>${escapeHtml(video.date)}</span>
+                    <span class="video-meta-stat"><i class="ph ph-eye"></i> ${escapeHtml(video.views)}</span>
+                    <span class="video-meta-stat"><i class="ph ph-chat-teardrop-text"></i> ${video.comments}</span>
+                    <span class="video-meta-stat"><i class="ph ph-heart"></i> ${escapeHtml(video.likes)}</span>
+                  </div>
                 </div>
               </div>
             `).join('')}
@@ -446,17 +462,18 @@ class TikTokApp {
           <div class="tiktok-widget-body">
             <div class="tiktok-ai-list">
               ${TIKTOK_AI_RECOMMENDATIONS.map(rec => `
-                <div class="tiktok-ai-item priority-${rec.priority}">
-                  <div class="tiktok-ai-icon"><i class="ph ph-warning-circle"></i></div>
+                <div class="tiktok-ai-item">
+                  <div class="tiktok-ai-icon" style="background:${rec.bgColor};color:${rec.iconColor};">
+                    <i class="ph ${rec.icon}"></i>
+                  </div>
                   <div class="tiktok-ai-content">
                     <div class="tiktok-ai-title">${escapeHtml(rec.type)} <span class="tiktok-ai-count">${rec.count}</span></div>
                     <div class="tiktok-ai-text">${escapeHtml(rec.desc)}</div>
-                    <div class="tiktok-ai-action"><button class="btn btn-sm btn-primary">${rec.action}</button></div>
                   </div>
                 </div>
               `).join('')}
             </div>
-            <a href="#" class="widget-link" style="display:block;margin-top:12px;">View All Insights</a>
+            <a href="#" class="widget-link" style="display:block;margin-top:16px;text-align:center;">View All Insights</a>
           </div>
         </section>
 
@@ -478,7 +495,7 @@ class TikTokApp {
                   </div>
                   <div class="conversation-meta">
                     <div class="conversation-time">${formatTimeAgo(item.timestamp)}</div>
-                    ${item.priority === 'high' ? '<span class="conversation-badge priority-high">High</span>' : ''}
+                    ${item.priority === 'high' ? '<span class="conversation-badge priority-high">High</span>' : item.priority === 'medium' ? '<span class="conversation-badge priority-medium">Medium</span>' : '<span class="conversation-badge priority-low">Low</span>'}
                   </div>
                 </div>
               `;
@@ -495,11 +512,11 @@ class TikTokApp {
             <div class="donut-chart-container">
               <div class="donut-visual">
                 <svg width="168" height="168" viewBox="0 0 168 168">
-                  <circle cx="84" cy="84" r="70" fill="none" stroke="#6366f1" stroke-width="20" stroke-dasharray="175.9 263.9" stroke-dashoffset="0" transform="rotate(-90 84 84)"/>
-                  <circle cx="84" cy="84" r="70" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="114.5 325.3" stroke-dashoffset="-175.9" transform="rotate(-90 84 84)"/>
-                  <circle cx="84" cy="84" r="70" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="70.6 369.2" stroke-dashoffset="-290.4" transform="rotate(-90 84 84)"/>
-                  <circle cx="84" cy="84" r="70" fill="none" stroke="#ef4444" stroke-width="20" stroke-dasharray="57.2 382.6" stroke-dashoffset="-361" transform="rotate(-90 84 84)"/>
-                  <circle cx="84" cy="84" r="70" fill="none" stroke="#8b5cf6" stroke-width="20" stroke-dasharray="22.2 417.6" stroke-dashoffset="-418.2" transform="rotate(-90 84 84)"/>
+                  <circle cx="84" cy="84" r="70" fill="none" stroke="#6366f1" stroke-width="20" stroke-dasharray="175.93 263.89" stroke-dashoffset="0" transform="rotate(-90 84 84)"/>
+                  <circle cx="84" cy="84" r="70" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="109.96 329.86" stroke-dashoffset="-175.93" transform="rotate(-90 84 84)"/>
+                  <circle cx="84" cy="84" r="70" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="87.96 351.86" stroke-dashoffset="-285.89" transform="rotate(-90 84 84)"/>
+                  <circle cx="84" cy="84" r="70" fill="none" stroke="#ef4444" stroke-width="20" stroke-dasharray="43.98 395.84" stroke-dashoffset="-373.85" transform="rotate(-90 84 84)"/>
+                  <circle cx="84" cy="84" r="70" fill="none" stroke="#8b5cf6" stroke-width="20" stroke-dasharray="21.99 417.83" stroke-dashoffset="-417.83" transform="rotate(-90 84 84)"/>
                 </svg>
                 <div class="donut-chart-center">
                   <div class="donut-chart-value">1,248</div>
@@ -534,14 +551,17 @@ class TikTokApp {
               <div class="account-stat">
                 <div class="account-stat-value">${escapeHtml(ACCOUNT_STATUS.followers)}</div>
                 <div class="account-stat-label">Followers</div>
+                <div class="account-stat-trend up"><i class="ph ph-trend-up"></i> ${ACCOUNT_STATUS.followerTrend}</div>
               </div>
               <div class="account-stat">
                 <div class="account-stat-value">${ACCOUNT_STATUS.following}</div>
                 <div class="account-stat-label">Following</div>
+                <div class="account-stat-trend up"><i class="ph ph-trend-up"></i> ${ACCOUNT_STATUS.followingTrend}</div>
               </div>
               <div class="account-stat">
                 <div class="account-stat-value">${escapeHtml(ACCOUNT_STATUS.likes)}</div>
                 <div class="account-stat-label">Likes</div>
+                <div class="account-stat-trend up"><i class="ph ph-trend-up"></i> ${ACCOUNT_STATUS.likesTrend}</div>
               </div>
             </div>
             <div class="connection-health">
@@ -559,7 +579,6 @@ class TikTokApp {
       </div>
     `;
 
-    // Bind view all link
     this.container.querySelector('[data-action="switch-view"]')?.addEventListener('click', (e) => {
       e.preventDefault();
       this.currentView = 'conversations';
@@ -580,7 +599,7 @@ class TikTokApp {
         <!-- Left Sidebar -->
         <div class="tiktok-conversations-sidebar">
           <div class="tiktok-conversations-header">
-            <div class="tiktok-conversations-title">Conversations</div>
+            <div class="tiktok-conversations-title">TikTok</div>
             <div class="tiktok-conversations-search">
               <i class="ph ph-magnifying-glass"></i>
               <input type="text" placeholder="Search conversations...">
@@ -590,7 +609,6 @@ class TikTokApp {
             <button class="tiktok-filter-chip ${this.conversationFilter === 'all' ? 'active' : ''}" data-action="filter-conversations" data-filter="all">All <span class="badge-count">${TIKTOK_SAMPLE_CONVERSATIONS.length}</span></button>
             <button class="tiktok-filter-chip ${this.conversationFilter === 'unread' ? 'active' : ''}" data-action="filter-conversations" data-filter="unread">Unread</button>
             <button class="tiktok-filter-chip ${this.conversationFilter === 'assigned' ? 'active' : ''}" data-action="filter-conversations" data-filter="assigned">Assigned to me</button>
-            <button class="tiktok-filter-chip">More Filters <i class="ph ph-caret-down"></i></button>
           </div>
           <div class="tiktok-conversations-list">
             ${filtered.map(item => {
@@ -646,7 +664,7 @@ class TikTokApp {
         <!-- Left Sidebar -->
         <div class="tiktok-conversations-sidebar">
           <div class="tiktok-conversations-header">
-            <div class="tiktok-conversations-title">Conversations</div>
+            <div class="tiktok-conversations-title">TikTok</div>
             <div class="tiktok-conversations-search">
               <i class="ph ph-magnifying-glass"></i>
               <input type="text" placeholder="Search conversations...">
@@ -656,7 +674,6 @@ class TikTokApp {
             <button class="tiktok-filter-chip active">All <span class="badge-count">${TIKTOK_SAMPLE_CONVERSATIONS.length}</span></button>
             <button class="tiktok-filter-chip">Unread</button>
             <button class="tiktok-filter-chip">Assigned to me</button>
-            <button class="tiktok-filter-chip">More Filters <i class="ph ph-caret-down"></i></button>
           </div>
           <div class="tiktok-conversations-list">
             ${TIKTOK_SAMPLE_CONVERSATIONS.map(item => {
@@ -809,7 +826,6 @@ class TikTokApp {
       </div>
     `;
 
-    // Scroll to bottom of messages
     setTimeout(() => {
       const msgContainer = document.getElementById('chatMessages');
       if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -883,8 +899,10 @@ class TikTokApp {
         <button class="tiktok-pagination-btn">3</button>
         <button class="tiktok-pagination-btn">4</button>
         <button class="tiktok-pagination-btn">5</button>
+        <button class="tiktok-pagination-btn">6</button>
+        <button class="tiktok-pagination-btn">7</button>
         <button class="tiktok-pagination-btn"><i class="ph ph-caret-right"></i></button>
-        <span class="tiktok-pagination-info">Showing 1 to 5 of 89 comments</span>
+        <span class="tiktok-pagination-info">Showing 1 to 10 of 68 comments</span>
       </div>
     `;
   }
@@ -942,7 +960,7 @@ class TikTokApp {
           <div class="mention-detail-header">
             <div class="tiktok-comment-avatar" style="background:#fe2c55;width:48px;height:48px;font-size:18px;">FD</div>
             <div>
-              <div style="font-weight:600;color:#0f172a;">fashion_daily</div>
+              <div style="font-weight:600;color:#0f172a;">fashion.daily</div>
               <div style="font-size:12px;color:#94a3b8;">@fashiondaily</div>
             </div>
           </div>
@@ -965,40 +983,63 @@ class TikTokApp {
         <button class="tiktok-pagination-btn active">1</button>
         <button class="tiktok-pagination-btn">2</button>
         <button class="tiktok-pagination-btn">3</button>
+        <button class="tiktok-pagination-btn">4</button>
+        <button class="tiktok-pagination-btn">5</button>
         <button class="tiktok-pagination-btn"><i class="ph ph-caret-right"></i></button>
-        <span class="tiktok-pagination-info">Showing 1 to 4 of 34 mentions</span>
+        <span class="tiktok-pagination-info">Showing 1 to 10 of 34 mentions</span>
       </div>
     `;
   }
 
   // ============================================
-  // 5. SAVED REPLIES (Panel 5) — Inside Settings
+  // 5. SAVED REPLIES (Panel 5)
   // ============================================
 
-  renderSavedReplies() {
-    return `
-      <div class="tiktok-saved-replies-header">
-        <h3>Saved Replies</h3>
-        <button class="btn btn-primary"><i class="ph ph-plus"></i> New Reply</button>
+  renderSavedRepliesPage() {
+    const filtered = this.savedReplyFilter === 'all' 
+      ? SAVED_REPLIES 
+      : SAVED_REPLIES.filter(r => r.category.toLowerCase() === this.savedReplyFilter);
+
+    this.container.innerHTML = `
+      <div class="dashboard-page-title">
+        <h1>Saved Replies</h1>
+        <p>Manage your quick reply templates</p>
       </div>
-      <div class="tiktok-saved-replies-list">
-        ${SAVED_REPLIES.map(reply => `
-          <div class="tiktok-saved-reply-item">
-            <div class="tiktok-saved-reply-icon"><i class="ph ph-chat-circle-text"></i></div>
-            <div class="tiktok-saved-reply-content">
-              <div class="tiktok-saved-reply-title">${escapeHtml(reply.title)}</div>
-              <div class="tiktok-saved-reply-text">${escapeHtml(reply.text)}</div>
-              <div class="tiktok-saved-reply-meta">
-                <span><i class="ph ph-tag"></i> ${escapeHtml(reply.category)}</span>
-                <span><i class="ph ph-clock"></i> Used ${reply.usage} times</span>
-              </div>
-            </div>
-            <div class="tiktok-saved-reply-actions">
-              <button class="tiktok-saved-reply-action-btn"><i class="ph ph-pencil-simple"></i></button>
-              <button class="tiktok-saved-reply-action-btn"><i class="ph ph-trash"></i></button>
-            </div>
+
+      <div class="tiktok-saved-replies-layout">
+        <div class="tiktok-saved-replies-categories">
+          ${SAVED_REPLY_CATEGORIES.map(cat => `
+            <button class="tiktok-saved-reply-category ${this.savedReplyFilter === cat.id ? 'active' : ''}" data-action="filter-saved-replies" data-filter="${cat.id}">
+              ${escapeHtml(cat.label)} <span class="category-count">${cat.count}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="tiktok-saved-replies-main">
+          <div class="tiktok-saved-replies-header">
+            <h3>${escapeHtml(SAVED_REPLY_CATEGORIES.find(c => c.id === this.savedReplyFilter)?.label || 'All Replies')}</h3>
+            <button class="btn btn-primary"><i class="ph ph-plus"></i> New Reply</button>
           </div>
-        `).join('')}
+          <div class="tiktok-saved-replies-list">
+            ${filtered.map(reply => `
+              <div class="tiktok-saved-reply-item">
+                <div class="tiktok-saved-reply-icon"><i class="ph ph-chat-circle-text"></i></div>
+                <div class="tiktok-saved-reply-content">
+                  <div class="tiktok-saved-reply-title">${escapeHtml(reply.title)}</div>
+                  <div class="tiktok-saved-reply-text">${escapeHtml(reply.text)}</div>
+                  <div class="tiktok-saved-reply-meta">
+                    <span><i class="ph ph-tag"></i> ${escapeHtml(reply.category)}</span>
+                    <span><i class="ph ph-clock"></i> Used ${reply.usage} times</span>
+                  </div>
+                </div>
+                <div class="tiktok-saved-reply-actions">
+                  <button class="tiktok-saved-reply-action-btn"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="tiktok-saved-reply-action-btn"><i class="ph ph-trash"></i></button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -1068,15 +1109,29 @@ class TikTokApp {
           </div>
           <div class="tiktok-integration-permission-item">
             <div class="tiktok-integration-permission-info">
+              <div class="tiktok-integration-permission-icon"><i class="ph ph-arrows-clockwise"></i></div>
+              <div class="tiktok-integration-permission-text"><strong>Sync conversations and tags</strong><br>Automatically sync conversations</div>
+            </div>
+            <span class="tiktok-integration-permission-status allowed">Allowed</span>
+          </div>
+          <div class="tiktok-integration-permission-item">
+            <div class="tiktok-integration-permission-info">
+              <div class="tiktok-integration-permission-icon"><i class="ph ph-upload-simple"></i></div>
+              <div class="tiktok-integration-permission-text"><strong>Post Video Interactions</strong><br>Sync likes, shares and views</div>
+            </div>
+            <span class="tiktok-integration-permission-status allowed">Allowed</span>
+          </div>
+          <div class="tiktok-integration-permission-item">
+            <div class="tiktok-integration-permission-info">
               <div class="tiktok-integration-permission-icon"><i class="ph ph-arrow-u-up-left"></i></div>
-              <div class="tiktok-integration-permission-text"><strong>Manage Replies</strong><br>Send replies and manage conversations</div>
+              <div class="tiktok-integration-permission-text"><strong>Manage Replies</strong><br>Automatically send saved replies</div>
             </div>
             <span class="tiktok-integration-permission-status allowed">Allowed</span>
           </div>
         </div>
 
         <div class="tiktok-integration-actions">
-          <button class="btn btn-primary" data-action="sync-integration"><i class="ph ph-arrows-clockwise"></i> Sync Now</button>
+          <button class="btn btn-primary" data-action="sync-integration" style="background:linear-gradient(135deg,#fe2c55,#d91a3e);"><i class="ph ph-arrows-clockwise"></i> Sync Now</button>
           <button class="btn btn-outline" data-action="disconnect-integration"><i class="ph ph-plugs"></i> Disconnect</button>
         </div>
       </div>
@@ -1084,7 +1139,7 @@ class TikTokApp {
   }
 
   // ============================================
-  // 7. TIKTOK SETTINGS (Panel 7)
+  // 7. TIKTOK SETTINGS
   // ============================================
 
   renderSettings() {
@@ -1200,8 +1255,8 @@ class TikTokApp {
         </div>
       `;
     } else if (this.settingsTab === 'saved-replies') {
-      contentHtml = this.renderSavedReplies();
-        } else {
+      contentHtml = this.renderSavedRepliesInline();
+    } else {
       contentHtml = `
         <div class="empty-state" style="padding:64px 24px;">
           <div class="empty-state-icon"><i class="ph ph-gear"></i></div>
@@ -1239,46 +1294,27 @@ class TikTokApp {
     `;
   }
 
-  // ============================================
-  // 8. VIDEOS
-  // ============================================
-
-  renderVideos() {
-    this.container.innerHTML = `
-      <div class="dashboard-page-title">
-        <h1>Video Interactions</h1>
-        <p>Monitor engagement across your TikTok videos</p>
+  renderSavedRepliesInline() {
+    return `
+      <div class="tiktok-saved-replies-header">
+        <h3>Saved Replies</h3>
+        <button class="btn btn-primary"><i class="ph ph-plus"></i> New Reply</button>
       </div>
-
-      <div class="tiktok-video-interactions-grid">
-        ${TIKTOK_SAMPLE_VIDEOS.map(video => `
-          <div class="tiktok-video-interaction-card">
-            <div class="tiktok-video-interaction-thumb">
-              <i class="ph ph-play-circle"></i>
-              <div class="tiktok-video-interaction-overlay">
-                <div class="tiktok-video-interaction-title">${escapeHtml(video.title)}</div>
-                <div class="tiktok-video-interaction-meta">${escapeHtml(video.date)}</div>
+      <div class="tiktok-saved-replies-list">
+        ${SAVED_REPLIES.map(reply => `
+          <div class="tiktok-saved-reply-item">
+            <div class="tiktok-saved-reply-icon"><i class="ph ph-chat-circle-text"></i></div>
+            <div class="tiktok-saved-reply-content">
+              <div class="tiktok-saved-reply-title">${escapeHtml(reply.title)}</div>
+              <div class="tiktok-saved-reply-text">${escapeHtml(reply.text)}</div>
+              <div class="tiktok-saved-reply-meta">
+                <span><i class="ph ph-tag"></i> ${escapeHtml(reply.category)}</span>
+                <span><i class="ph ph-clock"></i> Used ${reply.usage} times</span>
               </div>
             </div>
-            <div class="tiktok-video-interaction-body">
-              <div class="tiktok-video-interaction-stats">
-                <div class="tiktok-video-interaction-stat">
-                  <div class="tiktok-video-interaction-stat-value">${escapeHtml(video.views)}</div>
-                  <div class="tiktok-video-interaction-stat-label">Views</div>
-                </div>
-                <div class="tiktok-video-interaction-stat">
-                  <div class="tiktok-video-interaction-stat-value">${escapeHtml(video.likes)}</div>
-                  <div class="tiktok-video-interaction-stat-label">Likes</div>
-                </div>
-                <div class="tiktok-video-interaction-stat">
-                  <div class="tiktok-video-interaction-stat-value">${video.comments}</div>
-                  <div class="tiktok-video-interaction-stat-label">Comments</div>
-                </div>
-                <div class="tiktok-video-interaction-stat">
-                  <div class="tiktok-video-interaction-stat-value">${video.shares}</div>
-                  <div class="tiktok-video-interaction-stat-label">Shares</div>
-                </div>
-              </div>
+            <div class="tiktok-saved-reply-actions">
+              <button class="tiktok-saved-reply-action-btn"><i class="ph ph-pencil-simple"></i></button>
+              <button class="tiktok-saved-reply-action-btn"><i class="ph ph-trash"></i></button>
             </div>
           </div>
         `).join('')}
@@ -1292,7 +1328,6 @@ class TikTokApp {
 
   selectConversation(id) {
     this.selectedConversation = id;
-    // Mark as read when selected
     const conv = TIKTOK_SAMPLE_CONVERSATIONS.find(c => c.id === id);
     if (conv) conv.unread = false;
     this.renderSidebar();
@@ -1313,6 +1348,11 @@ class TikTokApp {
     this.conversationFilter = filter;
     this.selectedConversation = null;
     this.renderConversations();
+  }
+
+  filterSavedReplies(filter) {
+    this.savedReplyFilter = filter;
+    this.renderSavedRepliesPage();
   }
 
   switchSettingsTab(tab) {
@@ -1348,7 +1388,6 @@ class TikTokApp {
     }
     CHAT_MESSAGES[this.selectedConversation].push(msg);
     
-    // Update conversation last message
     const conv = TIKTOK_SAMPLE_CONVERSATIONS.find(c => c.id === this.selectedConversation);
     if (conv) {
       conv.lastMessage = msg.text;
