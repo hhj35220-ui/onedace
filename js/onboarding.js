@@ -242,7 +242,8 @@
     _renderChecklist() {
       const container = document.querySelector('#op-onboarding-checklist .op-checklist-body');
       if (!container) return;
-      let saved = this._load(ONB.CHECKLIST) || this.checklist;
+      const loadedChecklist = this._load(ONB.CHECKLIST);
+      const saved = Array.isArray(loadedChecklist) ? loadedChecklist : this.checklist;
       const percent = this._computeProgress();
       container.innerHTML = saved.map(it => `
         <div class="op-check-item" data-id="${it.id}">
@@ -256,7 +257,8 @@
     }
 
     _computeProgress() {
-      const saved = this._load(ONB.CHECKLIST) || this.checklist;
+      const loadedChecklist = this._load(ONB.CHECKLIST);
+      const saved = Array.isArray(loadedChecklist) ? loadedChecklist : this.checklist;
       const total = saved.length || 1;
       const done = saved.filter(i => i.done).length;
       return Math.round((done / total) * 100);
@@ -409,7 +411,8 @@
     }
 
     _refreshChecklistFromState() {
-      const saved = this._load(ONB.CHECKLIST) || this.checklist;
+      const loadedChecklist = this._load(ONB.CHECKLIST);
+      const saved = Array.isArray(loadedChecklist) ? loadedChecklist : this.checklist;
       // Update detection
       const updated = saved.map(item => ({ ...item, done: !!item.detect && !!item.detect() }));
       this._save(ONB.CHECKLIST, updated);

@@ -106,6 +106,10 @@
       return this.environment;
     }
 
+    isProduction() {
+      return this.environment === 'production';
+    }
+
     getBaseUrl() {
       return this.config.baseUrl;
     }
