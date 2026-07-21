@@ -3195,12 +3195,8 @@
    Responsive: Collapse TikTok sidebar on smaller screens
    ============================================ */
 @media (max-width: 1280px) {
-  .tiktok-sidebar {
-    display: none;
-  }
-
   .tiktok-layout {
-    display: block;
+    display: flex;
   }
 
   #tiktok-main.dashboard-main,
@@ -3211,6 +3207,7 @@
 
 @media (max-width: 1024px) {
   .tiktok-sidebar {
+    display: flex;
     left: 0;
     z-index: 95;
   }
