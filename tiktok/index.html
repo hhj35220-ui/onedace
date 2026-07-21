@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/tiktok.css">
 </head>
 <body>
@@ -80,61 +81,6 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- ============================================
-         SECOND NAV: TikTok Platform Sidebar (Light)
-         ============================================ -->
-    <aside class="tiktok-sidebar" role="navigation" aria-label="TikTok navigation">
-      <div class="tiktok-account-header">
-        <div class="tiktok-account-icon">
-          <i class="ph ph-tiktok-logo"></i>
-        </div>
-        <div class="tiktok-account-info">
-          <div class="tiktok-account-name">@acmesolutions</div>
-          <div class="tiktok-account-type">Business Account</div>
-          <div class="tiktok-account-date">Connected on May 12, 2024</div>
-        </div>
-        <div class="tiktok-account-status">
-          <span class="tiktok-status-dot"></span>
-          <span>Connected</span>
-        </div>
-        <button class="tiktok-view-integration-btn">View Integration</button>
-      </div>
-
-      <nav class="tiktok-nav">
-        <a href="#overview" class="tiktok-nav-item active" data-page="overview">
-          <i class="ph ph-clock-counter-clockwise"></i>
-          <span>Overview</span>
-        </a>
-        <a href="#conversations" class="tiktok-nav-item" data-page="conversations">
-          <i class="ph ph-chat-circle-text"></i>
-          <span>Conversations</span>
-          <span class="tiktok-nav-badge">12</span>
-        </a>
-        <a href="#comments" class="tiktok-nav-item" data-page="comments">
-          <i class="ph ph-chat-teardrop-text"></i>
-          <span>Comments</span>
-          <span class="tiktok-nav-badge">8</span>
-        </a>
-        <a href="#mentions" class="tiktok-nav-item" data-page="mentions">
-          <i class="ph ph-at"></i>
-          <span>Mentions</span>
-          <span class="tiktok-nav-badge">6</span>
-        </a>
-        <a href="#saved-replies" class="tiktok-nav-item" data-page="saved-replies">
-          <i class="ph ph-lightning"></i>
-          <span>Saved Replies</span>
-        </a>
-        <a href="#integration" class="tiktok-nav-item" data-page="integration">
-          <i class="ph ph-plugs-connected"></i>
-          <span>Integration</span>
-        </a>
-        <a href="#settings" class="tiktok-nav-item" data-page="settings">
-          <i class="ph ph-gear"></i>
-          <span>Settings</span>
-        </a>
-      </nav>
-    </aside>
-
-    <!-- ============================================
          MAIN CONTENT AREA
          ============================================ -->
     <main class="dashboard-main" id="tiktok-main">
@@ -159,8 +105,65 @@
         </div>
       </header>
 
-      <div class="dashboard-content" id="tiktok-content">
-        <!-- Content rendered by JS -->
+      <div class="tiktok-layout">
+        <!-- ============================================
+             SECOND NAV: TikTok Platform Sidebar (Light)
+             ============================================ -->
+        <aside class="tiktok-sidebar" role="navigation" aria-label="TikTok navigation">
+          <div class="tiktok-account-header">
+            <div class="tiktok-account-icon">
+              <i class="ph ph-tiktok-logo"></i>
+            </div>
+            <div class="tiktok-account-info">
+              <div class="tiktok-account-name">@acmesolutions</div>
+              <div class="tiktok-account-type">Business Account</div>
+              <div class="tiktok-account-date">Connected on May 12, 2024</div>
+            </div>
+            <div class="tiktok-account-status">
+              <span class="tiktok-status-dot"></span>
+              <span>Connected</span>
+            </div>
+            <button class="tiktok-view-integration-btn">View Integration</button>
+          </div>
+
+          <nav class="tiktok-nav" id="tiktok-nav">
+            <a href="#overview" class="tiktok-nav-item active" data-page="overview">
+              <i class="ph ph-clock-counter-clockwise"></i>
+              <span>Overview</span>
+            </a>
+            <a href="#conversations" class="tiktok-nav-item" data-page="conversations">
+              <i class="ph ph-chat-circle-text"></i>
+              <span>Conversations</span>
+              <span class="tiktok-nav-badge">12</span>
+            </a>
+            <a href="#comments" class="tiktok-nav-item" data-page="comments">
+              <i class="ph ph-chat-teardrop-text"></i>
+              <span>Comments</span>
+              <span class="tiktok-nav-badge">8</span>
+            </a>
+            <a href="#mentions" class="tiktok-nav-item" data-page="mentions">
+              <i class="ph ph-at"></i>
+              <span>Mentions</span>
+              <span class="tiktok-nav-badge">6</span>
+            </a>
+            <a href="#saved-replies" class="tiktok-nav-item" data-page="saved-replies">
+              <i class="ph ph-lightning"></i>
+              <span>Saved Replies</span>
+            </a>
+            <a href="#integration" class="tiktok-nav-item" data-page="integration">
+              <i class="ph ph-plugs-connected"></i>
+              <span>Integration</span>
+            </a>
+            <a href="#settings" class="tiktok-nav-item" data-page="settings">
+              <i class="ph ph-gear"></i>
+              <span>Settings</span>
+            </a>
+          </nav>
+        </aside>
+
+        <div class="dashboard-content tiktok-main" id="tiktok-content">
+          <!-- Content rendered by JS -->
+        </div>
       </div>
     </main>
   </div>

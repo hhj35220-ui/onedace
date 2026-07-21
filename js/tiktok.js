@@ -200,9 +200,9 @@ function escapeHtml(value) {
 
 class TikTokApp {
   constructor() {
-    this.currentView = 'overview';
+    this.currentPage = 'overview';
     this.container = document.getElementById('tiktok-content');
-    this.sidebar = document.querySelector('.tiktok-nav');
+    this.nav = document.getElementById('tiktok-nav');
     this.selectedConversation = null;
     this.conversationFilter = 'all';
     this.savedReplyFilter = 'all';
@@ -211,7 +211,7 @@ class TikTokApp {
   }
 
   init() {
-    if (!this.container || !this.sidebar) return;
+    if (!this.container || !this.nav) return;
     if (!(window.OP?.nav?.requireAuth && OP.nav.requireAuth())) {
       this.showError('Authentication required to load the TikTok workspace.');
       return;
@@ -222,13 +222,13 @@ class TikTokApp {
   }
 
   bindEvents() {
-    this.sidebar.addEventListener('click', event => {
-      const button = event.target.closest('[data-view]');
-      if (!button) return;
-      this.currentView = button.dataset.view;
-      this.selectedConversation = null;
-      this.renderSidebar();
-      this.render();
+    this.nav.querySelectorAll('.tiktok-nav-item').forEach(item => {
+      item.addEventListener('click', event => {
+        event.preventDefault();
+        const page = item.dataset.page;
+        if (!page) return;
+        this.navigateTo(page);
+      });
     });
 
     document.getElementById('sidebarToggle')?.addEventListener('click', () => {
@@ -239,7 +239,7 @@ class TikTokApp {
       document.body.classList.remove('sidebar-open');
     });
 
-    document.getElementById('exportReport')?.addEventListener('click', () => {
+    document.getElementById('exportReportButton')?.addEventListener('click', () => {
       OP.toast.show('Exporting TikTok report...', 'info');
     });
 
@@ -251,7 +251,7 @@ class TikTokApp {
 
       if (action === 'select-conversation') this.selectConversation(itemId);
       if (action === 'mark-read') this.markConversationRead(itemId);
-      if (action === 'back-to-list') { this.selectedConversation = null; this.renderConversations(); }
+      if (action === 'back-to-list') { this.selectedConversation = null; this.navigateTo('conversations'); }
       if (action === 'sync-integration') this.syncIntegration();
       if (action === 'disconnect-integration') this.disconnectIntegration();
       if (action === 'save-settings') this.saveSettings();
@@ -269,31 +269,39 @@ class TikTokApp {
         this.sendMessage();
       }
     });
+
+    window.addEventListener('popstate', () => {
+      const hash = window.location.hash.replace('#', '');
+      this.navigateTo(hash || 'overview', false);
+    });
   }
 
   // ============================================
   // Sidebar
   // ============================================
 
-  renderSidebar() {
-    const stats = this.computeStats();
-    const sections = [
-      { view: 'overview', label: 'Overview', icon: 'ph-chart-bar', badge: null },
-      { view: 'conversations', label: 'Conversations', icon: 'ph-chat-centered-text', badge: stats.unreadMessages },
-      { view: 'comments', label: 'Comments', icon: 'ph-chat-teardrop-text', badge: stats.totalComments },
-      { view: 'mentions', label: 'Mentions', icon: 'ph-at', badge: stats.totalMentions },
-      { view: 'saved-replies', label: 'Saved Replies', icon: 'ph-chat-circle-text', badge: null },
-      { view: 'integration', label: 'Integration', icon: 'ph-plugs', badge: null },
-      { view: 'settings', label: 'Settings', icon: 'ph-gear', badge: null }
-    ];
+  updateActiveNav(page) {
+    this.nav?.querySelectorAll('.tiktok-nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+  }
 
-    this.sidebar.innerHTML = sections.map(section => `
-      <button class="tiktok-sidebar-link ${this.currentView === section.view ? 'active' : ''}" data-view="${section.view}">
-        <i class="ph ${section.icon}"></i>
-        <span>${section.label}</span>
-        ${section.badge ? `<span class="sidebar-badge ${section.badge > 0 ? 'unread' : ''}">${section.badge}</span>` : ''}
-      </button>
-    `).join('');
+  navigateTo(page, updateHistory = true) {
+    this.currentPage = page;
+    this.selectedConversation = null;
+    this.updateActiveNav(page);
+
+    if (updateHistory) {
+      const url = new URL(window.location.href);
+      if (page && page !== 'overview') {
+        url.hash = page;
+      } else {
+        url.hash = '';
+      }
+      window.history.pushState({}, '', url);
+    }
+
+    this.render();
   }
 
   // ============================================
@@ -301,7 +309,7 @@ class TikTokApp {
   // ============================================
 
   render() {
-    switch (this.currentView) {
+    switch (this.currentPage) {
       case 'conversations': return this.selectedConversation ? this.renderChat() : this.renderConversations();
       case 'comments': return this.renderComments();
       case 'mentions': return this.renderMentions();

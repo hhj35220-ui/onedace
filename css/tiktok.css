@@ -23,8 +23,7 @@
    ============================================ */
 
 .dashboard-layout {
-  display: grid;
-  grid-template-columns: 260px 260px minmax(0, 1fr);
+  display: flex;
   min-height: 100vh;
   width: 100%;
   background: #f8fafc;
@@ -38,13 +37,13 @@
   border-right: none;
   display: flex;
   flex-direction: column;
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 0;
-  height: 100vh;
+  bottom: 0;
   z-index: 100;
   overflow-y: auto;
   overflow-x: hidden;
-  align-self: start;
 }
 
 .sidebar-header {
@@ -234,6 +233,8 @@
 
 /* Main Content */
 .dashboard-main {
+  flex: 1;
+  margin-left: 260px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -2678,6 +2679,13 @@
   min-width: 0;
 }
 
+.tiktok-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* ============================================
    SECOND NAV: TikTok Secondary Sidebar
    ============================================ */
@@ -2859,10 +2867,14 @@
   font-weight: var(--font-semibold);
 }
 
-/* Main content fills the remaining grid column */
+/* Main content fills the remaining inner layout column */
 .tiktok-main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ============================================
@@ -2898,7 +2910,7 @@
    TIKTOK DUAL NAVIGATION LAYOUT
    ============================================ */
 
-/* The TikTok sidebar sits in the middle grid column */
+/* The TikTok sidebar sits in the inner layout column */
 .tiktok-sidebar {
   width: 260px;
   min-width: 260px;
@@ -2906,13 +2918,11 @@
   border-right: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  position: relative;
   z-index: 90;
   overflow-y: auto;
   overflow-x: hidden;
-  align-self: start;
+  flex-shrink: 0;
 }
 
 .tiktok-sidebar::-webkit-scrollbar {
@@ -3088,10 +3098,10 @@
    Main Content Offset for Dual Sidebars
    ============================================ */
 
-/* Keep the main content in the final grid column without a hard-coded offset */
+/* Keep the main content in the shared dashboard shell without a hard-coded offset */
 #tiktok-main.dashboard-main,
 .dashboard-layout:has(.tiktok-sidebar) .dashboard-main {
-  margin-left: 0;
+  margin-left: 260px;
 }
 
 /* Header search styling */
@@ -3185,17 +3195,17 @@
    Responsive: Collapse TikTok sidebar on smaller screens
    ============================================ */
 @media (max-width: 1280px) {
-  .dashboard-layout {
-    grid-template-columns: 260px minmax(0, 1fr);
-  }
-
   .tiktok-sidebar {
     display: none;
   }
-  
+
+  .tiktok-layout {
+    display: block;
+  }
+
   #tiktok-main.dashboard-main,
   .dashboard-layout:has(.tiktok-sidebar) .dashboard-main {
-    margin-left: 0 !important;
+    margin-left: 260px !important;
   }
 }
 
