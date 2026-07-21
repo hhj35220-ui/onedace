@@ -520,6 +520,12 @@ class LinkedInApp {
   initMessagesPage() {
     this.renderMessageList('messages-list', LINKEDIN_CONTACTS);
     this.bindMessageFilters();
+
+    const firstConversation = document.querySelector('.message-list-item');
+    if (firstConversation) {
+      firstConversation.classList.add('active');
+      this.openConversation(firstConversation.dataset.id);
+    }
   }
 
   initCompanyInboxPage() {
@@ -614,7 +620,38 @@ class LinkedInApp {
 
       this.renderMessages(contactId);
       this.renderAISuggestions();
+      this.renderProfilePanel(contact);
     }
+  }
+
+  renderProfilePanel(contact) {
+    const emptyProfile = document.getElementById('profile-empty');
+    const profileDetails = document.getElementById('profile-details');
+
+    if (emptyProfile) emptyProfile.style.display = 'none';
+    if (!profileDetails) return;
+
+    profileDetails.style.display = 'flex';
+
+    const avatarEl = document.getElementById('profile-avatar');
+    const nameEl = document.getElementById('profile-name');
+    const titleEl = document.getElementById('profile-title');
+    const typeEl = document.getElementById('profile-type');
+    const stageEl = document.getElementById('profile-stage');
+    const lastContactedEl = document.getElementById('profile-last-contacted');
+    const locationEl = document.getElementById('profile-location');
+    const connectionTypeEl = document.getElementById('profile-connection-type');
+    const notesEl = document.getElementById('profile-notes');
+
+    if (avatarEl) avatarEl.src = contact.avatar;
+    if (nameEl) nameEl.textContent = contact.name;
+    if (titleEl) titleEl.textContent = contact.title;
+    if (typeEl) typeEl.textContent = contact.type === 'inmail' ? 'InMail' : contact.type === 'connection' ? 'Connection' : 'Message';
+    if (stageEl) stageEl.textContent = contact.unread ? 'New' : 'Active';
+    if (lastContactedEl) lastContactedEl.textContent = contact.time || '—';
+    if (locationEl) locationEl.textContent = contact.location || 'Remote';
+    if (connectionTypeEl) connectionTypeEl.textContent = contact.type === 'inmail' ? 'InMail' : contact.type === 'connection' ? 'Connection' : 'Message';
+    if (notesEl) notesEl.textContent = contact.notes || 'No notes yet. Add follow-up details to capture next steps.';
   }
 
   renderMessages(contactId) {
@@ -735,6 +772,12 @@ class LinkedInApp {
   // ============================================
   initMentionsPage() {
     this.renderMentionsList();
+
+    const firstMention = document.querySelector('.mention-item');
+    if (firstMention) {
+      firstMention.classList.add('active');
+      this.openMentionDetail(firstMention.dataset.id);
+    }
   }
 
   renderMentionsList() {
@@ -806,6 +849,12 @@ class LinkedInApp {
   // ============================================
   initPostEngagementsPage() {
     this.renderEngagementsList();
+
+    const firstEngagement = document.querySelector('.engagement-item');
+    if (firstEngagement) {
+      firstEngagement.classList.add('active');
+      this.openEngagementDetail(firstEngagement.dataset.id);
+    }
   }
 
   renderEngagementsList() {

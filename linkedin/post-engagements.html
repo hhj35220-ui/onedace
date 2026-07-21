@@ -212,14 +212,24 @@
   <script src="../js/dashboard.js"></script>
   <script src="../js/linkedin.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        // window.location.href = '../auth/signin.html';
-        return;
+    function initLinkedInPostEngagementsPage() {
+      if (typeof OP !== 'undefined' && OP.auth && typeof OP.auth.isAuthenticated === 'function') {
+        if (!OP.auth.isAuthenticated()) {
+          // Local preview mode: allow page rendering without active auth.
+        }
       }
+
       window.linkedinApp = new LinkedInApp();
-      window.linkedinApp.initPostEngagementsPage();
-    });
+      if (typeof window.linkedinApp.initPostEngagementsPage === 'function') {
+        window.linkedinApp.initPostEngagementsPage();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLinkedInPostEngagementsPage);
+    } else {
+      initLinkedInPostEngagementsPage();
+    }
   </script>
 </body>
 </html>

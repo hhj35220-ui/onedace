@@ -208,6 +208,38 @@
               </div>
             </div>
           </div>
+
+          <div class="messages-profile-panel" id="message-profile-panel">
+            <div class="profile-empty" id="profile-empty">
+              <div class="profile-empty-icon"><i class="ph ph-user-circle"></i></div>
+              <p>Select a conversation to view contact insights</p>
+            </div>
+            <div class="profile-details" id="profile-details" style="display:none;">
+              <div class="profile-header">
+                <img src="" alt="" class="profile-avatar" id="profile-avatar">
+                <div class="profile-meta">
+                  <h3 id="profile-name"></h3>
+                  <p id="profile-title"></p>
+                  <div class="profile-tag" id="profile-type"></div>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button class="btn btn-outline" id="profile-view-linkedin"><i class="ph ph-linkedin-logo"></i> View LinkedIn</button>
+                <button class="btn btn-primary" id="profile-add-crm"><i class="ph ph-user-plus"></i> Add to CRM</button>
+              </div>
+              <div class="profile-section">
+                <div class="profile-section-title">CRM Information</div>
+                <div class="profile-row"><span>Stage</span><strong id="profile-stage">Lead</strong></div>
+                <div class="profile-row"><span>Last Contacted</span><strong id="profile-last-contacted">—</strong></div>
+                <div class="profile-row"><span>Location</span><strong id="profile-location">—</strong></div>
+                <div class="profile-row"><span>Message Type</span><strong id="profile-connection-type">—</strong></div>
+              </div>
+              <div class="profile-section">
+                <div class="profile-section-title">Notes</div>
+                <p id="profile-notes">Add details about this contact to track next steps and CRM follow-up.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -218,14 +250,22 @@
   <script src="../js/dashboard.js"></script>
   <script src="../js/linkedin.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        // window.location.href = '../auth/signin.html';
-        return;
+    function initLinkedInMessagesPage() {
+      if (typeof OP !== 'undefined' && OP.auth && typeof OP.auth.isAuthenticated === 'function') {
+        if (!OP.auth.isAuthenticated()) {
+          // Local preview mode: allow page rendering without active auth.
+        }
       }
+
       window.linkedinApp = new LinkedInApp();
       window.linkedinApp.initMessagesPage();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLinkedInMessagesPage);
+    } else {
+      initLinkedInMessagesPage();
+    }
   </script>
 </body>
 </html>
