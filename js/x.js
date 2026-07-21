@@ -1704,10 +1704,11 @@
   // INITIALIZATION
   // ============================================
   function init() {
-    // Allow a local/dev bypass when `?debug=x` is present or running on localhost
-    const canBypassAuth = window.location.search.includes('debug=x') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // Allow a local/dev bypass only when the app-level dev flag is enabled in `app.js`.
+    // This ensures debug behavior is controlled from one place and disabled in production.
+    const canBypassAuth = !!(window.OP_CONFIG && window.OP_CONFIG.dev === true);
     const hasAuthFn = !!(OP && OP.nav && typeof OP.nav.requireAuth === 'function');
-    // If dev bypass is enabled, do not call OP.nav.requireAuth() because it may redirect.
+    // If dev bypass is enabled, skip calling OP.nav.requireAuth() to avoid redirects during local debugging.
     let isAuthed = false;
     if (canBypassAuth) {
       isAuthed = true;

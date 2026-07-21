@@ -13,7 +13,8 @@ const TIKTOK_STORAGE_KEYS = {
 };
 
 const TIKTOK_DEBUG = {
-  enabled: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.search.includes('debug=tiktok'),
+  // Debugging is enabled only when the central dev flag is set in `app.js`.
+  enabled: !!(window.OP_CONFIG && window.OP_CONFIG.dev === true),
   currentStep: 'boot',
   lastSuccessfulStep: 'boot',
   lastFailedStep: null,

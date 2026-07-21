@@ -22,6 +22,12 @@ const STORAGE_KEYS = {
 // ============================================
 // Theme Manager
 // ============================================
+
+// Global runtime configuration (development-only flag)
+// Toggle `dev` to `true` for local development debugging. Default is `false`.
+// This flag is intentionally conservative and should remain `false` in production.
+window.OP_CONFIG = window.OP_CONFIG || { dev: false };
+
 class ThemeManager {
   constructor() {
     this.init();
