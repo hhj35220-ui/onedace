@@ -986,7 +986,10 @@ function isPublicEntryPage() {
 
 function cleanupLegacyServiceWorkers() {
   if (!('serviceWorker' in navigator)) return;
-  if (!isPublicEntryPage()) return;
+  // Always attempt to cleanup legacy service workers on all pages.
+  // Previously this only ran on public entry pages which allowed
+  // older service workers to remain registered for other routes
+  // and sometimes return stale/offline navigation responses.
   try {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => {
