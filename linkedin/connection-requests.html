@@ -213,15 +213,24 @@
   <script src="../js/dashboard.js"></script>
   <script src="../js/linkedin.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    function initLinkedInConnectionRequestsPage() {
       if (typeof OP !== 'undefined' && OP.auth && typeof OP.auth.isAuthenticated === 'function') {
         if (!OP.auth.isAuthenticated()) {
           // Local preview mode: allow page rendering without active auth.
         }
       }
+
       window.linkedinApp = new LinkedInApp();
-      window.linkedinApp.initConnectionRequestsPage();
-    });
+      if (typeof window.linkedinApp.initConnectionRequestsPage === 'function') {
+        window.linkedinApp.initConnectionRequestsPage();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLinkedInConnectionRequestsPage);
+    } else {
+      initLinkedInConnectionRequestsPage();
+    }
   </script>
 </body>
 </html>

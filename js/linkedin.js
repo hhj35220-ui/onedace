@@ -693,6 +693,12 @@ class LinkedInApp {
   // ============================================
   initConnectionRequestsPage() {
     this.renderConnectionRequestsList();
+
+    const firstRequest = document.querySelector('.connection-request-item');
+    if (firstRequest) {
+      firstRequest.classList.add('active');
+      this.openConnectionDetail(firstRequest.dataset.id);
+    }
   }
 
   renderConnectionRequestsList() {
