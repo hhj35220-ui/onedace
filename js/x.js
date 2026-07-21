@@ -188,18 +188,103 @@
         [X_STORAGE_KEYS.X_SETTINGS]: X_SAMPLE_SETTINGS,
         [X_STORAGE_KEYS.X_INTEGRATION]: X_SAMPLE_INTEGRATION,
       }).forEach(([key, data]) => {
-        if (!localStorage.getItem(key)) {
+        const existing = localStorage.getItem(key);
+        if (!existing) {
           localStorage.setItem(key, JSON.stringify(data));
+          return;
+        }
+
+        const parsed = this.parseStoredValue(key, existing);
+        const normalized = this.normalizeValue(key, parsed);
+        if (normalized !== parsed) {
+          this.set(key, normalized);
         }
       });
     }
 
-    get(key) {
-      try {
-        return JSON.parse(localStorage.getItem(key) || '[]');
-      } catch {
-        return [];
+    getDefaultData(key) {
+      const defaults = {
+        [X_STORAGE_KEYS.X_CONTACTS]: X_SAMPLE_CONTACTS,
+        [X_STORAGE_KEYS.X_CONVERSATIONS]: X_SAMPLE_CONVERSATIONS,
+        [X_STORAGE_KEYS.X_MESSAGES]: X_SAMPLE_MESSAGES,
+        [X_STORAGE_KEYS.X_MENTIONS]: X_SAMPLE_MENTIONS,
+        [X_STORAGE_KEYS.X_COMMENTS]: X_SAMPLE_COMMENTS,
+        [X_STORAGE_KEYS.X_SAVED_REPLIES]: X_SAMPLE_SAVED_REPLIES,
+        [X_STORAGE_KEYS.X_POSTS]: X_SAMPLE_POSTS,
+        [X_STORAGE_KEYS.X_AI_RECOMMENDATIONS]: X_SAMPLE_AI_RECOMMENDATIONS,
+        [X_STORAGE_KEYS.X_SETTINGS]: X_SAMPLE_SETTINGS,
+        [X_STORAGE_KEYS.X_INTEGRATION]: X_SAMPLE_INTEGRATION,
+      };
+      return defaults[key] || [];
+    }
+
+    isPlainObject(value) {
+      return value !== null && typeof value === 'object' && !Array.isArray(value);
+    }
+
+    parseStoredValue(key, rawValue) {
+      if (rawValue === null || rawValue === undefined) {
+        return null;
       }
+
+      try {
+        return JSON.parse(rawValue);
+      } catch (error) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn(`[XStorage] Repaired malformed JSON for ${key}`, error);
+        }
+        return null;
+      }
+    }
+
+    normalizeValue(key, value) {
+      const fallback = this.getDefaultData(key);
+      const isArrayKey = [
+        X_STORAGE_KEYS.X_CONTACTS,
+        X_STORAGE_KEYS.X_CONVERSATIONS,
+        X_STORAGE_KEYS.X_MENTIONS,
+        X_STORAGE_KEYS.X_COMMENTS,
+        X_STORAGE_KEYS.X_SAVED_REPLIES,
+        X_STORAGE_KEYS.X_POSTS,
+        X_STORAGE_KEYS.X_AI_RECOMMENDATIONS,
+      ].includes(key);
+
+      if (value === null || value === undefined) {
+        return fallback;
+      }
+
+      if (isArrayKey) {
+        return Array.isArray(value) ? value : fallback;
+      }
+
+      if (key === X_STORAGE_KEYS.X_MESSAGES) {
+        if (!this.isPlainObject(value)) {
+          return fallback;
+        }
+        const normalizedMessages = {};
+        Object.entries(value).forEach(([convId, messages]) => {
+          normalizedMessages[convId] = Array.isArray(messages) ? messages : [];
+        });
+        return normalizedMessages;
+      }
+
+      if (key === X_STORAGE_KEYS.X_SETTINGS || key === X_STORAGE_KEYS.X_INTEGRATION) {
+        return this.isPlainObject(value) ? value : fallback;
+      }
+
+      return fallback;
+    }
+
+    get(key) {
+      const rawValue = localStorage.getItem(key);
+      const parsedValue = this.parseStoredValue(key, rawValue);
+      const normalizedValue = this.normalizeValue(key, parsedValue);
+
+      if (normalizedValue !== parsedValue) {
+        this.set(key, normalizedValue);
+      }
+
+      return normalizedValue;
     }
 
     set(key, data) {
@@ -208,7 +293,14 @@
 
     getContacts() { return this.get(X_STORAGE_KEYS.X_CONTACTS); }
     getConversations() { return this.get(X_STORAGE_KEYS.X_CONVERSATIONS); }
-    getMessages(convId) { return this.get(X_STORAGE_KEYS.X_MESSAGES)[convId] || []; }
+    getMessages(convId) {
+      const allMessages = this.get(X_STORAGE_KEYS.X_MESSAGES);
+      if (!this.isPlainObject(allMessages)) {
+        return [];
+      }
+      const convMessages = allMessages[convId];
+      return Array.isArray(convMessages) ? convMessages : [];
+    }
     getMentions() { return this.get(X_STORAGE_KEYS.X_MENTIONS); }
     getComments() { return this.get(X_STORAGE_KEYS.X_COMMENTS); }
     getSavedReplies() { return this.get(X_STORAGE_KEYS.X_SAVED_REPLIES); }
