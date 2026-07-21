@@ -694,11 +694,16 @@ class LinkedInApp {
   initConnectionRequestsPage() {
     this.renderConnectionRequestsList();
 
-    const firstRequest = document.querySelector('.connection-request-item');
-    if (firstRequest) {
-      firstRequest.classList.add('active');
-      this.openConnectionDetail(firstRequest.dataset.id);
-    }
+    // Ensure selection happens after the list is rendered and the browser has had
+    // a chance to update the DOM. Using a short timeout avoids race conditions
+    // on some deployed hosts where asset ordering or microtasks differ.
+    setTimeout(() => {
+      const firstRequest = document.querySelector('.connection-request-item');
+      if (firstRequest) {
+        firstRequest.classList.add('active');
+        this.openConnectionDetail(firstRequest.dataset.id);
+      }
+    }, 20);
   }
 
   renderConnectionRequestsList() {
