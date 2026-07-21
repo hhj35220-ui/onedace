@@ -1704,7 +1704,17 @@
   // INITIALIZATION
   // ============================================
   function init() {
-    if (!OP.nav.requireAuth()) return;
+    // Allow a local/dev bypass when `?debug=x` is present or running on localhost
+    const canBypassAuth = window.location.search.includes('debug=x') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const hasAuthFn = !!(OP && OP.nav && typeof OP.nav.requireAuth === 'function');
+    // If dev bypass is enabled, do not call OP.nav.requireAuth() because it may redirect.
+    let isAuthed = false;
+    if (canBypassAuth) {
+      isAuthed = true;
+    } else if (hasAuthFn) {
+      isAuthed = OP.nav.requireAuth();
+    }
+    if (!isAuthed) return;
 
     store = new XStorage();
     
