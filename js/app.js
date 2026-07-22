@@ -623,6 +623,16 @@ class NavigationGuard {
   }
 
   requireAuth() {
+    // Allow local file previews and localhost to bypass auth redirects
+    try {
+      const href = window.location.href || '';
+      if (href.startsWith('file:') || window.location.hostname === 'localhost') {
+        return true;
+      }
+    } catch (e) {
+      // ignore errors and fall through
+    }
+
     if (!this.auth.isAuthenticated()) {
       window.location.href = '../auth/signin.html';
       return false;

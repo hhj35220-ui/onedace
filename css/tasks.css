@@ -1200,6 +1200,71 @@
   text-align: center;
 }
 
+/* ============================================
+   Design tweaks to match provided Tasks screenshot
+   ============================================ */
+.tasks-stats-row .tasks-stat-card {
+  padding: var(--space-5);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(180deg, var(--gray-0), #fbfdff);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+}
+
+.tasks-stat-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tasks-stat-value {
+  font-size: 1.5rem;
+}
+
+.tasks-view-tabs { position: relative; padding-bottom: 1rem; }
+.tasks-view-tab { position: relative; }
+.tasks-view-tab.active {
+  color: var(--primary-700);
+  background: transparent;
+  box-shadow: none;
+}
+.tasks-view-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  height: 4px;
+  bottom: -8px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+  border-radius: 6px;
+}
+
+.kanban-column { background: var(--gray-0); border: 1px solid var(--gray-100); }
+.kanban-column-header { padding: var(--space-3) var(--space-4); }
+.kanban-column-indicator { height: 6px; border-radius: 8px 8px 0 0; margin: 0 12px 10px; }
+
+.task-card { background: var(--gray-0); border: 1px solid var(--gray-100); box-shadow: none; }
+.task-card:hover { box-shadow: var(--shadow-md); }
+
+.mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.mini-cal-day { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; }
+.mini-cal-day.today { background: var(--primary-600); color: white; }
+.mini-cal-day.selected { border: 2px solid var(--primary-500); color: var(--primary-700); background: transparent; }
+
+.tasks-right-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-4)); align-self: start; }
+
+.tasks-overview-chart svg { width: 140px; height: 140px; }
+
+.tasks-quick-create .quick-create-btn { padding: 12px; border-radius: 12px; }
+
+.tasks-panel { box-shadow: none; }
+
+.btn-primary { padding: 10px 16px; border-radius: 12px; }
+
+
 .tasks-priority-value {
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
