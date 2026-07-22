@@ -1030,15 +1030,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function getSiteAssetUrl(assetPath) {
   const normalized = assetPath.replace(/^\/+/, '');
   try {
-    const parts = window.location.pathname.split('/').filter(Boolean);
-    if (parts.length > 0) {
-      // If the site lives in a top-level folder (e.g. /OnePlace%20Enterprise/...),
-      // prefix injected asset paths with that folder so they resolve correctly
-      // when served from a subfolder on a local dev server.
-      const siteFolder = parts[0];
-      return `/${siteFolder}/${normalized}`;
-    }
-    return `/${normalized}`;
+    const baseUrl = window.location.href || 'https://example.com/';
+    const resolvedUrl = new URL(`../${normalized}`, baseUrl);
+    return resolvedUrl.toString();
   } catch (e) {
     return `/${normalized}`;
   }
