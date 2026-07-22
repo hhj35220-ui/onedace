@@ -28,6 +28,48 @@ const STORAGE_KEYS = {
 // This flag is intentionally conservative and should remain `false` in production.
 // NOTE: Temporarily set to `true` for local verification. Revert to `false` before deploying.
 window.OP_CONFIG = window.OP_CONFIG || { dev: true };
+const APP_CACHE_BUSTER = 'op-v20260722-2';
+
+function forceFreshAssetHeaders() {
+  try {
+    if (!document.head) return;
+    const metas = [
+      { httpEquiv: 'Cache-Control', content: 'no-store, no-cache, must-revalidate, max-age=0' },
+      { httpEquiv: 'Pragma', content: 'no-cache' },
+      { httpEquiv: 'Expires', content: '0' }
+    ];
+    metas.forEach(meta => {
+      let el = document.head.querySelector(`meta[http-equiv="${meta.httpEquiv}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute('http-equiv', meta.httpEquiv);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', meta.content);
+    });
+  } catch (e) {}
+}
+
+function clearStaleServiceState() {
+  try {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(reg => {
+          try { reg.unregister(); } catch (e) {}
+        });
+      }).catch(() => {});
+    }
+  } catch (e) {}
+
+  try {
+    if (window.caches && typeof window.caches.keys === 'function') {
+      window.caches.keys().then(keys => Promise.all(keys.map(k => window.caches.delete(k)))).catch(() => {});
+    }
+  } catch (e) {}
+}
+
+forceFreshAssetHeaders();
+clearStaleServiceState();
 
 class ThemeManager {
   constructor() {
@@ -1032,9 +1074,10 @@ function getSiteAssetUrl(assetPath) {
   try {
     const baseUrl = window.location.href || 'https://example.com/';
     const resolvedUrl = new URL(`../${normalized}`, baseUrl);
+    resolvedUrl.searchParams.set('v', APP_CACHE_BUSTER);
     return resolvedUrl.toString();
   } catch (e) {
-    return `/${normalized}`;
+    return `/${normalized}?v=${APP_CACHE_BUSTER}`;
   }
 }
 
