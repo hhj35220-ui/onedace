@@ -1221,7 +1221,7 @@
 }
 
 .tasks-stat-value {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .tasks-view-tabs { position: relative; padding-bottom: 1rem; }
@@ -1246,15 +1246,15 @@
 .kanban-column-header { padding: var(--space-3) var(--space-4); }
 .kanban-column-indicator { height: 6px; border-radius: 8px 8px 0 0; margin: 0 12px 10px; }
 
-.task-card { background: var(--gray-0); border: 1px solid var(--gray-100); box-shadow: none; }
-.task-card:hover { box-shadow: var(--shadow-md); }
+.task-card { background: var(--gray-0); border: 1px solid var(--gray-100); box-shadow: none; padding: 14px; border-radius: 12px; }
+.task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
 
-.mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.mini-cal-day { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; }
+.mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.mini-cal-day { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; }
 .mini-cal-day.today { background: var(--primary-600); color: white; }
 .mini-cal-day.selected { border: 2px solid var(--primary-500); color: var(--primary-700); background: transparent; }
 
-.tasks-right-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-4)); align-self: start; }
+.tasks-right-sidebar { position: sticky; top: calc(var(--header-height) + var(--space-4)); align-self: start; width: 320px; }
 
 .tasks-overview-chart svg { width: 140px; height: 140px; }
 
@@ -1263,6 +1263,40 @@
 .tasks-panel { box-shadow: none; }
 
 .btn-primary { padding: 10px 16px; border-radius: 12px; }
+
+/* Layout: center content and mirror design spacing */
+.dashboard-content .container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.tasks-page-title { align-items: center; }
+.tasks-title-left h1 { font-size: 1.4rem; }
+.tasks-title-right { gap: var(--space-4); }
+
+/* Make stats row visually prominent like the design */
+.tasks-stats-row { grid-template-columns: repeat(6, 1fr); gap: var(--space-4); margin-bottom: var(--space-6); }
+.tasks-stat-card { display: flex; flex-direction: column; justify-content: center; }
+.tasks-stat-header { align-items: center; }
+
+/* Tabs styling closer to design */
+.tasks-view-tabs { background: transparent; padding: 0; }
+.tasks-view-tab { padding: 10px 14px; }
+
+/* Kanban: set columns widths and spacing */
+.kanban-board { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.kanban-column { padding-bottom: var(--space-3); }
+.kanban-column-body { padding: var(--space-3); }
+
+/* Right sidebar small tweaks */
+.tasks-mini-calendar { padding: var(--space-3); }
+.tasks-my-tasks-sidebar { padding: var(--space-3); }
+
+/* Bottom panels spacing */
+.tasks-bottom-panels { grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-6); }
+
 
 
 .tasks-priority-value {

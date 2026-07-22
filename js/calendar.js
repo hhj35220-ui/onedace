@@ -519,9 +519,11 @@ class CalendarApp {
         const endHour = endDate.getHours() + endDate.getMinutes() / 60;
         const top = (startHour - 7) * 48;
         const height = (endHour - startHour) * 48;
+        const leftCalc = `calc(60px + ${day} * ((100% - 60px) / 7) + 2px)`;
+        const widthCalc = `calc((100% - 60px) / 7 - 4px)`;
 
         html += `<div class="week-event-card" 
-          style="background:${e.color};top:${top}px;height:${height - 2}px;" 
+          style="background:${e.color};top:${top}px;left:${leftCalc};width:${widthCalc};height:${height - 2}px;" 
           data-id="${e.id}" draggable="true">
           <span class="event-time">${this.formatTime(startDate)} – ${this.formatTime(endDate)}</span>
           <span class="event-title">${e.title}</span>

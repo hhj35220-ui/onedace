@@ -373,6 +373,42 @@
   justify-content: flex-end;
 }
 
+.week-event-card {
+  position: absolute;
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-2);
+  font-size: 11px;
+  font-weight: var(--font-medium);
+  color: white;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-left: 3px solid rgba(255,255,255,0.5);
+  transition: all var(--transition-fast);
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.week-event-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 20;
+}
+
+.week-event-card .event-time {
+  font-size: 10px;
+  opacity: 0.9;
+  display: block;
+}
+
+.week-event-card .event-title {
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .time-slot-cell {
   border-right: 1px solid var(--gray-100);
   border-bottom: 1px solid var(--gray-50);
