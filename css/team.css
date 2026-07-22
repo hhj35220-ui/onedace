@@ -83,8 +83,24 @@
 }
 
 /* Header overrides for team page */
-.team-header {
-  display: none;
+.dashboard-header.team-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+  padding: 0 var(--space-6);
+  background: var(--gray-0);
+  border-bottom: 1px solid var(--gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard-header.team-header .header-left,
+.dashboard-header.team-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 /* Stats Row */

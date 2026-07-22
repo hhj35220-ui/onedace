@@ -393,7 +393,8 @@ class TeamApp {
       html += `<div class="sidebar-section">`;
       html += `<div class="sidebar-section-title">${section.section}</div>`;
       section.items.forEach(item => {
-        const isActive = item.active || window.location.pathname.includes('/team/');
+        const currentUrl = window.location.href;
+        const isActive = item.active || currentUrl.endsWith(item.href);
         const activeClass = isActive ? 'active' : '';
         const platformClass = item.platform ? item.id : '';
 
