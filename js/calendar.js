@@ -32,11 +32,11 @@ const EVENT_TYPES = {
 
 const SAMPLE_EVENTS = [
   { id: 'evt_1', title: 'Team Offsite', type: 'event', calendar: 'my-calendar', start: '2024-05-19T00:00:00', end: '2024-05-19T23:59:59', allDay: true, color: '#10b981', location: 'Mountain Resort', description: 'Annual team offsite event', attendees: ['Alex Morgan', 'Jake Cooper', 'Cody Fisher'], reminder: true },
-  { id: 'evt_2', title: 'Daily Standup', type: 'meeting', calendar: 'meetings', start: '2024-05-20T09:00:00', end: '2024-05-20T09:30:00', allDay: false, color: '#6366f1', location: 'Zoom Room A', description: 'Daily team standup meeting', attendees: ['Team'], reminder: true },
-  { id: 'evt_3', title: 'Sales Meeting', type: 'meeting', calendar: 'meetings', start: '2024-05-21T10:00:00', end: '2024-05-21T11:00:00', allDay: false, color: '#6366f1', location: 'Conference Room B', description: 'Q2 sales review', attendees: ['Sales Team'], reminder: true },
+  { id: 'evt_2', title: 'Daily Standup', type: 'meeting', calendar: 'meetings', start: '2024-05-20T09:00:00', end: '2024-05-20T09:30:00', allDay: false, color: '#6366f1', location: 'Zoom Room A', description: 'Daily team standup meeting', attendees: ['Team'], reminder: true, invitationStatus: 'pending' },
+  { id: 'evt_3', title: 'Sales Meeting', type: 'meeting', calendar: 'meetings', start: '2024-05-21T10:00:00', end: '2024-05-21T11:00:00', allDay: false, color: '#6366f1', location: 'Conference Room B', description: 'Q2 sales review', attendees: ['Sales Team'], reminder: true, invitationStatus: 'pending' },
   { id: 'evt_4', title: 'Strategy Planning', type: 'meeting', calendar: 'meetings', start: '2024-05-22T08:00:00', end: '2024-05-22T09:30:00', allDay: false, color: '#f59e0b', location: 'Board Room', description: 'Strategic planning session', attendees: ['Management'], reminder: true },
   { id: 'evt_5', title: 'Product Launch', type: 'event', calendar: 'my-calendar', start: '2024-05-22T00:00:00', end: '2024-05-22T23:59:59', allDay: true, color: '#8b5cf6', location: 'Main Auditorium', description: 'New product launch event', attendees: ['All Staff'], reminder: true },
-  { id: 'evt_6', title: 'Customer Call', type: 'meeting', calendar: 'meetings', start: '2024-05-21T11:00:00', end: '2024-05-21T12:00:00', allDay: false, color: '#6366f1', location: 'Google Meet', description: 'Quarterly review with client', attendees: ['Sarah Johnson', 'Michael Brown'], reminder: true },
+  { id: 'evt_6', title: 'Customer Call', type: 'meeting', calendar: 'meetings', start: '2024-05-21T11:00:00', end: '2024-05-21T12:00:00', allDay: false, color: '#6366f1', location: 'Google Meet', description: 'Quarterly review with client', attendees: ['Sarah Johnson', 'Michael Brown'], reminder: true, invitationStatus: 'pending' },
   { id: 'evt_7', title: 'Product Demo', type: 'meeting', calendar: 'meetings', start: '2024-05-21T13:00:00', end: '2024-05-21T14:00:00', allDay: false, color: '#ec4899', location: 'Tech Solutions Inc.', description: 'Product demonstration', attendees: ['James Wilson'], reminder: true },
   { id: 'evt_8', title: 'CRM Review', type: 'task', calendar: 'tasks', start: '2024-05-22T13:00:00', end: '2024-05-22T14:00:00', allDay: false, color: '#f59e0b', location: 'Product Team', description: 'Monthly CRM review', attendees: ['Product Team'], reminder: true },
   { id: 'evt_9', title: 'Partnership Call', type: 'meeting', calendar: 'meetings', start: '2024-05-22T09:30:00', end: '2024-05-22T10:15:00', allDay: false, color: '#6366f1', location: 'Zoom', description: 'Partnership discussion', attendees: ['Olivia Martinez'], reminder: true },
@@ -177,8 +177,8 @@ class CalendarStorage {
     }).sort((a, b) => new Date(a.start) - new Date(b.start));
   }
 
-  getTodayEvents() {
-    const today = new Date();
+  getTodayEvents(referenceDate = new Date()) {
+    const today = new Date(referenceDate);
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -189,8 +189,8 @@ class CalendarStorage {
     });
   }
 
-  getUpcomingMeetings() {
-    const now = new Date();
+  getUpcomingMeetings(referenceDate = new Date()) {
+    const now = new Date(referenceDate);
     const weekLater = new Date(now);
     weekLater.setDate(weekLater.getDate() + 7);
     return this.getFilteredEvents().filter(e => {
@@ -203,8 +203,8 @@ class CalendarStorage {
     return this.getFilteredEvents().filter(e => e.invitationStatus === 'pending').length;
   }
 
-  getCompletedEvents() {
-    const now = new Date();
+  getCompletedEvents(referenceDate = new Date()) {
+    const now = new Date(referenceDate);
     const yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
     yesterday.setHours(0, 0, 0, 0);
@@ -214,10 +214,12 @@ class CalendarStorage {
     });
   }
 
-  getThisWeekEvents() {
-    const now = new Date();
+  getThisWeekEvents(referenceDate = new Date()) {
+    const now = new Date(referenceDate);
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
+    const dayOfWeek = startOfWeek.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    startOfWeek.setDate(startOfWeek.getDate() + mondayOffset);
     startOfWeek.setHours(0, 0, 0, 0);
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(endOfWeek.getDate() + 7);
@@ -370,11 +372,11 @@ class CalendarApp {
   // Stats
   // ============================================
   renderStats() {
-    const todayEvents = this.storage.getTodayEvents();
-    const upcomingMeetings = this.storage.getUpcomingMeetings();
+    const todayEvents = this.storage.getTodayEvents(this.currentDate);
+    const upcomingMeetings = this.storage.getUpcomingMeetings(this.currentDate);
     const pendingInvites = this.storage.getPendingInvitations();
-    const completedEvents = this.storage.getCompletedEvents();
-    const thisWeek = this.storage.getThisWeekEvents();
+    const completedEvents = this.storage.getCompletedEvents(this.currentDate);
+    const thisWeek = this.storage.getThisWeekEvents(this.currentDate);
 
     document.getElementById('stat-today-events').textContent = todayEvents.length;
     document.getElementById('stat-upcoming-meetings').textContent = upcomingMeetings.length;
@@ -408,7 +410,6 @@ class CalendarApp {
     }
 
     this.bindCalendarEvents();
-    this.highlightCurrentTime();
   }
 
   updateRangeDisplay() {
@@ -424,7 +425,9 @@ class CalendarApp {
       }
       case 'week': {
         const start = new Date(this.currentDate);
-        start.setDate(start.getDate() - start.getDay());
+        const dayOfWeek = start.getDay();
+        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        start.setDate(start.getDate() + mondayOffset);
         const end = new Date(start);
         end.setDate(end.getDate() + 6);
         if (start.getMonth() === end.getMonth()) {
@@ -450,11 +453,13 @@ class CalendarApp {
   // ============================================
   renderWeekView() {
     const start = new Date(this.currentDate);
-    start.setDate(start.getDate() - start.getDay());
+    const dayOfWeek = start.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    start.setDate(start.getDate() + mondayOffset);
     const end = new Date(start);
     end.setDate(end.getDate() + 6);
 
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const events = this.storage.getEventsForRange(start, end);
 
     let html = '<div class="calendar-week-view">';
@@ -468,7 +473,7 @@ class CalendarApp {
       const isToday = this.isSameDay(d, new Date());
       const todayClass = isToday ? 'today' : '';
       html += `<div class="week-header-cell ${todayClass}">
-        <div>${dayNames[i]}</div>
+        <div class="day-name">${dayNames[i]}</div>
         <div class="day-number">${d.getDate()}</div>
       </div>`;
     }
@@ -502,9 +507,6 @@ class CalendarApp {
       }
     }
     html += '</div>';
-
-    // Current time line
-    html += '<div class="current-time-line" id="current-time-line"></div>';
 
     // Event overlays
     for (let day = 0; day < 7; day++) {
@@ -1172,15 +1174,19 @@ class CalendarApp {
     const end = new Date(this.draggedEvent.end);
     const duration = end - start;
 
-    const newStart = new Date(this.currentDate);
+    let newStart;
     if (this.currentView === 'week') {
       const weekStart = new Date(this.currentDate);
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      newStart.setTime(weekStart.getTime());
+      const dayOfWeek = weekStart.getDay();
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      weekStart.setDate(weekStart.getDate() + mondayOffset);
+      newStart = new Date(weekStart);
       newStart.setDate(newStart.getDate() + dayOffset);
+    } else {
+      newStart = new Date(this.currentDate);
     }
-    newStart.setHours(hour, 0, 0, 0);
 
+    newStart.setHours(hour, 0, 0, 0);
     const newEnd = new Date(newStart.getTime() + duration);
 
     this.storage.updateEvent(this.draggedEvent.id, {
@@ -1188,7 +1194,7 @@ class CalendarApp {
       end: newEnd.toISOString()
     });
 
-    OP.toast.show('Event moved successfully', 'success');
+    this.draggedEvent = null;
     this.render();
     this.renderMiniCalendar();
     this.renderUpcomingEvents();
@@ -1437,18 +1443,7 @@ class CalendarApp {
   }
 
   highlightCurrentTime() {
-    const line = document.getElementById('current-time-line');
-    if (!line) return;
-
-    const now = new Date();
-    const currentHour = now.getHours() + now.getMinutes() / 60;
-    if (currentHour >= 7 && currentHour <= 18) {
-      const top = (currentHour - 7) * 48;
-      line.style.top = `${top}px`;
-      line.style.display = 'block';
-    } else {
-      line.style.display = 'none';
-    }
+    return;
   }
 
   // ============================================
