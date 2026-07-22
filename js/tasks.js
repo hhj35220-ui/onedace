@@ -106,7 +106,22 @@ class TasksStorage {
   }
 
   getTasks() {
-    return JSON.parse(localStorage.getItem(TASKS_STORAGE_KEYS.TASKS) || '[]');
+    const raw = localStorage.getItem(TASKS_STORAGE_KEYS.TASKS);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && typeof parsed === 'object') {
+        if (Array.isArray(parsed.data)) return parsed.data;
+        if (Array.isArray(parsed.items)) return parsed.items;
+        if (Array.isArray(parsed.tasks)) return parsed.tasks;
+        const values = Object.values(parsed).filter(v => v && typeof v === 'object' && v.id);
+        if (values.length) return values;
+      }
+    } catch (e) {
+      console.warn('TasksStorage.getTasks: failed to parse stored tasks', e);
+    }
+    return [];
   }
 
   saveTasks(tasks) {
@@ -155,7 +170,22 @@ class TasksStorage {
   }
 
   getProjects() {
-    return JSON.parse(localStorage.getItem(TASKS_STORAGE_KEYS.PROJECTS) || '[]');
+    const raw = localStorage.getItem(TASKS_STORAGE_KEYS.PROJECTS);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && typeof parsed === 'object') {
+        if (Array.isArray(parsed.data)) return parsed.data;
+        if (Array.isArray(parsed.items)) return parsed.items;
+        if (Array.isArray(parsed.projects)) return parsed.projects;
+        const values = Object.values(parsed).filter(v => v && typeof v === 'object' && v.id);
+        if (values.length) return values;
+      }
+    } catch (e) {
+      console.warn('TasksStorage.getProjects: failed to parse stored projects', e);
+    }
+    return [];
   }
 
   saveProjects(projects) {
@@ -163,7 +193,22 @@ class TasksStorage {
   }
 
   getActivity() {
-    return JSON.parse(localStorage.getItem(TASKS_STORAGE_KEYS.TASK_ACTIVITY) || '[]');
+    const raw = localStorage.getItem(TASKS_STORAGE_KEYS.TASK_ACTIVITY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && typeof parsed === 'object') {
+        if (Array.isArray(parsed.data)) return parsed.data;
+        if (Array.isArray(parsed.items)) return parsed.items;
+        if (Array.isArray(parsed.activity)) return parsed.activity;
+        const values = Object.values(parsed).filter(v => v && typeof v === 'object' && v.id);
+        if (values.length) return values;
+      }
+    } catch (e) {
+      console.warn('TasksStorage.getActivity: failed to parse stored activity', e);
+    }
+    return [];
   }
 
   addActivity(action, taskTitle) {
@@ -181,7 +226,16 @@ class TasksStorage {
   }
 
   getSettings() {
-    return JSON.parse(localStorage.getItem(TASKS_STORAGE_KEYS.TASK_SETTINGS) || '{}');
+    const raw = localStorage.getItem(TASKS_STORAGE_KEYS.TASK_SETTINGS);
+    if (!raw) return {};
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') return parsed;
+      if (parsed && parsed.data && typeof parsed.data === 'object') return parsed.data;
+    } catch (e) {
+      console.warn('TasksStorage.getSettings: failed to parse stored settings', e);
+    }
+    return {};
   }
 
   saveSettings(settings) {
