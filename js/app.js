@@ -629,6 +629,10 @@ class NavigationGuard {
       if (href.startsWith('file:') || window.location.hostname === 'localhost') {
         return true;
       }
+      // Allow bypass when running in development/debug mode
+      if (window.OP_CONFIG && window.OP_CONFIG.dev === true) {
+        return true;
+      }
     } catch (e) {
       // ignore errors and fall through
     }
