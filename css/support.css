@@ -5,7 +5,14 @@
 /* ============================================
    Support Header
    ============================================ */
-.support-header {
+.support-header,
+.dashboard-header.support-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   background: var(--gray-0);
   border-bottom: 1px solid var(--gray-200);
   padding: 0 var(--space-6);
@@ -16,6 +23,48 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+}
+
+.support-header .header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.support-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.header-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.header-user-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--gray-900);
+}
+
+.header-user-role {
+  font-size: 11px;
+  color: var(--gray-500);
 }
 
 .support-header-icon {
@@ -92,8 +141,9 @@
 .support-tabs-inner {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   overflow-x: auto;
+  padding: var(--space-2) 0;
   scrollbar-width: none;
 }
 
@@ -275,7 +325,7 @@
 }
 
 .support-chart-card.wide {
-  grid-column: span 1;
+  grid-column: span 2;
 }
 
 .widget-header {
