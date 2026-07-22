@@ -360,11 +360,22 @@
   <script src="../js/team.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (!OP.auth.isAuthenticated()) {
-        window.location.href = '../auth/signin.html';
-        return;
+      try {
+        if (!OP || !OP.auth || typeof OP.auth.isAuthenticated !== 'function') {
+          return;
+        }
+        if (!OP.auth.isAuthenticated()) {
+          window.location.href = '../auth/signin.html';
+          return;
+        }
+        window.teamApp = new TeamApp();
+      } catch (e) {
+        console.error('Team page init failed:', e);
+        const content = document.querySelector('.dashboard-content');
+        if (content) {
+          content.innerHTML = '<div style="padding:24px;color:var(--gray-700)">The Team page could not load its data. Please refresh or return later.</div>';
+        }
       }
-      window.teamApp = new TeamApp();
     });
   </script>
 </body>

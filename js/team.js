@@ -217,8 +217,21 @@ class TeamStorage {
     }
   }
 
+  readArray(key, fallback) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || 'null');
+      if (Array.isArray(value)) return value;
+      if (value && typeof value === 'object') {
+        return Array.isArray(value.items) ? value.items : fallback;
+      }
+      return fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
   getUsers() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_USERS) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_USERS, SAMPLE_USERS);
   }
 
   saveUsers(users) {
@@ -226,7 +239,7 @@ class TeamStorage {
   }
 
   getTeams() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_TEAMS) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_TEAMS, SAMPLE_TEAMS);
   }
 
   saveTeams(teams) {
@@ -234,7 +247,7 @@ class TeamStorage {
   }
 
   getDepartments() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS, SAMPLE_DEPARTMENTS);
   }
 
   saveDepartments(depts) {
@@ -242,7 +255,7 @@ class TeamStorage {
   }
 
   getRoles() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_ROLES) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ROLES, SAMPLE_ROLES);
   }
 
   saveRoles(roles) {
@@ -250,7 +263,7 @@ class TeamStorage {
   }
 
   getPermissions() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS, SAMPLE_PERMISSIONS);
   }
 
   savePermissions(perms) {
@@ -258,7 +271,7 @@ class TeamStorage {
   }
 
   getInvitations() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_INVITATIONS) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_INVITATIONS, SAMPLE_INVITATIONS);
   }
 
   saveInvitations(invites) {
@@ -266,7 +279,7 @@ class TeamStorage {
   }
 
   getActivity() {
-    return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_ACTIVITY) || '[]');
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ACTIVITY, SAMPLE_ACTIVITY);
   }
 
   addActivity(activity) {
