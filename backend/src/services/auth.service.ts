@@ -1,0 +1,245 @@
+import { randomBytes } from 'crypto';
+
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+import { prisma } from '../config/database';
+import { config } from '../config/env';
+import { log } from '../config/logger';
+import { LoginDto } from '../dto/auth/login.dto';
+import { RegisterDto } from '../dto/auth/register.dto';
+import { AppError } from '../utils/AppError';
+
+export class AuthService {
+  async register(payload: RegisterDto) {
+    try {
+      const normalizedEmail = payload.email.toLowerCase().trim();
+
+      const existingUser = await prisma.user.findUnique({
+        where: { email: normalizedEmail }
+      });
+
+      if (existingUser) {
+        throw new AppError('Email already exists', 409);
+      }
+
+      const hashedPassword = await bcrypt.hash(payload.password, 12);
+
+      const user = await prisma.user.create({
+        data: {
+          firstName: payload.firstName.trim(),
+          lastName: payload.lastName.trim(),
+          email: normalizedEmail,
+          password: hashedPassword,
+          role: 'USER',
+          isActive: true,
+          emailVerified: false
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          createdAt: true
+        }
+      });
+
+      return {
+        success: true,
+        message: 'Account created successfully',
+        data: user
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Registration failed', { error });
+      throw new AppError('An unexpected error occurred while creating the account', 500);
+    }
+  }
+
+  async login(payload: LoginDto) {
+    try {
+      const normalizedEmail = payload.email.toLowerCase().trim();
+
+      const user = await prisma.user.findUnique({
+        where: { email: normalizedEmail }
+      });
+
+      if (!user) {
+        throw new AppError('Invalid credentials', 401);
+      }
+
+      const isPasswordValid = await bcrypt.compare(payload.password, user.password);
+
+      if (!isPasswordValid) {
+        throw new AppError('Invalid credentials', 401);
+      }
+
+      const accessToken = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          role: user.role
+        },
+        config.JWT_SECRET,
+        { expiresIn: '15m' }
+      );
+
+      const refreshTokenValue = randomBytes(48).toString('hex');
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      await prisma.refreshToken.create({
+        data: {
+          token: refreshTokenValue,
+          userId: user.id,
+          expiresAt
+        }
+      });
+
+      const userResponse = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt
+      };
+
+      return {
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: userResponse,
+          accessToken,
+          refreshToken: refreshTokenValue
+        }
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Login failed', { error });
+      throw new AppError('An unexpected error occurred while logging in', 500);
+    }
+  }
+
+  async refreshToken(token: string) {
+    try {
+      const refreshTokenRecord = await prisma.refreshToken.findUnique({
+        where: { token }
+      });
+
+      if (!refreshTokenRecord) {
+        throw new AppError('Invalid refresh token', 401);
+      }
+
+      if (refreshTokenRecord.revokedAt) {
+        throw new AppError('Refresh token has been revoked', 401);
+      }
+
+      if (refreshTokenRecord.expiresAt <= new Date()) {
+        throw new AppError('Refresh token has expired', 401);
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: refreshTokenRecord.userId }
+      });
+
+      if (!user) {
+        throw new AppError('User not found', 404);
+      }
+
+      const accessToken = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          role: user.role
+        },
+        config.JWT_SECRET,
+        { expiresIn: '15m' }
+      );
+
+      const newRefreshTokenValue = randomBytes(48).toString('hex');
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      await prisma.$transaction([
+        prisma.refreshToken.update({
+          where: { id: refreshTokenRecord.id },
+          data: { revokedAt: new Date() }
+        }),
+        prisma.refreshToken.create({
+          data: {
+            token: newRefreshTokenValue,
+            userId: user.id,
+            expiresAt
+          }
+        })
+      ]);
+
+      return {
+        success: true,
+        message: 'Token refreshed successfully',
+        data: {
+          accessToken,
+          refreshToken: newRefreshTokenValue
+        }
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Refresh token failed', { error });
+      throw new AppError('An unexpected error occurred while refreshing the token', 500);
+    }
+  }
+
+  async logout(token: string) {
+    try {
+      const refreshTokenRecord = await prisma.refreshToken.findUnique({
+        where: { token }
+      });
+
+      if (!refreshTokenRecord) {
+        throw new AppError('Invalid refresh token', 401);
+      }
+
+      await prisma.refreshToken.update({
+        where: { id: refreshTokenRecord.id },
+        data: { revokedAt: new Date() }
+      });
+
+      return {
+        success: true,
+        message: 'Logout successful'
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Logout failed', { error });
+      throw new AppError('An unexpected error occurred while logging out', 500);
+    }
+  }
+
+  async forgotPassword() {
+    return { success: false, message: 'Not implemented' };
+  }
+
+  async resetPassword() {
+    return { success: false, message: 'Not implemented' };
+  }
+
+  async verifyEmail() {
+    return { success: false, message: 'Not implemented' };
+  }
+
+  async me() {
+    return { success: false, message: 'Not implemented' };
+  }
+}
