@@ -347,50 +347,14 @@ class TeamApp {
     const userName = session?.fullName || 'User';
     const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
-    const navItems = [
-      { section: 'Core', items: [
-        { id: 'main-dashboard', label: 'Dashboard', icon: 'ph-squares-four', href: '../dashboard/main-dashboard.html' },
-        { id: 'unified-inbox', label: 'Unified Inbox', icon: 'ph-inbox', href: '../inbox/unified-inbox.html' },
-      ]},
-      { section: 'Inbox', items: [
-        { id: 'all-conversations', label: 'All Conversations', icon: 'ph-chat-circle-text', href: '../inbox/unified-inbox.html?filter=all' },
-        { id: 'unread', label: 'Unread', icon: 'ph-envelope-open', href: '../inbox/unified-inbox.html?filter=unread' },
-      ]},
-      { section: 'Platforms', items: [
-        { id: 'gmail', label: 'Gmail', icon: 'ph-envelope-simple', href: '../gmail/index.html', platform: true },
-        { id: 'whatsapp', label: 'WhatsApp', icon: 'ph-chat-circle-text', href: '../whatsapp/index.html', platform: true },
-        { id: 'instagram', label: 'Instagram', icon: 'ph-camera', href: '../instagram/index.html', platform: true },
-        { id: 'tiktok', label: 'TikTok', icon: 'ph-tiktok-logo', href: '../tiktok/index.html', platform: true },
-        { id: 'x', label: 'X (Twitter)', icon: 'ph-x-logo', href: '../x/index.html', platform: true },
-        { id: 'linkedin', label: 'LinkedIn', icon: 'ph-linkedin-logo', href: '../linkedin/index.html', platform: true },
-      ]},
-      { section: 'Business', items: [
-        { id: 'crm', label: 'CRM', icon: 'ph-users', href: '../crm/index.html' },
-        { id: 'calendar', label: 'Calendar', icon: 'ph-calendar', href: '../calendar/index.html' },
-        { id: 'tasks', label: 'Tasks', icon: 'ph-check-circle', href: '../tasks/index.html' },
-        { id: 'workflow', label: 'Workflow', icon: 'ph-arrows-left-right', href: '../workflow/index.html' },
-        { id: 'team-management', label: 'Team Management', icon: 'ph-users-three', href: 'index.html', active: true },
-      ]},
-      { section: 'Insights', items: [
-        { id: 'ai-assistant', label: 'AI Assistant', icon: 'ph-sparkle', href: '../ai/index.html' },
-        { id: 'reports', label: 'Reports', icon: 'ph-chart-bar', href: '../reports/index.html' },
-      ]},
-      { section: 'System', items: [
-        { id: 'settings', label: 'Settings', icon: 'ph-gear', href: '../settings/index.html' },
-        { id: 'help', label: 'Help Center', icon: 'ph-question', href: '../help/index.html' },
-      ]},
-      { section: 'More', items: [
-        { id: 'support', label: 'Support', icon: 'ph-headset', href: '../support/index.html' },
-        { id: 'billing', label: 'Billing', icon: 'ph-credit-card', href: '../billing/index.html' },
-        { id: 'files', label: 'Files', icon: 'ph-folder', href: '../files/index.html' },
-        { id: 'search', label: 'Search', icon: 'ph-magnifying-glass', href: '../search/index.html' },
-        { id: 'notifications', label: 'Notifications', icon: 'ph-bell', href: '../notifications/notifications.html' },
-        { id: 'workflow', label: 'Workflow', icon: 'ph-arrows-left-right', href: '../workflow/index.html' },
-      ]}
-    ];
+    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    if (!sidebarNav) return;
 
-    let html = `
-      <div class="sidebar-header">
+    const existingHeader = sidebar.querySelector('.sidebar-header');
+    if (!existingHeader) {
+      const header = document.createElement('div');
+      header.className = 'sidebar-header';
+      header.innerHTML = `
         <a href="../index.html" class="logo">
           <div class="logo-mark"><i class="ph ph-chat-centered-text"></i></div>
           <div class="logo-text">
@@ -398,35 +362,15 @@ class TeamApp {
             <span class="logo-sub">Enterprise</span>
           </div>
         </a>
-      </div>
-      <nav class="sidebar-nav" aria-label="Dashboard navigation">
-    `;
+      `;
+      sidebar.insertBefore(header, sidebarNav);
+    }
 
-    navItems.forEach(section => {
-      html += `<div class="sidebar-section">`;
-      html += `<div class="sidebar-section-title">${section.section}</div>`;
-      section.items.forEach(item => {
-        const currentUrl = window.location.href;
-        const isActive = item.active || currentUrl.endsWith(item.href);
-        const activeClass = isActive ? 'active' : '';
-        const platformClass = item.platform ? item.id : '';
-
-        html += `
-          <a href="${item.href}" class="sidebar-item ${activeClass}" data-page="${item.id}">
-            ${item.platform 
-              ? `<span class="sidebar-platform-icon ${platformClass}"><i class="ph ${item.icon}"></i></span>`
-              : `<i class="ph ${item.icon}"></i>`
-            }
-            <span>${item.label}</span>
-          </a>
-        `;
-      });
-      html += `</div>`;
-    });
-
-    html += `
-      </nav>
-      <div class="sidebar-footer">
+    const existingFooter = sidebar.querySelector('.sidebar-footer');
+    if (!existingFooter) {
+      const footer = document.createElement('div');
+      footer.className = 'sidebar-footer';
+      footer.innerHTML = `
         <div class="sidebar-user">
           <div class="sidebar-user-avatar">${initials}</div>
           <div class="sidebar-user-info">
@@ -434,10 +378,40 @@ class TeamApp {
             <div class="sidebar-user-role">Administrator</div>
           </div>
         </div>
-      </div>
-    `;
+      `;
+      sidebar.appendChild(footer);
+    }
 
-    sidebar.innerHTML = html;
+    if (sidebarNav.querySelector('[data-nav-section="global"]')) {
+      return;
+    }
+
+    const navSection = document.createElement('div');
+    navSection.className = 'sidebar-section';
+    navSection.setAttribute('data-nav-section', 'global');
+    navSection.innerHTML = `
+      <div class="sidebar-section-title">Navigation</div>
+      <a href="../dashboard/main-dashboard.html" class="sidebar-item" data-page="main-dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></a>
+      <a href="../inbox/unified-inbox.html" class="sidebar-item" data-page="unified-inbox"><i class="ph ph-envelope"></i><span>All Inbox</span></a>
+      <a href="../reports/index.html" class="sidebar-item" data-page="reports"><i class="ph ph-chart-bar"></i><span>Reports</span></a>
+      <a href="../crm/index.html" class="sidebar-item" data-page="crm"><i class="ph ph-users"></i><span>CRM</span></a>
+      <a href="../calendar/index.html" class="sidebar-item" data-page="calendar"><i class="ph ph-calendar-blank"></i><span>Calendar</span></a>
+      <a href="../tasks/index.html" class="sidebar-item" data-page="tasks"><i class="ph ph-check-square"></i><span>Tasks</span></a>
+      <a href="index.html" class="sidebar-item active" data-page="team-management"><i class="ph ph-users-three"></i><span>Team</span></a>
+      <a href="../workflow/index.html" class="sidebar-item" data-page="workflow"><i class="ph ph-flow-arrow"></i><span>Workflow</span></a>
+      <a href="../files/index.html" class="sidebar-item" data-page="files"><i class="ph ph-folder"></i><span>Files</span></a>
+      <a href="../integrations/index.html" class="sidebar-item" data-page="integrations"><i class="ph ph-plugs-connected"></i><span>Integrations</span></a>
+      <a href="../settings/index.html" class="sidebar-item" data-page="settings"><i class="ph ph-gear"></i><span>Settings</span></a>
+      <a href="../help/index.html" class="sidebar-item" data-page="help"><i class="ph ph-question"></i><span>Help &amp; Support</span></a>
+    `;
+    sidebarNav.appendChild(navSection);
+
+    const currentUrl = window.location.href;
+    sidebarNav.querySelectorAll('a.sidebar-item').forEach(link => {
+      const href = link.getAttribute('href') || '';
+      const isActive = href === 'index.html' ? currentUrl.endsWith('/team/index.html') || currentUrl.endsWith('/team/') : currentUrl.endsWith(href);
+      link.classList.toggle('active', isActive);
+    });
   }
 
   // ============================================

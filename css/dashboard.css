@@ -9,6 +9,17 @@
   background: var(--gray-50);
 }
 
+body.has-global-nav {
+  padding-left: 260px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  body.has-global-nav {
+    padding-left: 0;
+  }
+}
+
 /* ============================================
    Sidebar
    ============================================ */
