@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import { AuthController } from '../../controllers/auth.controller';
+import { authenticate } from '../../middleware/auth.middleware';
 import { asyncHandler } from '../../utils/asyncHandler';
 
 const router = Router();
@@ -14,6 +15,6 @@ router.post('/logout', authController.logout.bind(authController));
 router.post('/forgot-password', authController.forgotPassword.bind(authController));
 router.post('/reset-password', authController.resetPassword.bind(authController));
 router.get('/verify-email', authController.verifyEmail.bind(authController));
-router.get('/me', authController.me.bind(authController));
+router.get('/me', authenticate, authController.me.bind(authController));
 
 export default router;
