@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client';
 import { config } from './env';
 import { log } from './logger';
 
+const fallbackDatabaseUrl = 'postgresql://postgres:0808803+1aA@localhost:5432/oneplace';
+const databaseUrl = config.DATABASE_URL || fallbackDatabaseUrl;
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   var prisma: PrismaClient | undefined;
@@ -12,10 +15,15 @@ const prisma =
   new PrismaClient({
     datasources: {
       db: {
-        url: config.DATABASE_URL
+        url: databaseUrl
       }
-    }
+    },
+    log: ['query', 'error', 'warn']
   });
+
+if (!databaseUrl.startsWith('prisma://')) {
+  (prisma as PrismaClient & { $engine: unknown }).$engine = undefined;
+}
 
 if (process.env.NODE_ENV !== 'production') {
   global.prisma = prisma;
