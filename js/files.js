@@ -119,7 +119,7 @@ class FileManager {
       localStorage.setItem(FILE_STORAGE_KEYS.FILES, JSON.stringify(SAMPLE_FILES));
     }
     if (!localStorage.getItem(FILE_STORAGE_KEYS.TRASH)) {
-      localStorage.setItem(FILE_STORAGE_KEYS.TRASH, JSON.stringify([]));
+      localStorage.setItem(FILE_STORAGE_KEYS.TRASH, JSON.stringify(SAMPLE_TRASH));
     }
     if (!localStorage.getItem(FILE_STORAGE_KEYS.ACTIVITIES)) {
       localStorage.setItem(FILE_STORAGE_KEYS.ACTIVITIES, JSON.stringify(SAMPLE_ACTIVITIES));

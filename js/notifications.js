@@ -221,11 +221,12 @@ class NotificationsModule {
       this.bindEvents();
       this.renderAll();
       this.updateStats();
+      this.syncFromBackend();
     } catch (err) {
       console.error('Failed to initialize notifications module:', err);
-      // Fallback: render with sample data
-      this.notifications = [...SAMPLE_NOTIFICATIONS];
-      this.activity = [...SAMPLE_ACTIVITY];
+      // Fallback: render empty state
+      this.notifications = [];
+      this.activity = [];
       this.settings = { emailNotifications: true, browserNotifications: true, soundAlerts: true };
       this.renderAll();
       this.updateStats();
@@ -238,18 +239,18 @@ class NotificationsModule {
   loadData() {
     try {
       const savedNotifications = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATIONS);
-      this.notifications = savedNotifications ? JSON.parse(savedNotifications) : [...SAMPLE_NOTIFICATIONS];
+      this.notifications = savedNotifications ? JSON.parse(savedNotifications) : [];
     } catch (e) {
       console.warn('Failed to load notifications from localStorage, using defaults.', e);
-      this.notifications = [...SAMPLE_NOTIFICATIONS];
+      this.notifications = [];
     }
 
     try {
       const savedActivity = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.NOTIFICATION_HISTORY);
-      this.activity = savedActivity ? JSON.parse(savedActivity) : [...SAMPLE_ACTIVITY];
+      this.activity = savedActivity ? JSON.parse(savedActivity) : [];
     } catch (e) {
       console.warn('Failed to load activity from localStorage, using defaults.', e);
-      this.activity = [...SAMPLE_ACTIVITY];
+      this.activity = [];
     }
 
     try {
@@ -269,6 +270,51 @@ class NotificationsModule {
     }
 
     this.saveData();
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+      const response = await window.OP.apiIntegration.get('/notifications?limit=100');
+      const rows = window.OP.apiIntegration.extractArray(response);
+      this.notifications = rows.map((item) => ({
+        id: item.id,
+        type: item.type || 'system',
+        category: item.type || 'system',
+        tag: item.type || 'System',
+        tagClass: (item.type || 'system').toLowerCase(),
+        title: item.title || 'Notification',
+        body: item.message || item.body || '',
+        priority: item.priority || 'medium',
+        source: 'notifications',
+        sourceName: 'Notifications',
+        timestamp: new Date(item.createdAt || Date.now()).getTime(),
+        read: !!item.isRead,
+        sender: { name: 'System', avatar: null, initials: 'OP', color: '#4f46e5' },
+        actionUrl: null,
+        actionLabel: 'Open'
+      }));
+
+      this.activity = this.notifications.slice(0, 10).map((n) => ({
+        id: `act_${n.id}`,
+        name: n.sender.name,
+        avatar: n.sender.avatar,
+        initials: n.sender.initials,
+        color: n.sender.color,
+        text: n.title,
+        desc: n.body,
+        time: n.timestamp
+      }));
+
+      this.saveData();
+      this.renderAll();
+      this.updateStats();
+      this.updateBadges();
+    } catch (error) {
+      console.warn('Notifications backend sync skipped:', error);
+    }
   }
 
   saveData() {
@@ -713,6 +759,12 @@ class NotificationsModule {
     this.updateBadges();
 
     this.showToast(notif.read ? 'Marked as read' : 'Marked as unread', 'success');
+
+    if (window.OP && window.OP.apiIntegration) {
+      window.OP.apiIntegration
+        .patch(`/notifications/${id}/read`, { isRead: notif.read })
+        .catch(() => {});
+    }
   }
 
   markAllRead() {
@@ -723,6 +775,10 @@ class NotificationsModule {
     this.updateStats();
     this.updateBadges();
     this.showToast(`${unreadCount} notifications marked as read`, 'success');
+
+    if (window.OP && window.OP.apiIntegration) {
+      window.OP.apiIntegration.patch('/notifications/read-all', { isRead: true }).catch(() => {});
+    }
   }
 
   confirmDeleteSingle(id) {
@@ -731,6 +787,7 @@ class NotificationsModule {
   }
 
   confirmDelete() {
+    const deletedId = this.currentModalNotification;
     if (this.currentModalNotification) {
       this.notifications = this.notifications.filter(n => n.id !== this.currentModalNotification);
       this.currentModalNotification = null;
@@ -741,6 +798,10 @@ class NotificationsModule {
     this.updateStats();
     this.updateBadges();
     this.showToast('Notification deleted', 'success');
+
+    if (deletedId && window.OP && window.OP.apiIntegration) {
+      window.OP.apiIntegration.delete(`/notifications/${deletedId}`).catch(() => {});
+    }
   }
 
   // ============================================

@@ -6,7 +6,7 @@ import { ListTasksQueryDto } from '../dto/tasks/list-tasks-query.dto';
 import { UpdateTaskDto } from '../dto/tasks/update-task.dto';
 import { TaskService } from '../services/task.service';
 import { AppError } from '../utils/AppError';
-import { createTaskSchema, listTasksQuerySchema, projectIdParamSchema, taskIdParamSchema, updateTaskSchema } from '../validators/task.validator';
+import { createTaskSchema, listTasksQuerySchema, projectIdParamSchema, taskAnalyticsQuerySchema, taskIdParamSchema, updateTaskSchema } from '../validators/task.validator';
 
 export class TaskController {
   private readonly taskService: TaskService;
@@ -102,6 +102,26 @@ export class TaskController {
 
       const { id } = taskIdParamSchema.parse(req.params) as { id: string };
       const result = await this.taskService.deleteTask(req.user.id, id);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const message = error.issues[0]?.message ?? 'Validation failed';
+        return next(new AppError(message, 400));
+      }
+
+      return next(error);
+    }
+  }
+
+  async analytics(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        return next(new AppError('Authentication required', 401));
+      }
+
+      const { projectId } = projectIdParamSchema.parse(req.params) as { projectId: string };
+      const query = taskAnalyticsQuerySchema.parse(req.query) as { groupBy: 'status' | 'priority' };
+      const result = await this.taskService.getTaskAnalytics(req.user.id, projectId, query.groupBy);
       res.status(200).json(result);
     } catch (error) {
       if (error instanceof ZodError) {

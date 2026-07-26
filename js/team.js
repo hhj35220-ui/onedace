@@ -195,25 +195,25 @@ class TeamStorage {
 
   init() {
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_USERS)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_USERS, JSON.stringify(SAMPLE_USERS));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_USERS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_TEAMS)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_TEAMS, JSON.stringify(SAMPLE_TEAMS));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_TEAMS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS, JSON.stringify(SAMPLE_DEPARTMENTS));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_ROLES)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_ROLES, JSON.stringify(SAMPLE_ROLES));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_ROLES, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS, JSON.stringify(SAMPLE_PERMISSIONS));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_INVITATIONS)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_INVITATIONS, JSON.stringify(SAMPLE_INVITATIONS));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_INVITATIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TEAM_STORAGE_KEYS.TEAM_ACTIVITY)) {
-      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_ACTIVITY, JSON.stringify(SAMPLE_ACTIVITY));
+      localStorage.setItem(TEAM_STORAGE_KEYS.TEAM_ACTIVITY, JSON.stringify([]));
     }
   }
 
@@ -231,7 +231,7 @@ class TeamStorage {
   }
 
   getUsers() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_USERS, SAMPLE_USERS);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_USERS, []);
   }
 
   saveUsers(users) {
@@ -239,7 +239,7 @@ class TeamStorage {
   }
 
   getTeams() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_TEAMS, SAMPLE_TEAMS);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_TEAMS, []);
   }
 
   saveTeams(teams) {
@@ -247,7 +247,7 @@ class TeamStorage {
   }
 
   getDepartments() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS, SAMPLE_DEPARTMENTS);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_DEPARTMENTS, []);
   }
 
   saveDepartments(depts) {
@@ -255,7 +255,7 @@ class TeamStorage {
   }
 
   getRoles() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ROLES, SAMPLE_ROLES);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ROLES, []);
   }
 
   saveRoles(roles) {
@@ -263,7 +263,7 @@ class TeamStorage {
   }
 
   getPermissions() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS, SAMPLE_PERMISSIONS);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_PERMISSIONS, []);
   }
 
   savePermissions(perms) {
@@ -271,7 +271,7 @@ class TeamStorage {
   }
 
   getInvitations() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_INVITATIONS, SAMPLE_INVITATIONS);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_INVITATIONS, []);
   }
 
   saveInvitations(invites) {
@@ -279,7 +279,7 @@ class TeamStorage {
   }
 
   getActivity() {
-    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ACTIVITY, SAMPLE_ACTIVITY);
+    return this.readArray(TEAM_STORAGE_KEYS.TEAM_ACTIVITY, []);
   }
 
   addActivity(activity) {

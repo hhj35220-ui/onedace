@@ -92,6 +92,17 @@ class DashboardApp {
     this.renderSidebar();
     this.renderHeader();
     this.bindEvents();
+    this.syncFromBackend();
+  }
+
+  async syncFromBackend() {
+    if (!this.storage || typeof this.storage.syncFromBackend !== 'function') return;
+    try {
+      await this.storage.syncFromBackend();
+      this.renderSidebar();
+    } catch (error) {
+      console.warn('Dashboard backend sync skipped:', error);
+    }
   }
 
   // ============================================

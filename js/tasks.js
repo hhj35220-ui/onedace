@@ -88,13 +88,13 @@ class TasksStorage {
 
   init() {
     if (!localStorage.getItem(TASKS_STORAGE_KEYS.TASKS)) {
-      localStorage.setItem(TASKS_STORAGE_KEYS.TASKS, JSON.stringify(SAMPLE_TASKS));
+      localStorage.setItem(TASKS_STORAGE_KEYS.TASKS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TASKS_STORAGE_KEYS.PROJECTS)) {
-      localStorage.setItem(TASKS_STORAGE_KEYS.PROJECTS, JSON.stringify(SAMPLE_PROJECTS));
+      localStorage.setItem(TASKS_STORAGE_KEYS.PROJECTS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TASKS_STORAGE_KEYS.TASK_ACTIVITY)) {
-      localStorage.setItem(TASKS_STORAGE_KEYS.TASK_ACTIVITY, JSON.stringify(SAMPLE_ACTIVITY));
+      localStorage.setItem(TASKS_STORAGE_KEYS.TASK_ACTIVITY, JSON.stringify([]));
     }
     if (!localStorage.getItem(TASKS_STORAGE_KEYS.TASK_SETTINGS)) {
       localStorage.setItem(TASKS_STORAGE_KEYS.TASK_SETTINGS, JSON.stringify({
@@ -420,6 +420,37 @@ class TasksApp {
     this.renderPriorityChart();
     this.renderRecentActivity();
     this.renderProjects();
+    this.syncFromBackend();
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+
+      const projectsResponse = await window.OP.apiIntegration.get('/projects');
+      const projects = window.OP.apiIntegration.extractArray(projectsResponse);
+      this.storage.saveProjects(projects);
+
+      const taskCollections = await Promise.all(projects.map(async (project) => {
+        try {
+          const response = await window.OP.apiIntegration.get(`/projects/${project.id}/tasks`);
+          const tasks = window.OP.apiIntegration.extractArray(response);
+          return tasks.map(t => Object.assign({}, t, { project: t.projectId || project.id }));
+        } catch (error) {
+          return [];
+        }
+      }));
+
+      const tasks = taskCollections.flat();
+      this.storage.saveTasks(tasks);
+      this.storage.saveSettings(Object.assign({ defaultView: 'kanban', sortBy: 'dueDate', sortOrder: 'asc' }, this.storage.getSettings()));
+
+      this.refreshAll();
+    } catch (error) {
+      console.warn('Tasks backend sync skipped:', error);
+    }
   }
 
   // ============================================

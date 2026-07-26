@@ -72,6 +72,10 @@ export class AuthService {
         throw new AppError('Invalid credentials', 401);
       }
 
+      if (user.isActive === false) {
+        throw new AppError('Invalid credentials', 401);
+      }
+
       const isPasswordValid = await bcrypt.compare(payload.password, user.password);
 
       if (!isPasswordValid) {
@@ -227,19 +231,204 @@ export class AuthService {
     }
   }
 
-  async forgotPassword() {
-    return { success: false, message: 'Not implemented' };
+  async forgotPassword(email: string) {
+    try {
+      const normalizedEmail = email.toLowerCase().trim();
+
+      const user = await prisma.user.findUnique({
+        where: { email: normalizedEmail },
+        select: { id: true, email: true }
+      });
+
+      if (!user) {
+        return {
+          success: true,
+          message: 'If the email exists, password reset instructions have been generated.',
+          data: null
+        };
+      }
+
+      const resetToken = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          purpose: 'password_reset'
+        },
+        config.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      return {
+        success: true,
+        message: 'Password reset token generated successfully',
+        data: {
+          resetToken
+        }
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Forgot password failed', { error, email });
+      throw new AppError('An unexpected error occurred while generating password reset instructions', 500);
+    }
   }
 
-  async resetPassword() {
-    return { success: false, message: 'Not implemented' };
+  async resetPassword(token: string, password: string) {
+    try {
+      const decoded = jwt.verify(token, config.JWT_SECRET) as jwt.JwtPayload & {
+        sub?: string;
+        email?: string;
+        purpose?: string;
+      };
+
+      if (!decoded || typeof decoded !== 'object' || typeof decoded.sub !== 'string' || decoded.purpose !== 'password_reset') {
+        throw new AppError('Invalid password reset token', 401);
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.sub },
+        select: { id: true, email: true }
+      });
+
+      if (!user) {
+        throw new AppError('User not found', 404);
+      }
+
+      if (decoded.email && decoded.email !== user.email) {
+        throw new AppError('Invalid password reset token', 401);
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      await prisma.$transaction(async (tx) => {
+        await tx.user.update({
+          where: { id: user.id },
+          data: { password: hashedPassword }
+        });
+
+        await tx.refreshToken.deleteMany({
+          where: { userId: user.id }
+        });
+      });
+
+      return {
+        success: true,
+        message: 'Password reset successfully',
+        data: null
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
+        throw new AppError('Password reset token has expired', 401);
+      }
+
+      if (error instanceof Error && (error.name === 'JsonWebTokenError' || error.name === 'NotBeforeError')) {
+        throw new AppError('Invalid password reset token', 401);
+      }
+
+      log.error('Reset password failed', { error });
+      throw new AppError('An unexpected error occurred while resetting the password', 500);
+    }
   }
 
-  async verifyEmail() {
-    return { success: false, message: 'Not implemented' };
+  async verifyEmail(token: string) {
+    try {
+      const decoded = jwt.verify(token, config.JWT_SECRET) as jwt.JwtPayload & {
+        sub?: string;
+        email?: string;
+        purpose?: string;
+      };
+
+      if (!decoded || typeof decoded !== 'object' || typeof decoded.sub !== 'string' || decoded.purpose !== 'email_verification') {
+        throw new AppError('Invalid email verification token', 401);
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.sub },
+        select: { id: true, email: true, emailVerified: true }
+      });
+
+      if (!user) {
+        throw new AppError('User not found', 404);
+      }
+
+      if (decoded.email && decoded.email !== user.email) {
+        throw new AppError('Invalid email verification token', 401);
+      }
+
+      if (!user.emailVerified) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { emailVerified: true }
+        });
+      }
+
+      return {
+        success: true,
+        message: 'Email verified successfully',
+        data: null
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
+        throw new AppError('Email verification token has expired', 401);
+      }
+
+      if (error instanceof Error && (error.name === 'JsonWebTokenError' || error.name === 'NotBeforeError')) {
+        throw new AppError('Invalid email verification token', 401);
+      }
+
+      log.error('Verify email failed', { error });
+      throw new AppError('An unexpected error occurred while verifying the email', 500);
+    }
   }
 
-  async me() {
-    return { success: false, message: 'Not implemented' };
+  async me(userId: string) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          avatar: true,
+          role: true,
+          isActive: true,
+          emailVerified: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      });
+
+      if (!user) {
+        throw new AppError('User not found', 404);
+      }
+
+      return {
+        success: true,
+        message: 'Authenticated user retrieved successfully',
+        data: {
+          ...user,
+          avatarUrl: user.avatar
+        }
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      log.error('Retrieve authenticated user failed', { error, userId });
+      throw new AppError('An unexpected error occurred while retrieving the authenticated user', 500);
+    }
   }
 }

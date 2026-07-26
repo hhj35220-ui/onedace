@@ -106,28 +106,93 @@ class DashboardStorage {
   }
 
   init() {
-    // Bump DATA_VERSION whenever the seed shape changes — stale demo
-    // data from older versions is cleared so pages always match design.
-    const DATA_VERSION = '3.1';
-    if (localStorage.getItem('op_data_version') !== DATA_VERSION) {
-      Object.values(DASHBOARD_STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
-      localStorage.setItem('op_data_version', DATA_VERSION);
-    }
-
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.CONVERSATIONS)) {
-      this.seedConversations();
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.CONVERSATIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.ACTIVITIES)) {
-      this.seedActivities();
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.ACTIVITIES, JSON.stringify([]));
     }
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.TEAM_MEMBERS)) {
-      this.seedTeamMembers();
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify([]));
     }
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.PLATFORM_STATS)) {
-      this.seedPlatformStats();
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.PLATFORM_STATS, JSON.stringify({}));
     }
     if (!localStorage.getItem(DASHBOARD_STORAGE_KEYS.AI_SUGGESTIONS)) {
-      this.seedAISuggestions();
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.AI_SUGGESTIONS, JSON.stringify([]));
+    }
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+      const [overviewRes, tasksRes, projectsRes, productivityRes, notificationsRes] = await Promise.all([
+        window.OP.apiIntegration.get('/dashboard/overview').catch(() => null),
+        window.OP.apiIntegration.get('/dashboard/tasks').catch(() => null),
+        window.OP.apiIntegration.get('/dashboard/projects').catch(() => null),
+        window.OP.apiIntegration.get('/dashboard/productivity').catch(() => null),
+        window.OP.apiIntegration.get('/notifications?limit=20').catch(() => null)
+      ]);
+
+      const overview = overviewRes ? window.OP.apiIntegration.extractData(overviewRes) : {};
+      const tasks = tasksRes ? window.OP.apiIntegration.extractData(tasksRes) : {};
+      const projects = projectsRes ? window.OP.apiIntegration.extractData(projectsRes) : {};
+      const productivity = productivityRes ? window.OP.apiIntegration.extractData(productivityRes) : {};
+      const notifications = notificationsRes ? window.OP.apiIntegration.extractArray(notificationsRes) : [];
+
+      const overviewStats = overview && overview.overview ? overview.overview : {};
+      const taskStats = tasks && tasks.taskStats ? tasks.taskStats : {};
+      const projectStats = projects && projects.projectStats ? projects.projectStats : {};
+      const productivityStats = productivity && productivity.productivity ? productivity.productivity : {};
+
+      const statusBreakdown = taskStats.statusBreakdown || {};
+      const taskTotal = Object.values(statusBreakdown).reduce((acc, value) => acc + Number(value || 0), 0);
+
+      const platformStats = {
+        gmail: {
+          conversations: Number(overviewStats.totalTasks || 0),
+          messages: Number(overviewStats.activeTasks || 0),
+          unread: Number(overviewStats.overdueTasks || 0),
+          responseRate: Number(productivityStats.completionRate || 0),
+          avgResponseTime: Number(productivityStats.averageCompletionTime || 0),
+          engagement: Number(productivityStats.tasksCompletedThisWeek || 0)
+        },
+        whatsapp: {
+          conversations: Number(taskTotal || 0),
+          messages: Number(statusBreakdown.IN_PROGRESS || 0),
+          unread: Number(statusBreakdown.TODO || 0),
+          responseRate: Number(productivityStats.completionRate || 0),
+          avgResponseTime: Number(productivityStats.averageCompletionTime || 0),
+          engagement: Number(productivityStats.tasksCompletedThisMonth || 0)
+        },
+        instagram: {
+          conversations: Number(projectStats.totalProjects || 0),
+          messages: Number(projectStats.activeProjects || 0),
+          unread: Number(projectStats.archivedProjects || 0),
+          responseRate: Number(productivityStats.completionRate || 0),
+          avgResponseTime: Number(productivityStats.averageCompletionTime || 0),
+          engagement: Number(projectStats.completedProjects || 0)
+        },
+        tiktok: { conversations: 0, messages: 0, unread: 0, responseRate: 0, avgResponseTime: 0, engagement: 0 },
+        x: { conversations: 0, messages: 0, unread: 0, responseRate: 0, avgResponseTime: 0, engagement: 0 },
+        linkedin: { conversations: notifications.length, messages: notifications.length, unread: notifications.filter(n => !n.isRead).length, responseRate: 0, avgResponseTime: 0, engagement: 0 }
+      };
+
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.PLATFORM_STATS, JSON.stringify(platformStats));
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.ACTIVITIES, JSON.stringify(notifications.map((n) => ({
+        id: n.id,
+        platform: 'linkedin',
+        title: n.title || 'Notification',
+        description: n.message || '',
+        timestamp: n.createdAt || new Date().toISOString(),
+        read: !!n.isRead
+      }))));
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.CONVERSATIONS, JSON.stringify([]));
+      localStorage.setItem(DASHBOARD_STORAGE_KEYS.AI_SUGGESTIONS, JSON.stringify([]));
+    } catch (error) {
+      console.warn('Dashboard backend sync skipped:', error);
     }
   }
 

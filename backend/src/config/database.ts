@@ -2,8 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from './env';
 import { log } from './logger';
 
-const fallbackDatabaseUrl = 'postgresql://postgres:0808803+1aA@localhost:5432/oneplace';
-const databaseUrl = config.DATABASE_URL || fallbackDatabaseUrl;
+const databaseUrl = config.DATABASE_URL;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention

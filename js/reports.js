@@ -104,7 +104,15 @@ class ReportsStorage {
 
   init() {
     if (!localStorage.getItem(REPORTS_STORAGE_KEYS.REPORTS_DATA)) {
-      this.seedData();
+      localStorage.setItem(REPORTS_STORAGE_KEYS.REPORTS_DATA, JSON.stringify({}));
+      localStorage.setItem(REPORTS_STORAGE_KEYS.SAVED_REPORTS, JSON.stringify([]));
+      localStorage.setItem(REPORTS_STORAGE_KEYS.SCHEDULED_REPORTS, JSON.stringify([]));
+      localStorage.setItem(REPORTS_STORAGE_KEYS.EXPORT_HISTORY, JSON.stringify([]));
+      localStorage.setItem(REPORTS_STORAGE_KEYS.REPORT_SETTINGS, JSON.stringify({
+        defaultDateRange: '7',
+        defaultFormat: 'pdf',
+        autoRefresh: true
+      }));
     }
   }
 
@@ -217,6 +225,46 @@ class ReportsApp {
     this.renderScheduledReports();
     this.bindEvents();
     this.initSearch();
+    this.syncFromBackend();
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+      const [tasksReport, projectsReport, timeReport, productivityReport] = await Promise.all([
+        window.OP.apiIntegration.get('/reports/tasks').catch(() => null),
+        window.OP.apiIntegration.get('/reports/projects').catch(() => null),
+        window.OP.apiIntegration.get('/reports/time').catch(() => null),
+        window.OP.apiIntegration.get('/reports/productivity').catch(() => null)
+      ]);
+
+      const reportData = {
+        tasks: tasksReport ? window.OP.apiIntegration.extractData(tasksReport) : {},
+        projects: projectsReport ? window.OP.apiIntegration.extractData(projectsReport) : {},
+        time: timeReport ? window.OP.apiIntegration.extractData(timeReport) : {},
+        productivity: productivityReport ? window.OP.apiIntegration.extractData(productivityReport) : {}
+      };
+
+      localStorage.setItem(REPORTS_STORAGE_KEYS.REPORTS_DATA, JSON.stringify(reportData));
+
+      const savedReports = [];
+      if (tasksReport) savedReports.push({ id: `r_tasks_${Date.now()}`, name: 'Tasks Report', category: 'tasks', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (projectsReport) savedReports.push({ id: `r_projects_${Date.now()}`, name: 'Projects Report', category: 'projects', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (timeReport) savedReports.push({ id: `r_time_${Date.now()}`, name: 'Time Report', category: 'time', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (productivityReport) savedReports.push({ id: `r_productivity_${Date.now()}`, name: 'Productivity Report', category: 'productivity', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      localStorage.setItem(REPORTS_STORAGE_KEYS.SAVED_REPORTS, JSON.stringify(savedReports));
+
+      this.renderKPICards();
+      this.renderCharts();
+      this.renderRecentReports();
+      this.renderCampaigns();
+      this.renderInsights();
+      this.renderScheduledReports();
+    } catch (error) {
+      console.warn('Reports backend sync skipped:', error);
+    }
   }
 
   renderSidebar() {

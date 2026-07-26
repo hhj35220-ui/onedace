@@ -280,7 +280,8 @@ export class TeamService {
       });
 
       const actorIsAdmin = actorMember?.role === 'ADMIN';
-      const actorIsOrgAdmin = (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'ADMIN' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'OWNER' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'SUPER_ADMIN';
+      const actor = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+      const actorIsOrgAdmin = actor?.role === 'ADMIN' || actor?.role === 'OWNER' || actor?.role === 'SUPER_ADMIN';
 
       if (!actorIsAdmin && !actorIsOrgAdmin) {
         throw new AppError('Forbidden', 403);
@@ -316,7 +317,8 @@ export class TeamService {
       });
 
       const actorIsAdmin = actorMember?.role === 'ADMIN';
-      const actorIsOrgAdmin = (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'ADMIN' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'OWNER' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'SUPER_ADMIN';
+      const actor = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+      const actorIsOrgAdmin = actor?.role === 'ADMIN' || actor?.role === 'OWNER' || actor?.role === 'SUPER_ADMIN';
 
       if (!actorIsAdmin && !actorIsOrgAdmin) {
         throw new AppError('Forbidden', 403);
@@ -358,7 +360,8 @@ export class TeamService {
       });
 
       const actorIsAdmin = actorMember?.role === 'ADMIN';
-      const actorIsOrgAdmin = (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'ADMIN' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'OWNER' || (await prisma.user.findUnique({ where: { id: userId }, select: { role: true } }))?.role === 'SUPER_ADMIN';
+      const actor = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+      const actorIsOrgAdmin = actor?.role === 'ADMIN' || actor?.role === 'OWNER' || actor?.role === 'SUPER_ADMIN';
 
       if (!actorIsAdmin && !actorIsOrgAdmin) {
         throw new AppError('Forbidden', 403);

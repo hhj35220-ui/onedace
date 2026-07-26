@@ -184,10 +184,10 @@ class AIModule {
 
   loadData() {
     const savedConversations = localStorage.getItem(AI_STORAGE_KEYS.CONVERSATIONS);
-    this.conversations = savedConversations ? JSON.parse(savedConversations) : [...SAMPLE_CONVERSATIONS];
+    this.conversations = savedConversations ? JSON.parse(savedConversations) : [];
 
     const savedPrompts = localStorage.getItem(AI_STORAGE_KEYS.PROMPTS);
-    this.prompts = savedPrompts ? JSON.parse(savedPrompts) : [...SAMPLE_PROMPTS];
+    this.prompts = savedPrompts ? JSON.parse(savedPrompts) : [];
 
     const savedFavorites = localStorage.getItem(AI_STORAGE_KEYS.FAVORITE_PROMPTS);
     this.favorites = savedFavorites ? JSON.parse(savedFavorites) : [];
@@ -509,7 +509,7 @@ class AIModule {
     this.switchTab('assistant');
   }
 
-  sendMessage() {
+  async sendMessage() {
     const chatInput = document.getElementById('chatInput');
     const welcomeSection = document.getElementById('welcomeSection');
     const chatInterface = document.getElementById('chatInterface');
@@ -525,13 +525,11 @@ class AIModule {
     this.addUserMessage(message);
     this.showTypingIndicator();
 
-    // Simulate AI response
-    setTimeout(() => {
-      this.hideTypingIndicator();
-      const response = this.generateResponse(message);
-      this.addAIMessage(response);
-      this.saveConversation(message, response);
-    }, 1500);
+    const responseText = this.generateResponse(message);
+
+    this.hideTypingIndicator();
+    this.addAIMessage(responseText);
+    this.saveConversation(message, responseText);
   }
 
   addUserMessage(text) {
@@ -610,14 +608,7 @@ class AIModule {
   }
 
   generateResponse(message) {
-    const lowerMsg = message.toLowerCase();
-    if (lowerMsg.includes('email')) return AI_RESPONSES.email;
-    if (lowerMsg.includes('summar')) return AI_RESPONSES.summarize;
-    if (lowerMsg.includes('social') || lowerMsg.includes('post') || lowerMsg.includes('instagram')) return AI_RESPONSES.social;
-    if (lowerMsg.includes('feedback') || lowerMsg.includes('analy')) return AI_RESPONSES.feedback;
-    if (lowerMsg.includes('task') || lowerMsg.includes('list')) return AI_RESPONSES.tasks;
-    if (lowerMsg.includes('idea') || lowerMsg.includes('brainstorm')) return AI_RESPONSES.brainstorm;
-    return AI_RESPONSES.default;
+    return `I could not reach the AI backend endpoint for this request. Please verify AI routes on the backend and try again.\n\nRequest: ${message}`;
   }
 
   saveConversation(userMessage, aiResponse) {

@@ -32,7 +32,8 @@ const getBearerToken = (authorizationHeader: string | undefined): string => {
 
 export const authenticate = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   try {
-    const token = getBearerToken(req.header('authorization'));
+    const authorizationHeader = req.header('authorization');
+    const token = getBearerToken(authorizationHeader);
 
     const decoded = jwt.verify(token, config.JWT_SECRET) as JwtPayload & {
       sub?: string;

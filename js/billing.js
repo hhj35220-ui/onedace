@@ -62,8 +62,8 @@ class BillingApp {
       localStorage.setItem(BILLING_KEYS.PLAN_STATUS, 'trial');
       localStorage.setItem(BILLING_KEYS.BILLING_CYCLE, 'monthly');
       localStorage.setItem(BILLING_KEYS.PAYMENT_PROVIDER, 'Paystack');
-      localStorage.setItem(BILLING_KEYS.INVOICES, JSON.stringify(DEFAULT_INVOICES));
-      localStorage.setItem(BILLING_KEYS.USAGE, JSON.stringify(DEFAULT_USAGE));
+      localStorage.setItem(BILLING_KEYS.INVOICES, JSON.stringify(SAMPLE_INVOICES));
+      localStorage.setItem(BILLING_KEYS.USAGE, JSON.stringify(SAMPLE_USAGE));
       localStorage.setItem(BILLING_KEYS.NEXT_BILLING_DATE, '2026-08-25');
     }
   }
@@ -113,9 +113,9 @@ class BillingApp {
 
   getInvoices() {
     try {
-      return JSON.parse(localStorage.getItem(BILLING_KEYS.INVOICES)) || DEFAULT_INVOICES;
+      return JSON.parse(localStorage.getItem(BILLING_KEYS.INVOICES)) || [];
     } catch {
-      return DEFAULT_INVOICES;
+      return [];
     }
   }
 
@@ -125,9 +125,9 @@ class BillingApp {
 
   getUsage() {
     try {
-      return JSON.parse(localStorage.getItem(BILLING_KEYS.USAGE)) || DEFAULT_USAGE;
+      return JSON.parse(localStorage.getItem(BILLING_KEYS.USAGE)) || {};
     } catch {
-      return DEFAULT_USAGE;
+      return {};
     }
   }
 

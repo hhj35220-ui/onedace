@@ -92,6 +92,8 @@
   <script src="../js/app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verificationToken = urlParams.get('token');
       const session = OP.auth.getSession();
       if (!session) {
         window.location.href = 'signup.html';
@@ -99,70 +101,28 @@
       }
 
       document.getElementById('display-email').textContent = session.email;
-
-      const displayCode = sessionStorage.getItem('op_verification_code_display') || '------';
-      document.getElementById('verification-code').textContent = displayCode;
-
-      const inputs = document.querySelectorAll('.verify-code-input');
       const form = document.getElementById('verify-form');
       const submitBtn = document.getElementById('submit-btn');
       const resendBtn = document.getElementById('resend-btn');
       let isSubmitting = false;
       let isResending = false;
 
-      inputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-          const val = e.target.value;
-          if (val && index < inputs.length - 1) {
-            inputs[index + 1].focus();
-          }
-          document.getElementById('code-error').style.display = 'none';
-          input.classList.remove('error');
-        });
-
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Backspace' && !input.value && index > 0) {
-            inputs[index - 1].focus();
-          }
-          if (e.key === 'ArrowLeft' && index > 0) {
-            inputs[index - 1].focus();
-          }
-          if (e.key === 'ArrowRight' && index < inputs.length - 1) {
-            inputs[index + 1].focus();
-          }
-        });
-
-        input.addEventListener('paste', (e) => {
-          e.preventDefault();
-          const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-          paste.split('').forEach((char, i) => {
-            if (inputs[i]) inputs[i].value = char;
-          });
-          if (inputs[paste.length - 1]) inputs[paste.length - 1].focus();
-        });
-      });
-
-      inputs[0].focus();
-
-      function getCode() {
-        return Array.from(inputs)
-          .map(i => i.value.replace(/\D/g, ''))
-          .join('')
-          .slice(0, 6);
+      if (verificationToken) {
+        document.getElementById('verification-code').textContent = 'Token link received';
+      } else {
+        document.getElementById('verification-code').textContent = 'No token found';
       }
 
       function showError(message) {
         const errorEl = document.getElementById('code-error');
         errorEl.textContent = message;
         errorEl.style.display = 'flex';
-        inputs.forEach(i => i.classList.add('error'));
       }
 
       function clearErrors() {
         const errorEl = document.getElementById('code-error');
         errorEl.style.display = 'none';
         errorEl.textContent = '';
-        inputs.forEach(i => i.classList.remove('error'));
       }
 
       form.addEventListener('submit', async (e) => {
@@ -170,9 +130,8 @@
         if (isSubmitting) return;
         clearErrors();
 
-        const code = getCode();
-        if (code.length !== 6) {
-          showError('Please enter all 6 digits.');
+        if (!verificationToken) {
+          showError('Invalid verification link. Request a new verification email.');
           return;
         }
 
@@ -183,11 +142,9 @@
         submitBtn.textContent = '';
 
         try {
-          await new Promise((resolve) => setTimeout(resolve, 700));
-          const result = OP.auth.verifyEmail(code);
+          const result = await OP.auth.verifyEmail(verificationToken);
           if (result.success) {
             OP.toast.show(result.message, 'success');
-            sessionStorage.removeItem('op_verification_code_display');
             const hasWorkspaces = OP.workspace.getUserWorkspaces().length > 0;
             setTimeout(() => {
               window.location.href = hasWorkspaces ? 'workspace-select.html' : 'workspace-create.html';
@@ -195,12 +152,6 @@
           } else {
             showError(result.message);
             OP.toast.show(result.message, 'error');
-            inputs.forEach(i => {
-              i.value = '';
-              i.classList.add('animate-shake');
-            });
-            setTimeout(() => inputs.forEach(i => i.classList.remove('animate-shake')), 300);
-            inputs[0].focus();
           }
         } catch (error) {
           const message = 'We could not verify your email right now.';
@@ -221,10 +172,8 @@
         resendBtn.disabled = true;
 
         try {
-          const result = OP.auth.resendVerificationCode();
+          const result = await OP.auth.resendVerificationCode();
           if (result.success) {
-            sessionStorage.setItem('op_verification_code_display', result.code);
-            document.getElementById('verification-code').textContent = result.code;
             OP.toast.show('New code sent!', 'success');
           } else {
             OP.toast.show(result.message, 'error');

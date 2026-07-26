@@ -3,12 +3,14 @@ import { app } from './app';
 import { config } from './config/env';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import { log } from './config/logger';
+import { SocketServer } from './socket';
 
 // Read the port from the validated configuration object.
 const PORT = config.PORT;
 
 // Create the HTTP server backed by the Express app.
 const server = http.createServer(app);
+new SocketServer(server);
 
 /**
  * Start the HTTP server and wait for the listening event.

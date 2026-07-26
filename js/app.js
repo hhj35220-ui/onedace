@@ -7,8 +7,8 @@
 // Storage Keys
 // ============================================
 const STORAGE_KEYS = {
-  USERS: 'op_users',
   SESSION: 'op_session',
+  AUTH_TOKENS: 'op_api_auth_tokens',
   WORKSPACES: 'op_workspaces',
   CURRENT_WORKSPACE: 'op_current_workspace',
   PROFILE: 'op_profile',
@@ -187,29 +187,51 @@ class ToastManager {
 class AuthManager {
   constructor() {
     this.toast = new ToastManager();
+    this._apiLoadPromise = null;
   }
 
-  // --- User Storage ---
-  getUsers() {
+  async ensureApiIntegration() {
+    if (window.OP && window.OP.apiIntegration) {
+      return window.OP.apiIntegration;
+    }
+
+    if (typeof loadAPIIntegration === 'function') {
+      loadAPIIntegration();
+    }
+
+    if (!this._apiLoadPromise) {
+      this._apiLoadPromise = new Promise((resolve, reject) => {
+        const startedAt = Date.now();
+        const maxWaitMs = 10000;
+
+        const checkReady = () => {
+          if (window.OP && window.OP.apiIntegration) {
+            resolve(window.OP.apiIntegration);
+            return;
+          }
+          if (Date.now() - startedAt > maxWaitMs) {
+            reject(new Error('Backend API integration is unavailable.'));
+            return;
+          }
+          setTimeout(checkReady, 50);
+        };
+
+        checkReady();
+      }).finally(() => {
+        this._apiLoadPromise = null;
+      });
+    }
+
+    return this._apiLoadPromise;
+  }
+
+  getAuthTokens() {
     try {
-      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS));
-      return Array.isArray(users) ? users : [];
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.AUTH_TOKENS) || 'null');
+      return parsed && typeof parsed === 'object' ? parsed : null;
     } catch {
-      return [];
+      return null;
     }
-  }
-
-  saveUsers(users) {
-    try {
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-    } catch (error) {
-      console.error('Unable to save users to localStorage:', error);
-      throw new Error('Unable to persist user data to localStorage.');
-    }
-  }
-
-  getUserByEmail(email) {
-    return this.getUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
   }
 
   // --- Session ---
@@ -222,232 +244,321 @@ class AuthManager {
   }
 
   setSession(session) {
-    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
+    const normalizedSession = session && typeof session === 'object' ? session : {};
+    if (normalizedSession.user) {
+      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(normalizedSession.user));
+    }
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(normalizedSession));
   }
 
   clearSession() {
     localStorage.removeItem(STORAGE_KEYS.SESSION);
+    localStorage.removeItem(STORAGE_KEYS.PROFILE);
+  }
+
+  clearAuthStorage() {
+    this.clearSession();
+    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKENS);
+    localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+    localStorage.removeItem('op_remembered_email');
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKSPACE);
+    localStorage.removeItem(STORAGE_KEYS.RESET_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.VERIFICATION_CODE);
+    sessionStorage.removeItem('op_verification_code_display');
   }
 
   isAuthenticated() {
-    if (window.OP_CONFIG && window.OP_CONFIG.dev === true) {
-      return true;
-    }
-
     const session = this.getSession();
     if (!session) return false;
     if (session.expiresAt && new Date(session.expiresAt) < new Date()) {
       this.clearSession();
       return false;
     }
+
+    const tokens = this.getAuthTokens();
+    if (!tokens) {
+      this.clearSession();
+      return false;
+    }
+
+    const hasAccessToken = !!tokens.accessToken;
+    const hasRefreshToken = !!tokens.refreshToken;
+    if (!hasAccessToken && !hasRefreshToken) {
+      this.clearSession();
+      return false;
+    }
+
+    if (tokens.expiresAt && new Date(tokens.expiresAt) < new Date() && !hasRefreshToken) {
+      this.clearSession();
+      return false;
+    }
+
     return true;
   }
 
   // --- Sign Up ---
-  signUp(fullName, email, password) {
-    const users = this.getUsers();
-
-    if (this.getUserByEmail(email)) {
-      return { success: false, message: 'An account with this email already exists.' };
-    }
-
-    const user = {
-      id: typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : `user_${Math.random().toString(36).slice(2, 12)}`,
-      fullName: fullName.trim(),
-      email: email.toLowerCase().trim(),
-      password: this.hashPassword(password),
-      createdAt: new Date().toISOString(),
-      verified: false
-    };
+  async signUp(fullName, email, password) {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const normalizedName = String(fullName || '').trim();
+    const parts = normalizedName.split(/\s+/).filter(Boolean);
+    const firstName = parts[0] || normalizedEmail.split('@')[0] || 'User';
+    const lastName = parts.slice(1).join(' ') || 'User';
 
     try {
-      users.push(user);
-      this.saveUsers(users);
+      await this.ensureApiIntegration();
 
-      // Generate verification code
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
-        email: user.email,
-        code,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-      }));
-
-      // Create session for verification flow
-      this.setSession({
-        userId: user.id,
-        email: user.email,
-        verified: false,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      const response = await window.OP.apiIntegration.post('/auth/register', {
+        firstName,
+        lastName,
+        email: normalizedEmail,
+        password,
+        confirmPassword: password
       });
+
+      const payload = response && response.data ? response.data : {};
+      if (!payload.success) {
+        return {
+          success: false,
+          message: payload.message || 'Unable to create account.'
+        };
+      }
 
       return {
         success: true,
-        message: 'Account created successfully.',
-        verificationCode: code // For simulation display
+        message: payload.message || 'Account created successfully. Please sign in.'
       };
     } catch (error) {
-      console.error('Sign-up failed:', error);
-      return { success: false, message: 'Unable to create account. Please enable browser storage and try again.' };
+      const message = error && error.message ? error.message : 'Unable to create account.';
+      return { success: false, message };
     }
   }
 
   // --- Sign In ---
-  signIn(email, password, rememberMe = false) {
-    const user = this.getUserByEmail(email);
-    
-    if (!user) {
-      return { success: false, message: 'Invalid email or password.' };
+  async signIn(email, password, rememberMe = false) {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+
+    try {
+      await this.ensureApiIntegration();
+
+      const payload = await (window.OP && window.OP.apiIntegration
+        ? window.OP.apiIntegration.login(normalizedEmail, password)
+        : Promise.reject(new Error('Backend API integration is unavailable.')));
+
+      const authData = payload && payload.data ? payload.data : {};
+      if (!authData || !authData.user) {
+        throw new Error(payload && payload.message ? payload.message : 'Unable to sign in.');
+      }
+      const user = authData.user || {};
+      const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || normalizedEmail;
+
+      const session = {
+        userId: user.id || `user_${Math.random().toString(36).slice(2, 12)}`,
+        email: user.email || normalizedEmail,
+        fullName,
+        role: user.role || 'USER',
+        verified: true,
+        rememberMe,
+        expiresAt: rememberMe
+          ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      };
+
+      const sessionPayload = {
+        ...session,
+        user
+      };
+
+      this.setSession(sessionPayload);
+      localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe);
+      localStorage.setItem('op_remembered_email', rememberMe ? normalizedEmail : '');
+
+      try {
+        await this.syncCurrentUser();
+      } catch (syncError) {
+        // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
+      }
+
+      return {
+        success: true,
+        message: payload && payload.message ? payload.message : 'Signed in successfully.'
+      };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Invalid email or password.';
+      return { success: false, message };
     }
+  }
 
-    if (user.password !== this.hashPassword(password)) {
-      return { success: false, message: 'Invalid email or password.' };
+  async syncCurrentUser() {
+    try {
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.get('/auth/me');
+      const payload = response && response.data ? response.data : {};
+      const user = payload && payload.data ? payload.data : null;
+
+      if (!user || typeof user !== 'object') {
+        return { success: false, message: 'Unable to load current user.' };
+      }
+
+      const session = this.getSession() || {};
+      const mergedSession = {
+        ...session,
+        userId: user.id || session.userId,
+        email: user.email || session.email,
+        fullName: [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || session.fullName,
+        role: user.role || session.role,
+        verified: typeof user.emailVerified === 'boolean' ? user.emailVerified : session.verified,
+        user
+      };
+
+      this.setSession(mergedSession);
+      return { success: true, data: user };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Unable to load current user.';
+      return { success: false, message };
     }
-
-    const session = {
-      userId: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      verified: user.verified,
-      rememberMe,
-      expiresAt: rememberMe 
-        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    };
-
-    this.setSession(session);
-    localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe);
-
-    return { success: true, message: 'Signed in successfully.' };
   }
 
   // --- Sign Out ---
-  signOut() {
-    this.clearSession();
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKSPACE);
+  async signOut() {
+    try {
+      await this.ensureApiIntegration();
+      if (window.OP && window.OP.apiIntegration) {
+        await window.OP.apiIntegration.logout();
+      }
+    } catch (error) {
+      // Ignore remote logout errors and continue local sign-out.
+    }
+    this.clearAuthStorage();
+    return { success: true };
   }
 
   // --- Password Reset ---
-  requestPasswordReset(email) {
-    const user = this.getUserByEmail(email);
-    if (!user) {
-      return { success: false, message: 'No account found with this email address.' };
-    }
-
-    const token = crypto.randomUUID();
-    localStorage.setItem(STORAGE_KEYS.RESET_TOKEN, JSON.stringify({
-      email: user.email,
-      token,
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
-    }));
-
-    return { success: true, message: 'Password reset link sent.', token };
-  }
-
-  resetPassword(token, newPassword) {
-    const resetData = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESET_TOKEN) || 'null');
-    
-    if (!resetData || resetData.token !== token || new Date(resetData.expiresAt) < new Date()) {
-      return { success: false, message: 'Invalid or expired reset token.' };
-    }
-
-    const users = this.getUsers();
-    const userIndex = users.findIndex(u => u.email === resetData.email);
-    
-    if (userIndex === -1) {
-      return { success: false, message: 'User not found.' };
-    }
-
-    users[userIndex].password = this.hashPassword(newPassword);
-    this.saveUsers(users);
-    localStorage.removeItem(STORAGE_KEYS.RESET_TOKEN);
-
-    return { success: true, message: 'Password reset successfully.' };
-  }
-
-  // --- Email Verification ---
-  verifyEmail(code) {
-    const session = this.getSession();
-    if (!session) {
-      return { success: false, message: 'Session expired. Please sign up again.' };
+  async requestPasswordReset(email) {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    if (!normalizedEmail) {
+      return { success: false, message: 'Email is required.' };
     }
 
     try {
-      const verificationData = JSON.parse(localStorage.getItem(STORAGE_KEYS.VERIFICATION_CODE) || 'null');
-      
-      if (!verificationData || verificationData.email !== session.email) {
-        return { success: false, message: 'Verification data not found.' };
-      }
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.post('/auth/forgot-password', { email: normalizedEmail });
+      const payload = response && response.data ? response.data : {};
+      const token = payload && payload.data && payload.data.resetToken ? payload.data.resetToken : null;
 
-      if (new Date(verificationData.expiresAt) < new Date()) {
-        return { success: false, message: 'Verification code expired.' };
-      }
-
-      const normalizedCode = String(code || '').replace(/\D/g, '').trim();
-      let normalizedExpected = String(verificationData.code || '').replace(/\D/g, '').trim();
-      if (!normalizedExpected) {
-        normalizedExpected = String(sessionStorage.getItem('op_verification_code_display') || '').replace(/\D/g, '').trim();
-      }
-      if (normalizedExpected !== normalizedCode) {
-        return { success: false, message: 'Invalid verification code.' };
-      }
-
-      // Mark user as verified
-      const users = this.getUsers();
-      const userIndex = users.findIndex(u => u.email === session.email);
-      if (userIndex !== -1) {
-        users[userIndex].verified = true;
-        this.saveUsers(users);
-      }
-
-      // Update session
-      session.verified = true;
-      this.setSession(session);
-      localStorage.removeItem(STORAGE_KEYS.VERIFICATION_CODE);
-
-      return { success: true, message: 'Email verified successfully.' };
+      return {
+        success: !!payload.success,
+        message: payload.message || 'If the email exists, password reset instructions have been generated.',
+        token
+      };
     } catch (error) {
-      return { success: false, message: 'We could not verify your email right now.' };
+      const message = error && error.message ? error.message : 'Unable to process password reset request.';
+      return { success: false, message };
+    }
+  }
+
+  async resetPassword(token, newPassword) {
+    if (!token || !newPassword) {
+      return { success: false, message: 'Invalid password reset request.' };
+    }
+
+    try {
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.post('/auth/reset-password', {
+        token,
+        password: newPassword,
+        confirmPassword: newPassword
+      });
+      const payload = response && response.data ? response.data : {};
+      return {
+        success: !!payload.success,
+        message: payload.message || 'Password reset successfully.'
+      };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Unable to reset password.';
+      return { success: false, message };
+    }
+  }
+
+  // --- Email Verification ---
+  async verifyEmail(token) {
+    if (!token) {
+      return { success: false, message: 'Verification token is required.' };
+    }
+
+    try {
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+      const payload = response && response.data ? response.data : {};
+      return {
+        success: !!payload.success,
+        message: payload.message || 'Email verified successfully.'
+      };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Unable to verify email.';
+      return { success: false, message };
     }
   }
 
   resendVerificationCode() {
-    const session = this.getSession();
-    if (!session) {
-      return { success: false, message: 'Session expired.' };
-    }
-
-    try {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      localStorage.setItem(STORAGE_KEYS.VERIFICATION_CODE, JSON.stringify({
-        email: session.email,
-        code,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-      }));
-
-      return { success: true, message: 'New verification code sent.', code };
-    } catch (error) {
-      return { success: false, message: 'We could not resend the verification code.' };
-    }
-  }
-
-  // --- Password Hash (Simple hash for demo) ---
-  hashPassword(password) {
-    let hash = 0;
-    for (let i = 0; i < password.length; i++) {
-      const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return hash.toString(16);
+    return { success: false, message: 'Email verification resend is not available from the current backend API.' };
   }
 
   // --- Current User ---
   getCurrentUser() {
     const session = this.getSession();
     if (!session) return null;
-    return this.getUsers().find(u => u.id === session.userId) || null;
+    return {
+      id: session.userId,
+      email: session.email,
+      fullName: session.fullName,
+      role: session.role,
+      verified: session.verified
+    };
+  }
+
+  async updateCurrentUserProfile(payload = {}) {
+    const session = this.getSession();
+    if (!session) {
+      return { success: false, message: 'Not authenticated.' };
+    }
+
+    const fullName = String(payload.fullName || '').trim();
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    const firstName = payload.firstName || nameParts[0] || '';
+    const lastName = payload.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+
+    const updatePayload = {};
+    if (firstName) updatePayload.firstName = firstName;
+    if (lastName) updatePayload.lastName = lastName;
+    if (typeof payload.phone === 'string') updatePayload.phone = payload.phone.trim();
+    if (typeof payload.avatarUrl === 'string' && payload.avatarUrl.trim().length <= 500) {
+      updatePayload.avatarUrl = payload.avatarUrl.trim();
+    }
+
+    try {
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.patch('/users/me', updatePayload);
+      const result = response && response.data ? response.data : {};
+
+      if (result.success) {
+        const updatedData = result.data || {};
+        const mergedSession = Object.assign({}, session, {
+          fullName: [updatedData.firstName, updatedData.lastName].filter(Boolean).join(' ').trim() || session.fullName,
+          email: updatedData.email || session.email,
+          role: updatedData.role || session.role
+        });
+        this.setSession(mergedSession);
+      }
+
+      return {
+        success: !!result.success,
+        message: result.message || 'Profile updated successfully.',
+        data: result.data || null
+      };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Unable to update profile.';
+      return { success: false, message };
+    }
   }
 }
 
@@ -669,20 +780,6 @@ class NavigationGuard {
   }
 
   requireAuth() {
-    // Allow local file previews and localhost to bypass auth redirects
-    try {
-      const href = window.location.href || '';
-      if (href.startsWith('file:') || window.location.hostname === 'localhost') {
-        return true;
-      }
-      // Allow bypass when running in development/debug mode
-      if (window.OP_CONFIG && window.OP_CONFIG.dev === true) {
-        return true;
-      }
-    } catch (e) {
-      // ignore errors and fall through
-    }
-
     if (!this.auth.isAuthenticated()) {
       window.location.href = '../auth/signin.html';
       return false;
@@ -722,6 +819,16 @@ const workspaceManager = new WorkspaceManager();
 const profileManager = new ProfileManager();
 const loadingManager = new LoadingManager();
 const navGuard = new NavigationGuard();
+
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (!isPublicEntryPage()) {
+      navGuard.requireAuth();
+    }
+  } catch (e) {
+    // Ignore guard initialization errors to avoid blocking render.
+  }
+});
 
 // ============================================
 // Command Palette (Global)

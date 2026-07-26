@@ -72,10 +72,10 @@ class CalendarStorage {
 
   init() {
     if (!localStorage.getItem(CALENDAR_STORAGE_KEYS.EVENTS)) {
-      localStorage.setItem(CALENDAR_STORAGE_KEYS.EVENTS, JSON.stringify(SAMPLE_EVENTS));
+      localStorage.setItem(CALENDAR_STORAGE_KEYS.EVENTS, JSON.stringify([]));
     }
     if (!localStorage.getItem(CALENDAR_STORAGE_KEYS.CALENDARS)) {
-      localStorage.setItem(CALENDAR_STORAGE_KEYS.CALENDARS, JSON.stringify(DEFAULT_CALENDARS));
+      localStorage.setItem(CALENDAR_STORAGE_KEYS.CALENDARS, JSON.stringify([]));
     }
     if (!localStorage.getItem(CALENDAR_STORAGE_KEYS.SETTINGS)) {
       localStorage.setItem(CALENDAR_STORAGE_KEYS.SETTINGS, JSON.stringify({
@@ -268,6 +268,63 @@ class CalendarApp {
     this.renderMeetingInsights();
     this.renderStats();
     this.startReminderCheck();
+    this.syncFromBackend();
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+      const projectsResponse = await window.OP.apiIntegration.get('/projects');
+      const projects = window.OP.apiIntegration.extractArray(projectsResponse);
+      const calendars = projects.map((project, idx) => ({
+        id: project.id,
+        name: project.name || `Project ${idx + 1}`,
+        color: project.color || DEFAULT_CALENDARS[idx % DEFAULT_CALENDARS.length]?.color || '#6366f1',
+        checked: true
+      }));
+
+      const taskCollections = await Promise.all(projects.map(async (project) => {
+        try {
+          const response = await window.OP.apiIntegration.get(`/projects/${project.id}/tasks`);
+          return window.OP.apiIntegration.extractArray(response).map((task) => {
+            const start = task.dueDate || task.startDate || task.createdAt || new Date().toISOString();
+            const end = task.dueDate || task.endDate || start;
+            return {
+              id: `task_${task.id}`,
+              title: task.name || task.title || 'Task',
+              type: 'task',
+              calendar: project.id,
+              start,
+              end,
+              allDay: true,
+              color: project.color || '#6366f1',
+              location: '',
+              description: task.description || '',
+              attendees: [],
+              reminder: true
+            };
+          });
+        } catch (error) {
+          return [];
+        }
+      }));
+
+      this.storage.saveCalendars(calendars);
+      this.storage.saveEvents(taskCollections.flat());
+
+      this.render();
+      this.renderMiniCalendar();
+      this.renderMyCalendars();
+      this.renderUpcomingEvents();
+      this.renderTodayAgenda();
+      this.renderNextMeeting();
+      this.renderMeetingInsights();
+      this.renderStats();
+    } catch (error) {
+      console.warn('Calendar backend sync skipped:', error);
+    }
   }
 
   // ============================================

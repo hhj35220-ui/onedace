@@ -5,7 +5,7 @@ import { LoginDto } from '../dto/auth/login.dto';
 import { RegisterDto } from '../dto/auth/register.dto';
 import { AuthService } from '../services/auth.service';
 import { AppError } from '../utils/AppError';
-import { loginSchema, registerSchema } from '../validators/auth.validator';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyEmailQuerySchema } from '../validators/auth.validator';
 
 export class AuthController {
   private readonly authService: AuthService;
@@ -76,19 +76,66 @@ export class AuthController {
     }
   }
 
-  async forgotPassword(_req: Request, _res: Response) {
-    return await this.authService.forgotPassword();
+  async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const payload = forgotPasswordSchema.parse(req.body) as { email: string };
+      const result = await this.authService.forgotPassword(payload.email);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const message = error.issues[0]?.message ?? 'Validation failed';
+        return next(new AppError(message, 400));
+      }
+
+      return next(error);
+    }
   }
 
-  async resetPassword(_req: Request, _res: Response) {
-    return await this.authService.resetPassword();
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const payload = resetPasswordSchema.parse(req.body) as {
+        token: string;
+        password: string;
+        confirmPassword: string;
+      };
+
+      const result = await this.authService.resetPassword(payload.token, payload.password);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const message = error.issues[0]?.message ?? 'Validation failed';
+        return next(new AppError(message, 400));
+      }
+
+      return next(error);
+    }
   }
 
-  async verifyEmail(_req: Request, _res: Response) {
-    return await this.authService.verifyEmail();
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const payload = verifyEmailQuerySchema.parse(req.query) as { token: string };
+      const result = await this.authService.verifyEmail(payload.token);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const message = error.issues[0]?.message ?? 'Validation failed';
+        return next(new AppError(message, 400));
+      }
+
+      return next(error);
+    }
   }
 
-  async me(_req: Request, _res: Response) {
-    return await this.authService.me();
+  async me(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        return next(new AppError('Authentication required', 401));
+      }
+
+      const result = await this.authService.me(req.user.id);
+      res.status(200).json(result);
+    } catch (error) {
+      return next(error);
+    }
   }
 }

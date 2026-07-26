@@ -215,9 +215,7 @@
         submitBtn.classList.add('btn-loading');
         submitBtn.textContent = '';
 
-        await new Promise(r => setTimeout(r, 800));
-
-        // Save profile
+        // Save profile locally for UX state
         const avatar = localStorage.getItem('op_avatar_temp');
         OP.profile.updateProfile({
           fullName,
@@ -227,12 +225,18 @@
           completedAt: new Date().toISOString()
         });
 
-        // Update user name
-        const users = OP.auth.getUsers();
-        const userIndex = users.findIndex(u => u.id === session.userId);
-        if (userIndex !== -1) {
-          users[userIndex].fullName = fullName;
-          OP.auth.saveUsers(users);
+        const profileResult = await OP.auth.updateCurrentUserProfile({
+          fullName,
+          avatarUrl: avatar && /^https?:\/\//i.test(avatar) ? avatar : undefined
+        });
+
+        if (!profileResult.success) {
+          OP.loading.hide();
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('btn-loading');
+          submitBtn.textContent = 'Continue to Dashboard';
+          OP.toast.show(profileResult.message || 'Unable to save profile.', 'error');
+          return;
         }
 
         OP.loading.hide();

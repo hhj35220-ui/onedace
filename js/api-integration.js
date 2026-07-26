@@ -13,12 +13,12 @@
 
   const DEFAULT_CONFIG = {
     environments: {
-      development: { name: 'development', baseUrl: '/api', timeout: 15000, retryCount: 3, debug: true },
-      testing: { name: 'testing', baseUrl: '/api/test', timeout: 15000, retryCount: 3, debug: true },
-      production: { name: 'production', baseUrl: '/api', timeout: 15000, retryCount: 3, debug: false }
+      development: { name: 'development', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      testing: { name: 'testing', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      production: { name: 'production', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: false }
     },
     environment: 'development',
-    backendEnabled: false,
+    backendEnabled: true,
     defaultTimeout: 15000,
     maxRetryAttempts: 3,
     cacheTTL: 300000,
@@ -579,8 +579,22 @@
       return this.tokens.oauthToken;
     }
 
-    getAuthHeaders() {
+    _isAuthRoute(url) {
+      const normalizedUrl = String(url || '').toLowerCase();
+      return normalizedUrl.includes('/auth/login') ||
+        normalizedUrl.includes('/auth/refresh') ||
+        normalizedUrl.includes('/auth/logout') ||
+        normalizedUrl.includes('/auth/register') ||
+        normalizedUrl.includes('/auth/forgot-password') ||
+        normalizedUrl.includes('/auth/reset-password') ||
+        normalizedUrl.includes('/auth/verify-email');
+    }
+
+    getAuthHeaders(url) {
       const headers = {};
+      if (this._isAuthRoute(url)) {
+        return headers;
+      }
       if (this.tokens.apiKey) {
         headers['x-api-key'] = this.tokens.apiKey;
       }
@@ -639,31 +653,93 @@
       return this.refreshPromise;
     }
 
-    _refreshTokenFlow() {
+    async _refreshTokenFlow() {
       this.logger.info('Starting token refresh flow');
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (!this.tokens.refreshToken) {
-            const error = new Error('No refresh token available');
-            this.logger.error(error);
-            reject(error);
-            return;
-          }
-          const refreshed = {
-            accessToken: `refreshed-${createUuid()}`,
-            tokenType: 'Bearer',
-            expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString()
-          };
-          this.setTokenPayload(refreshed);
-          this.logger.info('Token refresh completed');
-          resolve(this.tokens);
-        }, 600);
+      if (!this.tokens.refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const baseUrl = this.config.getBaseUrl().replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ refreshToken: this.tokens.refreshToken })
       });
+
+      if (!response.ok) {
+        throw new Error('Unable to refresh access token');
+      }
+
+      const payload = await response.json();
+      const data = payload && payload.data ? payload.data : payload;
+      this.setTokenPayload({
+        accessToken: data.accessToken || null,
+        refreshToken: data.refreshToken || this.tokens.refreshToken,
+        tokenType: 'Bearer',
+        expiresIn: 15 * 60
+      });
+      this.logger.info('Token refresh completed');
+      return this.tokens;
     }
 
     signOut() {
       this.clearTokens();
+      if (window.OP && window.OP.authLegacy && typeof window.OP.authLegacy.clearSession === 'function') {
+        window.OP.authLegacy.clearSession();
+      }
       window.dispatchEvent(new CustomEvent('op-api-logged-out'));
+    }
+
+    async login(email, password) {
+      const baseUrl = this.config.getBaseUrl().replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ email, password })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload && payload.message ? payload.message : 'Login failed');
+      }
+
+      const data = payload && payload.data ? payload.data : {};
+      this.setTokenPayload({
+        accessToken: data.accessToken || null,
+        refreshToken: data.refreshToken || null,
+        tokenType: 'Bearer',
+        expiresIn: 15 * 60
+      });
+      return payload;
+    }
+
+    async logout() {
+      if (this.tokens.refreshToken) {
+        const baseUrl = this.config.getBaseUrl().replace(/\/$/, '');
+        try {
+          await fetch(`${baseUrl}/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({ refreshToken: this.tokens.refreshToken })
+          });
+        } catch (error) {
+          this.logger.warn('Remote logout failed, continuing local sign out', error);
+        }
+      }
+      this.signOut();
+      return { success: true };
     }
 
     setApiKey(apiKey) {
@@ -706,7 +782,7 @@
     }
 
     _authInterceptor(request) {
-      const headers = Object.assign({}, request.headers || {}, this.auth.getAuthHeaders());
+      const headers = Object.assign({}, request.headers || {}, this.auth.getAuthHeaders(request.url));
       return Object.assign({}, request, { headers });
     }
 
@@ -937,12 +1013,19 @@
         return request;
       });
       this.http.addErrorInterceptor(error => {
-        if (error.status === 401) {
-          this.logger.warn('Authentication failure detected, triggering refresh');
-          return this.auth.refreshTokenIfNeeded().then(() => Promise.reject(error));
-        }
         return Promise.reject(error);
       });
+    }
+
+    _isAuthRoute(url) {
+      const normalizedUrl = String(url || '').toLowerCase();
+      return normalizedUrl.includes('/auth/login') ||
+        normalizedUrl.includes('/auth/refresh') ||
+        normalizedUrl.includes('/auth/logout') ||
+        normalizedUrl.includes('/auth/register') ||
+        normalizedUrl.includes('/auth/forgot-password') ||
+        normalizedUrl.includes('/auth/reset-password') ||
+        normalizedUrl.includes('/auth/verify-email');
     }
 
     async request(options) {
@@ -961,6 +1044,14 @@
         dedupe: true,
         queueOffline: true
       }, options);
+
+      if (!this._isAuthRoute(requestOptions.url) && this.auth.getRefreshToken() && !this.auth.isAuthenticated()) {
+        try {
+          await this.auth.refreshTokenIfNeeded();
+        } catch (error) {
+          this.logger.warn('Pre-request token refresh failed', error);
+        }
+      }
 
       if (requestOptions.method.toUpperCase() === 'GET' && requestOptions.cache) {
         const cached = this.cache.get(requestOptions);
@@ -993,6 +1084,28 @@
         return response;
       } catch (error) {
         const normalized = this.errorManager.normalize(error);
+
+        const shouldAttemptRefresh = normalized.status === 401 &&
+          !requestOptions._retriedAfterRefresh &&
+          !this._isAuthRoute(requestOptions.url) &&
+          !!this.auth.getRefreshToken();
+
+        if (shouldAttemptRefresh) {
+          this.logger.warn('Authentication failure detected, refreshing token and retrying request', requestOptions.url);
+          try {
+            await this.auth.refreshTokenIfNeeded();
+            const retryOptions = Object.assign({}, requestOptions, { _retriedAfterRefresh: true });
+            const retryResponse = await this.retry.attempt(() => this.http.request(retryOptions), (retryError, attempt) => this.errorManager.shouldRetry(retryError, attempt));
+            if (retryOptions.method.toUpperCase() === 'GET' && retryOptions.cache) {
+              this.cache.set(retryOptions, retryResponse, retryOptions.ttl);
+            }
+            return retryResponse;
+          } catch (refreshError) {
+            const refreshNormalized = this.errorManager.normalize(refreshError);
+            return Promise.reject(refreshNormalized);
+          }
+        }
+
         if (normalized.offline && requestOptions.queueOffline) {
           this.offline.enqueue(requestOptions);
         }
@@ -1082,4 +1195,110 @@
   window.OP.config = config;
   window.OP.apiInstance = api;
   window.OP.apiEnvironment = environment;
+
+  function extractData(payload) {
+    if (!payload) return null;
+    if (payload.data && payload.data.data !== undefined) return payload.data.data;
+    if (payload.data !== undefined) return payload.data;
+    if (payload.items !== undefined) return payload.items;
+    return payload;
+  }
+
+  function extractArray(payload) {
+    const data = extractData(payload);
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.items)) return data.items;
+    if (data && Array.isArray(data.rows)) return data.rows;
+    if (data && Array.isArray(data.projects)) return data.projects;
+    if (data && Array.isArray(data.tasks)) return data.tasks;
+    if (data && Array.isArray(data.users)) return data.users;
+    if (data && Array.isArray(data.notifications)) return data.notifications;
+    return [];
+  }
+
+  async function safeRequest(method, url, body, options = {}) {
+    api.init();
+    config.enableBackend();
+
+    try {
+      const requestOptions = Object.assign({ cache: false, dedupe: false, queueOffline: false }, options);
+      let response;
+      if (method === 'GET') {
+        response = await api.get(url, requestOptions);
+      } else if (method === 'POST') {
+        response = await api.post(url, body || {}, requestOptions);
+      } else if (method === 'PUT') {
+        response = await api.put(url, body || {}, requestOptions);
+      } else if (method === 'PATCH') {
+        response = await api.patch(url, body || {}, requestOptions);
+      } else if (method === 'DELETE') {
+        response = await api.delete(url, requestOptions);
+      } else {
+        throw new Error(`Unsupported method: ${method}`);
+      }
+
+      return { ok: true, response };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  window.OP.apiIntegration = {
+    init() {
+      api.init();
+      config.enableBackend();
+      return this;
+    },
+
+    extractData,
+    extractArray,
+
+    async get(url, options = {}) {
+      const result = await safeRequest('GET', url, null, options);
+      if (!result.ok) throw result.error;
+      return result.response;
+    },
+
+    async post(url, body = {}, options = {}) {
+      const result = await safeRequest('POST', url, body, options);
+      if (!result.ok) throw result.error;
+      return result.response;
+    },
+
+    async patch(url, body = {}, options = {}) {
+      const result = await safeRequest('PATCH', url, body, options);
+      if (!result.ok) throw result.error;
+      return result.response;
+    },
+
+    async delete(url, options = {}) {
+      const result = await safeRequest('DELETE', url, null, options);
+      if (!result.ok) throw result.error;
+      return result.response;
+    },
+
+    async syncToStorage(storageKey, url, fallbackValue) {
+      const result = await safeRequest('GET', url, null, { cache: false, dedupe: false, queueOffline: false });
+      if (!result.ok) {
+        if (fallbackValue !== undefined && window.localStorage.getItem(storageKey) === null) {
+          window.localStorage.setItem(storageKey, JSON.stringify(fallbackValue));
+        }
+        return { ok: false, error: result.error };
+      }
+
+      const data = extractData(result.response);
+      const value = data === undefined || data === null ? (fallbackValue !== undefined ? fallbackValue : {}) : data;
+      window.localStorage.setItem(storageKey, JSON.stringify(value));
+      return { ok: true, value };
+    },
+
+    async login(email, password) {
+      const payload = await auth.login(email, password);
+      return payload;
+    },
+
+    async logout() {
+      return auth.logout();
+    }
+  };
 })();

@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 // Load environment variables from a .env file if present.
 dotenv.config();
 
-const fallbackDatabaseUrl = 'postgresql://postgres:0808803+1aA@localhost:5432/oneplace';
+const nodeEnv = (process.env.NODE_ENV as EnvConfig['NODE_ENV']) || 'development';
+const fallbackDatabaseUrl = 'postgresql://postgres:postgres@localhost:5432/oneplace';
 
 /**
  * Strict configuration interface for backend runtime settings.
@@ -28,7 +29,11 @@ export interface EnvConfig {
 function requireString(name: string, fallback?: string): string {
   const value = process.env[name] ?? fallback;
   if (!value || value.trim() === '') {
-    throw new Error(`Missing required environment variable: ${name}`);
+    if (nodeEnv === 'production') {
+      throw new Error(`Missing required environment variable: ${name}`);
+    }
+
+    return fallback ?? `dev-${name.toLowerCase()}`;
   }
   return value;
 }
@@ -49,10 +54,10 @@ function requireNumber(name: string, fallback: number): number {
 
 const config: EnvConfig = {
   PORT: Number(process.env.PORT || 3000),
-  NODE_ENV: (process.env.NODE_ENV as EnvConfig['NODE_ENV']) || 'development',
-  DATABASE_URL: requireString('DATABASE_URL', fallbackDatabaseUrl),
-  JWT_SECRET: requireString('JWT_SECRET'),
-  REDIS_URL: requireString('REDIS_URL'),
+  NODE_ENV: nodeEnv,
+  DATABASE_URL: requireString('DATABASE_URL', nodeEnv === 'production' ? undefined : fallbackDatabaseUrl),
+  JWT_SECRET: requireString('JWT_SECRET', nodeEnv === 'production' ? undefined : 'dev-jwt-secret-change-me'),
+  REDIS_URL: requireString('REDIS_URL', nodeEnv === 'production' ? undefined : 'redis://localhost:6379'),
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
   LOG_LEVEL: (process.env.LOG_LEVEL as EnvConfig['LOG_LEVEL']) || 'info',
   UPLOAD_PATH: process.env.UPLOAD_PATH || 'uploads',

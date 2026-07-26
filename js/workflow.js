@@ -283,10 +283,10 @@ const SAMPLE_ANALYTICS = {
 // ============================================
 class WorkflowState {
   constructor() {
-    this.workflows = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.WORKFLOWS, SAMPLE_WORKFLOWS);
-    this.templates = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.TEMPLATES, SAMPLE_TEMPLATES);
-    this.executions = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.EXECUTIONS, SAMPLE_EXECUTIONS);
-    this.analytics = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.ANALYTICS, SAMPLE_ANALYTICS);
+    this.workflows = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.WORKFLOWS, [...SAMPLE_WORKFLOWS]);
+    this.templates = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.TEMPLATES, [...SAMPLE_TEMPLATES]);
+    this.executions = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.EXECUTIONS, [...SAMPLE_EXECUTIONS]);
+    this.analytics = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.ANALYTICS, { labels: [], executions: [], successRate: [] });
     this.settings = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.SETTINGS, { viewMode: 'grid', activeTab: 'all' });
     this.builderState = this.loadFromStorage(WORKFLOW_STORAGE_KEYS.BUILDER_STATE, { nodes: [] });
     this.currentFilter = 'all';
