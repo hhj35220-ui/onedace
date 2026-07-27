@@ -277,7 +277,11 @@ class CalendarApp {
     try {
       window.OP.apiIntegration.init();
       const projectsResponse = await window.OP.apiIntegration.get('/projects');
+      if (!projectsResponse) return;
+
       const projects = window.OP.apiIntegration.extractArray(projectsResponse);
+      if (!projects.length) return;
+
       const calendars = projects.map((project, idx) => ({
         id: project.id,
         name: project.name || `Project ${idx + 1}`,
@@ -311,8 +315,11 @@ class CalendarApp {
         }
       }));
 
+      const events = taskCollections.flat();
+      if (!events.length) return;
+
       this.storage.saveCalendars(calendars);
-      this.storage.saveEvents(taskCollections.flat());
+      this.storage.saveEvents(events);
 
       this.render();
       this.renderMiniCalendar();

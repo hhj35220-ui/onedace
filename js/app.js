@@ -406,6 +406,7 @@ class AuthManager {
         email: user.email || session.email,
         fullName: [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || session.fullName,
         role: user.role || session.role,
+        organizationId: user.organizationId || session.organizationId || null,
         verified: typeof user.emailVerified === 'boolean' ? user.emailVerified : session.verified,
         user
       };
@@ -557,6 +558,32 @@ class AuthManager {
       };
     } catch (error) {
       const message = error && error.message ? error.message : 'Unable to update profile.';
+      return { success: false, message };
+    }
+  }
+
+  async changePassword(currentPassword, newPassword) {
+    const normalizedCurrentPassword = String(currentPassword || '').trim();
+    const normalizedNewPassword = String(newPassword || '').trim();
+
+    if (!normalizedCurrentPassword || !normalizedNewPassword) {
+      return { success: false, message: 'Current password and new password are required.' };
+    }
+
+    try {
+      await this.ensureApiIntegration();
+      const response = await window.OP.apiIntegration.patch('/users/me/password', {
+        currentPassword: normalizedCurrentPassword,
+        newPassword: normalizedNewPassword
+      });
+      const payload = response && response.data ? response.data : {};
+
+      return {
+        success: !!payload.success,
+        message: payload.message || 'Password updated successfully.'
+      };
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Unable to change password.';
       return { success: false, message };
     }
   }

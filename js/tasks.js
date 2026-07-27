@@ -429,15 +429,49 @@ class TasksApp {
     try {
       window.OP.apiIntegration.init();
 
-      const projectsResponse = await window.OP.apiIntegration.get('/projects');
-      const projects = window.OP.apiIntegration.extractArray(projectsResponse);
-      this.storage.saveProjects(projects);
+      const projectsResponse = await window.OP.apiIntegration.get('/projects?limit=100').catch(() => null);
+      const projectsPayload = projectsResponse ? window.OP.apiIntegration.extractData(projectsResponse) : null;
+      const projects = Array.isArray(projectsPayload?.projects)
+        ? projectsPayload.projects
+        : window.OP.apiIntegration.extractArray(projectsResponse);
+
+      if (!projects.length) {
+        this.refreshAll();
+        return;
+      }
+
+      this.storage.saveProjects(projects.map((project) => ({
+        id: project.id,
+        name: project.name,
+        color: project.color || '#6366f1',
+        progress: 0,
+        tasks: 0,
+        members: []
+      })));
 
       const taskCollections = await Promise.all(projects.map(async (project) => {
         try {
-          const response = await window.OP.apiIntegration.get(`/projects/${project.id}/tasks`);
-          const tasks = window.OP.apiIntegration.extractArray(response);
-          return tasks.map(t => Object.assign({}, t, { project: t.projectId || project.id }));
+          const response = await window.OP.apiIntegration.get(`/projects/${project.id}/tasks?limit=100`).catch(() => null);
+          const payload = response ? window.OP.apiIntegration.extractData(response) : null;
+          const tasks = Array.isArray(payload?.tasks)
+            ? payload.tasks
+            : window.OP.apiIntegration.extractArray(response);
+          return tasks.map((task) => ({
+            id: task.id,
+            title: task.name,
+            status: String(task.status || 'todo').toLowerCase(),
+            priority: String(task.priority || 'medium').toLowerCase(),
+            project: task.projectId || project.id,
+            assignee: task.assigneeId || 'tm1',
+            tags: [],
+            dueDate: task.dueDate ? task.dueDate.split('T')[0] : null,
+            description: task.description || '',
+            subtasks: [],
+            comments: [],
+            attachments: [],
+            recurring: false,
+            createdAt: task.createdAt || new Date().toISOString()
+          }));
         } catch (error) {
           return [];
         }

@@ -136,6 +136,11 @@ class DashboardStorage {
         window.OP.apiIntegration.get('/notifications?limit=20').catch(() => null)
       ]);
 
+      const hasBackendData = [overviewRes, tasksRes, projectsRes, productivityRes, notificationsRes]
+        .some((res) => res !== null && res !== undefined);
+
+      if (!hasBackendData) return;
+
       const overview = overviewRes ? window.OP.apiIntegration.extractData(overviewRes) : {};
       const tasks = tasksRes ? window.OP.apiIntegration.extractData(tasksRes) : {};
       const projects = projectsRes ? window.OP.apiIntegration.extractData(projectsRes) : {};
@@ -288,18 +293,18 @@ class DashboardStorage {
 
   // Fixed "Recent Conversations" list shown on the main dashboard
   getRecentConversations() {
-    const at = (h, m) => {
-      const d = new Date();
-      d.setHours(h, m, 0, 0);
-      return d.toISOString();
-    };
-    return [
-      { id: 'rc1', platform: 'gmail', name: 'John Doe', subject: 'Project Update & Requirements', preview: 'Hi Sophia, please find the updated requirements...', timestamp: at(10, 30), unreadCount: 3 },
-      { id: 'rc2', platform: 'whatsapp', name: 'Sarah Williams', subject: 'Order Confirmation', preview: 'Thank you! I have received my order.', timestamp: at(10, 28), unreadCount: 1 },
-      { id: 'rc3', platform: 'instagram', name: 'Jessica Wright', subject: 'Collaboration Opportunity', preview: "Hi! We love your content. Let's collaborate!", timestamp: at(10, 15), unreadCount: 1 },
-      { id: 'rc4', platform: 'tiktok', name: 'Alex Johnson', subject: 'Question about your product', preview: 'I saw your video and I have a question...', timestamp: at(10, 10), unreadCount: 0 },
-      { id: 'rc5', platform: 'x', name: 'Michael Brown', subject: 'Feature Request', preview: 'Can you guys add a dark mode to the app?', timestamp: at(9, 58), unreadCount: 0 }
-    ];
+    const conversations = this.getConversations();
+    if (!conversations.length) return [];
+
+    return conversations.slice(0, 5).map((conversation) => ({
+      id: conversation.id,
+      platform: conversation.platform,
+      name: conversation.customer?.name || 'Unknown contact',
+      subject: conversation.message || 'Conversation',
+      preview: conversation.message || '',
+      timestamp: conversation.timestamp,
+      unreadCount: conversation.unreadMessages || (conversation.unread ? 1 : 0)
+    }));
   }
 
   // ============================================
@@ -394,40 +399,32 @@ class DashboardStorage {
   }
 
   getConversationTrends(days = 7) {
-    // Deterministic series (seeded) so charts are stable between reloads
-    const rand = opSeededRandom(42);
-    const platforms = ['gmail', 'whatsapp', 'instagram', 'tiktok', 'x', 'linkedin'];
-    const labels = ['May 12', 'May 13', 'May 14', 'May 15', 'May 16', 'May 17', 'May 18'];
-    const trends = [];
+    const conversations = this.getConversations();
+    if (!conversations.length) return [];
 
-    for (let i = 0; i < days; i++) {
-      const dayData = { date: labels[i] || `Day ${i + 1}` };
-      platforms.forEach(p => {
-        dayData[p] = Math.floor(rand() * 650) + 50;
-      });
-      trends.push(dayData);
+    const trends = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const day = new Date();
+      day.setDate(day.getDate() - i);
+      const key = day.toDateString();
+      const count = conversations.filter((conversation) => new Date(conversation.timestamp).toDateString() === key).length;
+      trends.push({ date: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), linkedin: count, x: count, whatsapp: count, instagram: count, tiktok: count, gmail: count });
     }
 
     return trends;
   }
 
   getAreaTrends(days = 30) {
-    // Deterministic stacked-area series for the analytics page
-    const rand = opSeededRandom(7);
-    const platforms = ['linkedin', 'x', 'whatsapp', 'instagram', 'tiktok', 'gmail'];
-    const trends = [];
-    const start = new Date(2024, 4, 12); // May 12, 2024
+    const conversations = this.getConversations();
+    if (!conversations.length) return [];
 
-    for (let i = 0; i < days; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      const dayData = {
-        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      };
-      platforms.forEach(p => {
-        dayData[p] = Math.floor(rand() * 900) + 400;
-      });
-      trends.push(dayData);
+    const trends = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const day = new Date();
+      day.setDate(day.getDate() - i);
+      const key = day.toDateString();
+      const count = conversations.filter((conversation) => new Date(conversation.timestamp).toDateString() === key).length;
+      trends.push({ date: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), linkedin: count, x: count, whatsapp: count, instagram: count, tiktok: count, gmail: count });
     }
 
     return trends;

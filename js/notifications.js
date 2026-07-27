@@ -277,8 +277,19 @@ class NotificationsModule {
 
     try {
       window.OP.apiIntegration.init();
-      const response = await window.OP.apiIntegration.get('/notifications?limit=100');
-      const rows = window.OP.apiIntegration.extractArray(response);
+      const response = await window.OP.apiIntegration.get('/notifications?limit=100').catch(() => null);
+      const payload = response ? window.OP.apiIntegration.extractData(response) : null;
+      const rows = Array.isArray(payload?.notifications)
+        ? payload.notifications
+        : window.OP.apiIntegration.extractArray(response);
+
+      if (!rows.length) {
+        this.renderAll();
+        this.updateStats();
+        this.updateBadges();
+        return;
+      }
+
       this.notifications = rows.map((item) => ({
         id: item.id,
         type: item.type || 'system',

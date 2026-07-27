@@ -334,6 +334,86 @@ class TeamApp {
     this.renderTable();
     this.renderSidebarContent();
     this.bindEvents();
+    this.syncFromBackend();
+  }
+
+  async syncFromBackend() {
+    if (!window.OP || !window.OP.apiIntegration) return;
+
+    try {
+      window.OP.apiIntegration.init();
+      const response = await window.OP.apiIntegration.get('/users?limit=100').catch(() => null);
+      const payload = response ? window.OP.apiIntegration.extractData(response) : null;
+      const users = Array.isArray(payload?.users)
+        ? payload.users
+        : window.OP.apiIntegration.extractArray(response);
+
+      if (!users.length) return;
+
+      const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#22c55e', '#06b6d4', '#eab308'];
+      const normalizedUsers = users.map((user, index) => {
+        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.fullName || user.name || user.email || `User ${index + 1}`;
+        const initials = fullName.split(' ').map((part) => part[0]).join('').toUpperCase().slice(0, 2);
+        const role = String(user.role || user.roles?.[0] || user.userRole || 'member').toLowerCase();
+        const department = user.department || user.team || user.organization?.name || 'Other';
+        return {
+          id: user.id || user.userId || `u_${index + 1}`,
+          name: fullName,
+          email: user.email || '',
+          department,
+          role,
+          team: user.team || department,
+          status: user.isActive === false ? 'offline' : 'online',
+          lastActive: user.lastActiveAt || user.updatedAt || new Date().toISOString(),
+          avatar: initials,
+          color: user.color || colors[index % colors.length],
+          createdAt: user.createdAt || new Date().toISOString()
+        };
+      });
+
+      this.storage.saveUsers(normalizedUsers);
+
+      const departments = Array.from(new Set(normalizedUsers.map((u) => u.department))).map((name, idx) => ({
+        id: `d${idx + 1}`,
+        name,
+        icon: 'department',
+        users: normalizedUsers.filter((u) => u.department === name).length,
+        teams: 1,
+        lead: normalizedUsers.find((u) => u.department === name)?.name || 'Team Lead',
+        color: colors[idx % colors.length]
+      }));
+      this.storage.saveDepartments(departments);
+
+      const teams = Array.from(new Set(normalizedUsers.map((u) => u.team))).map((name, idx) => ({
+        id: `t${idx + 1}`,
+        name,
+        description: `${name} team`,
+        icon: 'team',
+        members: normalizedUsers.filter((u) => u.team === name).length,
+        projects: 0,
+        color: colors[idx % colors.length],
+        lead: normalizedUsers.find((u) => u.team === name)?.name || 'Team Lead'
+      }));
+      this.storage.saveTeams(teams);
+
+      const roles = Array.from(new Set(normalizedUsers.map((u) => u.role))).map((name, idx) => ({
+        id: `r${idx + 1}`,
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        description: 'Backend-synced role',
+        icon: 'role',
+        users: normalizedUsers.filter((u) => u.role === name).length,
+        permissions: ['read'],
+        color: colors[idx % colors.length]
+      }));
+      this.storage.saveRoles(roles);
+
+      this.renderStats();
+      this.renderCharts();
+      this.renderTable();
+      this.renderSidebarContent();
+    } catch (error) {
+      console.warn('Team backend sync skipped:', error);
+    }
   }
 
   // ============================================

@@ -147,36 +147,21 @@ class WhatsAppStorage {
   }
 
   init() {
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(WA_SAMPLE_CONTACTS));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(WA_SAMPLE_CONVERSATIONS));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(WA_SAMPLE_MESSAGES));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES, JSON.stringify(WA_SAMPLE_TEMPLATES));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES, JSON.stringify(WA_SAMPLE_QUICK_REPLIES));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG, JSON.stringify(WA_SAMPLE_CATALOG));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_SETTINGS)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_SETTINGS, JSON.stringify(WA_SAMPLE_SETTINGS));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_INTEGRATION)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_INTEGRATION, JSON.stringify(WA_SAMPLE_INTEGRATION));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_LABELS)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_LABELS, JSON.stringify(WA_SAMPLE_LABELS));
-    }
-    if (!localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_BROADCASTS)) {
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_BROADCASTS, JSON.stringify([]));
-    }
+    const emptyValues = {
+      [WA_STORAGE_KEYS.WHATSAPP_CONTACTS]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_MESSAGES]: {},
+      [WA_STORAGE_KEYS.WHATSAPP_TEMPLATES]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_CATALOG]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_SETTINGS]: {},
+      [WA_STORAGE_KEYS.WHATSAPP_INTEGRATION]: {},
+      [WA_STORAGE_KEYS.WHATSAPP_LABELS]: [],
+      [WA_STORAGE_KEYS.WHATSAPP_BROADCASTS]: []
+    };
+    Object.entries(emptyValues).forEach(([key, value]) => {
+      if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(value));
+    });
   }
 
   // Contacts
@@ -430,12 +415,15 @@ class WhatsAppApp {
     this.currentFilter = '';
     this.currentSearch = '';
     this.sidebarOpen = false;
+    this.session = null;
     this.init();
   }
 
-  init() {
+  async init() {
     this.bindEvents();
     this.renderConversations();
+
+    await this.loadBackendStatus();
 
     // Select first conversation by default
     const conversations = this.storage.getConversations();
@@ -506,6 +494,11 @@ class WhatsAppApp {
         const menu = document.getElementById('create-menu');
         if (menu) menu.classList.toggle('active');
       });
+    }
+
+    const connectBtn = document.querySelector('.wa-view-integration-btn');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', () => this.connectSession());
     }
 
     // Notifications
@@ -859,6 +852,85 @@ class WhatsAppApp {
       this.renderChatMessages(this.currentConversation);
       this.renderConversations();
     }, 2000);
+  }
+
+  // ============================================
+  // Backend integration
+  // ============================================
+  async loadBackendStatus() {
+    try {
+      if (!window.OP || !window.OP.apiIntegration) {
+        return;
+      }
+
+      await window.OP.apiIntegration.init();
+      const session = window.OP.auth?.getSession?.() || null;
+      const organizationId = session?.user?.organizationId || session?.organizationId || null;
+      const payload = organizationId
+        ? await window.OP.apiIntegration.get(`/platforms/whatsapp/status?organizationId=${encodeURIComponent(organizationId)}`)
+        : null;
+
+      const responseData = payload && payload.data ? payload.data : null;
+      const status = responseData && responseData.data ? responseData.data.status : 'DISCONNECTED';
+      this.renderConnectionStatus(status);
+      this.session = responseData && responseData.data ? responseData.data : null;
+    } catch (error) {
+      this.renderConnectionStatus('DISCONNECTED');
+    }
+  }
+
+  async connectSession() {
+    try {
+      if (!window.OP || !window.OP.apiIntegration) {
+        throw new Error('Backend API is unavailable.');
+      }
+
+      await window.OP.apiIntegration.init();
+      const session = window.OP.auth?.getSession?.() || null;
+      const organizationId = session?.user?.organizationId || session?.organizationId || null;
+      if (!organizationId) {
+        throw new Error('No organization selected.');
+      }
+
+      const response = await window.OP.apiIntegration.post('/platforms/whatsapp/connect', {
+        organizationId,
+        sessionKey: `oneplace-${session?.userId || 'default'}`
+      });
+      const payload = response && response.data ? response.data : null;
+      const status = payload && payload.data ? payload.data.status : 'CONNECTING';
+      this.renderConnectionStatus(status);
+      this.session = payload && payload.data ? payload.data : null;
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show('WhatsApp connection request sent.', 'success');
+      }
+    } catch (error) {
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show(error?.message || 'Unable to connect WhatsApp.', 'error');
+      }
+    }
+  }
+
+  renderConnectionStatus(status) {
+    const accountStatus = document.querySelector('.wa-account-status span:last-child');
+    const accountName = document.querySelector('.wa-account-name');
+    const accountPhone = document.querySelector('.wa-account-phone');
+    const statusDot = document.querySelector('.wa-account-status .wa-status-dot');
+
+    if (accountStatus) {
+      accountStatus.textContent = status === 'CONNECTED' ? 'Connected' : status === 'CONNECTING' || status === 'RECONNECTING' ? 'Connecting' : 'Disconnected';
+    }
+
+    if (statusDot) {
+      statusDot.style.background = status === 'CONNECTED' ? '#22c55e' : status === 'CONNECTING' || status === 'RECONNECTING' ? '#f59e0b' : '#ef4444';
+    }
+
+    if (accountName) {
+      accountName.textContent = this.session?.organizationId ? 'Organization Session' : 'Acme Solutions';
+    }
+
+    if (accountPhone) {
+      accountPhone.textContent = this.session?.sessionKey ? this.session.sessionKey : '+1 (555) 123-4567';
+    }
   }
 
   // ============================================

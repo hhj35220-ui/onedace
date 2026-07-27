@@ -19,6 +19,7 @@ import taskTimeEntryRoutes from './task-time-entry.routes';
 import tasksRoutes from './tasks.routes';
 import teamsRoutes from './teams.routes';
 import usersRoutes from './users.routes';
+import platformWhatsAppRoutes from '../../modules/whatsapp/routes/whatsapp.routes';
 
 const router = Router();
 
@@ -55,5 +56,6 @@ router.use('/audit', auditRoutes);
 router.use('/reports', reportRoutes);
 router.use('/import', importRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/platforms/whatsapp', platformWhatsAppRoutes);
 
 export default router;

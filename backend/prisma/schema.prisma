@@ -62,6 +62,66 @@ enum NotificationType {
   DEPENDENCY_ADDED
 }
 
+enum PlatformType {
+  WHATSAPP
+  GMAIL
+  INSTAGRAM
+  TIKTOK
+  X
+  LINKEDIN
+}
+
+enum PlatformConnectionStatus {
+  DISCONNECTED
+  CONNECTING
+  QR_READY
+  CONNECTED
+  RECONNECTING
+  ERROR
+}
+
+enum WhatsAppSessionStatus {
+  DISCONNECTED
+  CONNECTING
+  QR_READY
+  CONNECTED
+  RECONNECTING
+  ERROR
+}
+
+enum MessageDirection {
+  INCOMING
+  OUTGOING
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum WhatsAppEventType {
+  SESSION_STATUS
+  QR_READY
+  MESSAGE_RECEIVED
+  MESSAGE_SENT
+  CONTACT_SYNCED
+  CHAT_SYNCED
+  GROUP_SYNCED
+  PRESENCE_UPDATED
+  TYPING_UPDATED
+  ERROR
+}
+
+enum SyncStateStatus {
+  IDLE
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
 model User {
   id                      String          @id @default(uuid()) @db.Uuid
   email                   String          @unique @db.VarChar(320)
@@ -89,8 +149,141 @@ model User {
   notifications           Notification[]
   recurringTasks          RecurringTask[]
   auditLogs               AuditLog[]
+  platformConnections     PlatformConnection[]
 
   @@map("users")
+}
+
+model PlatformConnection {
+  id                String                  @id @default(uuid()) @db.Uuid
+  organizationId    String                  @db.Uuid
+  userId            String                  @db.Uuid
+  platformType      PlatformType            @default(WHATSAPP)
+  status            PlatformConnectionStatus @default(DISCONNECTED)
+  displayName       String?                 @db.VarChar(255)
+  metadata          Json?
+  lastSeenAt        DateTime?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  deletedAt         DateTime?
+  organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ownerUser         User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  whatsappSessions  WhatsAppSession[]
+
+  @@map("platform_connections")
+}
+
+model WhatsAppSession {
+  id                  String               @id @default(uuid()) @db.Uuid
+  platformConnectionId String              @db.Uuid
+  organizationId      String               @db.Uuid
+  sessionKey          String               @unique @db.VarChar(255)
+  phoneNumber         String?              @db.VarChar(32)
+  displayName         String?              @db.VarChar(255)
+  status              WhatsAppSessionStatus @default(DISCONNECTED)
+  qrCodeUrl           String?
+  lastConnectedAt     DateTime?
+  lastSeenAt          DateTime?
+  lastError           String?              @db.Text
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  platformConnection  PlatformConnection   @relation(fields: [platformConnectionId], references: [id], onDelete: Cascade)
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chats               WhatsAppChat[]
+  contacts            WhatsAppContact[]
+  messages            WhatsAppMessage[]
+  events              WhatsAppEvent[]
+  syncStates          SyncState[]
+
+  @@map("whatsapp_sessions")
+}
+
+model WhatsAppChat {
+  id                String           @id @default(uuid()) @db.Uuid
+  whatsappSessionId String           @db.Uuid
+  externalChatId    String           @db.VarChar(255)
+  chatName          String?          @db.VarChar(255)
+  chatType          String?          @db.VarChar(50)
+  unreadCount       Int              @default(0)
+  archived          Boolean          @default(false)
+  lastMessageAt     DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  whatsappSession   WhatsAppSession  @relation(fields: [whatsappSessionId], references: [id], onDelete: Cascade)
+  messages          WhatsAppMessage[]
+
+  @@unique([whatsappSessionId, externalChatId])
+  @@map("whatsapp_chats")
+}
+
+model WhatsAppContact {
+  id                String           @id @default(uuid()) @db.Uuid
+  whatsappSessionId String           @db.Uuid
+  externalContactId String           @db.VarChar(255)
+  name              String?          @db.VarChar(255)
+  phoneNumber       String?          @db.VarChar(32)
+  profilePictureUrl String?
+  isBlocked         Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  whatsappSession   WhatsAppSession  @relation(fields: [whatsappSessionId], references: [id], onDelete: Cascade)
+  messages          WhatsAppMessage[]
+
+  @@unique([whatsappSessionId, externalContactId])
+  @@map("whatsapp_contacts")
+}
+
+model WhatsAppMessage {
+  id                 String           @id @default(uuid()) @db.Uuid
+  whatsappSessionId  String           @db.Uuid
+  chatId             String?          @db.Uuid
+  contactId          String?          @db.Uuid
+  externalMessageId  String?          @db.VarChar(255)
+  direction          MessageDirection
+  messageType        String           @db.VarChar(50)
+  content            String?          @db.Text
+  status             MessageStatus    @default(PENDING)
+  sentAt             DateTime?
+  deliveredAt        DateTime?
+  readAt             DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  whatsappSession    WhatsAppSession  @relation(fields: [whatsappSessionId], references: [id], onDelete: Cascade)
+  chat               WhatsAppChat?    @relation(fields: [chatId], references: [id], onDelete: SetNull)
+  contact            WhatsAppContact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@unique([whatsappSessionId, externalMessageId])
+  @@map("whatsapp_messages")
+}
+
+model WhatsAppEvent {
+  id                String             @id @default(uuid()) @db.Uuid
+  whatsappSessionId String             @db.Uuid
+  eventType         WhatsAppEventType
+  severity          String             @db.VarChar(20)
+  payload           Json
+  processed         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  whatsappSession   WhatsAppSession    @relation(fields: [whatsappSessionId], references: [id], onDelete: Cascade)
+
+  @@map("whatsapp_events")
+}
+
+model SyncState {
+  id                String           @id @default(uuid()) @db.Uuid
+  organizationId    String           @db.Uuid
+  whatsappSessionId String?          @db.Uuid
+  resourceType      String           @db.VarChar(50)
+  cursor            String?          @db.VarChar(255)
+  status            SyncStateStatus  @default(IDLE)
+  lastSyncedAt      DateTime?
+  lastError         String?          @db.Text
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  whatsappSession   WhatsAppSession? @relation(fields: [whatsappSessionId], references: [id], onDelete: Cascade)
+
+  @@map("sync_states")
 }
 
 model Notification {
@@ -188,6 +381,9 @@ model Organization {
   labels        Label[]
   notifications Notification[]
   auditLogs     AuditLog[]
+  platformConnections PlatformConnection[]
+  whatsappSessions WhatsAppSession[]
+  syncStates    SyncState[]
 
   @@map("organizations")
 }

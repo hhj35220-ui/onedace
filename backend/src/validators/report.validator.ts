@@ -1,15 +1,17 @@
 import { z } from 'zod';
 
+const dateFilterSchema = z.union([z.string().date(), z.string().datetime(), z.date()]);
+
 export const reportQuerySchema = z.object({
   projectId: z.string().min(1).optional(),
-  startDate: z.string().datetime().or(z.date()).optional(),
-  endDate: z.string().datetime().or(z.date()).optional(),
+  startDate: dateFilterSchema.optional(),
+  endDate: dateFilterSchema.optional(),
 });
 
 export const exportReportSchema = z.object({
   reportType: z.enum(['tasks', 'projects', 'time', 'productivity']),
   projectId: z.string().min(1).optional(),
-  startDate: z.string().datetime().or(z.date()).optional(),
-  endDate: z.string().datetime().or(z.date()).optional(),
+  startDate: dateFilterSchema.optional(),
+  endDate: dateFilterSchema.optional(),
   format: z.enum(['csv', 'xlsx', 'pdf']).optional(),
 });

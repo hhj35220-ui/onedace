@@ -406,7 +406,13 @@ export class AuthService {
           isActive: true,
           emailVerified: true,
           createdAt: true,
-          updatedAt: true
+          updatedAt: true,
+          organizations: {
+            where: { deletedAt: null },
+            orderBy: { createdAt: 'asc' },
+            take: 1,
+            select: { id: true, name: true, slug: true }
+          }
         }
       });
 
@@ -419,6 +425,9 @@ export class AuthService {
         message: 'Authenticated user retrieved successfully',
         data: {
           ...user,
+          organizationId: user.organizations[0]?.id ?? null,
+          organization: user.organizations[0] ?? null,
+          organizations: undefined,
           avatarUrl: user.avatar
         }
       };

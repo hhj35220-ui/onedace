@@ -240,20 +240,134 @@ class ReportsApp {
         window.OP.apiIntegration.get('/reports/productivity').catch(() => null)
       ]);
 
+      const tasksPayload = tasksReport ? window.OP.apiIntegration.extractData(tasksReport) : [];
+      const projectsPayload = projectsReport ? window.OP.apiIntegration.extractData(projectsReport) : [];
+      const timePayload = timeReport ? window.OP.apiIntegration.extractData(timeReport) : [];
+      const productivityPayload = productivityReport ? window.OP.apiIntegration.extractData(productivityReport) : {};
+
+      const tasksData = Array.isArray(tasksPayload) ? tasksPayload : [];
+      const projectsData = Array.isArray(projectsPayload) ? projectsPayload : [];
+      const timeData = Array.isArray(timePayload) ? timePayload : [];
+      const productivityData = productivityPayload && typeof productivityPayload === 'object' && !Array.isArray(productivityPayload) ? productivityPayload : {};
+
+      const hasBackendData = tasksData.length || projectsData.length || timeData.length || Object.keys(productivityData).length > 0;
+      if (!hasBackendData) {
+        this.renderKPICards();
+        this.renderCharts();
+        this.renderRecentReports();
+        this.renderCampaigns();
+        this.renderInsights();
+        this.renderScheduledReports();
+        return;
+      }
+
+      const completedTasks = tasksData.filter((task) => String(task.status || '').toUpperCase() === 'DONE').length;
+      const pendingTasks = Math.max(tasksData.length - completedTasks, 0);
+      const completionRate = Number(productivityData.completionRate || 0);
+      const totalTrackedMinutes = timeData.reduce((sum, entry) => sum + Number(entry.durationMinutes || 0), 0);
+
       const reportData = {
-        tasks: tasksReport ? window.OP.apiIntegration.extractData(tasksReport) : {},
-        projects: projectsReport ? window.OP.apiIntegration.extractData(projectsReport) : {},
-        time: timeReport ? window.OP.apiIntegration.extractData(timeReport) : {},
-        productivity: productivityReport ? window.OP.apiIntegration.extractData(productivityReport) : {}
+        tasks: tasksData,
+        projects: projectsData,
+        time: timeData,
+        productivity: productivityData,
+        kpiData: [
+          {
+            label: 'Tasks',
+            value: `${tasksData.length}`,
+            trend: Number(((completedTasks / Math.max(tasksData.length, 1)) * 100).toFixed(1)),
+            trendUp: completedTasks >= pendingTasks,
+            dateRange: 'Current period',
+            icon: 'tasks',
+            iconClass: 'ph-check-square',
+            color: '#6366f1',
+            sparkline: [Math.max(0, completedTasks), Math.max(0, pendingTasks)]
+          },
+          {
+            label: 'Projects',
+            value: `${projectsData.length}`,
+            trend: Number(Math.min(100, projectsData.length * 10)),
+            trendUp: projectsData.length > 0,
+            dateRange: 'Current period',
+            icon: 'projects',
+            iconClass: 'ph-folder',
+            color: '#10b981',
+            sparkline: [0, Math.max(0, projectsData.length)]
+          },
+          {
+            label: 'Tracked Time',
+            value: `${Math.round(totalTrackedMinutes / 60)}h`,
+            trend: Number(Math.min(100, Math.round(totalTrackedMinutes / 60))),
+            trendUp: totalTrackedMinutes > 0,
+            dateRange: 'Current period',
+            icon: 'time',
+            iconClass: 'ph-clock',
+            color: '#0284c7',
+            sparkline: [0, Math.max(0, Math.round(totalTrackedMinutes / 60))]
+          },
+          {
+            label: 'Completion Rate',
+            value: `${completionRate}%`,
+            trend: completionRate,
+            trendUp: completionRate >= 50,
+            dateRange: 'Current period',
+            icon: 'completion',
+            iconClass: 'ph-target',
+            color: '#db2777',
+            sparkline: [0, completionRate]
+          }
+        ],
+        channelData: [
+          { name: 'Tasks', value: tasksData.length, color: '#6366f1', percent: tasksData.length ? 100 : 0 },
+          { name: 'Projects', value: projectsData.length, color: '#10b981', percent: projectsData.length ? 100 : 0 },
+          { name: 'Tracked Time', value: Math.max(1, Math.round(totalTrackedMinutes / 60)), color: '#0284c7', percent: timeData.length ? 100 : 0 }
+        ],
+        revenueChartData: tasksData.slice(0, 7).map((task, index) => ({
+          date: task.name ? String(task.name).slice(0, 8) : `Task ${index + 1}`,
+          value: Math.max(1, index + 1)
+        })),
+        conversionChartData: projectsData.slice(0, 7).map((project, index) => ({
+          date: project.name ? String(project.name).slice(0, 8) : `Project ${index + 1}`,
+          value: Math.max(1, index + 1)
+        })),
+        campaigns: projectsData.slice(0, 5).map((project, index) => ({
+          id: project.id || `project-${index + 1}`,
+          name: project.name || `Project ${index + 1}`,
+          revenue: Math.max(1000, (index + 1) * 1500),
+          trend: Number(Math.min(100, 10 + index * 4)),
+          icon: 'project',
+          iconClass: 'ph-folder'
+        })),
+        insights: [
+          {
+            id: 'productivity-insight',
+            title: `${completionRate}% task completion rate`,
+            desc: `${completedTasks} completed / ${pendingTasks} pending`,
+            type: 'completion',
+            iconClass: 'ph-target'
+          },
+          {
+            id: 'time-insight',
+            title: `${Math.round(totalTrackedMinutes / 60)} hours tracked`,
+            desc: `${timeData.length} time entries captured`,
+            type: 'time',
+            iconClass: 'ph-clock'
+          }
+        ],
+        reportCategories: [
+          { id: 'tasks', name: 'Tasks', desc: 'Tracked work items', count: tasksData.length, icon: 'tasks', iconClass: 'ph-check-square' },
+          { id: 'projects', name: 'Projects', desc: 'Active initiatives', count: projectsData.length, icon: 'projects', iconClass: 'ph-folder' },
+          { id: 'time', name: 'Time', desc: 'Tracked time entries', count: timeData.length, icon: 'time', iconClass: 'ph-clock' }
+        ]
       };
 
       localStorage.setItem(REPORTS_STORAGE_KEYS.REPORTS_DATA, JSON.stringify(reportData));
 
       const savedReports = [];
-      if (tasksReport) savedReports.push({ id: `r_tasks_${Date.now()}`, name: 'Tasks Report', category: 'tasks', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
-      if (projectsReport) savedReports.push({ id: `r_projects_${Date.now()}`, name: 'Projects Report', category: 'projects', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
-      if (timeReport) savedReports.push({ id: `r_time_${Date.now()}`, name: 'Time Report', category: 'time', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
-      if (productivityReport) savedReports.push({ id: `r_productivity_${Date.now()}`, name: 'Productivity Report', category: 'productivity', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (tasksData.length) savedReports.push({ id: `r_tasks_${Date.now()}`, name: 'Tasks Report', category: 'tasks', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (projectsData.length) savedReports.push({ id: `r_projects_${Date.now()}`, name: 'Projects Report', category: 'projects', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (timeData.length) savedReports.push({ id: `r_time_${Date.now()}`, name: 'Time Report', category: 'time', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
+      if (Object.keys(productivityData).length) savedReports.push({ id: `r_productivity_${Date.now()}`, name: 'Productivity Report', category: 'productivity', generatedBy: 'System', status: 'completed', generatedOn: new Date().toISOString() });
       localStorage.setItem(REPORTS_STORAGE_KEYS.SAVED_REPORTS, JSON.stringify(savedReports));
 
       this.renderKPICards();
@@ -459,11 +573,18 @@ class ReportsApp {
     const container = document.getElementById('kpi-cards');
     if (!container) return;
 
+    const reportData = this.storage.getData();
+    const kpiData = Array.isArray(reportData.kpiData) ? reportData.kpiData : [];
+    if (!kpiData.length) {
+      container.innerHTML = '<div class="empty-state">No report metrics available yet.</div>';
+      return;
+    }
+
     let html = '';
-    KPI_DATA.forEach(kpi => {
+    kpiData.forEach(kpi => {
       const trendClass = kpi.trendUp ? 'up' : 'down';
       const trendIcon = kpi.trendUp ? 'ph-trend-up' : 'ph-trend-down';
-      const sparklineSvg = this.generateSparkline(kpi.sparkline, kpi.color);
+      const sparklineSvg = this.generateSparkline(kpi.sparkline || [0, 0], kpi.color || '#6366f1');
 
       html += `
         <div class="kpi-card">
@@ -493,17 +614,20 @@ class ReportsApp {
     const width = 200;
     const height = 40;
     const padding = 2;
-    const max = Math.max(...data);
-    const min = Math.min(...data);
+    const safeData = Array.isArray(data) && data.length ? data.map(value => Number(value || 0)).filter(Number.isFinite) : [0, 0];
+    if (!safeData.length) return '';
+
+    const max = Math.max(...safeData);
+    const min = Math.min(...safeData);
     const range = max - min || 1;
 
-    const points = data.map((val, i) => {
-      const x = padding + (i / (data.length - 1)) * (width - padding * 2);
+    const points = safeData.map((val, i) => {
+      const x = padding + (i / (safeData.length - 1)) * (width - padding * 2);
       const y = height - padding - ((val - min) / range) * (height - padding * 2);
       return `${x},${y}`;
     }).join(' ');
 
-    const safeColor = color.replace('#', '');
+    const safeColor = (color || '#6366f1').replace('#', '');
 
     return `
       <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
@@ -531,7 +655,13 @@ class ReportsApp {
     const container = document.getElementById('revenue-chart');
     if (!container) return;
 
-    const data = REVENUE_CHART_DATA;
+    const reportData = this.storage.getData();
+    const data = Array.isArray(reportData.revenueChartData) ? reportData.revenueChartData : [];
+    if (!data.length) {
+      container.innerHTML = '<div class="empty-state">No trend data available yet.</div>';
+      return;
+    }
+
     const width = 400;
     const height = 160;
     const padding = { top: 10, right: 10, bottom: 30, left: 50 };
@@ -593,7 +723,14 @@ class ReportsApp {
     const legendContainer = document.getElementById('channel-legend');
     if (!container || !legendContainer) return;
 
-    const data = CHANNEL_DATA;
+    const reportData = this.storage.getData();
+    const data = Array.isArray(reportData.channelData) ? reportData.channelData : [];
+    if (!data.length) {
+      container.innerHTML = '<div class="empty-state">No channel breakdown available yet.</div>';
+      legendContainer.innerHTML = '';
+      return;
+    }
+
     const total = data.reduce((sum, d) => sum + d.value, 0);
     const size = 140;
     const strokeWidth = 18;
@@ -648,7 +785,13 @@ class ReportsApp {
     const container = document.getElementById('conversion-chart');
     if (!container) return;
 
-    const data = CONVERSION_CHART_DATA;
+    const reportData = this.storage.getData();
+    const data = Array.isArray(reportData.conversionChartData) ? reportData.conversionChartData : [];
+    if (!data.length) {
+      container.innerHTML = '<div class="empty-state">No conversion data available yet.</div>';
+      return;
+    }
+
     const width = 400;
     const height = 160;
     const padding = { top: 10, right: 10, bottom: 30, left: 40 };
@@ -867,8 +1010,15 @@ class ReportsApp {
     const container = document.getElementById('campaign-list');
     if (!container) return;
 
+    const reportData = this.storage.getData();
+    const campaigns = Array.isArray(reportData.campaigns) ? reportData.campaigns : [];
+    if (!campaigns.length) {
+      container.innerHTML = '<div class="empty-state">No campaign summaries available yet.</div>';
+      return;
+    }
+
     let html = '';
-    SAMPLE_CAMPAIGNS.forEach(campaign => {
+    campaigns.forEach(campaign => {
       html += `
         <div class="campaign-item">
           <div class="campaign-icon ${campaign.icon}">
@@ -893,8 +1043,15 @@ class ReportsApp {
     const container = document.getElementById('insights-list');
     if (!container) return;
 
+    const reportData = this.storage.getData();
+    const insights = Array.isArray(reportData.insights) ? reportData.insights : [];
+    if (!insights.length) {
+      container.innerHTML = '<div class="empty-state">No insights generated yet.</div>';
+      return;
+    }
+
     let html = '';
-    SAMPLE_INSIGHTS.forEach(insight => {
+    insights.forEach(insight => {
       html += `
         <div class="insight-item">
           <div class="insight-icon ${insight.type}">

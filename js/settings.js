@@ -312,7 +312,47 @@ class SettingsApp {
      Profile Settings
      ============================================ */
   static initProfileSettings() {
+    const session = OP.auth.getSession() || {};
     const profile = OP.profile.getProfile() || {};
+    const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim()
+      || profile.fullName
+      || session.fullName
+      || 'Alex Morgan';
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    const firstName = profile.firstName || nameParts[0] || '';
+    const lastName = profile.lastName || nameParts.slice(1).join(' ') || '';
+
+    const nameInput = document.getElementById('profileNameInput');
+    const emailInput = document.getElementById('profileEmailInput');
+    const phoneInput = document.getElementById('profilePhoneInput');
+    const jobTitleInput = document.getElementById('profileJobTitle');
+    const departmentInput = document.getElementById('profileDepartment');
+    const bioInput = document.getElementById('profileBio');
+
+    if (nameInput) {
+      nameInput.value = fullName;
+    }
+
+    if (emailInput) {
+      emailInput.value = session.email || profile.email || 'alex.morgan@oneplace.com';
+      emailInput.readOnly = true;
+    }
+
+    if (phoneInput) {
+      phoneInput.value = profile.phone || '';
+    }
+
+    if (jobTitleInput) {
+      jobTitleInput.value = profile.jobTitle || session.role || 'Administrator';
+    }
+
+    if (departmentInput) {
+      departmentInput.value = profile.department || 'product';
+    }
+
+    if (bioInput) {
+      bioInput.value = profile.bio || '';
+    }
 
     // Photo upload
     const changePhotoBtn = document.getElementById('changePhotoBtn');
@@ -332,7 +372,7 @@ class SettingsApp {
               avatarImg.style.display = 'block';
               if (avatarFallback) avatarFallback.style.display = 'none';
             }
-            this.showToast('Profile photo updated');
+            this.showToast('Profile photo preview updated locally');
           };
           reader.readAsDataURL(file);
         }
@@ -342,19 +382,37 @@ class SettingsApp {
     // Save
     const saveBtn = document.getElementById('saveProfileSettings');
     if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        const newProfile = {
-          ...profile,
-          fullName: document.getElementById('profileNameInput')?.value,
-          email: document.getElementById('profileEmailInput')?.value,
-          phone: document.getElementById('profilePhoneInput')?.value,
-          jobTitle: document.getElementById('profileJobTitle')?.value,
-          department: document.getElementById('profileDepartment')?.value,
-          bio: document.getElementById('profileBio')?.value
-        };
-        OP.profile.saveProfile(newProfile);
-        this.initUserData(); // Refresh UI
-        this.showToast('Profile saved successfully');
+      saveBtn.addEventListener('click', async () => {
+        const newFullName = nameInput?.value?.trim() || '';
+        const nameParts = newFullName.split(/\s+/).filter(Boolean);
+        const nextFirstName = nameParts[0] || firstName || '';
+        const nextLastName = nameParts.slice(1).join(' ') || lastName || '';
+        const nextPhone = phoneInput?.value?.trim() || '';
+
+        const result = await OP.auth.updateCurrentUserProfile({
+          firstName: nextFirstName,
+          lastName: nextLastName,
+          phone: nextPhone
+        });
+
+        if (result.success) {
+          const updatedProfile = {
+            ...(OP.profile.getProfile() || {}),
+            firstName: nextFirstName,
+            lastName: nextLastName,
+            fullName: newFullName,
+            phone: nextPhone,
+            email: session.email || profile.email || emailInput?.value || '',
+            jobTitle: jobTitleInput?.value || profile.jobTitle || '',
+            department: departmentInput?.value || profile.department || '',
+            bio: bioInput?.value || profile.bio || ''
+          };
+          OP.profile.saveProfile(updatedProfile);
+          this.initUserData();
+          this.showToast(result.message || 'Profile saved successfully');
+        } else {
+          this.showToast(result.message || 'Unable to save profile', 'error');
+        }
       });
     }
   }
@@ -573,7 +631,7 @@ class SettingsApp {
     });
 
     if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => {
+      confirmBtn.addEventListener('click', async () => {
         const current = document.getElementById('currentPassword')?.value;
         const newPass = document.getElementById('newPassword')?.value;
         const confirm = document.getElementById('confirmNewPassword')?.value;
@@ -586,8 +644,17 @@ class SettingsApp {
           this.showToast('Passwords do not match', 'error');
           return;
         }
-        modal.classList.remove('active');
-        this.showToast('Password changed successfully');
+
+        const result = await OP.auth.changePassword(current, newPass);
+        if (result.success) {
+          modal.classList.remove('active');
+          document.getElementById('currentPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmNewPassword').value = '';
+          this.showToast(result.message || 'Password changed successfully');
+        } else {
+          this.showToast(result.message || 'Unable to change password', 'error');
+        }
       });
     }
 
@@ -953,7 +1020,8 @@ class SettingsApp {
   static initOrganizationSettings() {
     const saveBtn = document.getElementById('saveOrgSettings');
     if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
+      saveBtn.addEventListener('click', async () => {
+        const organizationId = OP.auth.getSession()?.organizationId || null;
         const settings = {
           name: document.getElementById('orgName')?.value,
           regNumber: document.getElementById('orgRegNumber')?.value,
@@ -963,11 +1031,35 @@ class SettingsApp {
           website: document.getElementById('orgWebsite')?.value,
           taxId: document.getElementById('orgTaxId')?.value
         };
-        this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, {
-          ...this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS),
-          ...settings
-        });
-        this.showToast('Organization settings saved');
+
+        if (!organizationId) {
+          this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, {
+            ...this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS),
+            ...settings
+          });
+          this.showToast('Organization settings saved locally', 'warning');
+          return;
+        }
+
+        try {
+          await OP.apiIntegration.init();
+          const response = await OP.apiIntegration.patch(`/organizations/${organizationId}`, {
+            name: settings.name,
+            description: [settings.industry, settings.address].filter(Boolean).join(' • ')
+          });
+          const payload = response && response.data ? response.data : {};
+          if (payload.success) {
+            this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, {
+              ...this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS),
+              ...settings
+            });
+            this.showToast(payload.message || 'Organization settings saved');
+          } else {
+            this.showToast(payload.message || 'Unable to save organization settings', 'error');
+          }
+        } catch (error) {
+          this.showToast(error?.message || 'Unable to save organization settings', 'error');
+        }
       });
     }
   }
