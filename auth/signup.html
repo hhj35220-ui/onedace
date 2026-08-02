@@ -175,6 +175,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       clearStaleOnboardingState();
+      localStorage.removeItem('op_api_config');
 
       if (OP.auth.isAuthenticated()) {
         const workspaces = OP.workspace.getUserWorkspaces();

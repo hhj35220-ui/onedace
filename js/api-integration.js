@@ -13,8 +13,8 @@
 
   const DEFAULT_CONFIG = {
     environments: {
-      development: { name: 'development', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
-      testing: { name: 'testing', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      development: { name: 'development', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      testing: { name: 'testing', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
       production: { name: 'production', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: false }
     },
     environment: 'development',
@@ -56,20 +56,34 @@
     init() {
       this._loadPersistentConfig();
       this.setEnvironment(this.environment);
+      this._clearStaleLocalhostOverride();
     }
 
     _loadPersistentConfig() {
       try {
         const stored = window.localStorage.getItem(STORAGE_KEYS.API_CONFIG);
-        if (!stored) return;
+        const detectedEnvironment = this._detectEnvironment();
+
+        if (!stored) {
+          this.environment = detectedEnvironment;
+          return;
+        }
+
         const parsed = JSON.parse(stored);
         if (parsed && typeof parsed === 'object') {
-          if (parsed.environment) this.environment = parsed.environment;
+          if (parsed.environment && parsed.environment !== 'development') {
+            this.environment = parsed.environment;
+          } else if (detectedEnvironment === 'production' || detectedEnvironment === 'testing') {
+            this.environment = detectedEnvironment;
+          } else {
+            this.environment = parsed.environment || detectedEnvironment;
+          }
+
           if (parsed.backendEnabled !== undefined) this.backendEnabled = parsed.backendEnabled;
           if (parsed.featureFlags) this.featureFlags = Object.assign(this.featureFlags, parsed.featureFlags);
         }
       } catch (err) {
-        // If parse fails, ignore and continue with defaults.
+        this.environment = this._detectEnvironment();
       }
     }
 
@@ -85,6 +99,25 @@
       }
     }
 
+    _clearStaleLocalhostOverride() {
+      try {
+        const hostname = window.location.hostname || 'localhost';
+        const shouldUseProduction = hostname !== 'localhost' && hostname !== '127.0.0.1';
+        if (!shouldUseProduction) return;
+
+        const stored = window.localStorage.getItem(STORAGE_KEYS.API_CONFIG);
+        if (!stored) return;
+
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object' && parsed.environment === 'development') {
+          const corrected = Object.assign({}, parsed, { environment: 'production' });
+          window.localStorage.setItem(STORAGE_KEYS.API_CONFIG, JSON.stringify(corrected));
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
     setEnvironment(environment) {
       if (!this.settings.environments[environment]) {
         environment = this._detectEnvironment();
@@ -97,7 +130,7 @@
 
     _detectEnvironment() {
       const hostname = window.location.hostname || 'localhost';
-      if (hostname === 'localhost' || hostname === '127.0.0.1') return 'development';
+      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '127.0.0.1') return 'development';
       if (hostname.includes('staging') || hostname.includes('test')) return 'testing';
       return 'production';
     }
