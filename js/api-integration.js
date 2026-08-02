@@ -888,9 +888,19 @@
     }
 
     _buildUrl(url, params) {
-      const baseUrl = this.config.getBaseUrl();
       const absolute = /^https?:\/\//i.test(url);
-      const requestUrl = absolute ? url : `${baseUrl.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+      if (absolute) {
+        const requestUrl = url;
+        if (!params || Object.keys(params).length === 0) return requestUrl;
+        const queryString = Object.keys(params)
+          .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+          .join('&');
+        return `${requestUrl}${requestUrl.includes('?') ? '&' : '?'}${queryString}`;
+      }
+
+      const currentOrigin = window.location.origin || '';
+      const normalizedBase = currentOrigin ? `${currentOrigin}/api/v1` : '/api/v1';
+      const requestUrl = `${normalizedBase.replace(/\/$/, '')}/${String(url || '').replace(/^\//, '')}`;
       if (!params || Object.keys(params).length === 0) return requestUrl;
       const queryString = Object.keys(params)
         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
