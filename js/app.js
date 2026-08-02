@@ -1274,7 +1274,16 @@ function getSharedNavClassNames(sidebar) {
   };
 }
 
+function isAuthFlowPage() {
+  const pathname = (window.location.pathname || '/').replace(/\\/g, '/').toLowerCase();
+  return pathname.includes('/auth/') || pathname.endsWith('/auth');
+}
+
 function applySharedNavigation() {
+  if (isAuthFlowPage()) {
+    return;
+  }
+
   const currentUrl = new URL(window.location.href);
   const currentPath = currentUrl.pathname.replace(/\/$/, '');
 
