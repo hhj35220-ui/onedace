@@ -1276,7 +1276,14 @@ function getSharedNavClassNames(sidebar) {
 
 function isAuthFlowPage() {
   const pathname = (window.location.pathname || '/').replace(/\\/g, '/').toLowerCase();
-  return pathname.includes('/auth/') || pathname.endsWith('/auth');
+  const hasLandingShell = document.querySelector('.landing-page, .auth-sidebar, .profile-setup-page, .workspace-page') || document.body.classList.contains('landing-page');
+
+  return pathname.includes('/auth/') ||
+    pathname.endsWith('/auth') ||
+    pathname === '/' ||
+    pathname === '/index' ||
+    pathname === '/index.html' ||
+    hasLandingShell;
 }
 
 function applySharedNavigation() {
