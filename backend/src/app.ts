@@ -10,20 +10,27 @@ import { globalRateLimiter } from './middleware/rateLimit.middleware';
 import routes from './routes';
 
 function resolveFrontendRoot(): string {
+  // Prefer the project root (sibling of the backend folder) where index.html lives
+  // but fall back to other reasonable locations so this works in dev and production.
   const candidates = [
-    path.resolve(process.cwd(), '..'),
-    path.resolve(process.cwd(), '..', '..'),
-    path.resolve(__dirname, '..', '..', '..'),
-    path.resolve(__dirname, '..', '..')
+    path.resolve(process.cwd(), '..'), // when backend cwd is `backend/`, frontend is one level up
+    path.resolve(process.cwd()), // when backend is run from project root
+    path.resolve(__dirname, '..', '..'), // compiled runtime locations
+    path.resolve(__dirname, '..')
   ];
 
   for (const candidate of candidates) {
-    if (existsSync(path.join(candidate, 'index.html'))) {
-      return candidate;
+    try {
+      if (existsSync(path.join(candidate, 'index.html'))) {
+        return candidate;
+      }
+    } catch (e) {
+      // ignore and try next candidate
     }
   }
 
-  return path.resolve(process.cwd(), '..');
+  // As a last resort, use the current working directory.
+  return path.resolve(process.cwd());
 }
 
 // Create the Express application instance.
@@ -39,8 +46,9 @@ app.use(morgan('combined'));
 // Security middleware and CORS configuration.
 app.use(...securityMiddleware);
 
-// Global rate limiting should be applied before body parsing and route handlers.
-app.use(globalRateLimiter);
+// Apply global rate limiting only to API routes so static assets aren't blocked.
+// This prevents the rate limiter from returning JSON error responses for JS/CSS files.
+// Keep rate limiting active for API endpoints.
 
 // Response compression for smaller payloads.
 app.use(compression());
@@ -51,16 +59,23 @@ app.use(express.json({ limit: '10mb' }));
 // Parse URL-encoded bodies.
 app.use(express.urlencoded({ extended: true }));
 
-// Serve the frontend static files from the sibling frontend directory.
+// Serve the frontend static files from the resolved frontend root.
+// Static assets (CSS/JS/images/fonts) must be served directly so the browser can load the SPA.
 app.use(express.static(frontendRoot, {
   index: 'index.html',
   redirect: false,
+  extensions: ['html'],
   maxAge: 0,
   immutable: false,
   setHeaders: (res: Response) => {
+    // Prevent the API rate limiter from interfering with asset requests by ensuring
+    // they are not routed through API middleware. We also add no-cache headers
+    // for local development so edits surface immediately.
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+    // Provide correct MIME handling hints for fonts/images when necessary
+    return res;
   }
 }));
 
@@ -79,19 +94,14 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// API versioned routes.
+// API versioned routes. Apply global rate limiter only to API endpoints.
+app.use('/api', globalRateLimiter);
 app.use('/api', routes);
 
-// Fallback for client-side routes and unknown pages.
-app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('/api') || path.extname(req.path)) {
-    return next();
-  }
-
-  res.sendFile(path.join(frontendRoot, 'index.html'));
-});
-
 // 404 handler for unknown routes.
+// Let express.static() serve any existing HTML files and assets. If a
+// request doesn't match a static file or API route, fall through to this
+// 404 handler which returns a standard Not Found error.
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   next(new AppError('Resource not found', 404));
 });

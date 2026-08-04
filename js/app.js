@@ -328,7 +328,7 @@ class AuthManager {
         message: payload.message || 'Account created successfully. Please sign in.'
       };
     } catch (error) {
-      const message = error && error.message ? error.message : 'Unable to create account.';
+      const message = error && (error.message || error.detail) ? (error.message || error.detail) : 'Unable to create account.';
       return { success: false, message };
     }
   }

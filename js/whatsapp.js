@@ -16,126 +16,8 @@ const WA_STORAGE_KEYS = {
   WHATSAPP_MESSAGES: 'op_wa_messages',
   WHATSAPP_LABELS: 'op_wa_labels'
 };
-
-// ============================================
-// Sample Data (matches the photo exactly)
-// ============================================
-
-const WA_SAMPLE_CONTACTS = [
-  { id: 'wa_c1', name: 'Sarah Johnson', phone: '+1 (555) 987-6543', email: 'sarah.j@example.com', avatar: 'SJ', color: '#EC4899', location: 'New York, USA', timezone: 'EST', leadScore: 85, status: 'Active Customer', totalOrders: 12, totalSpent: 1250.00, tags: ['customer-support', 'vip'] },
-  { id: 'wa_c2', name: 'Michael Brown', phone: '+1 (555) 234-5678', email: 'michael.b@example.com', avatar: 'MB', color: '#F97316', location: 'Los Angeles, USA', timezone: 'PST', leadScore: 72, status: 'Active Customer', totalOrders: 8, totalSpent: 890.00, tags: ['sales'] },
-  { id: 'wa_c3', name: 'Emily Davis', phone: '+1 (555) 345-6789', email: 'emily.d@example.com', avatar: 'ED', color: '#EAB308', location: 'Chicago, USA', timezone: 'CST', leadScore: 91, status: 'Active Customer', totalOrders: 24, totalSpent: 3200.00, tags: ['order-status', 'vip'] },
-  { id: 'wa_c4', name: 'David Wilson', phone: '+1 (555) 456-7890', email: 'david.w@example.com', avatar: 'DW', color: '#22C55E', location: 'Miami, USA', timezone: 'EST', leadScore: 68, status: 'Inactive', totalOrders: 3, totalSpent: 150.00, tags: ['returns'] },
-  { id: 'wa_c5', name: 'Jessica Taylor', phone: '+1 (555) 567-8901', email: 'jessica.t@example.com', avatar: 'JT', color: '#06B6D4', location: 'Seattle, USA', timezone: 'PST', leadScore: 88, status: 'Active Customer', totalOrders: 15, totalSpent: 2100.00, tags: ['sales'] },
-  { id: 'wa_c6', name: 'Daniel Martinez', phone: '+1 (555) 678-9012', email: 'daniel.m@example.com', avatar: 'DM', color: '#6366F1', location: 'Austin, USA', timezone: 'CST', leadScore: 55, status: 'Lead', totalOrders: 0, totalSpent: 0, tags: ['support'] },
-  { id: 'wa_c7', name: 'Ashley Anderson', phone: '+1 (555) 789-0123', email: 'ashley.a@example.com', avatar: 'AA', color: '#8B5CF6', location: 'Denver, USA', timezone: 'MST', leadScore: 79, status: 'Active Customer', totalOrders: 6, totalSpent: 540.00, tags: ['customer-support'] },
-  { id: 'wa_c8', name: 'Robert Thomas', phone: '+1 (555) 890-1234', email: 'robert.t@example.com', avatar: 'RT', color: '#F43F5E', location: 'Boston, USA', timezone: 'EST', leadScore: 62, status: 'Inactive', totalOrders: 2, totalSpent: 95.00, tags: ['support'] },
-];
-
-const WA_SAMPLE_CONVERSATIONS = [
-  { id: 'wa_conv_1', contactId: 'wa_c1', unread: 2, tag: 'customer-support', lastMessage: 'Hi, I have a question about your product...', timestamp: new Date(Date.now() - 15 * 60000).toISOString(), status: 'open', assignedTo: 'tm1' },
-  { id: 'wa_conv_2', contactId: 'wa_c2', unread: 1, tag: 'sales', lastMessage: 'Thanks for the information!', timestamp: new Date(Date.now() - 45 * 60000).toISOString(), status: 'open', assignedTo: 'tm1' },
-  { id: 'wa_conv_3', contactId: 'wa_c3', unread: 2, tag: 'order-status', lastMessage: 'When will my order be delivered?', timestamp: new Date(Date.now() - 2 * 3600000).toISOString(), status: 'open', assignedTo: 'tm2' },
-  { id: 'wa_conv_4', contactId: 'wa_c4', unread: 1, tag: 'returns', lastMessage: 'Can I return an item?', timestamp: new Date(Date.now() - 3 * 3600000).toISOString(), status: 'open', assignedTo: 'tm1' },
-  { id: 'wa_conv_5', contactId: 'wa_c5', unread: 0, tag: 'sales', lastMessage: 'Do you have this in size M?', timestamp: new Date(Date.now() - 5 * 3600000).toISOString(), status: 'open', assignedTo: 'tm3' },
-  { id: 'wa_conv_6', contactId: 'wa_c6', unread: 2, tag: 'support', lastMessage: 'Payment issue', timestamp: new Date(Date.now() - 8 * 3600000).toISOString(), status: 'open', assignedTo: 'tm1' },
-  { id: 'wa_conv_7', contactId: 'wa_c7', unread: 0, tag: 'customer-support', lastMessage: 'Thank you so much!', timestamp: new Date(Date.now() - 12 * 3600000).toISOString(), status: 'resolved', assignedTo: 'tm2' },
-  { id: 'wa_conv_8', contactId: 'wa_c8', unread: 1, tag: 'support', lastMessage: 'I need help with my account', timestamp: new Date(Date.now() - 24 * 3600000).toISOString(), status: 'open', assignedTo: 'tm1' },
-];
-
-const WA_SAMPLE_MESSAGES = {
-  'wa_conv_1': [
-    { id: 'm1', type: 'received', text: 'Hi! I have a question about your product.', time: '10:20 AM', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'Hello Sarah! 👋\n\nHow can I help you today?', time: '10:21 AM', status: 'read' },
-    { id: 'm3', type: 'received', text: 'I would like to know if you have this in black color and what\'s the delivery time to New York?', time: '10:22 AM', status: 'read' },
-    { id: 'm4', type: 'sent', text: 'Yes, we have it in black color ✅\nDelivery time to New York is 2-3 business days.', time: '10:23 AM', status: 'read' },
-  ],
-  'wa_conv_2': [
-    { id: 'm1', type: 'received', text: 'Thanks for the information!', time: '9:41 AM', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'You\'re welcome! Let me know if you need anything else.', time: '9:42 AM', status: 'delivered' },
-  ],
-  'wa_conv_3': [
-    { id: 'm1', type: 'received', text: 'When will my order be delivered?', time: '8:15 AM', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'Hi Emily! Your order #ORD-1024 is expected to arrive tomorrow.', time: '8:16 AM', status: 'read' },
-    { id: 'm3', type: 'received', text: 'Great, thank you!', time: '8:17 AM', status: 'read' },
-  ],
-  'wa_conv_4': [
-    { id: 'm1', type: 'received', text: 'Can I return an item?', time: '8:32 AM', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'Of course! You can return items within 30 days of purchase.', time: '8:33 AM', status: 'read' },
-  ],
-  'wa_conv_5': [
-    { id: 'm1', type: 'received', text: 'Do you have this in size M?', time: 'Yesterday', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'Yes, size M is available! Would you like me to reserve one for you?', time: 'Yesterday', status: 'read' },
-  ],
-  'wa_conv_6': [
-    { id: 'm1', type: 'received', text: 'I\'m having a payment issue with my order.', time: 'Yesterday', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'I\'m sorry to hear that. Can you share your order number so I can check?', time: 'Yesterday', status: 'read' },
-  ],
-  'wa_conv_7': [
-    { id: 'm1', type: 'received', text: 'Thank you so much for your help!', time: 'Yesterday', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'You\'re very welcome, Ashley! Have a great day! 😊', time: 'Yesterday', status: 'read' },
-  ],
-  'wa_conv_8': [
-    { id: 'm1', type: 'received', text: 'I need help with my account settings.', time: 'Apr 28', status: 'read' },
-    { id: 'm2', type: 'sent', text: 'I\'d be happy to help. What specifically would you like to change?', time: 'Apr 28', status: 'read' },
-  ],
-};
-
-const WA_SAMPLE_TEMPLATES = [
-  { id: 'wa_t1', name: 'Welcome Message', category: 'Greeting', content: 'Hello {{name}}! 👋 Welcome to Acme Solutions. How can we help you today?', variables: ['name'] },
-  { id: 'wa_t2', name: 'Order Confirmation', category: 'Transactional', content: 'Hi {{name}}, your order #{{orderId}} has been confirmed! Expected delivery: {{date}}.', variables: ['name', 'orderId', 'date'] },
-  { id: 'wa_t3', name: 'Shipping Update', category: 'Transactional', content: 'Great news {{name}}! Your order #{{orderId}} has been shipped and will arrive on {{date}}.', variables: ['name', 'orderId', 'date'] },
-  { id: 'wa_t4', name: 'Feedback Request', category: 'Engagement', content: 'Hi {{name}}, we hope you enjoyed your purchase! Would you mind leaving us a quick review?', variables: ['name'] },
-  { id: 'wa_t5', name: 'Abandoned Cart', category: 'Marketing', content: 'Hey {{name}}, you left something in your cart! Complete your order now and get 10% off with code SAVE10.', variables: ['name'] },
-  { id: 'wa_t6', name: 'Appointment Reminder', category: 'Transactional', content: 'Reminder: You have an appointment scheduled for {{date}} at {{time}}. See you then!', variables: ['date', 'time'] },
-];
-
-const WA_SAMPLE_QUICK_REPLIES = [
-  { id: 'wa_qr1', shortcut: '/thanks', text: 'Thank you for reaching out! We appreciate your message and will get back to you shortly.' },
-  { id: 'wa_qr2', shortcut: '/hours', text: 'Our business hours are Monday-Friday 9AM-6PM EST and Saturday 10AM-4PM EST.' },
-  { id: 'wa_qr3', shortcut: '/shipping', text: 'We offer free shipping on orders over $50. Standard delivery takes 3-5 business days.' },
-  { id: 'wa_qr4', shortcut: '/return', text: 'You can return items within 30 days of purchase. Please ensure items are in original condition.' },
-  { id: 'wa_qr5', shortcut: '/discount', text: 'Use code WELCOME15 for 15% off your first order!' },
-  { id: 'wa_qr6', shortcut: '/support', text: 'For urgent support, please call us at +1 (555) 123-4567 or email support@acme.com' },
-];
-
-const WA_SAMPLE_CATALOG = [
-  { id: 'wa_prod1', name: 'Premium Wireless Headphones', price: 149.99, stock: 45, category: 'Electronics', image: 'ph-headphones' },
-  { id: 'wa_prod2', name: 'Smart Watch Pro', price: 299.99, stock: 23, category: 'Electronics', image: 'ph-watch' },
-  { id: 'wa_prod3', name: 'Organic Cotton T-Shirt', price: 29.99, stock: 120, category: 'Clothing', image: 'ph-t-shirt' },
-  { id: 'wa_prod4', name: 'Leather Wallet', price: 59.99, stock: 67, category: 'Accessories', image: 'ph-wallet' },
-  { id: 'wa_prod5', name: 'Bluetooth Speaker', price: 79.99, stock: 34, category: 'Electronics', image: 'ph-speaker-high' },
-  { id: 'wa_prod6', name: 'Running Shoes', price: 119.99, stock: 18, category: 'Footwear', image: 'ph-sneaker' },
-];
-
-const WA_SAMPLE_SETTINGS = {
-  autoReply: true,
-  readReceipts: true,
-  typingIndicators: true,
-  notifications: true,
-  soundEnabled: true,
-  businessHours: { start: '09:00', end: '18:00', timezone: 'EST' },
-  awayMessage: 'Thank you for your message! We are currently away and will respond during business hours.',
-  greetingMessage: 'Hello! Welcome to Acme Solutions. How can we help you today?',
-};
-
-const WA_SAMPLE_INTEGRATION = {
-  connected: true,
-  phoneNumber: '+1 (555) 123-4567',
-  businessName: 'Acme Solutions',
-  businessDescription: 'Your trusted partner for premium products',
-  apiKey: 'wa_api_xxxxxxxxxxxx',
-  webhookUrl: 'https://api.acme.com/webhooks/whatsapp',
-  lastSync: new Date().toISOString(),
-};
-
-const WA_SAMPLE_LABELS = [
-  { id: 'lbl_cs', name: 'Customer Support', color: '#DBEAFE', textColor: '#2563EB' },
-  { id: 'lbl_vip', name: 'VIP Customer', color: '#FCE7F3', textColor: '#DB2777' },
-  { id: 'lbl_sales', name: 'Sales', color: '#EEF2FF', textColor: '#4F46E5' },
-  { id: 'lbl_urgent', name: 'Urgent', color: '#FEF2F2', textColor: '#DC2626' },
-  { id: 'lbl_follow', name: 'Follow-up', color: '#FEF3C7', textColor: '#D97706' },
-];
+// No sample/demo data: the UI will use live backend data only.
+// Local storage keys are initialized empty; data is populated by API calls below.
 
 // ============================================
 // WhatsApp Storage Manager
@@ -425,10 +307,20 @@ class WhatsAppApp {
 
     await this.loadBackendStatus();
 
-    // Select first conversation by default
-    const conversations = this.storage.getConversations();
-    if (conversations.length > 0) {
-      this.selectConversation(conversations[0].id);
+    // If connected load live data; otherwise show empty state or QR
+    const status = this.session?.status || null;
+    const sessionKey = this.session?.sessionKey ?? null;
+    if (status === 'CONNECTED' && sessionKey) {
+      await this.fetchAndStoreLiveData(sessionKey);
+      this.renderConversations();
+      const conversations = this.storage.getConversations();
+      if (conversations.length > 0) {
+        this.selectConversation(conversations[0].id);
+      }
+    } else {
+      // Not connected: render conversations (will be empty) and display QR if available
+      this.renderConversations();
+      if (this.session?.qrCodeUrl) this.displayQr(this.session.qrCodeUrl);
     }
   }
 
@@ -871,12 +763,105 @@ class WhatsAppApp {
         : null;
 
       const responseData = payload && payload.data ? payload.data : null;
-      const status = responseData && responseData.data ? responseData.data.status : 'DISCONNECTED';
+      const sessionData = responseData && responseData.data ? responseData.data : null;
+      const status = sessionData?.status ?? 'DISCONNECTED';
       this.renderConnectionStatus(status);
-      this.session = responseData && responseData.data ? responseData.data : null;
+      this.session = sessionData;
     } catch (error) {
       this.renderConnectionStatus('DISCONNECTED');
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show('Unable to reach WhatsApp backend. Please try again later.', 'error');
+      }
     }
+  }
+
+  // Helper to call API and return data.data or throw
+  async apiGet(path) {
+    if (!window.OP || !window.OP.apiIntegration) throw new Error('API integration unavailable');
+    await window.OP.apiIntegration.init();
+    const res = await window.OP.apiIntegration.get(path);
+    if (!res || !res.data) throw new Error('Invalid API response');
+    return res.data.data ?? res.data;
+  }
+
+  async fetchAndStoreLiveData(sessionKey) {
+    try {
+      const orgSession = this.session;
+
+      // Contacts
+      const contacts = await this.apiGet(`/platforms/whatsapp/contacts?sessionKey=${encodeURIComponent(sessionKey)}`) || [];
+      const mappedContacts = (contacts || []).map(c => ({
+        id: 'wa_' + (c.externalContactId ?? c.id ?? (c.phoneNumber || '').replace(/\D+/g, '')),
+        name: c.name ?? c.pushName ?? c.displayName ?? (c.phoneNumber ?? ''),
+        phone: c.phoneNumber ?? '',
+        avatar: c.profilePictureUrl ?? '',
+        color: c.color ?? '#6366f1',
+        createdAt: c.createdAt ?? new Date().toISOString(),
+      }));
+      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(mappedContacts));
+
+      // Chats -> conversations
+      const chats = await this.apiGet(`/platforms/whatsapp/chats?sessionKey=${encodeURIComponent(sessionKey)}`) || [];
+      const conversations = (chats || []).map(ch => {
+        const externalChatId = ch.externalChatId ?? ch.id ?? ch.chatId;
+        const contactId = 'wa_' + (ch.externalContactId ?? ch.contactId ?? (ch.phoneNumber || '').replace(/\D+/g, ''));
+        return {
+          id: externalChatId ?? 'chat_' + Date.now(),
+          contactId,
+          unread: ch.unreadCount ?? ch.unread ?? 0,
+          tag: ch.tag ?? '',
+          lastMessage: ch.lastMessage ?? ch.preview ?? '',
+          timestamp: ch.lastMessageAt ?? ch.updatedAt ?? new Date().toISOString(),
+          status: ch.status ?? 'open'
+        };
+      });
+      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
+
+      // Messages: for each conversation fetch recent messages and store
+      const messagesStore = {};
+      for (const conv of conversations) {
+        try {
+          const msgsResp = await this.apiGet(`/platforms/whatsapp/messages?sessionKey=${encodeURIComponent(sessionKey)}&chatId=${encodeURIComponent(conv.id)}&limit=50`);
+          const msgs = (msgsResp && msgsResp.messages) ? msgsResp.messages : msgsResp || [];
+          messagesStore[conv.id] = (msgs || []).map(m => ({
+            id: m.id ?? m.externalMessageId ?? 'm_' + Date.now(),
+            type: m.direction === 'OUTGOING' || m.direction === 'OUT' || m.fromMe ? 'sent' : 'received',
+            text: m.content ?? m.body ?? m.text ?? '',
+            time: m.sentAt ? new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (m.time || ''),
+            status: (m.status && m.status.toLowerCase()) || (m.direction === 'OUTGOING' ? 'sent' : 'read')
+          }));
+        } catch (err) {
+          // If messages fail for a conversation, skip silently (no sample fallback)
+          messagesStore[conv.id] = [];
+        }
+      }
+      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(messagesStore));
+
+    } catch (err) {
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Failed to load WhatsApp data from backend', 'error');
+    }
+  }
+
+  displayQr(qrData) {
+    // qrData may be a data URL or a plain string (svg/png/base64). Insert into account card if present.
+    const accountCard = document.querySelector('.wa-account-card');
+    if (!accountCard) return;
+    let container = accountCard.querySelector('.wa-qr-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'wa-qr-container';
+      container.style.marginTop = '12px';
+      accountCard.appendChild(container);
+    }
+    // determine data type
+    let src = qrData;
+    if (!/^data:/.test(qrData) && qrData && qrData.length > 0) {
+      // backend may return base64 without data: prefix
+      if (/^([A-Za-z0-9+/=\n])+$/m.test(qrData.replace(/\s+/g, ''))) {
+        src = 'data:image/png;base64,' + qrData.replace(/\s+/g, '');
+      }
+    }
+    container.innerHTML = `<img src="${src}" alt="WhatsApp QR" style="width:160px;height:160px;object-fit:contain;border-radius:6px;" />`;
   }
 
   async connectSession() {
@@ -925,11 +910,11 @@ class WhatsAppApp {
     }
 
     if (accountName) {
-      accountName.textContent = this.session?.organizationId ? 'Organization Session' : 'Acme Solutions';
+      accountName.textContent = this.session?.organizationId ? 'Organization Session' : (this.session ? 'WhatsApp account' : 'Not connected');
     }
 
     if (accountPhone) {
-      accountPhone.textContent = this.session?.sessionKey ? this.session.sessionKey : '+1 (555) 123-4567';
+      accountPhone.textContent = this.session?.sessionKey ? this.session.sessionKey : '';
     }
   }
 

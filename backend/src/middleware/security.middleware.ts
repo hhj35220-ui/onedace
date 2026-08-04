@@ -3,7 +3,20 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { config } from '../config/env';
 
-const allowedOrigins = config.CORS_ORIGIN.split(',').map((origin) => origin.trim());
+const allowedOrigins = config.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean);
+const additionalAllowedOrigins = [
+  'https://oneplacee.onrender.com',
+  'https://www.oneplacee.onrender.com'
+];
+const normalizedAllowedOrigins = new Set([...allowedOrigins, ...additionalAllowedOrigins]);
+
+function isAllowedOrigin(origin: string): boolean {
+  if (normalizedAllowedOrigins.has(origin)) {
+    return true;
+  }
+
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
 
 export const securityMiddleware: RequestHandler[] = [
   helmet({
@@ -25,7 +38,7 @@ export const securityMiddleware: RequestHandler[] = [
   }),
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin) || origin === 'http://localhost:3000') {
+      if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }

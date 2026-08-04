@@ -862,7 +862,15 @@
     }
 
     _applyErrorInterceptors(error) {
-      return this.errorInterceptors.reduce((acc, interceptor) => interceptor(acc), error);
+      return this.errorInterceptors.reduce((acc, interceptor) => {
+        if (acc && typeof acc.then === 'function') {
+          return acc.then(
+            (resolved) => Promise.resolve(interceptor(resolved)),
+            (rejected) => Promise.resolve(interceptor(rejected))
+          );
+        }
+        return Promise.resolve(interceptor(acc));
+      }, Promise.resolve(error));
     }
 
     _createAbortSignal(requestId, timeout) {
@@ -926,7 +934,7 @@
 
       const fetchOptions = {
         method: finalRequest.method.toUpperCase(),
-        headers: finalRequest.headers,
+        headers: Object.assign({}, this.defaultHeaders, finalRequest.headers),
         credentials: finalRequest.credentials,
         signal
       };
@@ -946,7 +954,23 @@
         const response = await fetch(url, fetchOptions);
         this.abortControllers.delete(requestId);
         if (!response.ok) {
+          const contentType = response.headers.get('Content-Type') || '';
           const normalizedError = this.errorManager.normalize(response);
+          if (contentType.includes('application/json')) {
+            const responseText = await response.text().catch(() => null);
+            if (responseText) {
+              try {
+                const parsedError = JSON.parse(responseText);
+                if (parsedError && typeof parsedError === 'object') {
+                  normalizedError.message = parsedError.message || parsedError.error || normalizedError.message;
+                  normalizedError.detail = parsedError.detail || normalizedError.detail;
+                  normalizedError.code = parsedError.code || normalizedError.code;
+                }
+              } catch (err) {
+                // ignore JSON parse failures and preserve default normalized message
+              }
+            }
+          }
           throw normalizedError;
         }
         const contentType = response.headers.get('Content-Type') || '';
@@ -956,7 +980,11 @@
       } catch (error) {
         this.abortControllers.delete(requestId);
         const normalized = this.errorManager.normalize(error);
-        return this._applyErrorInterceptors(normalized);
+        const result = this._applyErrorInterceptors(normalized);
+        if (result && typeof result.then === 'function') {
+          return result;
+        }
+        return Promise.reject(result);
       }
     }
 

@@ -1,3 +1,7 @@
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { spawnSync } from 'child_process';
 import { create as createWppConnect, type Whatsapp as WppConnectWhatsapp } from '@wppconnect-team/wppconnect';
 import { prisma } from '../../../config/database';
 import { log } from '../../../config/logger';
@@ -18,6 +22,10 @@ type RuntimeClient = WppConnectWhatsapp & {
   getAllGroups?: (withNewMessagesOnly?: boolean) => Promise<unknown[]>;
   getMessages?: (chatId: string, params?: Record<string, unknown>) => Promise<unknown[]>;
   getSessionTokenBrowser?: () => Promise<unknown>;
+  getWid?: () => Promise<string>;
+  getHostDevice?: () => Promise<{ phone?: { number?: string | null } | null } | unknown>;
+  isAuthenticated?: () => Promise<boolean>;
+  isMainReady?: () => Promise<boolean>;
 };
 
 type SessionSnapshot = {
@@ -37,30 +45,94 @@ export class WhatsAppRuntimeService {
   private sessions = new Map<string, SessionSnapshot>();
   private disposers = new Map<string, Disposer[]>();
   private reconnectAttempts = new Map<string, number>();
+  private sessionDataDirs = new Map<string, string>();
+  private manuallyStopped = new Set<string>();
   private readonly maxReconnectAttempts = 5;
   private readonly reconnectDelayMs = 5000;
 
   async startSession(sessionKey: string): Promise<{ sessionKey: string; status: string }> {
-    await this.stopSession(sessionKey).catch(() => undefined);
+    const existingStatus = this.sessions.get(sessionKey)?.status;
+    if (this.clients.has(sessionKey) && existingStatus && existingStatus !== 'DISCONNECTED' && existingStatus !== 'ERROR') {
+      return { sessionKey, status: existingStatus };
+    }
+
+    this.manuallyStopped.delete(sessionKey);
+    const sessionFolderName = this.getSessionFolderName(sessionKey);
+    const tokenFolder = path.resolve(process.cwd(), 'wppconnect-tokens');
+    const userDataDir = path.resolve(os.tmpdir(), `oneplace-whatsapp-${sessionFolderName}-${Date.now()}`);
+
+    await this.killStaleSessionBrowsers(sessionKey).catch(() => undefined);
+    await this.cleanupOldSessionDataDirs(sessionKey).catch(() => undefined);
+
+    fs.mkdirSync(tokenFolder, { recursive: true });
+    fs.mkdirSync(userDataDir, { recursive: true });
+    this.sessionDataDirs.set(sessionKey, userDataDir);
+
+    let runtimeClient: RuntimeClient | null = null;
 
     try {
       const client = (await createWppConnect({
         session: sessionKey,
-        headless: true,
+        headless: 'shell',
         logQR: false,
         autoClose: 0,
+        waitForLogin: false,
+        disableWelcome: true,
+        updatesLog: false,
+        folderNameToken: tokenFolder,
+        puppeteerOptions: {
+          userDataDir,
+          args: [
+            '--log-level=3',
+            '--no-default-browser-check',
+            '--disable-site-isolation-trials',
+            '--no-experiments',
+            '--ignore-gpu-blacklist',
+            '--ignore-certificate-errors',
+            '--ignore-certificate-errors-spki-list',
+            '--disable-gpu',
+            '--disable-extensions',
+            '--disable-default-apps',
+            '--enable-features=NetworkService',
+            '--disable-setuid-sandbox',
+            '--no-sandbox',
+            '--disable-webgl',
+            '--disable-infobars',
+            '--window-position=0,0',
+            '--disable-threaded-animation',
+            '--disable-threaded-scrolling',
+            '--disable-in-process-stack-traces',
+            '--disable-histogram-customizer',
+            '--disable-gl-extensions',
+            '--disable-composited-antialiasing',
+            '--disable-canvas-aa',
+            '--disable-3d-apis',
+            '--disable-accelerated-2d-canvas',
+            '--disable-accelerated-jpeg-decoding',
+            '--disable-accelerated-mjpeg-decode',
+            '--disable-app-list-dismiss-on-blur',
+            '--disable-accelerated-video-decode',
+            '--disable-dev-shm-usage',
+            '--autoplay-policy=no-user-gesture-required',
+            '--disable-blink-features=AutomationControlled',
+          ],
+        },
         statusFind: async (status: string) => {
-          await this.updateSessionState(sessionKey, { status: this.normalizeStatus(status) });
+          const normalizedStatus = this.normalizeStatus(status);
+          await this.recordRuntimeStatus(sessionKey, normalizedStatus, runtimeClient);
         },
         catchQR: async (qrCode: string) => {
           await this.updateSessionState(sessionKey, { status: 'QR_READY', qrCodeUrl: qrCode, lastError: null });
         },
       })) as RuntimeClient;
 
+      runtimeClient = client;
+
       const disposers: Disposer[] = [];
 
       const stateChangeHandler = client.onStateChange?.((state: unknown) => {
-        void this.updateSessionState(sessionKey, { status: this.normalizeStatus(String(state)) });
+        const normalizedStatus = this.normalizeStatus(String(state));
+        void this.recordRuntimeStatus(sessionKey, normalizedStatus, client);
       });
       if (stateChangeHandler) disposers.push(stateChangeHandler);
 
@@ -102,13 +174,17 @@ export class WhatsAppRuntimeService {
       return { sessionKey, status: 'STARTING' };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unable to start session';
+      const stack = error instanceof Error ? error.stack : undefined;
       await this.updateSessionState(sessionKey, { status: 'ERROR', lastError: errorMessage });
-      log.error('Failed to start WhatsApp session', { sessionKey, error: errorMessage });
+      log.error('Failed to start WhatsApp session', { sessionKey, error: errorMessage, stack });
+      await this.cleanupFailedSession(sessionKey).catch(() => undefined);
       return { sessionKey, status: 'ERROR' };
     }
   }
 
   async stopSession(sessionKey: string): Promise<void> {
+    this.manuallyStopped.add(sessionKey);
+
     const client = this.clients.get(sessionKey);
     if (client) {
       await client.close?.().catch(() => undefined);
@@ -126,6 +202,7 @@ export class WhatsAppRuntimeService {
     this.sessions.delete(sessionKey);
     this.reconnectAttempts.delete(sessionKey);
 
+    await this.cleanupSessionDataDir(sessionKey).catch(() => undefined);
     await this.updateSessionState(sessionKey, { status: 'DISCONNECTED', qrCodeUrl: null, lastError: null }).catch(() => undefined);
   }
 
@@ -282,6 +359,46 @@ export class WhatsAppRuntimeService {
     await this.stopSession(sessionKey);
   }
 
+  private async recordRuntimeStatus(sessionKey: string, status: string, client: RuntimeClient | null): Promise<void> {
+    if (status === 'CONNECTED') {
+      const authEvidence = await this.resolveAuthEvidence(client);
+      if (!authEvidence.hasEvidence) {
+        log.info('Deferring CONNECTED promotion until WhatsApp authentication evidence is available', {
+          sessionKey,
+          status,
+          authenticated: authEvidence.authenticated,
+          ready: authEvidence.ready,
+          phoneNumber: authEvidence.phoneNumber,
+        });
+        await this.updateSessionState(sessionKey, { status: 'CONNECTING', lastError: null });
+        return;
+      }
+
+      await this.updateSessionState(sessionKey, {
+        status: 'CONNECTED',
+        phoneNumber: authEvidence.phoneNumber ?? null,
+        lastError: null,
+      });
+      return;
+    }
+
+    await this.updateSessionState(sessionKey, { status });
+  }
+
+  private async resolveAuthEvidence(client: RuntimeClient | null): Promise<{ hasEvidence: boolean; authenticated: boolean; ready: boolean; phoneNumber: string | null }> {
+    if (!client) {
+      return { hasEvidence: false, authenticated: false, ready: false, phoneNumber: null };
+    }
+
+    const authenticated = await client.isAuthenticated?.().catch(() => false) ?? false;
+    const ready = await client.isMainReady?.().catch(() => false) ?? false;
+    const wid = await client.getWid?.().catch(() => null) ?? null;
+    const phoneNumber = wid ? this.extractPhoneFromId(wid) : null;
+    const hasEvidence = authenticated && ready && !!wid && !!phoneNumber;
+
+    return { hasEvidence, authenticated, ready, phoneNumber };
+  }
+
   private normalizeContactId(recipient: string): string {
     if (!recipient.includes('@')) {
       return `${recipient}@c.us`;
@@ -337,6 +454,11 @@ export class WhatsAppRuntimeService {
   }
 
   private async scheduleReconnect(sessionKey: string): Promise<void> {
+    if (this.manuallyStopped.has(sessionKey)) {
+      log.info('Skipping reconnect because session was manually stopped', { sessionKey });
+      return;
+    }
+
     const attempts = this.reconnectAttempts.get(sessionKey) ?? 0;
     if (attempts >= this.maxReconnectAttempts) {
       log.warn('Max reconnect attempts reached for WhatsApp session', { sessionKey, attempts });
@@ -354,6 +476,138 @@ export class WhatsAppRuntimeService {
         void this.startSession(sessionKey);
       }
     }, delay);
+  }
+
+  private async cleanupSessionDataDir(sessionKey: string): Promise<void> {
+    const dataDir = this.sessionDataDirs.get(sessionKey);
+    if (!dataDir) {
+      return;
+    }
+
+    this.sessionDataDirs.delete(sessionKey);
+    try {
+      if (fs.existsSync(dataDir)) {
+        await fs.promises.rm(dataDir, { recursive: true, force: true });
+      }
+    } catch (error) {
+      log.warn('Failed to cleanup WhatsApp session data directory', { sessionKey, dataDir, error: error instanceof Error ? error.message : error });
+    }
+  }
+
+  private async cleanupFailedSession(sessionKey: string): Promise<void> {
+    const sessionFolderName = this.getSessionFolderName(sessionKey);
+    const tokenFolder = path.resolve(process.cwd(), 'wppconnect-tokens', sessionFolderName);
+
+    await this.cleanupSessionDataDir(sessionKey).catch(() => undefined);
+
+    try {
+      if (fs.existsSync(tokenFolder)) {
+        await fs.promises.rm(tokenFolder, { recursive: true, force: true });
+        log.info('Removed failed WhatsApp session token directory', { sessionKey, tokenFolder });
+      }
+    } catch (error) {
+      log.warn('Failed to cleanup failed WhatsApp session token directory', { sessionKey, tokenFolder, error: error instanceof Error ? error.message : error });
+    }
+  }
+
+  private async killStaleSessionBrowsers(sessionKey: string): Promise<void> {
+    const sessionFolderName = this.getSessionFolderName(sessionKey);
+    const prefix = `oneplace-whatsapp-${sessionFolderName}-`;
+    const tempDir = os.tmpdir();
+
+    try {
+      const items = await fs.promises.readdir(tempDir, { withFileTypes: true });
+      const staleDirs = items
+        .filter((item) => item.isDirectory() && item.name.startsWith(prefix))
+        .map((item) => path.resolve(tempDir, item.name));
+
+      if (!staleDirs.length) {
+        return;
+      }
+
+      const matchedPids = new Set<number>();
+      const searchTerm = staleDirs.map((dir) => dir.replace(/\\/g, '\\\\')).join('|');
+
+      if (process.platform === 'win32') {
+        const command = `Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -match '${searchTerm}' } | Select-Object -ExpandProperty ProcessId`;
+        const result = spawnSync('powershell.exe', ['-NoProfile', '-Command', command], { encoding: 'utf8' });
+        if (result.status === 0 && result.stdout) {
+          for (const line of result.stdout.split(/\r?\n/).map((line) => line.trim())) {
+            const pid = Number(line);
+            if (Number.isInteger(pid) && pid > 0) {
+              matchedPids.add(pid);
+            }
+          }
+        }
+      } else {
+        const result = spawnSync('ps', ['-ax', '-o', 'pid=,args='], { encoding: 'utf8' });
+        if (result.status === 0 && result.stdout) {
+          for (const line of result.stdout.split(/\r?\n/)) {
+            if (!line.trim()) {
+              continue;
+            }
+            const [pidString, ...args] = line.trim().split(/\s+/);
+            const pid = Number(pidString);
+            if (!Number.isInteger(pid) || pid <= 0) {
+              continue;
+            }
+            const argsString = args.join(' ');
+            if (staleDirs.some((dir) => argsString.includes(dir))) {
+              matchedPids.add(pid);
+            }
+          }
+        }
+      }
+
+      for (const pid of matchedPids) {
+        try {
+          process.kill(pid, 'SIGKILL');
+          log.info('Killed stale WhatsApp browser process', { sessionKey, pid });
+        } catch {
+          try {
+            if (process.platform === 'win32') {
+              spawnSync('taskkill', ['/F', '/T', '/PID', String(pid)], { encoding: 'utf8' });
+            }
+          } catch {
+            // Ignore kill failures
+          }
+        }
+      }
+    } catch (error) {
+      log.warn('Failed to cleanup stale WhatsApp browser processes', { sessionKey, error: error instanceof Error ? error.message : error });
+    }
+  }
+
+  private async cleanupOldSessionDataDirs(currentSessionKey: string): Promise<void> {
+    const sessionFolderName = this.getSessionFolderName(currentSessionKey);
+    const prefix = `oneplace-whatsapp-${sessionFolderName}-`;
+    try {
+      const tempDir = os.tmpdir();
+      const items = await fs.promises.readdir(tempDir, { withFileTypes: true });
+      await Promise.all(items.map(async (item) => {
+        if (!item.isDirectory()) {
+          return;
+        }
+        const itemName = item.name;
+        if (!itemName.startsWith(prefix)) {
+          return;
+        }
+
+        const itemPath = path.resolve(tempDir, itemName);
+        try {
+          await fs.promises.rm(itemPath, { recursive: true, force: true });
+          log.info('Removed stale WhatsApp session user data directory', { path: itemPath, sessionKey: currentSessionKey });
+        } catch {
+          // Directory may be locked by another process or already removed.
+        }
+      }));
+    } catch (error) {
+      log.warn('Failed to cleanup stale WhatsApp user data directories', { error: error instanceof Error ? error.message : error });
+    }
+  }
+
+  private getSessionFolderName(sessionKey: string): string {
+    return sessionKey.replace(/[^a-zA-Z0-9-_]/g, '_');
   }
 
   private async getSessionRecord(sessionKey: string): Promise<{ id: string; organizationId: string } | null> {
