@@ -13,8 +13,8 @@
 
   const DEFAULT_CONFIG = {
     environments: {
-      development: { name: 'development', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
-      testing: { name: 'testing', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      development: { name: 'development', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      testing: { name: 'testing', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
       production: { name: 'production', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: false }
     },
     environment: 'development',
@@ -63,6 +63,13 @@
       try {
         const stored = window.localStorage.getItem(STORAGE_KEYS.API_CONFIG);
         const detectedEnvironment = this._detectEnvironment();
+
+        if (detectedEnvironment === 'development') {
+          this.environment = 'development';
+          this.config = Object.assign({}, this.settings.environments.development);
+          this.backendEnabled = true;
+          return;
+        }
 
         if (!stored) {
           this.environment = detectedEnvironment;
@@ -119,8 +126,16 @@
     }
 
     setEnvironment(environment) {
+      const detectedEnvironment = this._detectEnvironment();
+      if (detectedEnvironment === 'development') {
+        this.environment = 'development';
+        this.config = Object.assign({}, this.settings.environments.development);
+        this.persist();
+        return this;
+      }
+
       if (!this.settings.environments[environment]) {
-        environment = this._detectEnvironment();
+        environment = detectedEnvironment;
       }
       this.environment = environment;
       this.config = Object.assign({}, this.settings.environments[this.environment]);
@@ -906,9 +921,12 @@
         return `${requestUrl}${requestUrl.includes('?') ? '&' : '?'}${queryString}`;
       }
 
-      const currentOrigin = window.location.origin || '';
-      const normalizedBase = currentOrigin ? `${currentOrigin}/api/v1` : '/api/v1';
-      const requestUrl = `${normalizedBase.replace(/\/$/, '')}/${String(url || '').replace(/^\//, '')}`;
+      const configuredBase = (this.config && typeof this.config.getBaseUrl === 'function' ? this.config.getBaseUrl() : '/api/v1') || '/api/v1';
+      const isAbsoluteBase = /^https?:\/\//i.test(configuredBase);
+      const normalizedBase = isAbsoluteBase
+        ? configuredBase.replace(/\/$/, '')
+        : `${window.location.origin || ''}${configuredBase}`.replace(/\/$/, '');
+      const requestUrl = `${normalizedBase}/${String(url || '').replace(/^\//, '')}`;
       if (!params || Object.keys(params).length === 0) return requestUrl;
       const queryString = Object.keys(params)
         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)

@@ -749,6 +749,17 @@ class WhatsAppApp {
   // ============================================
   // Backend integration
   // ============================================
+  getOrganizationId() {
+    const session = window.OP.auth?.getSession?.() || null;
+    const currentWorkspace = window.OP.workspace?.getCurrentWorkspace?.() || null;
+    return session?.user?.organizationId || session?.organizationId || currentWorkspace?.organizationId || null;
+  }
+
+  getSessionKey() {
+    const session = window.OP.auth?.getSession?.() || null;
+    return session?.user?.id ? `oneplace-${session.user.id}` : `oneplace-${session?.userId || `default-${Date.now()}`}`;
+  }
+
   async loadBackendStatus() {
     try {
       if (!window.OP || !window.OP.apiIntegration) {
@@ -756,14 +767,16 @@ class WhatsAppApp {
       }
 
       await window.OP.apiIntegration.init();
-      const session = window.OP.auth?.getSession?.() || null;
-      const organizationId = session?.user?.organizationId || session?.organizationId || null;
-      const payload = organizationId
-        ? await window.OP.apiIntegration.get(`/platforms/whatsapp/status?organizationId=${encodeURIComponent(organizationId)}`)
-        : null;
+      const organizationId = this.getOrganizationId();
+      if (!organizationId) {
+        this.renderConnectionStatus('DISCONNECTED');
+        return;
+      }
 
-      const responseData = payload && payload.data ? payload.data : null;
-      const sessionData = responseData && responseData.data ? responseData.data : null;
+      const sessionKey = this.getSessionKey();
+      const response = await window.OP.apiIntegration.get(`/platforms/whatsapp/status?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`);
+      const payload = response && response.data ? response.data : response;
+      const sessionData = payload && payload.data ? payload.data : payload;
       const status = sessionData?.status ?? 'DISCONNECTED';
       this.renderConnectionStatus(status);
       this.session = sessionData;
@@ -786,10 +799,15 @@ class WhatsAppApp {
 
   async fetchAndStoreLiveData(sessionKey) {
     try {
+      const organizationId = this.getOrganizationId();
+      if (!organizationId) {
+        throw new Error('Missing organization context for WhatsApp data fetch.');
+      }
+
       const orgSession = this.session;
 
       // Contacts
-      const contacts = await this.apiGet(`/platforms/whatsapp/contacts?sessionKey=${encodeURIComponent(sessionKey)}`) || [];
+      const contacts = await this.apiGet(`/platforms/whatsapp/contacts?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`) || [];
       const mappedContacts = (contacts || []).map(c => ({
         id: 'wa_' + (c.externalContactId ?? c.id ?? (c.phoneNumber || '').replace(/\D+/g, '')),
         name: c.name ?? c.pushName ?? c.displayName ?? (c.phoneNumber ?? ''),
@@ -801,7 +819,7 @@ class WhatsAppApp {
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(mappedContacts));
 
       // Chats -> conversations
-      const chats = await this.apiGet(`/platforms/whatsapp/chats?sessionKey=${encodeURIComponent(sessionKey)}`) || [];
+      const chats = await this.apiGet(`/platforms/whatsapp/chats?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`) || [];
       const conversations = (chats || []).map(ch => {
         const externalChatId = ch.externalChatId ?? ch.id ?? ch.chatId;
         const contactId = 'wa_' + (ch.externalContactId ?? ch.contactId ?? (ch.phoneNumber || '').replace(/\D+/g, ''));
@@ -821,7 +839,7 @@ class WhatsAppApp {
       const messagesStore = {};
       for (const conv of conversations) {
         try {
-          const msgsResp = await this.apiGet(`/platforms/whatsapp/messages?sessionKey=${encodeURIComponent(sessionKey)}&chatId=${encodeURIComponent(conv.id)}&limit=50`);
+          const msgsResp = await this.apiGet(`/platforms/whatsapp/messages?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}&chatId=${encodeURIComponent(conv.id)}&limit=50`);
           const msgs = (msgsResp && msgsResp.messages) ? msgsResp.messages : msgsResp || [];
           messagesStore[conv.id] = (msgs || []).map(m => ({
             id: m.id ?? m.externalMessageId ?? 'm_' + Date.now(),
@@ -872,7 +890,8 @@ class WhatsAppApp {
 
       await window.OP.apiIntegration.init();
       const session = window.OP.auth?.getSession?.() || null;
-      const organizationId = session?.user?.organizationId || session?.organizationId || null;
+      const currentWorkspace = window.OP.workspace?.getCurrentWorkspace?.() || null;
+      const organizationId = session?.user?.organizationId || session?.organizationId || currentWorkspace?.organizationId || null;
       if (!organizationId) {
         throw new Error('No organization selected.');
       }

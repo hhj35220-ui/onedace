@@ -15,6 +15,7 @@ router.post('/refresh', authRateLimiter, asyncHandler(authController.refreshToke
 router.post('/logout', authRateLimiter, asyncHandler(authController.logout.bind(authController)));
 router.post('/forgot-password', authRateLimiter, asyncHandler(authController.forgotPassword.bind(authController)));
 router.post('/reset-password', authRateLimiter, asyncHandler(authController.resetPassword.bind(authController)));
+router.post('/firebase', authRateLimiter, asyncHandler(authController.firebaseLogin.bind(authController)));
 router.get('/verify-email', authRateLimiter, asyncHandler(authController.verifyEmail.bind(authController)));
 router.get('/me', authenticate, asyncHandler(authController.me.bind(authController)));
 

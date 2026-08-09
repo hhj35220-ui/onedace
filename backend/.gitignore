@@ -15,6 +15,10 @@ build/
 .env.local
 .env.*.local
 
+# Local Firebase service account JSON used only for development
+oneplace-c3ac8-firebase-adminsdk-*.json
+firebase-service-account.json
+
 # Logs
 logs/
 *.log

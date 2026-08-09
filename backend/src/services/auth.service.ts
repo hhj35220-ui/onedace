@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../config/database';
 import { config } from '../config/env';
 import { log } from '../config/logger';
+import { firebaseAdminConfigStatus, firebaseAuth, firebaseAdminInitialized } from '../config/firebase';
 import { LoginDto } from '../dto/auth/login.dto';
 import { RegisterDto } from '../dto/auth/register.dto';
 import { AppError } from '../utils/AppError';
@@ -65,7 +66,23 @@ export class AuthService {
       const normalizedEmail = payload.email.toLowerCase().trim();
 
       const user = await prisma.user.findUnique({
-        where: { email: normalizedEmail }
+        where: { email: normalizedEmail },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          password: true,
+          isActive: true,
+          createdAt: true,
+          organizations: {
+            where: { deletedAt: null },
+            orderBy: { createdAt: 'asc' },
+            take: 1,
+            select: { id: true, name: true, slug: true }
+          }
+        }
       });
 
       if (!user) {
@@ -109,7 +126,9 @@ export class AuthService {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        organizationId: user.organizations[0]?.id ?? null,
+        organization: user.organizations[0] ?? null
       };
 
       return {
@@ -128,6 +147,185 @@ export class AuthService {
 
       log.error('Login failed', { error });
       throw new AppError('An unexpected error occurred while logging in', 500);
+    }
+  }
+
+  async loginWithFirebase(idToken: string) {
+    const tokenReceived = Boolean(idToken && idToken.trim().length > 0);
+    const tokenLength = idToken.trim().length;
+
+    const decodeTokenMetadata = (value: string) => {
+      try {
+        if (!value || !value.includes('.')) {
+          return null;
+        }
+
+        const parts = value.split('.');
+        if (parts.length < 2) {
+          return null;
+        }
+
+        const payloadSegment = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const padded = payloadSegment.padEnd(Math.ceil(payloadSegment.length / 4) * 4, '=');
+        const decoded = JSON.parse(Buffer.from(padded, 'base64').toString('utf8'));
+
+        return {
+          iss: decoded.iss ?? null,
+          aud: decoded.aud ?? null,
+          project_id: decoded.project_id ?? null,
+          email: decoded.email ?? null,
+          email_verified: decoded.email_verified ?? null,
+          exp: decoded.exp ?? null
+        };
+      } catch {
+        return null;
+      }
+    };
+
+    try {
+      if (!firebaseAdminInitialized || !firebaseAuth || typeof firebaseAuth.verifyIdToken !== 'function') {
+        throw new AppError('Firebase Admin is not initialized', 500);
+      }
+
+      const decodedToken = await firebaseAuth.verifyIdToken(idToken);
+      const email = String(decodedToken.email || '').toLowerCase().trim();
+
+      if (!email) {
+        throw new AppError('Firebase authenticated user does not have an email address', 400);
+      }
+
+      let user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+          isActive: true,
+          createdAt: true,
+          organizations: {
+            where: { deletedAt: null },
+            orderBy: { createdAt: 'asc' },
+            take: 1,
+            select: { id: true, name: true, slug: true }
+          }
+        }
+      });
+
+      if (!user) {
+        const emailVerified = Boolean(decodedToken.email_verified ?? decodedToken.emailVerified ?? true);
+        const fullName = String(decodedToken.name || decodedToken.displayName || '').trim();
+        const displayParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
+        const firstName = displayParts[0] || email.split('@')[0] || 'User';
+        const lastName = displayParts.slice(1).join(' ') || 'User';
+
+        if (!emailVerified) {
+          throw new AppError('Firebase email is not verified', 401);
+        }
+
+        user = await prisma.user.create({
+          data: {
+            firstName,
+            lastName,
+            email,
+            password: await bcrypt.hash(randomBytes(32).toString('hex'), 12),
+            role: 'USER',
+            isActive: true,
+            emailVerified: true,
+            avatar: decodedToken.picture || null
+          },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            isActive: true,
+            createdAt: true,
+            organizations: {
+              where: { deletedAt: null },
+              orderBy: { createdAt: 'asc' },
+              take: 1,
+              select: { id: true, name: true, slug: true }
+            }
+          }
+        });
+      }
+
+      if (user.isActive === false) {
+        throw new AppError('Invalid credentials', 401);
+      }
+
+      const accessToken = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          role: user.role
+        },
+        config.JWT_SECRET,
+        { expiresIn: '15m' }
+      );
+
+      const refreshTokenValue = randomBytes(48).toString('hex');
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      await prisma.refreshToken.create({
+        data: {
+          token: refreshTokenValue,
+          userId: user.id,
+          expiresAt
+        }
+      });
+
+      const userResponse = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+        organizationId: user.organizations[0]?.id ?? null,
+        organization: user.organizations[0] ?? null
+      };
+
+      return {
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: userResponse,
+          accessToken,
+          refreshToken: refreshTokenValue
+        }
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      const firebaseError = error as { code?: string; message?: string; stack?: string } | undefined;
+      const decodedTokenMetadata = decodeTokenMetadata(idToken);
+
+      log.error('Firebase login verification failed', {
+        tokenReceived,
+        tokenLength,
+        firebaseAdminInitialized,
+        firebaseAdminConfig: firebaseAdminConfigStatus,
+        firebaseErrorCode: firebaseError?.code ?? null,
+        firebaseErrorMessage: firebaseError?.message ?? String(error),
+        tokenIssuer: decodedTokenMetadata?.iss ?? null,
+        tokenAudience: decodedTokenMetadata?.aud ?? null,
+        tokenProjectId: decodedTokenMetadata?.project_id ?? null,
+        tokenEmail: decodedTokenMetadata?.email ?? null,
+        tokenEmailVerified: decodedTokenMetadata?.email_verified ?? null,
+        stack: firebaseError?.stack ?? undefined
+      });
+
+      const code = firebaseError?.code ? String(firebaseError.code) : 'unknown';
+      const message = firebaseError?.message ? String(firebaseError.message) : 'Firebase token verification failed';
+      const statusCode = /invalid|expired|mismatch|audience|issuer|project/i.test(code + ' ' + message) ? 401 : 500;
+
+      throw new AppError(`Firebase authentication failed: ${code} - ${message}`, statusCode);
     }
   }
 

@@ -46,6 +46,20 @@ export class AuthController {
     }
   }
 
+  async firebaseLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const idToken = String(req.body?.idToken || '').trim();
+      if (!idToken) {
+        throw new AppError('Firebase ID token is required', 400);
+      }
+
+      const result = await this.authService.loginWithFirebase(idToken);
+      res.status(200).json(result);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   async refreshToken(req: Request, res: Response, next: NextFunction) {
     try {
       const refreshToken = req.body?.refreshToken as string | undefined;

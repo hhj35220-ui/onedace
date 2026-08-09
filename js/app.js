@@ -26,8 +26,7 @@ const STORAGE_KEYS = {
 // Global runtime configuration (development-only flag)
 // Toggle `dev` to `true` for local development debugging. Default is `false`.
 // This flag is intentionally conservative and should remain `false` in production.
-// NOTE: Temporarily set to `true` for local verification. Revert to `false` before deploying.
-window.OP_CONFIG = window.OP_CONFIG || { dev: true };
+window.OP_CONFIG = window.OP_CONFIG || { dev: false };
 const APP_CACHE_BUSTER = 'op-v20260722-2';
 
 function forceFreshAssetHeaders() {
@@ -251,6 +250,45 @@ class AuthManager {
     localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(normalizedSession));
   }
 
+  ensureOrganizationWorkspace() {
+    try {
+      if (!window.OP || !window.OP.workspace) return;
+      const session = this.getSession();
+      const organizationId = session?.organizationId || session?.user?.organizationId || session?.user?.organization?.id || null;
+      if (!organizationId) return;
+
+      const workspaces = window.OP.workspace.getUserWorkspaces();
+      const existingWorkspace = workspaces.find(w => w.organizationId === organizationId);
+      if (existingWorkspace) {
+        window.OP.workspace.setCurrentWorkspace(existingWorkspace.id);
+        return;
+      }
+
+      const organizationName = session?.user?.organization?.name || `${session?.fullName || 'Workspace'}`;
+      const organizationSlug = session?.user?.organization?.slug || `workspace-${organizationId.slice(0, 8)}`;
+      const generatedUrl = String(organizationSlug).toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+      const workspace = {
+        id: organizationId,
+        name: organizationName,
+        url: generatedUrl || `workspace-${organizationId.slice(0, 8)}`,
+        size: '1-10',
+        industry: null,
+        ownerId: session.userId,
+        organizationId,
+        createdAt: new Date().toISOString(),
+        members: [{ userId: session.userId, role: 'Owner', joinedAt: new Date().toISOString() }]
+      };
+
+      const saved = window.OP.workspace.getWorkspaces() || [];
+      saved.push(workspace);
+      window.OP.workspace.saveWorkspaces(saved);
+      window.OP.workspace.setCurrentWorkspace(workspace.id);
+    } catch (error) {
+      // Keep workspace hydration best-effort and do not break auth flow.
+    }
+  }
+
   clearSession() {
     localStorage.removeItem(STORAGE_KEYS.SESSION);
     localStorage.removeItem(STORAGE_KEYS.PROFILE);
@@ -259,6 +297,7 @@ class AuthManager {
   clearAuthStorage() {
     this.clearSession();
     localStorage.removeItem(STORAGE_KEYS.AUTH_TOKENS);
+    localStorage.removeItem(STORAGE_KEYS.WORKSPACES);
     localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
     localStorage.removeItem('op_remembered_email');
     localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKSPACE);
@@ -333,57 +372,142 @@ class AuthManager {
     }
   }
 
+  async processFirebaseAuthPayload(payload, rememberMe = false, rememberedEmail = '') {
+    const authData = payload && payload.data ? payload.data : {};
+    if (!authData || !authData.user) {
+      throw new Error(payload && payload.message ? payload.message : 'Unable to sign in.');
+    }
+
+    const user = authData.user || {};
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || String(user.email || rememberedEmail || '').trim();
+    const normalizedEmail = String(user.email || rememberedEmail || '').trim().toLowerCase();
+
+    const session = {
+      userId: user.id || `user_${Math.random().toString(36).slice(2, 12)}`,
+      email: normalizedEmail,
+      fullName,
+      role: user.role || 'USER',
+      organizationId: user.organizationId || null,
+      verified: true,
+      rememberMe,
+      expiresAt: rememberMe
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      user: {
+        ...user,
+        organizationId: user.organizationId || null
+      }
+    };
+
+    const sessionPayload = {
+      ...session,
+      user
+    };
+
+    this.setSession(sessionPayload);
+    localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe);
+    localStorage.setItem('op_remembered_email', rememberMe ? normalizedEmail : '');
+    this.ensureOrganizationWorkspace();
+
+    try {
+      await this.syncCurrentUser();
+    } catch (syncError) {
+      // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
+    }
+
+    return {
+      success: true,
+      message: payload && payload.message ? payload.message : 'Signed in successfully.'
+    };
+  }
+
   // --- Sign In ---
   async signIn(email, password, rememberMe = false) {
     const normalizedEmail = String(email || '').trim().toLowerCase();
 
     try {
+      let payload;
+
+      if (window.OP && window.OP.firebase && window.OP.firebase.initialized) {
+        try {
+          const userCredential = await window.OP.firebase.signInWithEmailAndPassword(normalizedEmail, password);
+          const idToken = await userCredential.user.getIdToken();
+          await this.ensureApiIntegration();
+
+          payload = await (window.OP && window.OP.apiIntegration
+            ? window.OP.apiIntegration.post('/auth/firebase', { idToken })
+            : Promise.reject(new Error('Backend API integration is unavailable.')));
+        } catch (firebaseError) {
+          if (window.OP && window.OP.firebase && typeof window.OP.firebase.signOut === 'function') {
+            try {
+              await window.OP.firebase.signOut();
+            } catch (ignore) {}
+          }
+          throw firebaseError;
+        }
+      } else {
+        await this.ensureApiIntegration();
+        payload = await (window.OP && window.OP.apiIntegration
+          ? window.OP.apiIntegration.login(normalizedEmail, password)
+          : Promise.reject(new Error('Backend API integration is unavailable.')));
+      }
+
+      return await this.processFirebaseAuthPayload(payload, rememberMe, normalizedEmail);
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Invalid email or password.';
+      return { success: false, message };
+    }
+  }
+
+  async signInWithGoogle() {
+    const firebaseState = window.OP?.firebase || null;
+    console.debug('[Firebase] signInWithGoogle pre-check', {
+      windowOP: window.OP || null,
+      firebase: firebaseState,
+      firebaseInitialized: firebaseState?.initialized ?? null,
+      hasSignInWithPopup: typeof firebaseState?.signInWithPopup === 'function',
+      hasGoogleAuthProvider: typeof firebaseState?.GoogleAuthProvider === 'function',
+      hasReadyPromise: typeof firebaseState?.readyPromise?.then === 'function',
+      hasGlobalInitializeApp: typeof window.initializeApp === 'function',
+      hasGlobalGetAuth: typeof window.getAuth === 'function',
+      hasGlobalGoogleAuthProvider: typeof window.GoogleAuthProvider === 'function'
+    });
+
+    try {
+      if (!window.OP || !window.OP.firebase) {
+        throw new Error('Firebase authentication is not available.');
+      }
+
+      const readyPromise = typeof window.OP.firebaseReady === 'function'
+        ? window.OP.firebaseReady()
+        : window.OP.firebase.readyPromise;
+
+      if (readyPromise && typeof readyPromise.then === 'function') {
+        await readyPromise;
+      }
+
+      if (!(window.OP.firebase.initialized && typeof window.OP.firebase.signInWithPopup === 'function' && typeof window.OP.firebase.GoogleAuthProvider === 'function')) {
+        throw new Error('Firebase authentication is not initialized yet.');
+      }
+
+      const provider = new window.OP.firebase.GoogleAuthProvider();
+      const userCredential = await window.OP.firebase.signInWithPopup(provider);
+      const idToken = await userCredential.user.getIdToken();
       await this.ensureApiIntegration();
 
       const payload = await (window.OP && window.OP.apiIntegration
-        ? window.OP.apiIntegration.login(normalizedEmail, password)
+        ? window.OP.apiIntegration.post('/auth/firebase', { idToken })
         : Promise.reject(new Error('Backend API integration is unavailable.')));
 
-      const authData = payload && payload.data ? payload.data : {};
-      if (!authData || !authData.user) {
-        throw new Error(payload && payload.message ? payload.message : 'Unable to sign in.');
-      }
-      const user = authData.user || {};
-      const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || normalizedEmail;
-
-      const session = {
-        userId: user.id || `user_${Math.random().toString(36).slice(2, 12)}`,
-        email: user.email || normalizedEmail,
-        fullName,
-        role: user.role || 'USER',
-        verified: true,
-        rememberMe,
-        expiresAt: rememberMe
-          ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-          : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      };
-
-      const sessionPayload = {
-        ...session,
-        user
-      };
-
-      this.setSession(sessionPayload);
-      localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe);
-      localStorage.setItem('op_remembered_email', rememberMe ? normalizedEmail : '');
-
-      try {
-        await this.syncCurrentUser();
-      } catch (syncError) {
-        // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
-      }
-
-      return {
-        success: true,
-        message: payload && payload.message ? payload.message : 'Signed in successfully.'
-      };
+      return await this.processFirebaseAuthPayload(payload, false, userCredential.user.email || '');
     } catch (error) {
-      const message = error && error.message ? error.message : 'Invalid email or password.';
+      if (window.OP && window.OP.firebase && typeof window.OP.firebase.signOut === 'function') {
+        try {
+          await window.OP.firebase.signOut();
+        } catch (ignore) {}
+      }
+
+      const message = error && error.message ? error.message : 'Unable to sign in with Google.';
       return { success: false, message };
     }
   }
@@ -412,6 +536,7 @@ class AuthManager {
       };
 
       this.setSession(mergedSession);
+      this.ensureOrganizationWorkspace();
       return { success: true, data: user };
     } catch (error) {
       const message = error && error.message ? error.message : 'Unable to load current user.';
@@ -599,8 +724,13 @@ class WorkspaceManager {
 
   getWorkspaces() {
     try {
-      const workspaces = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
-      return Array.isArray(workspaces) ? workspaces : [];
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
+      if (Array.isArray(raw)) return raw;
+      if (raw && typeof raw === 'object') {
+        if (Array.isArray(raw.data)) return raw.data;
+        if (Array.isArray(raw.workspaces)) return raw.workspaces;
+      }
+      return [];
     } catch {
       return [];
     }
@@ -610,7 +740,7 @@ class WorkspaceManager {
     localStorage.setItem(STORAGE_KEYS.WORKSPACES, JSON.stringify(workspaces));
   }
 
-  createWorkspace(name, url, size, industry) {
+  createWorkspace(name, url, size, industry, organizationId = null) {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return { success: false, message: 'Not authenticated.' };
 
@@ -627,6 +757,7 @@ class WorkspaceManager {
       size,
       industry: industry || null,
       ownerId: session.userId,
+      organizationId: organizationId || session.organizationId || null,
       createdAt: new Date().toISOString(),
       members: [{ userId: session.userId, role: 'Owner', joinedAt: new Date().toISOString() }]
     };
@@ -659,6 +790,9 @@ class WorkspaceManager {
       role: 'Member',
       joinedAt: new Date().toISOString()
     });
+    if (!workspace.organizationId && session.organizationId) {
+      workspace.organizationId = session.organizationId;
+    }
 
     this.saveWorkspaces(workspaces);
     this.setCurrentWorkspace(workspace.id);
@@ -671,17 +805,54 @@ class WorkspaceManager {
     if (!session) return [];
 
     const workspaces = this.getWorkspaces();
-    return workspaces.filter(w => w.members.some(m => m.userId === session.userId));
+    const directMembership = workspaces.filter(w => w.members.some(m => m.userId === session.userId));
+    if (directMembership.length > 0) return directMembership;
+
+    if (session.organizationId) {
+      return workspaces.filter(w => w.organizationId === session.organizationId);
+    }
+
+    return [];
   }
 
   setCurrentWorkspace(workspaceId) {
     localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId);
+
+    const session = window.OP?.auth?.getSession?.() || null;
+    if (session) {
+      const workspace = this.getWorkspaces().find(w => w.id === workspaceId);
+      if (workspace && workspace.organizationId && session.organizationId !== workspace.organizationId) {
+        const updatedSession = {
+          ...session,
+          organizationId: workspace.organizationId,
+          user: {
+            ...(session.user || {}),
+            organizationId: workspace.organizationId
+          }
+        };
+        window.OP.auth.setSession(updatedSession);
+      }
+    }
   }
 
   getCurrentWorkspace() {
     const id = localStorage.getItem(STORAGE_KEYS.CURRENT_WORKSPACE);
-    if (!id) return null;
-    return this.getWorkspaces().find(w => w.id === id) || null;
+    const workspaces = this.getWorkspaces();
+    if (id) {
+      const current = workspaces.find(w => w.id === id);
+      if (current) return current;
+    }
+
+    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
+    if (session && session.organizationId) {
+      const fallback = workspaces.find(w => w.organizationId === session.organizationId);
+      if (fallback) {
+        this.setCurrentWorkspace(fallback.id);
+        return fallback;
+      }
+    }
+
+    return null;
   }
 }
 
@@ -807,6 +978,10 @@ class NavigationGuard {
   }
 
   requireAuth() {
+    if (window.OP_CONFIG && window.OP_CONFIG.dev === true) {
+      return true;
+    }
+
     if (!this.auth.isAuthenticated()) {
       window.location.href = '../auth/signin.html';
       return false;
@@ -847,10 +1022,13 @@ const profileManager = new ProfileManager();
 const loadingManager = new LoadingManager();
 const navGuard = new NavigationGuard();
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   try {
     if (!isPublicEntryPage()) {
-      navGuard.requireAuth();
+      if (!navGuard.requireAuth()) return;
+      if (authManager.isAuthenticated()) {
+        authManager.syncCurrentUser().catch(() => {});
+      }
     }
   } catch (e) {
     // Ignore guard initialization errors to avoid blocking render.

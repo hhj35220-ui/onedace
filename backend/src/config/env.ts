@@ -24,6 +24,9 @@ export interface EnvConfig {
   AUTH_RATE_WINDOW_SECONDS: number;
   AI_RATE_LIMIT: number;
   AI_RATE_WINDOW_SECONDS: number;
+  FIREBASE_ADMIN_PROJECT_ID: string;
+  FIREBASE_ADMIN_CLIENT_EMAIL: string;
+  FIREBASE_ADMIN_PRIVATE_KEY: string;
 }
 
 function requireString(name: string, fallback?: string): string {
@@ -66,7 +69,10 @@ const config: EnvConfig = {
   AUTH_RATE_LIMIT: requireNumber('AUTH_RATE_LIMIT', 10),
   AUTH_RATE_WINDOW_SECONDS: requireNumber('AUTH_RATE_WINDOW_SECONDS', 900),
   AI_RATE_LIMIT: requireNumber('AI_RATE_LIMIT', 20),
-  AI_RATE_WINDOW_SECONDS: requireNumber('AI_RATE_WINDOW_SECONDS', 60)
+  AI_RATE_WINDOW_SECONDS: requireNumber('AI_RATE_WINDOW_SECONDS', 60),
+  FIREBASE_ADMIN_PROJECT_ID: requireString('FIREBASE_ADMIN_PROJECT_ID', ''),
+  FIREBASE_ADMIN_CLIENT_EMAIL: requireString('FIREBASE_ADMIN_CLIENT_EMAIL', ''),
+  FIREBASE_ADMIN_PRIVATE_KEY: requireString('FIREBASE_ADMIN_PRIVATE_KEY', '')
 };
 
 export { config };
