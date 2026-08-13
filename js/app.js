@@ -17,6 +17,8 @@ const STORAGE_KEYS = {
   REMEMBER_ME: 'op_remember_me',
   RESET_TOKEN: 'op_reset_token',
   VERIFICATION_CODE: 'op_verification_code'
+  ,
+  SIGNUP_FLOW: 'op_signup_flow'
 };
 
 // ============================================
@@ -252,6 +254,12 @@ class AuthManager {
 
   ensureOrganizationWorkspace() {
     try {
+      // If the signup flow is active, do not auto-create or hydrate workspaces here.
+      try {
+        if (localStorage.getItem(STORAGE_KEYS.SIGNUP_FLOW) === '1') {
+          return;
+        }
+      } catch (ignore) {}
       if (!window.OP || !window.OP.workspace) return;
       const session = this.getSession();
       const organizationId = session?.organizationId || session?.user?.organizationId || session?.user?.organization?.id || null;
@@ -373,9 +381,29 @@ class AuthManager {
   }
 
   async processFirebaseAuthPayload(payload, rememberMe = false, rememberedEmail = '') {
-    const authData = payload && payload.data ? payload.data : {};
+    const log = (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function')
+      ? window.OP.authDebugLogger.log
+      : () => {};
+
+    const rawPayload = payload || {};
+    const responseWrapper = rawPayload.data || rawPayload;
+    let authData = responseWrapper?.data ?? responseWrapper ?? rawPayload;
+
+    if (!authData.user && authData.data?.user) {
+      authData = authData.data;
+    }
+
+    log(`processFirebaseAuthPayload received payload: ${JSON.stringify(authData, (key, value) => {
+      if (key === 'accessToken' || key === 'refreshToken' || key === 'idToken' || key === 'password' || key === 'token') {
+        return '[REDACTED]';
+      }
+      return value;
+    }, 2)}`);
+
     if (!authData || !authData.user) {
-      throw new Error(payload && payload.message ? payload.message : 'Unable to sign in.');
+      const errorMessage = rawPayload && rawPayload.message ? rawPayload.message : 'Unable to sign in.';
+      log(`processFirebaseAuthPayload failed: missing user field, payload message = ${errorMessage}`);
+      throw new Error(errorMessage);
     }
 
     const user = authData.user || {};
@@ -404,16 +432,69 @@ class AuthManager {
       user
     };
 
+    // Persist API auth tokens (if provided by backend) so AuthService considers the user authenticated.
+    try {
+      const accessToken = authData.accessToken || authData.token || (authData.data && authData.data.accessToken) || null;
+      const refreshToken = authData.refreshToken || (authData.data && authData.data.refreshToken) || null;
+      const expiresIn = authData.expiresIn || (authData.data && authData.data.expiresIn) || null;
+      if (window.OP && window.OP.auth && typeof window.OP.auth.setTokenPayload === 'function' && (accessToken || refreshToken)) {
+        const tokenPayload = Object.assign({}, accessToken ? { accessToken } : {}, refreshToken ? { refreshToken } : {}, expiresIn ? { expiresIn } : {});
+        try { window.OP.auth.setTokenPayload(tokenPayload); } catch (e) { /* ignore */ }
+      }
+    } catch (e) {}
+
     this.setSession(sessionPayload);
     localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe);
     localStorage.setItem('op_remembered_email', rememberMe ? normalizedEmail : '');
-    this.ensureOrganizationWorkspace();
+
+    // Visible auth flow debug: report signup flag and authentication state
+    try {
+      const signupFlag = (function () { try { return localStorage.getItem(STORAGE_KEYS.SIGNUP_FLOW) === '1'; } catch (e) { return false; } })();
+      if (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') {
+        window.OP.authDebugLogger.log('[AUTH FLOW] 5. signup flag: ' + (signupFlag ? '1' : '0'));
+        window.OP.authDebugLogger.log('[AUTH FLOW] 4. isAuthenticated after auth: ' + (this.isAuthenticated() ? 'true' : 'false'));
+      }
+    } catch (e) {}
+
+    // If signup flow is active, do not auto-create or auto-hydrate workspaces here.
+    const signupFlow = (function () {
+      try { return localStorage.getItem(STORAGE_KEYS.SIGNUP_FLOW) === '1'; } catch (e) { return false; }
+    })();
 
     try {
+      // Always attempt to sync current user for profile enrichment, but do not let
+      // workspace auto-hydration interfere with explicit onboarding.
       await this.syncCurrentUser();
     } catch (syncError) {
       // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
     }
+
+    // Log detection of existing workspaces for clarity.
+    try {
+      const workspaces = (window.OP && window.OP.workspace) ? window.OP.workspace.getUserWorkspaces() : [];
+      if (workspaces && workspaces.length > 0) {
+        log('[AUTH FLOW] Existing workspace detected');
+      } else {
+        log('[AUTH FLOW] No existing workspace detected');
+      }
+    } catch (ignore) {}
+
+    if (signupFlow) {
+      log('[AUTH FLOW] SIGNUP');
+      log('[AUTH FLOW] Backend authentication successful');
+      log('[AUTH FLOW] Starting workspace onboarding');
+      // Return a result that indicates onboarding should be started by the caller (signup page).
+      return {
+        success: true,
+        onboarding: true,
+        message: payload && payload.message ? payload.message : 'Signed in successfully.'
+      };
+    }
+
+    // Normal login flow: allow workspace hydration/selection.
+    try {
+      this.ensureOrganizationWorkspace();
+    } catch (ignore) {}
 
     return {
       success: true,
@@ -460,6 +541,20 @@ class AuthManager {
   }
 
   async signInWithGoogle() {
+    const logger = (window.OP && window.OP.authDebugLogger) || null;
+    const log = (message) => {
+      if (logger && typeof logger.log === 'function') {
+        logger.log(message);
+      }
+      console.debug('[AuthDebug]', message);
+    };
+    const logError = (error) => {
+      if (logger && typeof logger.error === 'function') {
+        logger.error(error);
+      }
+      console.error('[AuthDebug]', error);
+    };
+
     const firebaseState = window.OP?.firebase || null;
     console.debug('[Firebase] signInWithGoogle pre-check', {
       windowOP: window.OP || null,
@@ -490,17 +585,63 @@ class AuthManager {
         throw new Error('Firebase authentication is not initialized yet.');
       }
 
+      log('Firebase initialized');
+      log('Google popup opened');
+
       const provider = new window.OP.firebase.GoogleAuthProvider();
       const userCredential = await window.OP.firebase.signInWithPopup(provider);
+
+      log('Google authentication completed');
+      try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] 1. Google authentication completed'); } catch (e) {}
+      log(`Firebase user received: ${userCredential.user?.email || '<unknown>'}`);
+
       const idToken = await userCredential.user.getIdToken();
+      log('ID token obtained');
+
       await this.ensureApiIntegration();
+      log('→ POST /api/v1/auth/firebase');
 
       const payload = await (window.OP && window.OP.apiIntegration
         ? window.OP.apiIntegration.post('/auth/firebase', { idToken })
         : Promise.reject(new Error('Backend API integration is unavailable.')));
 
-      return await this.processFirebaseAuthPayload(payload, false, userCredential.user.email || '');
+      const sanitizedPayload = JSON.parse(JSON.stringify(payload, (key, value) => {
+        if (key === 'accessToken' || key === 'refreshToken' || key === 'idToken' || key === 'password' || key === 'token') {
+          return '[REDACTED]';
+        }
+        return value;
+      }));
+      log(`Backend response payload: ${JSON.stringify(sanitizedPayload, null, 2)}`);
+
+      const responseStatus = payload && (payload.status || payload.statusCode || payload.code || 'unknown');
+      log(`Backend responded: ${responseStatus}${payload && payload.message ? ` - ${payload.message}` : ''}`);
+
+      log('[AUTH FLOW] Google authentication successful');
+      log('[AUTH FLOW] 2. Backend authentication completed');
+
+      const result = await this.processFirebaseAuthPayload(payload, false, userCredential.user.email || '');
+
+      try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] 3. processFirebaseAuthPayload returned: ' + JSON.stringify(result)); } catch (e) {}
+
+      if (result && result.success) {
+        if (result.onboarding) {
+          log('[AUTH FLOW] SIGNUP flow: onboarding required');
+        } else {
+          log('[AUTH FLOW] LOGIN flow: authentication successful');
+        }
+      }
+
+      return result;
     } catch (error) {
+      logError({
+        step: 'Google authentication',
+        code: error && error.code ? error.code : undefined,
+        message: error && error.message ? error.message : String(error),
+        stack: error && error.stack ? error.stack : undefined,
+        status: error && error.status ? error.status : undefined,
+        responseBody: error && error.response ? JSON.stringify(error.response) : undefined
+      });
+
       if (window.OP && window.OP.firebase && typeof window.OP.firebase.signOut === 'function') {
         try {
           await window.OP.firebase.signOut();

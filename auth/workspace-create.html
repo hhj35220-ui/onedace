@@ -192,6 +192,10 @@
 
         if (result.success) {
           OP.toast.show(result.message, 'success');
+          try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] Workspace created'); } catch (e) {}
+          // Clear signup flow marker now that onboarding has started / workspace created.
+          try { localStorage.removeItem('op_signup_flow'); } catch (e) {}
+          try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] Redirecting to profile-setup (onboarding)'); } catch (e) {}
           setTimeout(() => {
             window.location.href = 'profile-setup.html';
           }, 500);

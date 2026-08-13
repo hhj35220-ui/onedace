@@ -118,6 +118,17 @@
           </button>
         </form>
 
+        <div class="divider">or continue with</div>
+        <button type="button" class="social-btn btn-full" id="google-signin-btn">
+          <i class="ph ph-google-logo"></i>
+          Continue with Google
+        </button>
+
+        <div id="auth-debug-panel" style="margin-top: 1.5rem; padding: 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 16px; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.88rem; max-height: 320px; overflow-y: auto; white-space: pre-wrap;">
+          <div style="font-weight: 700; margin-bottom: 0.75rem; color: #cbd5e1;">Authentication debug log</div>
+          <div id="auth-debug-log">No authentication activity yet.</div>
+        </div>
+
         <div class="auth-footer">
           Don't have an account? <a href="signup.html">Sign up</a>
         </div>
@@ -125,9 +136,94 @@
     </main>
   </div>
 
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    window.initializeApp = initializeApp;
+    window.getAuth = getAuth;
+    window.GoogleAuthProvider = GoogleAuthProvider;
+    window.signInWithPopup = signInWithPopup;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+
+    window.OP = window.OP || {};
+    const firebaseConfig = {
+      apiKey: 'AIzaSyAPYya9VUq_suYoQLG8CGM2ppM9TFlKfVQ',
+      authDomain: 'oneplace-c3ac8.firebaseapp.com',
+      projectId: 'oneplace-c3ac8',
+      storageBucket: 'oneplace-c3ac8.firebasestorage.app',
+      messagingSenderId: '220251027915',
+      appId: '1:220251027915:web:e06e5c3ea9da071d9e1e4e',
+      measurementId: 'G-XD2RX55EG9T'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.OP.firebase = {
+      initialized: true,
+      ready: true,
+      app,
+      auth,
+      initError: null,
+      signInWithEmailAndPassword: (email, password) => signInWithEmailAndPassword(auth, email, password),
+      signInWithPopup: (provider) => signInWithPopup(auth, provider),
+      GoogleAuthProvider,
+      signOut: () => signOut(auth)
+    };
+
+    console.log('[Firebase] initialized', {
+      locationProtocol: location.protocol,
+      initializeApp: typeof window.initializeApp,
+      getAuth: typeof window.getAuth,
+      GoogleAuthProvider: typeof window.GoogleAuthProvider,
+      signInWithPopup: typeof window.OP.firebase.signInWithPopup,
+      initialized: window.OP.firebase.initialized,
+      authReady: !!window.OP.firebase.auth
+    });
+  </script>
   <script src="../js/app.js?v=20260803-1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // --- Authentication debug panel setup (visible logs) ---
+      const debugPanel = document.getElementById('auth-debug-panel');
+      const debugLog = document.getElementById('auth-debug-log');
+
+      function formatTime(date) {
+        return date.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      function appendDebugLine(text) {
+        if (!debugLog) return;
+        if (debugLog.textContent === 'No authentication activity yet.') debugLog.textContent = '';
+        debugLog.textContent += `[${formatTime(new Date())}] ${text}\n`;
+        if (debugPanel) debugPanel.scrollTop = debugPanel.scrollHeight;
+      }
+
+      function appendDebugError(error) {
+        appendDebugLine(`✗ ${error.step || 'Error'}: ${error.message || error.toString()}`);
+        if (error.code) appendDebugLine(`    Code: ${error.code}`);
+        if (error.status) appendDebugLine(`    HTTP: ${error.status}`);
+        if (error.responseBody) appendDebugLine(`    Response: ${error.responseBody}`);
+        if (error.stack) appendDebugLine(`    Stack: ${error.stack}`);
+      }
+
+      function clearDebugLog() { if (debugLog) debugLog.textContent = 'No authentication activity yet.'; }
+      clearDebugLog();
+
+      window.OP = window.OP || {};
+      window.OP.authDebugLogger = {
+        log(message) { appendDebugLine(`✓ ${message}`); },
+        error(error) { appendDebugError(error); }
+      };
+      // --- end debug panel setup ---
       // Redirect if authenticated
       if (OP.auth.isAuthenticated()) {
         const workspaces = OP.workspace.getUserWorkspaces();
@@ -140,6 +236,7 @@
       const passwordInput = document.getElementById('password');
       const toggleBtn = document.getElementById('toggle-password');
       const submitBtn = document.getElementById('submit-btn');
+      const googleButton = document.getElementById('google-signin-btn');
       let isSubmitting = false;
 
       // Toggle password visibility
@@ -225,6 +322,43 @@
           submitBtn.disabled = false;
           submitBtn.classList.remove('btn-loading');
           submitBtn.textContent = 'Sign In';
+        }
+      });
+
+      googleButton?.addEventListener('click', async () => {
+        if (isSubmitting) return;
+
+        isSubmitting = true;
+        OP.loading.show();
+        googleButton.disabled = true;
+        googleButton.classList.add('btn-loading');
+        googleButton.textContent = '';
+
+        try {
+          // Ensure any signup flow flag is cleared for login flows.
+          try { localStorage.removeItem('op_signup_flow'); } catch (e) {}
+          try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] LOGIN'); } catch (e) {}
+
+          const result = await OP.auth.signInWithGoogle();
+
+          if (result.success) {
+            OP.toast.show(result.message, 'success');
+            const workspaces = OP.workspace.getUserWorkspaces();
+            const target = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+            try { appendDebugLine('[AUTH FLOW] 6. About to redirect to: ' + target); } catch (e) {}
+            setTimeout(() => {
+              try { appendDebugLine('[AUTH FLOW] 7. Redirect executed'); } catch (e) {}
+              window.location.href = target;
+            }, 500);
+          } else {
+            OP.toast.show(result.message, 'error');
+          }
+        } finally {
+          OP.loading.hide();
+          isSubmitting = false;
+          googleButton.disabled = false;
+          googleButton.classList.remove('btn-loading');
+          googleButton.textContent = 'Continue with Google';
         }
       });
 

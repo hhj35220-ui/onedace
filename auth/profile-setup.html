@@ -246,6 +246,7 @@
 
         OP.toast.show('Profile completed successfully!', 'success');
         setTimeout(() => {
+          try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] Redirecting to dashboard'); } catch (e) {}
           OP.toast.show('Redirecting to dashboard...', 'success');
           window.location.href = '../dashboard/main-dashboard.html';
         }, 1000);

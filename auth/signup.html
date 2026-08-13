@@ -63,86 +63,21 @@
           <p class="auth-subtitle">Start your 14-day free trial. No credit card.</p>
         </div>
 
-        <form id="signup-form" novalidate>
-          <!-- Full Name -->
-          <div class="form-group">
-            <label class="form-label" for="fullName">Full name</label>
-            <div class="form-input-wrapper">
-              <i class="ph ph-user form-input-icon"></i>
-              <input 
-                type="text" 
-                id="fullName" 
-                name="fullName" 
-                class="form-input with-icon" 
-                placeholder="Enter your full name"
-                autocomplete="name"
-                required
-              >
-            </div>
-            <div class="form-error" id="fullName-error" style="display: none;"></div>
-          </div>
+        <div class="auth-note" style="margin-bottom: var(--space-6);">
+          <p class="auth-subtitle" style="margin-bottom: var(--space-4);">
+            Sign up with Google first, then complete workspace setup on the next page.
+          </p>
+        </div>
 
-          <!-- Email -->
-          <div class="form-group">
-            <label class="form-label" for="email">Email address</label>
-            <div class="form-input-wrapper">
-              <i class="ph ph-envelope-simple form-input-icon"></i>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                class="form-input with-icon" 
-                placeholder="name@example.com"
-                autocomplete="email"
-                required
-              >
-            </div>
-            <div class="form-error" id="email-error" style="display: none;"></div>
-          </div>
+        <button type="button" class="social-btn btn-full" id="google-signup-btn">
+          <i class="ph ph-google-logo"></i>
+          Continue with Google
+        </button>
 
-          <!-- Password -->
-          <div class="form-group">
-            <label class="form-label" for="password">Password</label>
-            <div class="form-input-wrapper">
-              <i class="ph ph-lock-key form-input-icon"></i>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                class="form-input with-icon with-icon-right" 
-                placeholder="Create a strong password"
-                autocomplete="new-password"
-                required
-              >
-              <button type="button" class="form-input-toggle" id="toggle-password" aria-label="Toggle password visibility">
-                <i class="ph ph-eye"></i>
-              </button>
-            </div>
-            <!-- Strength Meter -->
-            <div class="strength-meter" id="strength-meter">
-              <div class="strength-segment"></div>
-              <div class="strength-segment"></div>
-              <div class="strength-segment"></div>
-              <div class="strength-segment"></div>
-            </div>
-            <div class="strength-label" id="strength-label"></div>
-            <div class="form-error" id="password-error" style="display: none;"></div>
-          </div>
-
-          <!-- Terms -->
-          <div class="form-group">
-            <label class="checkbox-wrapper">
-              <input type="checkbox" id="terms" name="terms" required>
-              <span class="checkbox-label">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
-            </label>
-            <div class="form-error" id="terms-error" style="display: none;"></div>
-          </div>
-
-          <!-- Submit -->
-          <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn">
-            Create Account
-          </button>
-        </form>
+        <div id="auth-debug-panel" style="margin-top: 1.5rem; padding: 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 16px; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.88rem; max-height: 320px; overflow-y: auto; white-space: pre-wrap;">
+          <div style="font-weight: 700; margin-bottom: 0.75rem; color: #cbd5e1;">Authentication debug log</div>
+          <div id="auth-debug-log">No authentication activity yet.</div>
+        </div>
 
         <div class="auth-footer">
           Already have an account? <a href="signin.html">Sign in</a>
@@ -154,6 +89,59 @@
     </main>
   </div>
 
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    window.initializeApp = initializeApp;
+    window.getAuth = getAuth;
+    window.GoogleAuthProvider = GoogleAuthProvider;
+    window.signInWithPopup = signInWithPopup;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+
+    window.OP = window.OP || {};
+    const firebaseConfig = {
+      apiKey: 'AIzaSyAPYya9VUq_suYoQLG8CGM2ppM9TFlKfVQ',
+      authDomain: 'oneplace-c3ac8.firebaseapp.com',
+      projectId: 'oneplace-c3ac8',
+      storageBucket: 'oneplace-c3ac8.firebasestorage.app',
+      messagingSenderId: '220251027915',
+      appId: '1:220251027915:web:e06e5c3ea9da071d9e1e4e',
+      measurementId: 'G-XD2RX55EG9T'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.OP.firebase = {
+      initialized: true,
+      ready: true,
+      app,
+      auth,
+      initError: null,
+      signInWithEmailAndPassword: (email, password) => signInWithEmailAndPassword(auth, email, password),
+      signInWithPopup: (provider) => signInWithPopup(auth, provider),
+      GoogleAuthProvider,
+      signOut: () => signOut(auth)
+    };
+
+    console.log('[Firebase] initialized', {
+      locationProtocol: location.protocol,
+      initializeApp: typeof window.initializeApp,
+      getAuth: typeof window.getAuth,
+      GoogleAuthProvider: typeof window.GoogleAuthProvider,
+      signInWithPopup: typeof window.OP.firebase.signInWithPopup,
+      initialized: window.OP.firebase.initialized,
+      authReady: !!window.OP.firebase.auth
+    });
+  </script>
   <script src="../js/app.js?v=20260803-1"></script>
   <script>
     function clearStaleOnboardingState() {
@@ -178,150 +166,133 @@
       localStorage.removeItem('op_api_config');
 
       if (OP.auth.isAuthenticated()) {
-        const workspaces = OP.workspace.getUserWorkspaces();
-        window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+        // Signup page must not decide post-auth destination based on existing workspaces.
+        // Always send authenticated visitors to workspace creation when arriving at signup.
+        window.location.href = 'workspace-create.html';
         return;
       }
 
-      const form = document.getElementById('signup-form');
-      const fullNameInput = document.getElementById('fullName');
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      const toggleBtn = document.getElementById('toggle-password');
-      const submitBtn = document.getElementById('submit-btn');
-      const strengthMeter = document.getElementById('strength-meter');
-      const strengthLabel = document.getElementById('strength-label');
+      const debugPanel = document.getElementById('auth-debug-panel');
+      const debugLog = document.getElementById('auth-debug-log');
+
+      function formatTime(date) {
+        return date.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      function appendDebugLine(text) {
+        if (!debugLog) return;
+        if (debugLog.textContent === 'No authentication activity yet.') {
+          debugLog.textContent = '';
+        }
+        debugLog.textContent += `[${formatTime(new Date())}] ${text}\n`;
+        if (debugPanel) {
+          debugPanel.scrollTop = debugPanel.scrollHeight;
+        }
+      }
+
+      function appendDebugError(error) {
+        appendDebugLine(`✗ ${error.step || 'Error'}: ${error.message || error.toString()}`);
+        if (error.code) {
+          appendDebugLine(`    Code: ${error.code}`);
+        }
+        if (error.status) {
+          appendDebugLine(`    HTTP: ${error.status}`);
+        }
+        if (error.responseBody) {
+          appendDebugLine(`    Response: ${error.responseBody}`);
+        }
+        if (error.stack) {
+          appendDebugLine(`    Stack: ${error.stack}`);
+        }
+      }
+
+      function clearDebugLog() {
+        if (debugLog) {
+          debugLog.textContent = 'No authentication activity yet.';
+        }
+      }
+
+      clearDebugLog();
+
+      window.OP = window.OP || {};
+      window.OP.authDebugLogger = {
+        log(message) {
+          appendDebugLine(`✓ ${message}`);
+        },
+        error(error) {
+          appendDebugError(error);
+        }
+      };
+
+      const googleButton = document.getElementById('google-signup-btn');
       let isSubmitting = false;
 
-      // Toggle password
-      toggleBtn.addEventListener('click', () => {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        toggleBtn.innerHTML = isPassword ? '<i class="ph ph-eye-slash"></i>' : '<i class="ph ph-eye"></i>';
-      });
-
-      // Password strength
-      passwordInput.addEventListener('input', () => {
-        const strength = OP.validator.checkStrength(passwordInput.value);
-        const segments = strengthMeter.querySelectorAll('.strength-segment');
-        
-        segments.forEach((seg, i) => {
-          seg.className = 'strength-segment';
-          if (i < strength.score) {
-            seg.classList.add(strength.class);
-          }
-        });
-
-        strengthLabel.textContent = strength.score > 0 ? strength.label : '';
-        strengthLabel.className = `strength-label ${strength.class}`;
-      });
-
-      function showError(fieldId, message) {
-        const errorEl = document.getElementById(`${fieldId}-error`);
-        const inputEl = document.getElementById(fieldId);
-        if (errorEl) {
-          errorEl.textContent = message;
-          errorEl.style.display = 'flex';
-        }
-        if (inputEl) inputEl.classList.add('error');
-      }
-
-      function clearErrors() {
-        document.querySelectorAll('.form-error').forEach(el => {
-          el.style.display = 'none';
-          el.textContent = '';
-        });
-        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
-      }
-
-      function validate() {
-        clearErrors();
-        let valid = true;
-
-        const fullName = fullNameInput.value.trim();
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-
-        if (!fullName) {
-          showError('fullName', 'Full name is required.');
-          valid = false;
-        } else if (fullName.length < 2) {
-          showError('fullName', 'Name must be at least 2 characters.');
-          valid = false;
-        }
-
-        if (!email) {
-          showError('email', 'Email is required.');
-          valid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          showError('email', 'Please enter a valid email address.');
-          valid = false;
-        }
-
-        if (!password) {
-          showError('password', 'Password is required.');
-          valid = false;
-        } else {
-          const strength = OP.validator.checkStrength(password);
-          if (strength.score < 3) {
-            showError('password', 'Please choose a stronger password.');
-            valid = false;
-          }
-        }
-
-        if (!document.getElementById('terms').checked) {
-          showError('terms', 'You must agree to the Terms of Service.');
-          valid = false;
-        }
-
-        return valid;
-      }
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (isSubmitting || !validate()) return;
-
-        const auth = OP?.auth;
-        const loading = OP?.loading;
-        const toast = OP?.toast;
+      googleButton?.addEventListener('click', async () => {
+        if (isSubmitting) return;
 
         isSubmitting = true;
-        submitBtn.disabled = true;
-        submitBtn.classList.add('btn-loading');
-        submitBtn.textContent = '';
+        OP.loading.show();
+        googleButton.disabled = true;
+        googleButton.classList.add('btn-loading');
+        googleButton.textContent = '';
+
+        appendDebugLine('Starting Google authentication flow');
+        const authMethod = (OP.authLegacy && typeof OP.authLegacy.signInWithGoogle === 'function')
+          ? OP.authLegacy.signInWithGoogle.bind(OP.authLegacy)
+          : OP.auth.signInWithGoogle?.bind(OP.auth);
+
+        if (!authMethod) {
+          appendDebugError({ step: 'Google auth', message: 'No Google auth method available.', code: 'AUTH_METHOD_MISSING' });
+          OP.toast.show('Unable to start Google authentication.', 'error');
+          OP.loading.hide();
+          isSubmitting = false;
+          googleButton.disabled = false;
+          googleButton.classList.remove('btn-loading');
+          googleButton.textContent = 'Continue with Google';
+          return;
+        }
 
         try {
-          loading?.show();
+          appendDebugLine('Firebase initialized');
+          appendDebugLine('Google popup opened');
 
-          if (!auth || typeof auth.signUp !== 'function') {
-            throw new Error('Authentication service unavailable');
-          }
+          // Mark this session as a signup flow so the auth processor won't auto-create
+          // or auto-hydrate a workspace before onboarding completes.
+          try { localStorage.setItem('op_signup_flow', '1'); } catch (e) {}
+          appendDebugLine('[AUTH FLOW] SIGNUP');
 
-          const result = await auth.signUp(
-            fullNameInput.value.trim(),
-            emailInput.value.trim(),
-            passwordInput.value
-          );
+          const result = await authMethod();
+          appendDebugLine('Google authentication completed');
 
-          if (result.success) {
-            toast?.show(result.message, 'success');
+          if (result && result.success) {
+            appendDebugLine('[AUTH FLOW] Google authentication successful');
+            OP.toast.show(result.message, 'success');
+
+            // For signup flows, always route to workspace creation/onboarding.
+            appendDebugLine('[AUTH FLOW] Redirecting to workspace-create.html for onboarding');
+            try { appendDebugLine('[AUTH FLOW] 6. About to redirect to: workspace-create.html'); } catch (e) {}
             setTimeout(() => {
-              window.location.href = 'signin.html';
+              try { appendDebugLine('[AUTH FLOW] 7. Redirect executed'); } catch (e) {}
+              window.location.href = 'workspace-create.html';
             }, 500);
           } else {
-            showError('email', result.message || 'Unable to create account.');
-            toast?.show(result.message || 'Unable to create account.', 'error');
+            appendDebugError({ step: 'Google auth', message: result && result.message ? result.message : 'Authentication failed.' });
+            OP.toast.show(result && result.message ? result.message : 'Unable to sign in with Google.', 'error');
           }
         } catch (error) {
-          console.error('Signup submit error:', error);
-          showError('email', error?.message || 'Unable to create account. Please try again.');
-          toast?.show(error?.message || 'Unable to create account. Please try again.', 'error');
+          appendDebugError({
+            step: 'Google auth',
+            message: error && error.message ? error.message : String(error),
+            code: error && error.code ? error.code : undefined,
+            stack: error && error.stack ? error.stack : undefined
+          });
+          OP.toast.show(error?.message || 'Unable to sign in with Google.', 'error');
         } finally {
-          loading?.hide();
+          OP.loading.hide();
           isSubmitting = false;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('btn-loading');
-          submitBtn.textContent = 'Create Account';
+          googleButton.disabled = false;
+          googleButton.classList.remove('btn-loading');
+          googleButton.textContent = 'Continue with Google';
         }
       });
     });

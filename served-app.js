@@ -1,5 +1,5 @@
 /**
- * OnePlace Enterprise v3.0 — Authentication Module
+ * OnePlace Enterprise v3.0 ï¿½ Authentication Module
  * Vanilla JavaScript (ES6+)
  */
 
@@ -26,8 +26,7 @@ const STORAGE_KEYS = {
 // Global runtime configuration (development-only flag)
 // Toggle `dev` to `true` for local development debugging. Default is `false`.
 // This flag is intentionally conservative and should remain `false` in production.
-// NOTE: Temporarily set to `true` for local verification. Revert to `false` before deploying.
-window.OP_CONFIG = window.OP_CONFIG || { dev: true };
+window.OP_CONFIG = window.OP_CONFIG || { dev: false };
 const APP_CACHE_BUSTER = 'op-v20260722-2';
 
 function forceFreshAssetHeaders() {
@@ -599,8 +598,13 @@ class WorkspaceManager {
 
   getWorkspaces() {
     try {
-      const workspaces = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
-      return Array.isArray(workspaces) ? workspaces : [];
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
+      if (Array.isArray(raw)) return raw;
+      if (raw && typeof raw === 'object') {
+        if (Array.isArray(raw.data)) return raw.data;
+        if (Array.isArray(raw.workspaces)) return raw.workspaces;
+      }
+      return [];
     } catch {
       return [];
     }
@@ -627,6 +631,7 @@ class WorkspaceManager {
       size,
       industry: industry || null,
       ownerId: session.userId,
+      organizationId: session.organizationId || null,
       createdAt: new Date().toISOString(),
       members: [{ userId: session.userId, role: 'Owner', joinedAt: new Date().toISOString() }]
     };
@@ -659,6 +664,9 @@ class WorkspaceManager {
       role: 'Member',
       joinedAt: new Date().toISOString()
     });
+    if (!workspace.organizationId && session.organizationId) {
+      workspace.organizationId = session.organizationId;
+    }
 
     this.saveWorkspaces(workspaces);
     this.setCurrentWorkspace(workspace.id);
@@ -676,6 +684,22 @@ class WorkspaceManager {
 
   setCurrentWorkspace(workspaceId) {
     localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId);
+
+    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
+    if (session) {
+      const workspace = this.getWorkspaces().find(w => w.id === workspaceId);
+      if (workspace && workspace.organizationId && session.organizationId !== workspace.organizationId) {
+        const updatedSession = {
+          ...session,
+          organizationId: workspace.organizationId,
+          user: {
+            ...(session.user || {}),
+            organizationId: workspace.organizationId
+          }
+        };
+        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(updatedSession));
+      }
+    }
   }
 
   getCurrentWorkspace() {
@@ -902,7 +926,7 @@ class CommandPalette {
     this.overlay.innerHTML = `
       <div class="command-palette" role="dialog" aria-modal="true" aria-label="Global Command Palette">
         <div class="cp-input-wrap">
-          <input id="cpInput" class="cp-input" placeholder="Search everything — commands, files, contacts, tasks..." aria-label="Command palette search" autocomplete="off" />
+          <input id="cpInput" class="cp-input" placeholder="Search everything ï¿½ commands, files, contacts, tasks..." aria-label="Command palette search" autocomplete="off" />
           <button id="cpClose" class="cp-close" aria-label="Close">Esc</button>
         </div>
         <div class="cp-sections">

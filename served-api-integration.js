@@ -1,4 +1,4 @@
-/* OnePlace Enterprise — API Integration Layer
+/* OnePlace Enterprise ï¿½ API Integration Layer
    Centralized API architecture for backend-ready enterprise services.
 */
 (function () {
@@ -13,7 +13,7 @@
 
   const DEFAULT_CONFIG = {
     environments: {
-      development: { name: 'development', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
+      development: { name: 'development', baseUrl: 'http://localhost:3000/api/v1', timeout: 15000, retryCount: 3, debug: true },
       testing: { name: 'testing', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: true },
       production: { name: 'production', baseUrl: '/api/v1', timeout: 15000, retryCount: 3, debug: false }
     },

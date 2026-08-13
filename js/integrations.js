@@ -348,14 +348,15 @@ class IntegrationManager {
 
   getLogs() {
     try {
-      return JSON.parse(localStorage.getItem(INTEGRATION_KEYS.INTEGRATION_LOGS)) || [];
+      const parsed = JSON.parse(localStorage.getItem(INTEGRATION_KEYS.INTEGRATION_LOGS));
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
   }
 
   saveLogs(logs) {
-    localStorage.setItem(INTEGRATION_KEYS.INTEGRATION_LOGS, JSON.stringify(logs));
+    localStorage.setItem(INTEGRATION_KEYS.INTEGRATION_LOGS, JSON.stringify(Array.isArray(logs) ? logs : []));
   }
 
   addLog(log) {
