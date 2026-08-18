@@ -149,6 +149,56 @@ class WhatsAppStorage {
     }
   }
 
+  // Insert a live (service-originated) message preserving its id/time,
+  // de-duplicating by message id, and updating the conversation preview.
+  upsertMessage(conversationId, message) {
+    const allMessages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
+    if (!allMessages[conversationId]) allMessages[conversationId] = [];
+
+    const list = allMessages[conversationId];
+    if (message.id && list.some(m => m.id === message.id)) return null;
+
+    if (!message.id) message.id = 'm_' + Date.now();
+    if (!message.time) message.time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    list.push(message);
+    localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(allMessages));
+
+    const conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
+    const idx = conversations.findIndex(c => c.id === conversationId);
+    if (idx !== -1) {
+      conversations[idx].lastMessage = message.text;
+      conversations[idx].timestamp = new Date().toISOString();
+      if (message.type === 'received') {
+        conversations[idx].unread = (conversations[idx].unread || 0) + 1;
+      }
+      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
+    }
+
+    return message;
+  }
+
+  upsertConversation(conversation) {
+    const conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
+    const idx = conversations.findIndex(c => c.id === conversation.id);
+    if (idx !== -1) {
+      conversations[idx] = { ...conversations[idx], ...conversation };
+    } else {
+      conversations.push(conversation);
+    }
+    localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
+  }
+
+  upsertContact(contact) {
+    const contacts = this.getContacts();
+    const idx = contacts.findIndex(c => c.id === contact.id);
+    if (idx !== -1) {
+      contacts[idx] = { ...contacts[idx], ...contact };
+    } else {
+      contacts.push(contact);
+    }
+    localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
+  }
+
   // Templates
   getTemplates() {
     return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES) || '[]');
@@ -298,6 +348,9 @@ class WhatsAppApp {
     this.currentSearch = '';
     this.sidebarOpen = false;
     this.session = null;
+    this.lastEventSeq = 0;
+    this.statusPollTimer = null;
+    this.eventPollTimer = null;
     this.init();
   }
 
@@ -307,20 +360,19 @@ class WhatsAppApp {
 
     await this.loadBackendStatus();
 
-    // If connected load live data; otherwise show empty state or QR
-    const status = this.session?.status || null;
-    const sessionKey = this.session?.sessionKey ?? null;
-    if (status === 'CONNECTED' && sessionKey) {
-      await this.fetchAndStoreLiveData(sessionKey);
+    if (this.session?.connected) {
+      await this.fetchAndStoreLiveData();
       this.renderConversations();
       const conversations = this.storage.getConversations();
       if (conversations.length > 0) {
         this.selectConversation(conversations[0].id);
       }
+      this.startEventPolling();
     } else {
       // Not connected: render conversations (will be empty) and display QR if available
       this.renderConversations();
-      if (this.session?.qrCodeUrl) this.displayQr(this.session.qrCodeUrl);
+      if (this.session?.qr) this.displayQr(this.session.qr);
+      if (this.session?.pairingCode) this.displayPairingCode(this.session.pairingCode);
     }
   }
 
@@ -390,7 +442,36 @@ class WhatsAppApp {
 
     const connectBtn = document.querySelector('.wa-view-integration-btn');
     if (connectBtn) {
-      connectBtn.addEventListener('click', () => this.connectSession());
+      connectBtn.addEventListener('click', () => {
+        if (this.session?.connected) {
+          this.disconnectSession();
+        } else {
+          this.connectSession();
+        }
+      });
+    }
+
+    // Attachment button -> send media through the WhatsApp service
+    const attachBtn = document.querySelector('.wa-input-action[title="Attachment"]');
+    if (attachBtn) {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.style.display = 'none';
+      fileInput.id = 'wa-attachment-input';
+      document.body.appendChild(fileInput);
+
+      attachBtn.addEventListener('click', () => {
+        if (!this.currentConversation) {
+          if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Select a conversation first.', 'info');
+          return;
+        }
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files && fileInput.files[0];
+        fileInput.value = '';
+        if (file) this.sendMediaMessage(file);
+      });
     }
 
     // Notifications
@@ -568,14 +649,15 @@ class WhatsAppApp {
 
     let html = '<div class="wa-message-date"><span>Today</span></div>';
     messages.forEach(msg => {
-      const statusIcon = msg.status === 'read' 
-        ? '<i class="ph ph-checks"></i>' 
+      const statusIcon = msg.status === 'read'
+        ? '<i class="ph ph-checks"></i>'
         : '<i class="ph ph-check"></i>';
 
       html += `
         <div class="wa-message ${msg.type}">
           <div class="wa-message-bubble">
-            <div class="wa-message-text">${this.escapeHtml(msg.text).replace(/\n/g, '<br>')}</div>
+            ${msg.media ? this.renderMediaAttachment(msg) : ''}
+            <div class="wa-message-text">${this.escapeHtml(msg.text || '').replace(/\n/g, '<br>')}</div>
             <div class="wa-message-meta">
               <span class="wa-message-time">${msg.time}</span>
               ${msg.type === 'sent' ? '<span class="wa-message-status ' + msg.status + '">' + statusIcon + '</span>' : ''}
@@ -587,6 +669,49 @@ class WhatsAppApp {
 
     container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
+    this.hydrateMediaAttachments(container);
+  }
+
+  renderMediaAttachment(msg) {
+    const media = msg.media || {};
+    const isImage = (media.mimetype || '').startsWith('image/') || media.type === 'image';
+    const isAudio = (media.mimetype || '').startsWith('audio/') || media.type === 'ptt';
+
+    if (!media.messageId) {
+      return `<div class="wa-media-attachment"><i class="ph ph-file"></i> ${this.escapeHtml(media.filename || 'Attachment')}</div>`;
+    }
+
+    if (isImage) {
+      return `<div class="wa-media-attachment wa-media-image" data-media-id="${this.escapeHtml(media.messageId)}" data-media-kind="image"><i class="ph ph-image"></i> Loading image...</div>`;
+    }
+    if (isAudio) {
+      return `<div class="wa-media-attachment" data-media-id="${this.escapeHtml(media.messageId)}" data-media-kind="audio"><i class="ph ph-microphone"></i> Loading voice message...</div>`;
+    }
+    return `<div class="wa-media-attachment" data-media-id="${this.escapeHtml(media.messageId)}" data-media-kind="file"><i class="ph ph-file-arrow-down"></i> ${this.escapeHtml(media.filename || 'Download attachment')}</div>`;
+  }
+
+  // Lazily download media for rendered placeholders via the service.
+  hydrateMediaAttachments(container) {
+    if (!window.OP || !window.OP.whatsappService) return;
+    container.querySelectorAll('[data-media-id]').forEach(el => {
+      const messageId = el.getAttribute('data-media-id');
+      const kind = el.getAttribute('data-media-kind');
+      window.OP.whatsappService.downloadMedia(messageId)
+        .then(resp => {
+          const dataUrl = resp && resp.dataUrl;
+          if (!dataUrl) return;
+          if (kind === 'image') {
+            el.innerHTML = `<img src="${dataUrl}" alt="image" style="max-width:240px; border-radius:8px; display:block;" />`;
+          } else if (kind === 'audio') {
+            el.innerHTML = `<audio controls src="${dataUrl}" style="max-width:240px;"></audio>`;
+          } else {
+            el.innerHTML = `<a href="${dataUrl}" download class="wa-media-download"><i class="ph ph-file-arrow-down"></i> Download attachment</a>`;
+          }
+        })
+        .catch(() => {
+          el.innerHTML = '<i class="ph ph-warning"></i> Media unavailable';
+        });
+    });
   }
 
   // ============================================
@@ -704,159 +829,325 @@ class WhatsAppApp {
   }
 
   // ============================================
-  // Send Message
+  // Send Message (via WPPConnect service)
   // ============================================
-  sendMessage() {
+  resolveChatId(conversationId) {
+    const conv = this.storage.getConversationById(conversationId);
+    return conv?.chatId || conv?.contact?.phone || conversationId;
+  }
+
+  async sendMessage() {
     const input = document.getElementById('chat-input');
     if (!input || !this.currentConversation) return;
 
     const text = input.value.trim();
     if (!text) return;
 
-    this.storage.addMessage(this.currentConversation, {
+    if (!this.session?.connected) {
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp is not connected.', 'error');
+      return;
+    }
+
+    const to = this.resolveChatId(this.currentConversation);
+    input.value = '';
+
+    // Optimistic local echo; the service event feed reconciles it later.
+    this.storage.upsertMessage(this.currentConversation, {
+      id: 'local_' + Date.now(),
       type: 'sent',
       text: text,
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       status: 'delivered'
     });
-
-    input.value = '';
     this.renderChatMessages(this.currentConversation);
     this.renderConversations();
 
-    // Simulate reply after 2 seconds
-    setTimeout(() => {
-      const replies = [
-        'Thanks for the update!',
-        'That sounds great!',
-        'I appreciate your help.',
-        'Could you provide more details?',
-        'Perfect, thank you!',
-        'I will check and get back to you.',
-      ];
-      const randomReply = replies[Math.floor(Math.random() * replies.length)];
-
-      this.storage.addMessage(this.currentConversation, {
-        type: 'received',
-        text: randomReply,
-        status: 'read'
-      });
-
-      this.renderChatMessages(this.currentConversation);
-      this.renderConversations();
-    }, 2000);
-  }
-
-  // ============================================
-  // Backend integration
-  // ============================================
-  getOrganizationId() {
-    const session = window.OP.auth?.getSession?.() || null;
-    const currentWorkspace = window.OP.workspace?.getCurrentWorkspace?.() || null;
-    return session?.user?.organizationId || session?.organizationId || currentWorkspace?.organizationId || null;
-  }
-
-  getSessionKey() {
-    const session = window.OP.auth?.getSession?.() || null;
-    return session?.user?.id ? `oneplace-${session.user.id}` : `oneplace-${session?.userId || `default-${Date.now()}`}`;
-  }
-
-  async loadBackendStatus() {
     try {
-      if (!window.OP || !window.OP.apiIntegration) {
-        return;
-      }
-
-      await window.OP.apiIntegration.init();
-      const organizationId = this.getOrganizationId();
-      if (!organizationId) {
-        this.renderConnectionStatus('DISCONNECTED');
-        return;
-      }
-
-      const sessionKey = this.getSessionKey();
-      const response = await window.OP.apiIntegration.get(`/platforms/whatsapp/status?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`);
-      const payload = response && response.data ? response.data : response;
-      const sessionData = payload && payload.data ? payload.data : payload;
-      const status = sessionData?.status ?? 'DISCONNECTED';
-      this.renderConnectionStatus(status);
-      this.session = sessionData;
+      await window.OP.whatsappService.sendText(to, text);
     } catch (error) {
-      this.renderConnectionStatus('DISCONNECTED');
       if (typeof OP !== 'undefined' && OP.toast) {
-        OP.toast.show('Unable to reach WhatsApp backend. Please try again later.', 'error');
+        OP.toast.show(error?.message || 'Failed to send WhatsApp message.', 'error');
       }
     }
   }
 
-  // Helper to call API and return data.data or throw
-  async apiGet(path) {
-    if (!window.OP || !window.OP.apiIntegration) throw new Error('API integration unavailable');
-    await window.OP.apiIntegration.init();
-    const res = await window.OP.apiIntegration.get(path);
-    if (!res || !res.data) throw new Error('Invalid API response');
-    return res.data.data ?? res.data;
+  async sendMediaMessage(file) {
+    if (!this.session?.connected) {
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp is not connected.', 'error');
+      return;
+    }
+
+    const to = this.resolveChatId(this.currentConversation);
+    const caption = (document.getElementById('chat-input')?.value || '').trim();
+    const input = document.getElementById('chat-input');
+    if (input) input.value = '';
+
+    try {
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Uploading attachment...', 'info');
+      const media = await window.OP.whatsappService.fileToMedia(file);
+      await window.OP.whatsappService.sendMedia(to, { ...media, caption });
+
+      this.storage.upsertMessage(this.currentConversation, {
+        id: 'local_' + Date.now(),
+        type: 'sent',
+        text: caption || `[${file.name}]`,
+        media: { mimetype: file.type, filename: file.name, type: media.kind },
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        status: 'delivered'
+      });
+      this.renderChatMessages(this.currentConversation);
+      this.renderConversations();
+    } catch (error) {
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show(error?.message || 'Failed to send attachment.', 'error');
+      }
+    }
   }
 
-  async fetchAndStoreLiveData(sessionKey) {
+  // ============================================
+  // Backend integration (OnePlace WhatsApp service / WPPConnect)
+  // ============================================
+  async loadBackendStatus() {
     try {
-      const organizationId = this.getOrganizationId();
-      if (!organizationId) {
-        throw new Error('Missing organization context for WhatsApp data fetch.');
+      if (!window.OP || !window.OP.whatsappService) {
+        this.renderConnectionStatus(null);
+        return;
       }
 
-      const orgSession = this.session;
+      const status = await window.OP.whatsappService.status();
+      this.session = status;
+      this.renderConnectionStatus(status);
+    } catch (error) {
+      this.session = null;
+      this.renderConnectionStatus(null);
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show('Unable to reach the WhatsApp service. Make sure whatsapp-service is running.', 'error');
+      }
+    }
+  }
 
-      // Contacts
-      const contacts = await this.apiGet(`/platforms/whatsapp/contacts?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`) || [];
-      const mappedContacts = (contacts || []).map(c => ({
-        id: 'wa_' + (c.externalContactId ?? c.id ?? (c.phoneNumber || '').replace(/\D+/g, '')),
-        name: c.name ?? c.pushName ?? c.displayName ?? (c.phoneNumber ?? ''),
-        phone: c.phoneNumber ?? '',
-        avatar: c.profilePictureUrl ?? '',
-        color: c.color ?? '#6366f1',
-        createdAt: c.createdAt ?? new Date().toISOString(),
-      }));
-      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(mappedContacts));
+  mapChatToConversation(chat) {
+    const chatId = (chat.id && (chat.id._serialized || chat.id.id)) || String(chat.id || chat.chatId || '');
+    const contact = chat.contact || {};
+    const name = chat.name || contact.name || contact.pushname || contact.shortName || chatId.replace(/@.*$/, '');
+    const lastMsg = chat.lastMessage || {};
+    const timestamp = chat.t ? new Date(chat.t * 1000).toISOString()
+      : (lastMsg.timestamp ? new Date(lastMsg.timestamp * 1000).toISOString() : new Date().toISOString());
 
-      // Chats -> conversations
-      const chats = await this.apiGet(`/platforms/whatsapp/chats?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}`) || [];
-      const conversations = (chats || []).map(ch => {
-        const externalChatId = ch.externalChatId ?? ch.id ?? ch.chatId;
-        const contactId = 'wa_' + (ch.externalContactId ?? ch.contactId ?? (ch.phoneNumber || '').replace(/\D+/g, ''));
-        return {
-          id: externalChatId ?? 'chat_' + Date.now(),
-          contactId,
-          unread: ch.unreadCount ?? ch.unread ?? 0,
-          tag: ch.tag ?? '',
-          lastMessage: ch.lastMessage ?? ch.preview ?? '',
-          timestamp: ch.lastMessageAt ?? ch.updatedAt ?? new Date().toISOString(),
-          status: ch.status ?? 'open'
-        };
-      });
+    return {
+      id: chatId,
+      chatId,
+      contactId: chatId,
+      unread: chat.unreadCount || 0,
+      tag: chat.isGroup ? 'group' : '',
+      lastMessage: lastMsg.body || chat.lastMessagePreview || '',
+      timestamp,
+      status: 'open',
+      contact: {
+        id: chatId,
+        name,
+        phone: chatId.replace(/@.*$/, ''),
+        color: '#25D366'
+      }
+    };
+  }
+
+  mapServiceMessage(m) {
+    return {
+      id: m.id,
+      type: m.fromMe ? 'sent' : 'received',
+      text: m.body || (m.hasMedia ? `[${m.filename || m.type || 'media'}]` : ''),
+      media: m.hasMedia ? { messageId: m.id, mimetype: m.mimetype, filename: m.filename, type: m.type } : null,
+      time: new Date(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      status: m.fromMe ? 'delivered' : 'read'
+    };
+  }
+
+  async fetchAndStoreLiveData() {
+    try {
+      const chatsResp = await window.OP.whatsappService.chats();
+      const chats = chatsResp.chats || [];
+      const conversations = chats
+        .map(chat => this.mapChatToConversation(chat))
+        .filter(c => c.id);
+
+      const contacts = conversations.map(c => c.contact);
+      localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
 
-      // Messages: for each conversation fetch recent messages and store
+      // Recent messages per conversation
       const messagesStore = {};
       for (const conv of conversations) {
         try {
-          const msgsResp = await this.apiGet(`/platforms/whatsapp/messages?organizationId=${encodeURIComponent(organizationId)}&sessionKey=${encodeURIComponent(sessionKey)}&chatId=${encodeURIComponent(conv.id)}&limit=50`);
-          const msgs = (msgsResp && msgsResp.messages) ? msgsResp.messages : msgsResp || [];
-          messagesStore[conv.id] = (msgs || []).map(m => ({
-            id: m.id ?? m.externalMessageId ?? 'm_' + Date.now(),
-            type: m.direction === 'OUTGOING' || m.direction === 'OUT' || m.fromMe ? 'sent' : 'received',
-            text: m.content ?? m.body ?? m.text ?? '',
-            time: m.sentAt ? new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (m.time || ''),
-            status: (m.status && m.status.toLowerCase()) || (m.direction === 'OUTGOING' ? 'sent' : 'read')
-          }));
+          const resp = await window.OP.whatsappService.chatMessages(conv.chatId, 50);
+          messagesStore[conv.id] = (resp.messages || []).map(m => this.mapServiceMessage(m));
         } catch (err) {
-          // If messages fail for a conversation, skip silently (no sample fallback)
           messagesStore[conv.id] = [];
         }
       }
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(messagesStore));
-
     } catch (err) {
-      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Failed to load WhatsApp data from backend', 'error');
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Failed to load WhatsApp data from the service.', 'error');
+    }
+  }
+
+  // ============================================
+  // Live event feed (incoming + outgoing messages)
+  // ============================================
+  startEventPolling() {
+    this.stopEventPolling();
+    this.eventPollTimer = setInterval(async () => {
+      try {
+        const resp = await window.OP.whatsappService.events(this.lastEventSeq);
+        this.lastEventSeq = resp.lastSeq || this.lastEventSeq;
+
+        if (resp.connected === false && this.session?.connected) {
+          this.session.connected = false;
+          this.renderConnectionStatus(this.session);
+          this.stopEventPolling();
+        }
+
+        if (Array.isArray(resp.events) && resp.events.length) {
+          this.handleServiceEvents(resp.events);
+        }
+      } catch (error) {
+        // transient failure — next tick retries
+      }
+    }, 4000);
+  }
+
+  stopEventPolling() {
+    if (this.eventPollTimer) {
+      clearInterval(this.eventPollTimer);
+      this.eventPollTimer = null;
+    }
+  }
+
+  handleServiceEvents(events) {
+    let listChanged = false;
+
+    events.filter(e => e && e.type === 'message' && e.message).forEach(e => {
+      const m = e.message;
+      const chatId = m.chatId;
+      if (!chatId) return;
+
+      let conv = this.storage.getConversationById(chatId);
+      if (!conv) {
+        const name = (m.sender && (m.sender.name || m.sender.pushname)) || chatId.replace(/@.*$/, '');
+        this.storage.upsertContact({ id: chatId, name, phone: chatId.replace(/@.*$/, ''), color: '#25D366' });
+        this.storage.upsertConversation({
+          id: chatId,
+          chatId,
+          contactId: chatId,
+          unread: 0,
+          tag: m.isGroupMsg ? 'group' : '',
+          lastMessage: '',
+          timestamp: new Date().toISOString(),
+          status: 'open'
+        });
+      }
+
+      const stored = this.storage.upsertMessage(chatId, this.mapServiceMessage(m));
+      if (stored) {
+        listChanged = true;
+        if (this.currentConversation === chatId) {
+          this.storage.markConversationRead(chatId);
+          this.renderChatMessages(chatId);
+        } else if (stored.type === 'received' && typeof OP !== 'undefined' && OP.toast) {
+          OP.toast.show(`New WhatsApp message from ${(m.sender && (m.sender.name || m.sender.pushname)) || chatId.replace(/@.*$/, '')}`, 'info');
+        }
+      }
+    });
+
+    if (listChanged) this.renderConversations();
+  }
+
+  // ============================================
+  // Connect / disconnect with QR + pairing code
+  // ============================================
+  async connectSession() {
+    try {
+      if (!window.OP || !window.OP.whatsappService) {
+        throw new Error('WhatsApp service client is unavailable.');
+      }
+
+      this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
+      await window.OP.whatsappService.connect();
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show('WhatsApp connection started. Scan the QR code when it appears.', 'success');
+      }
+      this.startStatusPolling();
+    } catch (error) {
+      this.renderConnectionStatus(null);
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show(error?.message || 'Unable to connect WhatsApp.', 'error');
+      }
+    }
+  }
+
+  async connectWithPairingCode() {
+    const phone = window.prompt('Enter the WhatsApp phone number in international format (digits only, e.g. 15551234567):');
+    if (!phone) return;
+
+    try {
+      this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
+      await window.OP.whatsappService.connect({ phoneNumber: phone });
+      this.startStatusPolling();
+    } catch (error) {
+      this.renderConnectionStatus(null);
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show(error?.message || 'Unable to start pairing-code login.', 'error');
+      }
+    }
+  }
+
+  async disconnectSession() {
+    try {
+      await window.OP.whatsappService.disconnect();
+      this.session = null;
+      this.stopEventPolling();
+      this.stopStatusPolling();
+      this.renderConnectionStatus(null);
+      if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp disconnected.', 'success');
+    } catch (error) {
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show(error?.message || 'Unable to disconnect WhatsApp.', 'error');
+      }
+    }
+  }
+
+  startStatusPolling() {
+    this.stopStatusPolling();
+    this.statusPollTimer = setInterval(async () => {
+      try {
+        const status = await window.OP.whatsappService.status();
+        this.session = status;
+        this.renderConnectionStatus(status);
+
+        if (status.qr) this.displayQr(status.qr);
+        if (status.pairingCode) this.displayPairingCode(status.pairingCode);
+
+        if (status.connected) {
+          this.stopStatusPolling();
+          await this.fetchAndStoreLiveData();
+          this.renderConversations();
+          const conversations = this.storage.getConversations();
+          if (conversations.length > 0 && !this.currentConversation) {
+            this.selectConversation(conversations[0].id);
+          }
+          this.startEventPolling();
+          if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp connected.', 'success');
+        }
+      } catch (error) {
+        // keep polling while the service spins up the browser session
+      }
+    }, 3000);
+  }
+
+  stopStatusPolling() {
+    if (this.statusPollTimer) {
+      clearInterval(this.statusPollTimer);
+      this.statusPollTimer = null;
     }
   }
 
@@ -882,36 +1173,21 @@ class WhatsAppApp {
     container.innerHTML = `<img src="${src}" alt="WhatsApp QR" style="width:160px;height:160px;object-fit:contain;border-radius:6px;" />`;
   }
 
-  async connectSession() {
-    try {
-      if (!window.OP || !window.OP.apiIntegration) {
-        throw new Error('Backend API is unavailable.');
-      }
-
-      await window.OP.apiIntegration.init();
-      const session = window.OP.auth?.getSession?.() || null;
-      const currentWorkspace = window.OP.workspace?.getCurrentWorkspace?.() || null;
-      const organizationId = session?.user?.organizationId || session?.organizationId || currentWorkspace?.organizationId || null;
-      if (!organizationId) {
-        throw new Error('No organization selected.');
-      }
-
-      const response = await window.OP.apiIntegration.post('/platforms/whatsapp/connect', {
-        organizationId,
-        sessionKey: `oneplace-${session?.userId || 'default'}`
-      });
-      const payload = response && response.data ? response.data : null;
-      const status = payload && payload.data ? payload.data.status : 'CONNECTING';
-      this.renderConnectionStatus(status);
-      this.session = payload && payload.data ? payload.data : null;
-      if (typeof OP !== 'undefined' && OP.toast) {
-        OP.toast.show('WhatsApp connection request sent.', 'success');
-      }
-    } catch (error) {
-      if (typeof OP !== 'undefined' && OP.toast) {
-        OP.toast.show(error?.message || 'Unable to connect WhatsApp.', 'error');
-      }
+  displayPairingCode(code) {
+    const accountCard = document.querySelector('.wa-account-card');
+    if (!accountCard || !code) return;
+    let container = accountCard.querySelector('.wa-qr-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'wa-qr-container';
+      container.style.marginTop = '12px';
+      accountCard.appendChild(container);
     }
+    container.innerHTML = `
+      <div style="text-align:center; padding:12px; border:1px dashed var(--gray-300, #d1d5db); border-radius:8px;">
+        <div style="font-size:12px; color:var(--gray-500, #6b7280); margin-bottom:6px;">Pairing code — enter it in WhatsApp → Linked devices → Link with phone number</div>
+        <div style="font-size:22px; font-weight:700; letter-spacing:2px;">${this.escapeHtml(code)}</div>
+      </div>`;
   }
 
   renderConnectionStatus(status) {
@@ -919,21 +1195,31 @@ class WhatsAppApp {
     const accountName = document.querySelector('.wa-account-name');
     const accountPhone = document.querySelector('.wa-account-phone');
     const statusDot = document.querySelector('.wa-account-status .wa-status-dot');
+    const connectBtn = document.querySelector('.wa-view-integration-btn');
 
-    if (accountStatus) {
-      accountStatus.textContent = status === 'CONNECTED' ? 'Connected' : status === 'CONNECTING' || status === 'RECONNECTING' ? 'Connecting' : 'Disconnected';
-    }
+    const connected = !!(status && status.connected);
+    const connecting = !!(status && !status.connected && status.connectionStatus &&
+      !['notLogged', 'disconnected'].includes(String(status.connectionStatus)));
+    const label = connected ? 'Connected' : connecting ? (status.statusText || 'Connecting') : 'Disconnected';
 
-    if (statusDot) {
-      statusDot.style.background = status === 'CONNECTED' ? '#22c55e' : status === 'CONNECTING' || status === 'RECONNECTING' ? '#f59e0b' : '#ef4444';
-    }
+    if (accountStatus) accountStatus.textContent = label;
+    if (statusDot) statusDot.style.background = connected ? '#22c55e' : connecting ? '#f59e0b' : '#ef4444';
 
     if (accountName) {
-      accountName.textContent = this.session?.organizationId ? 'Organization Session' : (this.session ? 'WhatsApp account' : 'Not connected');
+      const profile = status && status.account && (status.account.profile || status.account.device);
+      accountName.textContent = connected
+        ? (profile && (profile.pushname || profile.name || profile.displayName)) || 'WhatsApp account'
+        : 'Not connected';
     }
 
     if (accountPhone) {
-      accountPhone.textContent = this.session?.sessionKey ? this.session.sessionKey : '';
+      const wid = status && status.account && status.account.wid;
+      const widStr = wid ? String(wid._serialized || wid.user || wid) : '';
+      accountPhone.textContent = connected && widStr ? widStr.replace(/@.*$/, '') : (connected ? '' : 'Connect a WhatsApp account to begin');
+    }
+
+    if (connectBtn) {
+      connectBtn.textContent = connected ? 'Disconnect' : 'Connect WhatsApp';
     }
   }
 

@@ -238,7 +238,16 @@ class AuthManager {
   // --- Session ---
   getSession() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION));
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
+      if (!raw || typeof raw !== 'object') return null;
+      if (raw.data && typeof raw.data === 'object') {
+        const payload = raw.data;
+        const looksLikeSession = payload.userId !== undefined || payload.email !== undefined || payload.fullName !== undefined || payload.user !== undefined || payload.organizationId !== undefined || payload.role !== undefined;
+        if (looksLikeSession) {
+          return payload;
+        }
+      }
+      return raw;
     } catch {
       return null;
     }
@@ -462,8 +471,9 @@ class AuthManager {
     })();
 
     try {
-      // Always attempt to sync current user for profile enrichment, but do not let
-      // workspace auto-hydration interfere with explicit onboarding.
+      if (window.OP && window.OP.firebaseUsers && typeof window.OP.firebaseUsers.ensureUserDoc === 'function') {
+        await window.OP.firebaseUsers.ensureUserDoc();
+      }
       await this.syncCurrentUser();
     } catch (syncError) {
       // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
@@ -502,22 +512,57 @@ class AuthManager {
     };
   }
 
+  buildFirebaseUserPayload(firebaseUser, fallbackEmail = '', rememberMe = false) {
+    const user = firebaseUser || {};
+    const email = String(user.email || fallbackEmail || '').trim().toLowerCase();
+    const displayName = String(user.displayName || '').trim();
+    const nameParts = displayName ? displayName.split(/\s+/).filter(Boolean) : [];
+    const firstName = String(user.firstName || nameParts[0] || email.split('@')[0] || 'User').trim();
+    const lastName = String(user.lastName || nameParts.slice(1).join(' ') || 'User').trim();
+    const normalizedUser = {
+      id: user.uid || user.id || `user_${Math.random().toString(36).slice(2, 12)}`,
+      email,
+      firstName,
+      lastName,
+      displayName: displayName || `${firstName} ${lastName}`.trim() || email,
+      photoURL: user.photoURL || null,
+      role: user.role || 'USER',
+      organizationId: user.organizationId || null,
+      emailVerified: !!user.emailVerified,
+      providerId: user.providerId || 'firebase'
+    };
+
+    return {
+      user: normalizedUser,
+      accessToken: user.accessToken || null,
+      refreshToken: user.refreshToken || null,
+      expiresIn: 3600,
+      message: 'Signed in successfully.'
+    };
+  }
+
   // --- Sign In ---
   async signIn(email, password, rememberMe = false) {
     const normalizedEmail = String(email || '').trim().toLowerCase();
 
     try {
-      let payload;
-
       if (window.OP && window.OP.firebase && window.OP.firebase.initialized) {
         try {
           const userCredential = await window.OP.firebase.signInWithEmailAndPassword(normalizedEmail, password);
-          const idToken = await userCredential.user.getIdToken();
-          await this.ensureApiIntegration();
+          const firebaseUser = userCredential && userCredential.user ? userCredential.user : null;
+          if (!firebaseUser) {
+            throw new Error('Unable to sign in with Firebase.');
+          }
 
-          payload = await (window.OP && window.OP.apiIntegration
-            ? window.OP.apiIntegration.post('/auth/firebase', { idToken })
-            : Promise.reject(new Error('Backend API integration is unavailable.')));
+          const idToken = await firebaseUser.getIdToken();
+          const payload = this.buildFirebaseUserPayload({
+            ...firebaseUser,
+            accessToken: idToken,
+            refreshToken: firebaseUser.refreshToken || null,
+            email: firebaseUser.email || normalizedEmail
+          }, normalizedEmail, rememberMe);
+
+          return await this.processFirebaseAuthPayload(payload, rememberMe, normalizedEmail);
         } catch (firebaseError) {
           if (window.OP && window.OP.firebase && typeof window.OP.firebase.signOut === 'function') {
             try {
@@ -526,12 +571,12 @@ class AuthManager {
           }
           throw firebaseError;
         }
-      } else {
-        await this.ensureApiIntegration();
-        payload = await (window.OP && window.OP.apiIntegration
-          ? window.OP.apiIntegration.login(normalizedEmail, password)
-          : Promise.reject(new Error('Backend API integration is unavailable.')));
       }
+
+      await this.ensureApiIntegration();
+      const payload = await (window.OP && window.OP.apiIntegration
+        ? window.OP.apiIntegration.login(normalizedEmail, password)
+        : Promise.reject(new Error('Backend API integration is unavailable.')));
 
       return await this.processFirebaseAuthPayload(payload, rememberMe, normalizedEmail);
     } catch (error) {
@@ -595,40 +640,30 @@ class AuthManager {
       try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] 1. Google authentication completed'); } catch (e) {}
       log(`Firebase user received: ${userCredential.user?.email || '<unknown>'}`);
 
-      const idToken = await userCredential.user.getIdToken();
+      const firebaseUser = userCredential && userCredential.user ? userCredential.user : null;
+      if (!firebaseUser) {
+        throw new Error('Google sign-in returned no user.');
+      }
+
+      const idToken = await firebaseUser.getIdToken();
       log('ID token obtained');
 
-      await this.ensureApiIntegration();
-      log('→ POST /api/v1/auth/firebase');
-
-      const payload = await (window.OP && window.OP.apiIntegration
-        ? window.OP.apiIntegration.post('/auth/firebase', { idToken })
-        : Promise.reject(new Error('Backend API integration is unavailable.')));
-
-      const sanitizedPayload = JSON.parse(JSON.stringify(payload, (key, value) => {
-        if (key === 'accessToken' || key === 'refreshToken' || key === 'idToken' || key === 'password' || key === 'token') {
-          return '[REDACTED]';
-        }
-        return value;
-      }));
-      log(`Backend response payload: ${JSON.stringify(sanitizedPayload, null, 2)}`);
-
-      const responseStatus = payload && (payload.status || payload.statusCode || payload.code || 'unknown');
-      log(`Backend responded: ${responseStatus}${payload && payload.message ? ` - ${payload.message}` : ''}`);
+      const payload = this.buildFirebaseUserPayload({
+        ...firebaseUser,
+        accessToken: idToken,
+        refreshToken: firebaseUser.refreshToken || null,
+        email: firebaseUser.email || ''
+      }, firebaseUser.email || '', false);
 
       log('[AUTH FLOW] Google authentication successful');
-      log('[AUTH FLOW] 2. Backend authentication completed');
+      log('[AUTH FLOW] 2. Direct Firebase authentication completed');
 
-      const result = await this.processFirebaseAuthPayload(payload, false, userCredential.user.email || '');
+      const result = await this.processFirebaseAuthPayload(payload, false, firebaseUser.email || '');
 
       try { (window.OP && window.OP.authDebugLogger && typeof window.OP.authDebugLogger.log === 'function') && window.OP.authDebugLogger.log('[AUTH FLOW] 3. processFirebaseAuthPayload returned: ' + JSON.stringify(result)); } catch (e) {}
 
       if (result && result.success) {
-        if (result.onboarding) {
-          log('[AUTH FLOW] SIGNUP flow: onboarding required');
-        } else {
-          log('[AUTH FLOW] LOGIN flow: authentication successful');
-        }
+        log('[AUTH FLOW] LOGIN flow: authentication successful');
       }
 
       return result;
@@ -655,6 +690,36 @@ class AuthManager {
 
   async syncCurrentUser() {
     try {
+      if (window.OP && window.OP.firebaseUsers && typeof window.OP.firebaseUsers.getCurrentProfile === 'function') {
+        const userProfile = await window.OP.firebaseUsers.getCurrentProfile();
+        if (userProfile && typeof userProfile === 'object') {
+          const session = this.getSession() || {};
+          const mergedSession = {
+            ...session,
+            userId: userProfile.uid || session.userId,
+            email: userProfile.email || session.email,
+            fullName: userProfile.displayName || [userProfile.firstName, userProfile.lastName].filter(Boolean).join(' ').trim() || session.fullName,
+            role: userProfile.role || session.role,
+            organizationId: userProfile.organizationId || session.organizationId || null,
+            verified: typeof userProfile.emailVerified === 'boolean' ? userProfile.emailVerified : session.verified,
+            user: {
+              ...(session.user || {}),
+              ...userProfile,
+              uid: userProfile.uid || session.userId,
+              email: userProfile.email || session.email,
+              displayName: userProfile.displayName || [userProfile.firstName, userProfile.lastName].filter(Boolean).join(' ').trim() || session.fullName,
+              activeWorkspaceId: userProfile.activeWorkspaceId || session.user?.activeWorkspaceId || null
+            }
+          };
+
+          this.setSession(mergedSession);
+          if (userProfile.activeWorkspaceId) {
+            localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, userProfile.activeWorkspaceId);
+          }
+          return { success: true, data: userProfile };
+        }
+      }
+
       await this.ensureApiIntegration();
       const response = await window.OP.apiIntegration.get('/auth/me');
       const payload = response && response.data ? response.data : {};
@@ -794,33 +859,58 @@ class AuthManager {
     const firstName = payload.firstName || nameParts[0] || '';
     const lastName = payload.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
 
-    const updatePayload = {};
+    const updatePayload = {
+      uid: session.userId,
+      email: session.email || payload.email || '',
+      displayName: fullName || [firstName, lastName].filter(Boolean).join(' ').trim() || session.fullName || '',
+      photoURL: payload.photoURL || payload.avatarUrl || session.user?.photoURL || null,
+      onboardingCompleted: payload.onboardingCompleted ?? true,
+      activeWorkspaceId: payload.activeWorkspaceId || session.user?.activeWorkspaceId || localStorage.getItem(STORAGE_KEYS.CURRENT_WORKSPACE) || null
+    };
+
     if (firstName) updatePayload.firstName = firstName;
     if (lastName) updatePayload.lastName = lastName;
     if (typeof payload.phone === 'string') updatePayload.phone = payload.phone.trim();
     if (typeof payload.avatarUrl === 'string' && payload.avatarUrl.trim().length <= 500) {
-      updatePayload.avatarUrl = payload.avatarUrl.trim();
+      updatePayload.photoURL = payload.avatarUrl.trim();
     }
+    if (payload.role) updatePayload.role = payload.role;
+    if (payload.department) updatePayload.department = payload.department;
+    if (payload.bio) updatePayload.bio = payload.bio;
+    if (payload.jobTitle) updatePayload.jobTitle = payload.jobTitle;
+    if (payload.timezone) updatePayload.timezone = payload.timezone;
 
     try {
-      await this.ensureApiIntegration();
-      const response = await window.OP.apiIntegration.patch('/users/me', updatePayload);
-      const result = response && response.data ? response.data : {};
-
-      if (result.success) {
-        const updatedData = result.data || {};
+      if (window.OP && window.OP.firebaseUsers && typeof window.OP.firebaseUsers.updateCurrentProfile === 'function') {
+        const result = await window.OP.firebaseUsers.updateCurrentProfile(updatePayload);
         const mergedSession = Object.assign({}, session, {
-          fullName: [updatedData.firstName, updatedData.lastName].filter(Boolean).join(' ').trim() || session.fullName,
-          email: updatedData.email || session.email,
-          role: updatedData.role || session.role
+          fullName: result?.displayName || [result?.firstName, result?.lastName].filter(Boolean).join(' ').trim() || session.fullName,
+          email: result?.email || session.email,
+          role: result?.role || session.role,
+          user: {
+            ...(session.user || {}),
+            ...result,
+            email: result?.email || session.email,
+            displayName: result?.displayName || session.fullName || '',
+            activeWorkspaceId: result?.activeWorkspaceId || session.user?.activeWorkspaceId || null
+          }
         });
         this.setSession(mergedSession);
+        return {
+          success: true,
+          message: 'Profile updated successfully.',
+          data: result || null
+        };
       }
 
+      const profile = this.getSession() || {};
+      const existingProfile = Object.assign({}, profile.user || {}, profile);
+      const mergedProfile = { ...existingProfile, ...updatePayload, updatedAt: new Date().toISOString() };
+      this.setSession({ ...session, user: mergedProfile, fullName: mergedProfile.displayName || session.fullName });
       return {
-        success: !!result.success,
-        message: result.message || 'Profile updated successfully.',
-        data: result.data || null
+        success: true,
+        message: 'Profile updated successfully.',
+        data: mergedProfile
       };
     } catch (error) {
       const message = error && error.message ? error.message : 'Unable to update profile.';
@@ -865,7 +955,7 @@ class WorkspaceManager {
 
   getWorkspaces() {
     try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES));
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES) || 'null');
       if (Array.isArray(raw)) return raw;
       if (raw && typeof raw === 'object') {
         if (Array.isArray(raw.data)) return raw.data;
@@ -881,20 +971,74 @@ class WorkspaceManager {
     localStorage.setItem(STORAGE_KEYS.WORKSPACES, JSON.stringify(workspaces));
   }
 
-  createWorkspace(name, url, size, industry, organizationId = null) {
+  async loadUserWorkspaces() {
+    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
+    if (!session || !session.userId) return [];
+
+    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.listUserWorkspaces === 'function') {
+      try {
+        const workspaces = await window.OP.firebaseWorkspaces.listUserWorkspaces(session.userId);
+        if (Array.isArray(workspaces) && workspaces.length > 0) {
+          this.saveWorkspaces(workspaces);
+          return workspaces;
+        }
+      } catch (error) {
+        console.warn('[WorkspaceManager] Firestore workspace query failed', error);
+      }
+    }
+
+    const localWorkspaces = this.getWorkspaces();
+    const directMembership = localWorkspaces.filter(w => (w.members || []).some(m => m.userId === session.userId || m.uid === session.userId));
+    if (directMembership.length > 0) return directMembership;
+
+    if (session.organizationId) {
+      return localWorkspaces.filter(w => w.organizationId === session.organizationId);
+    }
+
+    return localWorkspaces;
+  }
+
+  async createWorkspace(name, url, size, industry, organizationId = null) {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return { success: false, message: 'Not authenticated.' };
 
+    const normalizedUrl = String(url || '').trim().toLowerCase();
+    const normalizedName = String(name || '').trim();
+
+    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.createWorkspace === 'function') {
+      try {
+        const result = await window.OP.firebaseWorkspaces.createWorkspace({
+          name: normalizedName,
+          slug: normalizedUrl,
+          size,
+          industry: industry || null,
+          ownerId: session.userId,
+          organizationId: organizationId || session.organizationId || null
+        });
+        if (result && result.success && result.workspace) {
+          const workspaces = this.getWorkspaces();
+          const exists = workspaces.some(w => String(w.id || '').toLowerCase() === String(result.workspace.id || '').toLowerCase());
+          if (!exists) {
+            workspaces.push(result.workspace);
+            this.saveWorkspaces(workspaces);
+          }
+          this.setCurrentWorkspace(result.workspace.id);
+        }
+        return result;
+      } catch (error) {
+        console.warn('[WorkspaceManager] Firebase workspace create failed', error);
+      }
+    }
+
     const workspaces = this.getWorkspaces();
-    
-    if (workspaces.some(w => w.url.toLowerCase() === url.toLowerCase())) {
+    if (workspaces.some(w => String(w.url || '').toLowerCase() === normalizedUrl)) {
       return { success: false, message: 'This workspace URL is already taken.' };
     }
 
     const workspace = {
       id: crypto.randomUUID(),
-      name: name.trim(),
-      url: url.toLowerCase().trim(),
+      name: normalizedName,
+      url: normalizedUrl,
       size,
       industry: industry || null,
       ownerId: session.userId,
@@ -906,16 +1050,33 @@ class WorkspaceManager {
     workspaces.push(workspace);
     this.saveWorkspaces(workspaces);
     this.setCurrentWorkspace(workspace.id);
-
     return { success: true, message: 'Workspace created successfully.', workspace };
   }
 
-  joinWorkspace(inviteCode) {
+  async joinWorkspace(inviteCode) {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return { success: false, message: 'Not authenticated.' };
 
+    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.joinWorkspace === 'function') {
+      try {
+        const result = await window.OP.firebaseWorkspaces.joinWorkspace({ inviteCode, uid: session.userId });
+        if (result && result.success && result.workspace) {
+          const workspaces = this.getWorkspaces();
+          const existing = workspaces.find(w => String(w.id || '').toLowerCase() === String(result.workspace.id || '').toLowerCase());
+          if (!existing) {
+            workspaces.push(result.workspace);
+            this.saveWorkspaces(workspaces);
+          }
+          this.setCurrentWorkspace(result.workspace.id);
+        }
+        return result;
+      } catch (error) {
+        console.warn('[WorkspaceManager] Firebase workspace join failed', error);
+      }
+    }
+
     const workspaces = this.getWorkspaces();
-    const workspace = workspaces.find(w => w.id.slice(0, 8).toUpperCase() === inviteCode.toUpperCase());
+    const workspace = workspaces.find(w => String(w.id || '').slice(0, 8).toUpperCase() === String(inviteCode || '').toUpperCase());
     
     if (!workspace) {
       return { success: false, message: 'Invalid invite code.' };
@@ -937,7 +1098,6 @@ class WorkspaceManager {
 
     this.saveWorkspaces(workspaces);
     this.setCurrentWorkspace(workspace.id);
-
     return { success: true, message: 'Joined workspace successfully.', workspace };
   }
 
@@ -946,29 +1106,34 @@ class WorkspaceManager {
     if (!session) return [];
 
     const workspaces = this.getWorkspaces();
-    const directMembership = workspaces.filter(w => w.members.some(m => m.userId === session.userId));
+    const directMembership = workspaces.filter(w => (w.members || []).some(m => m.userId === session.userId || m.uid === session.userId));
     if (directMembership.length > 0) return directMembership;
 
     if (session.organizationId) {
       return workspaces.filter(w => w.organizationId === session.organizationId);
     }
 
-    return [];
+    return workspaces;
   }
 
   setCurrentWorkspace(workspaceId) {
-    localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId);
+    localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId || '');
 
     const session = window.OP?.auth?.getSession?.() || null;
+    if (session && session.userId && window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.setCurrentWorkspace === 'function') {
+      window.OP.firebaseWorkspaces.setCurrentWorkspace(workspaceId, session.userId).catch(() => {});
+    }
+
     if (session) {
       const workspace = this.getWorkspaces().find(w => w.id === workspaceId);
-      if (workspace && workspace.organizationId && session.organizationId !== workspace.organizationId) {
+      const fallbackOrganizationId = workspace?.organizationId || workspace?.id || session.organizationId || null;
+      if (fallbackOrganizationId && session.organizationId !== fallbackOrganizationId) {
         const updatedSession = {
           ...session,
-          organizationId: workspace.organizationId,
+          organizationId: fallbackOrganizationId,
           user: {
             ...(session.user || {}),
-            organizationId: workspace.organizationId
+            organizationId: fallbackOrganizationId
           }
         };
         window.OP.auth.setSession(updatedSession);
@@ -991,6 +1156,12 @@ class WorkspaceManager {
         this.setCurrentWorkspace(fallback.id);
         return fallback;
       }
+    }
+
+    if (workspaces.length > 0) {
+      const fallback = workspaces[0];
+      this.setCurrentWorkspace(fallback.id);
+      return fallback;
     }
 
     return null;
@@ -1459,10 +1630,63 @@ window.OP = Object.assign({
   toast: new ToastManager()
 }, window.OP || {});
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === 'true') {
+        resolve();
+        return;
+      }
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.addEventListener('load', () => {
+      script.dataset.loaded = 'true';
+      resolve();
+    }, { once: true });
+    script.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
+    document.head.appendChild(script);
+  });
+}
+
+window.OP.ensureFirebaseModules = async function () {
+  if (window.OP.firebaseModulesReady) {
+    return window.OP.firebaseModulesReady;
+  }
+
+  const currentPage = new URL(window.location.href);
+  const baseUrl = new URL('../js/', currentPage);
+  const moduleUrls = [
+    new URL('firebase/firestore.js', baseUrl),
+    new URL('firebase/users.js', baseUrl),
+    new URL('firebase/workspaces.js', baseUrl),
+    new URL('firebase/members.js', baseUrl)
+  ];
+
+  window.OP.firebaseModulesReady = (async () => {
+    for (const moduleUrl of moduleUrls) {
+      try {
+        await loadScript(moduleUrl.toString());
+      } catch (error) {
+        console.warn('[FirebaseModules]', 'Failed to load module', moduleUrl.toString(), error);
+      }
+    }
+    return true;
+  })();
+
+  return window.OP.firebaseModulesReady;
+};
+
 // Initialize global command palette and expose
-window.OP.command = window.OP.command || new CommandPalette();
-document.addEventListener('DOMContentLoaded', () => {
-  try { window.OP.command.init(); } catch (e) { /* ignore */ }
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await window.OP.ensureFirebaseModules(); } catch (e) { /* ignore */ }
+  try { window.OP.command = window.OP.command || new CommandPalette(); window.OP.command.init(); } catch (e) { /* ignore */ }
 });
 
 // Service Worker / Push registration (safe stub)

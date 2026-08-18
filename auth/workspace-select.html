@@ -42,13 +42,14 @@
     </div>
   </div>
 
+  <script src="../js/firebase-init.js"></script>
   <script src="../js/app.js?v=20260803-1"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       if (!OP.nav.requireAuth()) return;
 
       const session = OP.auth.getSession();
-      const workspaces = OP.workspace.getUserWorkspaces();
+      const workspaces = await OP.workspace.loadUserWorkspaces();
       const listEl = document.getElementById('workspace-list');
 
       if (workspaces.length === 0) {

@@ -2,3 +2,13 @@ backend/tokens/
 backend/*.log
 frontend-runtime.log
 backend-runtime.log
+
+# Firebase / service-account secrets (must stay server-side only)
+**/service-account*.json
+**/firebase-service-account*.json
+**/google-service-account*.json
+**/.env
+**/.env.*
+**/credentials/*.json
+**/secrets/*.json
+whatsapp-service/sessions/

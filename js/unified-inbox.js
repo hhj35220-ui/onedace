@@ -178,6 +178,17 @@ class UnifiedInbox {
 
   // Deterministic demo thread built from the conversation seed
   buildThread(conv) {
+    // Live WhatsApp conversations carry their real message history —
+    // never mix it with generated demo messages.
+    if (conv.platform === 'whatsapp' && Array.isArray(conv.messages) && conv.messages.length) {
+      return conv.messages.map(m => ({
+        direction: m.direction || 'outbound',
+        text: m.text,
+        timestamp: m.timestamp,
+        note: m.note
+      }));
+    }
+
     const rand = opSeededRandom(conv.id.split('').reduce((s, ch) => s + ch.charCodeAt(0), 0));
     const inbound = [
       'Hi! I need some help with my recent order.',
@@ -305,18 +316,36 @@ class UnifiedInbox {
       const textarea = view.querySelector('#reply-textarea');
       const text = textarea.value.trim();
       if (!text) return;
-      this.storage.addMessage(conv.id, {
-        direction: 'outbound',
-        text,
-        timestamp: new Date().toISOString(),
-        author: 'Sophia Moore',
-        note: this.replyMode === 'note'
-      });
-      this.storage.updateConversation(conv.id, { message: text, timestamp: new Date().toISOString() });
-      textarea.value = '';
+
+      const persist = () => {
+        this.storage.addMessage(conv.id, {
+          direction: 'outbound',
+          text,
+          timestamp: new Date().toISOString(),
+          author: 'Sophia Moore',
+          note: this.replyMode === 'note'
+        });
+        this.storage.updateConversation(conv.id, { message: text, timestamp: new Date().toISOString() });
+        textarea.value = '';
+        this.renderConversationList();
+        this.selectConversation(conv.id);
+      };
+
+      // WhatsApp conversations reply through the WPPConnect-backed service.
+      if (this.replyMode === 'reply' && conv.platform === 'whatsapp' && window.OP.whatsappInboxBridge) {
+        window.OP.whatsappInboxBridge.sendReply(conv, text)
+          .then(() => {
+            persist();
+            OP.toast.show('WhatsApp reply sent', 'success');
+          })
+          .catch((error) => {
+            OP.toast.show(error?.message || 'Failed to send WhatsApp reply.', 'error');
+          });
+        return;
+      }
+
+      persist();
       OP.toast.show(this.replyMode === 'reply' ? 'Reply sent' : 'Note added', 'success');
-      this.renderConversationList();
-      this.selectConversation(conv.id);
     };
 
     view.querySelector('#reply-send-btn').addEventListener('click', send);

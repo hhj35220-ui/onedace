@@ -136,59 +136,7 @@
     </main>
   </div>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signInWithEmailAndPassword,
-      signOut
-    } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-
-    window.initializeApp = initializeApp;
-    window.getAuth = getAuth;
-    window.GoogleAuthProvider = GoogleAuthProvider;
-    window.signInWithPopup = signInWithPopup;
-    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-    window.signOut = signOut;
-
-    window.OP = window.OP || {};
-    const firebaseConfig = {
-      apiKey: 'AIzaSyAPYya9VUq_suYoQLG8CGM2ppM9TFlKfVQ',
-      authDomain: 'oneplace-c3ac8.firebaseapp.com',
-      projectId: 'oneplace-c3ac8',
-      storageBucket: 'oneplace-c3ac8.firebasestorage.app',
-      messagingSenderId: '220251027915',
-      appId: '1:220251027915:web:e06e5c3ea9da071d9e1e4e',
-      measurementId: 'G-XD2RX55EG9T'
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    window.OP.firebase = {
-      initialized: true,
-      ready: true,
-      app,
-      auth,
-      initError: null,
-      signInWithEmailAndPassword: (email, password) => signInWithEmailAndPassword(auth, email, password),
-      signInWithPopup: (provider) => signInWithPopup(auth, provider),
-      GoogleAuthProvider,
-      signOut: () => signOut(auth)
-    };
-
-    console.log('[Firebase] initialized', {
-      locationProtocol: location.protocol,
-      initializeApp: typeof window.initializeApp,
-      getAuth: typeof window.getAuth,
-      GoogleAuthProvider: typeof window.GoogleAuthProvider,
-      signInWithPopup: typeof window.OP.firebase.signInWithPopup,
-      initialized: window.OP.firebase.initialized,
-      authReady: !!window.OP.firebase.auth
-    });
-  </script>
+  <script src="../js/firebase-init.js"></script>
   <script src="../js/app.js?v=20260803-1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

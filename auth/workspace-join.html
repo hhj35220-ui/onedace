@@ -89,6 +89,7 @@
     </div>
   </div>
 
+  <script src="../js/firebase-init.js"></script>
   <script src="../js/app.js?v=20260803-1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -157,7 +158,7 @@
 
         await new Promise(r => setTimeout(r, 800));
 
-        const result = OP.workspace.joinWorkspace(code);
+        const result = await OP.workspace.joinWorkspace(code);
 
         OP.loading.hide();
         submitBtn.disabled = false;
@@ -203,7 +204,7 @@
 
         await new Promise(r => setTimeout(r, 800));
 
-        const result = OP.workspace.joinWorkspace(target.id.slice(0, 8).toUpperCase());
+        const result = await OP.workspace.joinWorkspace(target.id.slice(0, 8).toUpperCase());
 
         OP.loading.hide();
         submitBtn.disabled = false;

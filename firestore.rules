@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelfUser(uid) {
+      return signedIn() && uid == request.auth.uid;
+    }
+
+    function workspaceMember(workspaceId) {
+      return signedIn() && exists(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid));
+    }
+
+    function workspaceOwner(workspaceId) {
+      return workspaceMember(workspaceId) && get(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid)).data.role == 'owner';
+    }
+
+    match /users/{uid} {
+      allow read: if isSelfUser(uid);
+      allow create: if isSelfUser(uid);
+      allow update: if isSelfUser(uid);
+      allow delete: if false;
+    }
+
+    match /workspaces/{workspaceId} {
+      allow read: if workspaceMember(workspaceId);
+      allow create: if signedIn();
+      allow update: if workspaceOwner(workspaceId);
+      allow delete: if workspaceOwner(workspaceId);
+
+      match /members/{uid} {
+        allow read: if workspaceMember(workspaceId);
+        allow create: if signedIn() && uid == request.auth.uid;
+        allow update: if workspaceOwner(workspaceId) || (signedIn() && uid == request.auth.uid && resource.data.role != 'owner');
+        allow delete: if workspaceOwner(workspaceId) || (signedIn() && uid == request.auth.uid && resource.data.role != 'owner');
+      }
+
+      match /{document=**} {
+        allow read: if workspaceMember(workspaceId);
+        allow create, update, delete: if workspaceOwner(workspaceId);
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

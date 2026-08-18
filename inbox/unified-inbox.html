@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="../css/unified-inbox.css?v=3.1">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
   <div class="dashboard-layout">
@@ -161,15 +162,38 @@
     </main>
   </div>
 
+  <script type="module">
+    // Firebase Auth session for the WhatsApp service client (ID token auth).
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    window.OP = window.OP || {};
+    if (!window.OP.firebase || !window.OP.firebase.initialized) {
+      const app = initializeApp({
+        apiKey: 'AIzaSyAPYya9VUq_suYoQLG8CGM2ppM9TFlKfVQ',
+        authDomain: 'oneplace-c3ac8.firebaseapp.com',
+        projectId: 'oneplace-c3ac8',
+        storageBucket: 'oneplace-c3ac8.firebasestorage.app',
+        messagingSenderId: '220251027915',
+        appId: '1:220251027915:web:e06e5c3ea9da071d9e1e4e',
+        measurementId: 'G-XD2RX55EG9T'
+      });
+      window.OP.firebase = { initialized: true, ready: true, app, auth: getAuth(app), initError: null };
+      window.OP.firebaseReady = () => Promise.resolve(window.OP.firebase);
+    }
+  </script>
   <script src="../js/app.js?v=3.1"></script>
   <script src="../js/storage.js?v=3.1"></script>
   <script src="../js/dashboard.js?v=3.1"></script>
-  <script src="../js/unified-inbox.js?v=3.1"></script>
+  <script src="../js/whatsapp-service-client.js"></script>
+  <script src="../js/unified-inbox.js?v=3.2"></script>
+  <script src="../js/whatsapp-inbox-bridge.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (!OP.nav.requireAuth()) return;
       const app = new DashboardApp();
       const inbox = new UnifiedInbox();
+      window.unifiedInbox = inbox;
 
       // Handle search from header
       document.addEventListener('dashboard:search', () => {

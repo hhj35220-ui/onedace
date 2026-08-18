@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/whatsapp.css">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
   <div class="dashboard-layout">
@@ -366,9 +367,30 @@
     </a>
   </div>
 
+  <script type="module">
+    // Firebase Auth session for the WhatsApp service client (ID token auth).
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    window.OP = window.OP || {};
+    if (!window.OP.firebase || !window.OP.firebase.initialized) {
+      const app = initializeApp({
+        apiKey: 'AIzaSyAPYya9VUq_suYoQLG8CGM2ppM9TFlKfVQ',
+        authDomain: 'oneplace-c3ac8.firebaseapp.com',
+        projectId: 'oneplace-c3ac8',
+        storageBucket: 'oneplace-c3ac8.firebasestorage.app',
+        messagingSenderId: '220251027915',
+        appId: '1:220251027915:web:e06e5c3ea9da071d9e1e4e',
+        measurementId: 'G-XD2RX55EG9T'
+      });
+      window.OP.firebase = { initialized: true, ready: true, app, auth: getAuth(app), initError: null };
+      window.OP.firebaseReady = () => Promise.resolve(window.OP.firebase);
+    }
+  </script>
   <script src="../js/app.js"></script>
   <script src="../js/api-integration.js"></script>
   <script src="../js/storage.js"></script>
+  <script src="../js/whatsapp-service-client.js"></script>
   <script src="../js/whatsapp.js"></script>
 </body>
 </html>

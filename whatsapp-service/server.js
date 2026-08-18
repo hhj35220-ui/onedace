@@ -1,3 +1,21 @@
+/**
+ * OnePlace Enterprise — WhatsApp Service (WPPConnect)
+ *
+ * Express microservice that embeds WPPConnect directly into OnePlace.
+ * One WhatsApp session per OnePlace workspace, persisted on disk via
+ * WPPConnect's file token store, so sessions survive restarts.
+ *
+ * Auth model (unchanged from the original service):
+ *   1. Caller presents a Firebase ID token (Authorization: Bearer ...).
+ *   2. Caller obtains a short-lived workspace-auth token from
+ *      POST /api/whatsapp/workspace-auth (verifies Firestore membership).
+ *   3. All other endpoints require both the Firebase token and the
+ *      workspace-auth token, and are always scoped to one workspaceId.
+ *
+ * Local development: set ALLOW_LOCAL_DEV=true to bypass Firebase with an
+ * X-User-Id header instead.
+ */
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -16,9 +34,17 @@ const FIREBASE_JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/ser
 const WORKSPACE_AUTH_TTL_SECONDS = Number(process.env.WHATSAPP_WORKSPACE_AUTH_TTL_SECONDS || 600);
 const WORKSPACE_AUTH_SECRET = String(process.env.WHATSAPP_WORKSPACE_AUTH_SECRET || crypto.randomBytes(48).toString('hex'));
 
+// In-memory caps (per workspace)
+const MAX_MESSAGES_PER_CHAT = Number(process.env.WHATSAPP_MAX_MESSAGES_PER_CHAT || 500);
+const MAX_EVENTS_PER_WORKSPACE = Number(process.env.WHATSAPP_MAX_EVENTS || 1000);
+
 fs.mkdirSync(SESSIONS_DIR, { recursive: true });
 
 const sessions = new Map();
+
+// ============================================
+// Session registry helpers
+// ============================================
 
 function normalizeWorkspaceId(raw) {
   const value = String(raw || '').trim();
@@ -37,15 +63,33 @@ function getSessionMeta(workspaceId) {
       workspaceId,
       sessionName,
       client: null,
+      creating: null,          // Promise while wppconnect.create() is in flight
       status: 'notLogged',
       qr: null,
+      pairingCode: null,
       connectedAt: null,
       updatedAt: null,
-      lastError: null
+      lastError: null,
+      messageStore: new Map(), // chatId -> normalized message[]
+      events: [],              // { seq, type, message, timestamp }
+      eventSeq: 0
     });
   }
   return sessions.get(sessionName);
 }
+
+function hasStoredToken(workspaceId) {
+  const dir = path.join(SESSIONS_DIR, getSessionName(workspaceId));
+  try {
+    return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
+  } catch (error) {
+    return false;
+  }
+}
+
+// ============================================
+// Status mapping
+// ============================================
 
 function mapStatus(status) {
   const normalized = String(status || 'notLogged').trim();
@@ -81,6 +125,10 @@ function uiStatusFromState(rawStatus) {
   if (value.includes('disconnected') || value.includes('browserclose') || value.includes('delete') || value.includes('serverclose')) return 'Disconnected';
   return mapStatus(normalized);
 }
+
+// ============================================
+// Workspace auth tokens (HMAC-signed, short-lived)
+// ============================================
 
 function toBase64Url(input) {
   return Buffer.from(input).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -167,12 +215,16 @@ function getWorkspaceIdFromRequest(req) {
   return String(
     req.query.workspaceId ||
     req.query.activeWorkspaceId ||
-    req.body.workspaceId ||
-    req.body.activeWorkspaceId ||
+    (req.body && req.body.workspaceId) ||
+    (req.body && req.body.activeWorkspaceId) ||
     req.headers['x-workspace-id'] ||
     ''
   ).trim();
 }
+
+// ============================================
+// Firebase token + workspace membership
+// ============================================
 
 async function verifyFirebaseToken(req) {
   const authHeader = String(req.headers.authorization || '');
@@ -328,7 +380,7 @@ async function authorizeWorkspace(req) {
     req.headers['x-workspace-auth'] ||
     req.headers['x-workspace-token'] ||
     req.query.workspaceAuthToken ||
-    req.body.workspaceAuthToken ||
+    (req.body && req.body.workspaceAuthToken) ||
     ''
   ).trim();
 
@@ -353,8 +405,95 @@ async function authorizeWorkspace(req) {
   };
 }
 
+// ============================================
+// Message normalization + per-workspace store
+// ============================================
+
+function normalizeChatId(value) {
+  const raw = typeof value === 'object' && value !== null ? (value._serialized || value.id || '') : String(value || '');
+  return raw;
+}
+
+function normalizeMessage(message) {
+  if (!message || typeof message !== 'object') return null;
+
+  const fromMe = !!(message.fromMe || (message.id && message.id.fromMe));
+  const from = normalizeChatId(message.from);
+  const to = normalizeChatId(message.to);
+  const chatId = normalizeChatId(message.chatId) || (fromMe ? to : from);
+  const timestampMs = message.timestamp
+    ? Number(message.timestamp) * 1000
+    : (message.t ? Number(message.t) * 1000 : Date.now());
+
+  const sender = message.sender || {};
+  const normalized = {
+    id: (message.id && (message.id._serialized || message.id.id)) || String(message.id || `m_${timestampMs}`),
+    chatId,
+    from,
+    to,
+    fromMe,
+    type: String(message.type || 'chat'),
+    body: typeof message.body === 'string' ? message.body : (message.caption || ''),
+    caption: message.caption || null,
+    mimetype: message.mimetype || null,
+    filename: message.filename || null,
+    mediaUrl: message.mediaUrl || null,
+    deprecatedMms3Url: message.deprecatedMms3Url || null,
+    isGroupMsg: !!message.isGroupMsg,
+    ack: typeof message.ack === 'number' ? message.ack : null,
+    timestamp: timestampMs,
+    sender: {
+      id: normalizeChatId(sender.id) || from,
+      name: sender.name || sender.pushname || sender.shortName || null,
+      pushname: sender.pushname || null
+    }
+  };
+
+  normalized.hasMedia = !!(normalized.mimetype && normalized.type !== 'chat' && normalized.type !== 'revoked');
+  return normalized;
+}
+
+function storeMessage(meta, normalized) {
+  if (!normalized || !normalized.chatId) return;
+
+  if (!meta.messageStore.has(normalized.chatId)) {
+    meta.messageStore.set(normalized.chatId, []);
+  }
+  const list = meta.messageStore.get(normalized.chatId);
+
+  // De-duplicate by message id (WPPConnect can re-emit on reconnect)
+  if (!list.some(m => m.id === normalized.id)) {
+    list.push(normalized);
+    list.sort((a, b) => a.timestamp - b.timestamp);
+    if (list.length > MAX_MESSAGES_PER_CHAT) {
+      list.splice(0, list.length - MAX_MESSAGES_PER_CHAT);
+    }
+  }
+
+  meta.eventSeq += 1;
+  meta.events.push({
+    seq: meta.eventSeq,
+    type: 'message',
+    message: normalized,
+    timestamp: new Date().toISOString()
+  });
+  if (meta.events.length > MAX_EVENTS_PER_WORKSPACE) {
+    meta.events.splice(0, meta.events.length - MAX_EVENTS_PER_WORKSPACE);
+  }
+}
+
+function getStoredMessages(meta, chatId, limit) {
+  const list = meta.messageStore.get(chatId) || [];
+  const max = Math.max(1, Math.min(Number(limit) || 50, MAX_MESSAGES_PER_CHAT));
+  return list.slice(-max);
+}
+
+// ============================================
+// WPPConnect client lifecycle
+// ============================================
+
 async function readClientAccountInfo(client) {
-  const account = { }
+  const account = {};
   try {
     if (client && typeof client.getHostDevice === 'function') {
       const hostDevice = await client.getHostDevice();
@@ -378,16 +517,50 @@ async function readClientAccountInfo(client) {
   return account;
 }
 
-async function ensureClientForWorkspace(workspaceId) {
-  const sessionName = getSessionName(workspaceId);
-  const meta = getSessionMeta(workspaceId);
+function attachClientHandlers(client, meta) {
+  client.onMessage(async (message) => {
+    try {
+      const normalized = normalizeMessage(message);
+      if (normalized) {
+        storeMessage(meta, normalized);
+        meta.updatedAt = new Date().toISOString();
+      }
+    } catch (error) {
+      meta.lastError = String(error && error.message ? error.message : error);
+    }
+  });
 
-  if (meta.client) {
-    return meta.client;
+  if (typeof client.onAck === 'function') {
+    client.onAck(async (ack) => {
+      try {
+        if (!ack) return;
+        const messageId = (ack.id && (ack.id._serialized || ack.id.id)) || null;
+        if (!messageId) return;
+        for (const list of meta.messageStore.values()) {
+          const found = list.find(m => m.id === messageId);
+          if (found) {
+            found.ack = typeof ack.ack === 'number' ? ack.ack : found.ack;
+            break;
+          }
+        }
+      } catch (error) {}
+    });
   }
 
+  client.onStateChange(async (state) => {
+    meta.status = String(state || meta.status || 'notLogged');
+    meta.updatedAt = new Date().toISOString();
+    if (state === 'isLogged') {
+      meta.connectedAt = new Date().toISOString();
+      meta.qr = null;
+      meta.pairingCode = null;
+    }
+  });
+}
+
+async function createClient(meta, options = {}) {
   const client = await wppconnect.create({
-    session: sessionName,
+    session: meta.sessionName,
     headless: true,
     debug: false,
     logQR: false,
@@ -395,11 +568,18 @@ async function ensureClientForWorkspace(workspaceId) {
     autoClose: 0,
     chromeVersion: 'stable',
     tokenStore: 'file',
-    folderNameToken: path.join(SESSIONS_DIR, sessionName),
+    folderNameToken: path.join(SESSIONS_DIR, meta.sessionName),
+    // Pairing-code login: only used when a phone number was supplied.
+    ...(options.phoneNumber ? { phoneNumber: String(options.phoneNumber).replace(/\D+/g, '') } : {}),
     catchQR: (base64Qr, asciiQR, attempts, urlCode) => {
       const data = base64Qr && base64Qr.startsWith('data:image') ? base64Qr : `data:image/png;base64,${base64Qr || ''}`;
       meta.qr = data;
       meta.status = 'qrReadSuccess';
+      meta.updatedAt = new Date().toISOString();
+    },
+    catchLinkCode: (code) => {
+      meta.pairingCode = code || null;
+      meta.status = 'pairing';
       meta.updatedAt = new Date().toISOString();
     },
     statusFind: (statusSession, session) => {
@@ -407,44 +587,72 @@ async function ensureClientForWorkspace(workspaceId) {
       meta.updatedAt = new Date().toISOString();
       if (meta.status === 'isLogged') {
         meta.connectedAt = new Date().toISOString();
+        meta.qr = null;
+        meta.pairingCode = null;
       }
       if (meta.status === 'disconnectedMobile' || meta.status === 'deleteToken' || meta.status === 'browserClose') {
         meta.qr = null;
+        meta.pairingCode = null;
       }
     }
   });
 
   meta.client = client;
-  meta.status = 'notLogged';
   meta.updatedAt = new Date().toISOString();
-
-  client.onMessage(async (message) => {
-    if (!message) return;
-    meta.lastMessage = message;
-  });
-
-  client.onStateChange(async (state) => {
-    meta.status = String(state || meta.status || 'notLogged');
-    meta.updatedAt = new Date().toISOString();
-    if (state === 'isLogged') {
-      meta.connectedAt = new Date().toISOString();
-    }
-  });
-
+  attachClientHandlers(client, meta);
   return client;
+}
+
+/**
+ * Returns a connected-or-connecting WPPConnect client for the workspace.
+ * Concurrent calls share one in-flight create() promise so we never spawn
+ * two Chromium instances for the same session.
+ */
+async function ensureClientForWorkspace(workspaceId, options = {}) {
+  const meta = getSessionMeta(workspaceId);
+
+  if (meta.client) {
+    return meta.client;
+  }
+
+  if (meta.creating) {
+    return meta.creating;
+  }
+
+  meta.creating = createClient(meta, options)
+    .then(client => client)
+    .catch(error => {
+      meta.lastError = String(error && error.message ? error.message : error);
+      meta.status = 'notLogged';
+      throw error;
+    })
+    .finally(() => {
+      meta.creating = null;
+    });
+
+  return meta.creating;
 }
 
 async function getWorkspaceStatus(workspaceId) {
   const meta = getSessionMeta(workspaceId);
+
+  // Auto-resume a persisted session in the background so a plain status
+  // poll reconnects WhatsApp after a service restart.
+  if (!meta.client && !meta.creating && hasStoredToken(workspaceId)) {
+    ensureClientForWorkspace(workspaceId).catch(() => {});
+  }
+
   if (!meta.client) {
     return {
       workspaceId,
       sessionName: getSessionName(workspaceId),
-      connectionStatus: 'notLogged',
-      status: 'Not connected',
-      statusText: 'Not connected',
+      connectionStatus: meta.creating ? 'initializing' : 'notLogged',
+      status: meta.creating ? 'Connecting' : 'Not connected',
+      statusText: meta.creating ? 'Connecting' : 'Not connected',
       connected: false,
-      qr: null,
+      qr: meta.qr || null,
+      pairingCode: meta.pairingCode || null,
+      hasStoredSession: hasStoredToken(workspaceId),
       lastUpdatedAt: meta.updatedAt,
       account: null
     };
@@ -468,6 +676,8 @@ async function getWorkspaceStatus(workspaceId) {
       statusText: uiStatusFromState(nextStatus),
       connected: nextStatus === 'isLogged' || nextStatus === 'CONNECTED' || nextStatus.toLowerCase() === 'islogged',
       qr: meta.qr || null,
+      pairingCode: meta.pairingCode || null,
+      hasStoredSession: true,
       lastUpdatedAt: meta.updatedAt,
       connectedAt: meta.connectedAt,
       account
@@ -482,6 +692,8 @@ async function getWorkspaceStatus(workspaceId) {
       statusText: uiStatusFromState(meta.status || 'notLogged'),
       connected: false,
       qr: meta.qr || null,
+      pairingCode: meta.pairingCode || null,
+      hasStoredSession: hasStoredToken(workspaceId),
       lastUpdatedAt: meta.updatedAt,
       connectedAt: meta.connectedAt,
       error: meta.lastError,
@@ -500,11 +712,16 @@ async function disconnectWorkspaceSession(workspaceId) {
   }
 
   meta.client = null;
+  meta.creating = null;
   meta.status = 'notLogged';
   meta.qr = null;
+  meta.pairingCode = null;
   meta.connectedAt = null;
   meta.updatedAt = new Date().toISOString();
   meta.lastError = null;
+  meta.messageStore = new Map();
+  meta.events = [];
+  meta.eventSeq = 0;
 
   const proprietaryTokenDir = path.join(SESSIONS_DIR, getSessionName(workspaceId));
   if (fs.existsSync(proprietaryTokenDir)) {
@@ -520,12 +737,21 @@ async function disconnectWorkspaceSession(workspaceId) {
   };
 }
 
-const allowedOrigins = new Set([
+// ============================================
+// HTTP layer
+// ============================================
+
+const defaultOrigins = [
   'http://localhost:8000',
   'http://127.0.0.1:8000',
   'http://localhost:3001',
   'http://127.0.0.1:3001'
-]);
+];
+const envOrigins = String(process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set([...defaultOrigins, ...envOrigins]);
 
 app.use(cors({
   origin(origin, callback) {
@@ -537,7 +763,15 @@ app.use(cors({
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Workspace-Auth', 'X-Workspace-Token', 'X-Workspace-Id', 'X-User-Id']
 }));
-app.use(express.json({ limit: '5mb' }));
+// 25mb to carry base64 media payloads
+app.use(express.json({ limit: '25mb' }));
+
+function handleError(res, error, fallbackMessage, code) {
+  const message = error && error.message ? error.message : fallbackMessage;
+  res.status(error.statusCode || 500).json({ success: false, message, code });
+}
+
+// ---------- Health ----------
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, service: 'oneplace-whatsapp-service' });
@@ -547,16 +781,7 @@ app.get('/api/whatsapp/health', (req, res) => {
   res.json({ ok: true, service: 'oneplace-whatsapp' });
 });
 
-app.get('/api/whatsapp/status', async (req, res) => {
-  try {
-    const access = await authorizeWorkspace(req);
-    const status = await getWorkspaceStatus(access.workspaceId);
-    res.json({ success: true, ...status });
-  } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to load WhatsApp status.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_STATUS_ERROR' });
-  }
-});
+// ---------- Auth ----------
 
 app.post('/api/whatsapp/workspace-auth', async (req, res) => {
   try {
@@ -569,8 +794,19 @@ app.post('/api/whatsapp/workspace-auth', async (req, res) => {
       expiresInSeconds: auth.expiresInSeconds
     });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to authorize workspace.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_WORKSPACE_AUTH_ERROR' });
+    handleError(res, error, 'Unable to authorize workspace.', 'WHATSAPP_WORKSPACE_AUTH_ERROR');
+  }
+});
+
+// ---------- Status / connection ----------
+
+app.get('/api/whatsapp/status', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const status = await getWorkspaceStatus(access.workspaceId);
+    res.json({ success: true, ...status });
+  } catch (error) {
+    handleError(res, error, 'Unable to load WhatsApp status.', 'WHATSAPP_STATUS_ERROR');
   }
 });
 
@@ -585,7 +821,8 @@ app.get('/api/whatsapp/connect', (req, res) => {
 app.post('/api/whatsapp/connect', async (req, res) => {
   try {
     const access = await authorizeWorkspace(req);
-    const client = await ensureClientForWorkspace(access.workspaceId);
+    const phoneNumber = req.body && req.body.phoneNumber ? String(req.body.phoneNumber) : null;
+    await ensureClientForWorkspace(access.workspaceId, phoneNumber ? { phoneNumber } : {});
     const status = await getWorkspaceStatus(access.workspaceId);
 
     res.json({
@@ -593,6 +830,7 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       workspaceId: access.workspaceId,
       sessionName: getSessionName(access.workspaceId),
       qr: status.qr || null,
+      pairingCode: status.pairingCode || null,
       status: status.status,
       statusText: status.statusText,
       connectionStatus: status.connectionStatus,
@@ -600,8 +838,7 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       account: status.account || null
     });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to connect WhatsApp.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_CONNECT_ERROR' });
+    handleError(res, error, 'Unable to connect WhatsApp.', 'WHATSAPP_CONNECT_ERROR');
   }
 });
 
@@ -609,10 +846,16 @@ app.get('/api/whatsapp/qr', async (req, res) => {
   try {
     const access = await authorizeWorkspace(req);
     const status = await getWorkspaceStatus(access.workspaceId);
-    res.json({ success: true, qr: status.qr || null, status: status.status, statusText: status.statusText, connected: !!status.connected });
+    res.json({
+      success: true,
+      qr: status.qr || null,
+      pairingCode: status.pairingCode || null,
+      status: status.status,
+      statusText: status.statusText,
+      connected: !!status.connected
+    });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to fetch WhatsApp QR.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_QR_ERROR' });
+    handleError(res, error, 'Unable to fetch WhatsApp QR.', 'WHATSAPP_QR_ERROR');
   }
 });
 
@@ -622,10 +865,11 @@ app.post('/api/whatsapp/disconnect', async (req, res) => {
     const result = await disconnectWorkspaceSession(access.workspaceId);
     res.json({ success: true, ...result });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to disconnect WhatsApp.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_DISCONNECT_ERROR' });
+    handleError(res, error, 'Unable to disconnect WhatsApp.', 'WHATSAPP_DISCONNECT_ERROR');
   }
 });
+
+// ---------- Chats / contacts ----------
 
 app.get('/api/whatsapp/chats', async (req, res) => {
   try {
@@ -634,30 +878,189 @@ app.get('/api/whatsapp/chats', async (req, res) => {
     const chats = typeof client.getAllChats === 'function' ? await client.getAllChats() : [];
     res.json({ success: true, chats });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to load WhatsApp chats.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_CHATS_ERROR' });
+    handleError(res, error, 'Unable to load WhatsApp chats.', 'WHATSAPP_CHATS_ERROR');
   }
 });
+
+app.get('/api/whatsapp/chats/:chatId/messages', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const chatId = decodeURIComponent(req.params.chatId);
+    const limit = Math.max(1, Math.min(Number(req.query.limit) || 50, 200));
+    const meta = getSessionMeta(access.workspaceId);
+
+    let messages = [];
+    if (meta.client && typeof meta.client.getMessages === 'function') {
+      try {
+        const raw = await meta.client.getMessages(chatId, { count: limit });
+        messages = (Array.isArray(raw) ? raw : [])
+          .map(normalizeMessage)
+          .filter(Boolean);
+      } catch (error) {
+        messages = [];
+      }
+    }
+
+    // Merge with the live store (covers messages received since connect)
+    const stored = getStoredMessages(meta, chatId, limit);
+    const byId = new Map();
+    [...messages, ...stored].forEach(m => byId.set(m.id, m));
+    messages = Array.from(byId.values()).sort((a, b) => a.timestamp - b.timestamp).slice(-limit);
+
+    res.json({ success: true, chatId, messages });
+  } catch (error) {
+    handleError(res, error, 'Unable to load WhatsApp messages.', 'WHATSAPP_MESSAGES_ERROR');
+  }
+});
+
+app.get('/api/whatsapp/contacts', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const client = await ensureClientForWorkspace(access.workspaceId);
+    const contacts = typeof client.getAllContacts === 'function' ? await client.getAllContacts() : [];
+    res.json({ success: true, contacts });
+  } catch (error) {
+    handleError(res, error, 'Unable to load WhatsApp contacts.', 'WHATSAPP_CONTACTS_ERROR');
+  }
+});
+
+// ---------- Sending ----------
 
 app.post('/api/whatsapp/messages', async (req, res) => {
   try {
     const access = await authorizeWorkspace(req);
     const { to, text } = req.body || {};
-    const client = await ensureClientForWorkspace(access.workspaceId);
 
     if (!to || !text) {
       return res.status(400).json({ success: false, message: 'Recipient and message text are required.' });
     }
 
-    if (typeof client.sendText === 'function') {
-      const result = await client.sendText(to, text);
-      return res.json({ success: true, result });
+    const client = await ensureClientForWorkspace(access.workspaceId);
+
+    if (typeof client.sendText !== 'function') {
+      return res.status(400).json({ success: false, message: 'WhatsApp sendText is unavailable in the current session.' });
     }
 
-    return res.status(400).json({ success: false, message: 'WhatsApp sendText is unavailable in the current session.' });
+    const result = await client.sendText(to, text);
+
+    // Record the outgoing message so every workspace member sees it
+    const meta = getSessionMeta(access.workspaceId);
+    storeMessage(meta, {
+      id: (result && result.id && (result.id._serialized || result.id.id)) || `out_${Date.now()}`,
+      chatId: String(to),
+      from: 'me',
+      to: String(to),
+      fromMe: true,
+      type: 'chat',
+      body: String(text),
+      caption: null,
+      mimetype: null,
+      filename: null,
+      isGroupMsg: String(to).endsWith('@g.us'),
+      ack: result && typeof result.ack === 'number' ? result.ack : 1,
+      timestamp: Date.now(),
+      sender: { id: 'me', name: null, pushname: null },
+      hasMedia: false
+    });
+
+    res.json({ success: true, result });
   } catch (error) {
-    const message = error && error.message ? error.message : 'Unable to send WhatsApp message.';
-    res.status(error.statusCode || 401).json({ success: false, message, code: 'WHATSAPP_MESSAGE_ERROR' });
+    handleError(res, error, 'Unable to send WhatsApp message.', 'WHATSAPP_MESSAGE_ERROR');
+  }
+});
+
+app.post('/api/whatsapp/messages/media', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const { to, base64, filename, mimetype, caption, kind } = req.body || {};
+
+    if (!to || !base64) {
+      return res.status(400).json({ success: false, message: 'Recipient (to) and base64 media are required.' });
+    }
+
+    const client = await ensureClientForWorkspace(access.workspaceId);
+    const mediaKind = String(kind || 'file').toLowerCase();
+    const name = filename || `file-${Date.now()}`;
+    let result;
+
+    if (mediaKind === 'image' && typeof client.sendImage === 'function') {
+      result = await client.sendImage(to, base64, name, caption || '');
+    } else if ((mediaKind === 'ptt' || mediaKind === 'audio' || mediaKind === 'voice') && typeof client.sendPttFromBase64 === 'function') {
+      result = await client.sendPttFromBase64(to, base64, name, caption || '');
+    } else if (typeof client.sendFile === 'function') {
+      result = await client.sendFile(to, base64, { filename: name, caption: caption || '' });
+    } else {
+      return res.status(400).json({ success: false, message: 'WhatsApp media sending is unavailable in the current session.' });
+    }
+
+    const meta = getSessionMeta(access.workspaceId);
+    storeMessage(meta, {
+      id: (result && result.id && (result.id._serialized || result.id.id)) || `out_${Date.now()}`,
+      chatId: String(to),
+      from: 'me',
+      to: String(to),
+      fromMe: true,
+      type: mediaKind === 'image' ? 'image' : (mediaKind === 'ptt' || mediaKind === 'audio' || mediaKind === 'voice') ? 'ptt' : 'document',
+      body: caption || '',
+      caption: caption || null,
+      mimetype: mimetype || null,
+      filename: name,
+      isGroupMsg: String(to).endsWith('@g.us'),
+      ack: 1,
+      timestamp: Date.now(),
+      sender: { id: 'me', name: null, pushname: null },
+      hasMedia: true
+    });
+
+    res.json({ success: true, result });
+  } catch (error) {
+    handleError(res, error, 'Unable to send WhatsApp media.', 'WHATSAPP_MEDIA_ERROR');
+  }
+});
+
+// ---------- Media download ----------
+
+app.get('/api/whatsapp/media/:messageId', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const messageId = decodeURIComponent(req.params.messageId);
+    const meta = getSessionMeta(access.workspaceId);
+
+    if (!meta.client || typeof meta.client.downloadMedia !== 'function') {
+      return res.status(400).json({ success: false, message: 'WhatsApp media download is unavailable in the current session.' });
+    }
+
+    const base64 = await meta.client.downloadMedia(messageId);
+    if (!base64) {
+      return res.status(404).json({ success: false, message: 'Media not found for this message.' });
+    }
+
+    const dataUrl = base64.startsWith('data:') ? base64 : `data:application/octet-stream;base64,${base64}`;
+    res.json({ success: true, messageId, dataUrl });
+  } catch (error) {
+    handleError(res, error, 'Unable to download WhatsApp media.', 'WHATSAPP_MEDIA_DOWNLOAD_ERROR');
+  }
+});
+
+// ---------- Event feed (polling) ----------
+
+app.get('/api/whatsapp/events', async (req, res) => {
+  try {
+    const access = await authorizeWorkspace(req);
+    const meta = getSessionMeta(access.workspaceId);
+    const since = Math.max(0, Number(req.query.since) || 0);
+    const events = meta.events.filter(e => e.seq > since);
+    const status = await getWorkspaceStatus(access.workspaceId);
+
+    res.json({
+      success: true,
+      events,
+      lastSeq: meta.eventSeq,
+      connectionStatus: status.connectionStatus,
+      connected: !!status.connected
+    });
+  } catch (error) {
+    handleError(res, error, 'Unable to load WhatsApp events.', 'WHATSAPP_EVENTS_ERROR');
   }
 });
 
