@@ -36,16 +36,17 @@
   }
 
   async function listUserWorkspaces(uid) {
-    const firebase = await ensureFirebase();
+    const user = await ensureAuthedUser();
     const db = resolveDb();
     if (!db) throw new Error('Firestore is not available.');
-    const snapshot = await db.collection('workspaces').where('members', 'array-contains', uid).get();
+    const currentUid = user.uid;
+    const snapshot = await db.collection('workspaces').where('members', 'array-contains', currentUid).get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
 
   async function createWorkspace({ name, slug, size, industry, ownerId, organizationId = null }) {
     const user = await ensureAuthedUser();
-    const currentUid = ownerId || user.uid;
+    const currentUid = user.uid;
     const firebase = await ensureFirebase();
     const db = resolveDb();
     if (!db) throw new Error('Firestore is not available.');
@@ -98,10 +99,11 @@
   }
 
   async function joinWorkspace({ inviteCode, uid }) {
+    const user = await ensureAuthedUser();
     const firebase = await ensureFirebase();
     const db = resolveDb();
     if (!db) throw new Error('Firestore is not available.');
-    const currentUid = uid || (firebase.auth && firebase.auth.currentUser ? firebase.auth.currentUser.uid : null);
+    const currentUid = user.uid;
 
     if (!currentUid) {
       throw new Error('User is not authenticated.');
@@ -148,10 +150,11 @@
   }
 
   async function setCurrentWorkspace(workspaceId, uid) {
+    const user = await ensureAuthedUser();
     const firebase = await ensureFirebase();
     const db = resolveDb();
     if (!db) throw new Error('Firestore is not available.');
-    const userId = uid || (firebase.auth && firebase.auth.currentUser ? firebase.auth.currentUser.uid : null);
+    const userId = user.uid;
     if (!userId) {
       throw new Error('User is not authenticated.');
     }

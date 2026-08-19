@@ -953,6 +953,14 @@ class WorkspaceManager {
     this.toast = new ToastManager();
   }
 
+  getFirebaseUid() {
+    try {
+      return window.OP?.firebase?.auth?.currentUser?.uid || null;
+    } catch {
+      return null;
+    }
+  }
+
   getWorkspaces() {
     try {
       const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES) || 'null');
@@ -974,10 +982,12 @@ class WorkspaceManager {
   async loadUserWorkspaces() {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session || !session.userId) return [];
+    const firebaseUid = this.getFirebaseUid();
+    const identityUids = [firebaseUid, session.userId].filter(Boolean);
 
     if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.listUserWorkspaces === 'function') {
       try {
-        const workspaces = await window.OP.firebaseWorkspaces.listUserWorkspaces(session.userId);
+        const workspaces = await window.OP.firebaseWorkspaces.listUserWorkspaces();
         if (Array.isArray(workspaces) && workspaces.length > 0) {
           this.saveWorkspaces(workspaces);
           return workspaces;
@@ -988,7 +998,7 @@ class WorkspaceManager {
     }
 
     const localWorkspaces = this.getWorkspaces();
-    const directMembership = localWorkspaces.filter(w => (w.members || []).some(m => m.userId === session.userId || m.uid === session.userId));
+  const directMembership = localWorkspaces.filter(w => (w.members || []).some(m => identityUids.includes(m.userId) || identityUids.includes(m.uid)));
     if (directMembership.length > 0) return directMembership;
 
     if (session.organizationId) {
@@ -1001,6 +1011,7 @@ class WorkspaceManager {
   async createWorkspace(name, url, size, industry, organizationId = null) {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return { success: false, message: 'Not authenticated.' };
+    const firebaseUid = this.getFirebaseUid();
 
     const normalizedUrl = String(url || '').trim().toLowerCase();
     const normalizedName = String(name || '').trim();
@@ -1012,7 +1023,7 @@ class WorkspaceManager {
           slug: normalizedUrl,
           size,
           industry: industry || null,
-          ownerId: session.userId,
+          ownerId: firebaseUid || session.userId,
           organizationId: organizationId || session.organizationId || null
         });
         if (result && result.success && result.workspace) {
@@ -1056,10 +1067,11 @@ class WorkspaceManager {
   async joinWorkspace(inviteCode) {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return { success: false, message: 'Not authenticated.' };
+    const firebaseUid = this.getFirebaseUid();
 
     if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.joinWorkspace === 'function') {
       try {
-        const result = await window.OP.firebaseWorkspaces.joinWorkspace({ inviteCode, uid: session.userId });
+        const result = await window.OP.firebaseWorkspaces.joinWorkspace({ inviteCode, uid: firebaseUid || session.userId });
         if (result && result.success && result.workspace) {
           const workspaces = this.getWorkspaces();
           const existing = workspaces.find(w => String(w.id || '').toLowerCase() === String(result.workspace.id || '').toLowerCase());
@@ -1104,9 +1116,11 @@ class WorkspaceManager {
   getUserWorkspaces() {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
     if (!session) return [];
+    const firebaseUid = this.getFirebaseUid();
+    const identityUids = [firebaseUid, session.userId].filter(Boolean);
 
     const workspaces = this.getWorkspaces();
-    const directMembership = workspaces.filter(w => (w.members || []).some(m => m.userId === session.userId || m.uid === session.userId));
+    const directMembership = workspaces.filter(w => (w.members || []).some(m => identityUids.includes(m.userId) || identityUids.includes(m.uid)));
     if (directMembership.length > 0) return directMembership;
 
     if (session.organizationId) {
@@ -1120,8 +1134,8 @@ class WorkspaceManager {
     localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId || '');
 
     const session = window.OP?.auth?.getSession?.() || null;
-    if (session && session.userId && window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.setCurrentWorkspace === 'function') {
-      window.OP.firebaseWorkspaces.setCurrentWorkspace(workspaceId, session.userId).catch(() => {});
+    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.setCurrentWorkspace === 'function') {
+      window.OP.firebaseWorkspaces.setCurrentWorkspace(workspaceId).catch(() => {});
     }
 
     if (session) {

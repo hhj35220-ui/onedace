@@ -31,16 +31,23 @@
     const workspace = window.OP.workspace && typeof window.OP.workspace.getCurrentWorkspace === 'function'
       ? window.OP.workspace.getCurrentWorkspace()
       : null;
-    const session = window.OP.auth && typeof window.OP.auth.getSession === 'function'
-      ? window.OP.auth.getSession()
-      : null;
+    return (workspace && workspace.id) || '';
+  }
 
-    return (
-      (workspace && workspace.id) ||
-      (session && session.organizationId) ||
-      (session && session.user && session.user.organizationId) ||
-      'default'
-    );
+  async function resolveWorkspaceId() {
+    const workspaceId = getWorkspaceId();
+    if (!workspaceId) {
+      throw new Error('No workspace is selected. Please select a workspace and try again.');
+    }
+
+    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.getWorkspace === 'function') {
+      const firestoreWorkspace = await window.OP.firebaseWorkspaces.getWorkspace(workspaceId);
+      if (!firestoreWorkspace || !firestoreWorkspace.id) {
+        throw new Error('Selected workspace is not Firestore-backed. Create or join a workspace in Firebase before using WhatsApp.');
+      }
+    }
+
+    return workspaceId;
   }
 
   function getDevUser() {
@@ -129,7 +136,7 @@
   }
 
   async function request(path, options = {}) {
-    const workspaceId = options.workspaceId || getWorkspaceId();
+    const workspaceId = options.workspaceId || await resolveWorkspaceId();
     const workspaceAuth = await getWorkspaceAuthToken(workspaceId);
     const headers = await buildAuthHeaders(workspaceId);
     headers['X-Workspace-Auth'] = workspaceAuth;
