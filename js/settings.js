@@ -253,62 +253,6 @@ class SettingsApp {
   }
 
   /* ============================================
-     Workspace Settings
-     ============================================ */
-  static initWorkspaceSettings() {
-    const settings = this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS);
-
-    // Logo upload
-    const uploadBtn = document.getElementById('uploadWorkspaceLogo');
-    const fileInput = document.getElementById('workspaceLogoInput');
-    if (uploadBtn && fileInput) {
-      uploadBtn.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const preview = document.getElementById('workspaceLogoPreview');
-            if (preview) {
-              preview.innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-xl);">`;
-            }
-            this.showToast('Workspace logo uploaded');
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-
-    // Delete workspace modal
-    const deleteBtn = document.getElementById('deleteWorkspaceBtn');
-    if (deleteBtn) {
-      deleteBtn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to delete this workspace? This action cannot be undone.')) {
-          this.showToast('Workspace deleted', 'error');
-        }
-      });
-    }
-
-    // Save
-    const saveBtn = document.getElementById('saveWorkspaceSettings');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        const newSettings = {
-          ...settings,
-          name: document.getElementById('wsName')?.value,
-          domain: document.getElementById('wsDomain')?.value,
-          language: document.getElementById('wsLanguage')?.value,
-          timezone: document.getElementById('wsTimezone')?.value,
-          companySize: document.getElementById('wsCompanySize')?.value,
-          defaultPermission: document.getElementById('wsDefaultPermission')?.value
-        };
-        this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, newSettings);
-        this.showToast('Workspace settings saved');
-      });
-    }
-  }
-
-  /* ============================================
      Profile Settings
      ============================================ */
   static initProfileSettings() {
@@ -1010,56 +954,6 @@ class SettingsApp {
     if (createNewKey) {
       createNewKey.addEventListener('click', () => {
         this.showToast('New API key created');
-      });
-    }
-  }
-
-  /* ============================================
-     Organization Settings
-     ============================================ */
-  static initOrganizationSettings() {
-    const saveBtn = document.getElementById('saveOrgSettings');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', async () => {
-        const organizationId = OP.auth.getSession()?.organizationId || null;
-        const settings = {
-          name: document.getElementById('orgName')?.value,
-          regNumber: document.getElementById('orgRegNumber')?.value,
-          industry: document.getElementById('orgIndustry')?.value,
-          size: document.getElementById('orgSize')?.value,
-          address: document.getElementById('orgAddress')?.value,
-          website: document.getElementById('orgWebsite')?.value,
-          taxId: document.getElementById('orgTaxId')?.value
-        };
-
-        if (!organizationId) {
-          this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, {
-            ...this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS),
-            ...settings
-          });
-          this.showToast('Organization settings saved locally', 'warning');
-          return;
-        }
-
-        try {
-          await OP.apiIntegration.init();
-          const response = await OP.apiIntegration.patch(`/organizations/${organizationId}`, {
-            name: settings.name,
-            description: [settings.industry, settings.address].filter(Boolean).join(' • ')
-          });
-          const payload = response && response.data ? response.data : {};
-          if (payload.success) {
-            this.saveSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS, {
-              ...this.getSettings(SETTINGS_STORAGE_KEYS.WORKSPACE_SETTINGS),
-              ...settings
-            });
-            this.showToast(payload.message || 'Organization settings saved');
-          } else {
-            this.showToast(payload.message || 'Unable to save organization settings', 'error');
-          }
-        } catch (error) {
-          this.showToast(error?.message || 'Unable to save organization settings', 'error');
-        }
       });
     }
   }

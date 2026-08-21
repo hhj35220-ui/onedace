@@ -104,7 +104,6 @@
       window.OP.auth.clearSession();
       localStorage.removeItem('op_verification_code');
       localStorage.removeItem('op_reset_token');
-      localStorage.removeItem('op_current_workspace');
       localStorage.removeItem('op_profile');
       sessionStorage.removeItem('op_verification_code_display');
     }
@@ -114,9 +113,7 @@
       localStorage.removeItem('op_api_config');
 
       if (OP.auth.isAuthenticated()) {
-        // Signup page must not decide post-auth destination based on existing workspaces.
-        // Always send authenticated visitors to workspace creation when arriving at signup.
-        window.location.href = 'workspace-create.html';
+        window.location.href = '../dashboard/main-dashboard.html';
         return;
       }
 
@@ -216,12 +213,11 @@
             appendDebugLine('[AUTH FLOW] Google authentication successful');
             OP.toast.show(result.message, 'success');
 
-            // For signup flows, always route to workspace creation/onboarding.
-            appendDebugLine('[AUTH FLOW] Redirecting to workspace-create.html for onboarding');
-            try { appendDebugLine('[AUTH FLOW] 6. About to redirect to: workspace-create.html'); } catch (e) {}
+            appendDebugLine('[AUTH FLOW] Redirecting to profile-setup.html for onboarding');
+            try { appendDebugLine('[AUTH FLOW] 6. About to redirect to: profile-setup.html'); } catch (e) {}
             setTimeout(() => {
               try { appendDebugLine('[AUTH FLOW] 7. Redirect executed'); } catch (e) {}
-              window.location.href = 'workspace-create.html';
+              window.location.href = 'profile-setup.html';
             }, 500);
           } else {
             appendDebugError({ step: 'Google auth', message: result && result.message ? result.message : 'Authentication failed.' });

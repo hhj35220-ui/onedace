@@ -145,9 +145,8 @@
           const result = await OP.auth.verifyEmail(verificationToken);
           if (result.success) {
             OP.toast.show(result.message, 'success');
-            const hasWorkspaces = OP.workspace.getUserWorkspaces().length > 0;
             setTimeout(() => {
-              window.location.href = hasWorkspaces ? 'workspace-select.html' : 'workspace-create.html';
+              window.location.href = 'profile-setup.html';
             }, 600);
           } else {
             showError(result.message);

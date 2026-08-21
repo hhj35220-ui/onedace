@@ -97,7 +97,6 @@
       window.OP.auth.clearSession();
       localStorage.removeItem('op_verification_code');
       localStorage.removeItem('op_reset_token');
-      localStorage.removeItem('op_current_workspace');
       localStorage.removeItem('op_profile');
     }
 
@@ -106,17 +105,12 @@
 
       clearStaleOnboardingState();
 
-      if (!window.OP || !window.OP.workspace || !window.OP.auth) return;
+      if (!window.OP || !window.OP.auth) return;
       const session = window.OP.auth.getSession();
       if (!session || session.verified !== true) return;
       if (session.expiresAt && new Date(session.expiresAt) < new Date()) return;
 
-      const workspaces = window.OP.workspace.getUserWorkspaces();
-      if (workspaces.length > 0) {
-        window.location.href = 'auth/workspace-select.html';
-      } else {
-        window.location.href = 'auth/workspace-create.html';
-      }
+      window.location.href = 'dashboard/main-dashboard.html';
     });
   </script>
 </body>

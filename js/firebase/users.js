@@ -41,11 +41,9 @@
       createdAt: extra.createdAt || currentUser.metadata?.creationTime || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       onboardingCompleted: Boolean(extra.onboardingCompleted),
-      activeWorkspaceId: extra.activeWorkspaceId || null,
       firstName,
       lastName,
       role: extra.role || 'member',
-      organizationId: extra.organizationId || null,
       emailVerified: !!currentUser.emailVerified,
       ...extra
     };
@@ -71,7 +69,6 @@
         displayName: user.displayName || '',
         photoURL: user.photoURL || null,
         onboardingCompleted: false,
-        activeWorkspaceId: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
@@ -95,7 +92,7 @@
     const userRef = db.doc(`users/${user.uid}`);
     const snapshot = await userRef.get();
     if (!snapshot.exists) {
-      const profile = await buildUserRecord(user, { onboardingCompleted: false, activeWorkspaceId: null, createdAt: new Date().toISOString() });
+      const profile = await buildUserRecord(user, { onboardingCompleted: false, createdAt: new Date().toISOString() });
       await userRef.set(profile);
       return profile;
     }
@@ -123,7 +120,6 @@
       email: String((updates && updates.email) || user.email || '').trim().toLowerCase() || currentProfile?.email || user.email || '',
       displayName: String((updates && updates.displayName) || currentProfile?.displayName || user.displayName || '').trim() || (user.email || 'User'),
       updatedAt: new Date().toISOString(),
-      activeWorkspaceId: updates?.activeWorkspaceId ?? currentProfile?.activeWorkspaceId ?? null,
       onboardingCompleted: updates?.onboardingCompleted ?? currentProfile?.onboardingCompleted ?? false,
       photoURL: updates?.photoURL || updates?.avatarUrl || currentProfile?.photoURL || user.photoURL || null
     });

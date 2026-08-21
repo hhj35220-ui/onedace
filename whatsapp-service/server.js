@@ -2,15 +2,12 @@
  * OnePlace Enterprise — WhatsApp Service (WPPConnect)
  *
  * Express microservice that embeds WPPConnect directly into OnePlace.
- * One WhatsApp session per OnePlace workspace, persisted on disk via
+ * One WhatsApp session per authenticated OnePlace user, persisted on disk via
  * WPPConnect's file token store, so sessions survive restarts.
  *
  * Auth model (unchanged from the original service):
  *   1. Caller presents a Firebase ID token (Authorization: Bearer ...).
- *   2. Caller obtains a short-lived workspace-auth token from
- *      POST /api/whatsapp/workspace-auth (verifies Firestore membership).
- *   3. All other endpoints require both the Firebase token and the
- *      workspace-auth token, and are always scoped to one workspaceId.
+ *   2. All endpoints are authorized directly from the authenticated Firebase user.
  *
  * Local development: set ALLOW_LOCAL_DEV=true to bypass Firebase with an
  * X-User-Id header instead.
@@ -31,10 +28,7 @@ const ALLOW_LOCAL_DEV = process.env.ALLOW_LOCAL_DEV === 'true';
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'oneplace-c3ac8';
 const FIREBASE_ISSUER = `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`;
 const FIREBASE_JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'));
-const WORKSPACE_AUTH_TTL_SECONDS = Number(process.env.WHATSAPP_WORKSPACE_AUTH_TTL_SECONDS || 600);
-const WORKSPACE_AUTH_SECRET = String(process.env.WHATSAPP_WORKSPACE_AUTH_SECRET || crypto.randomBytes(48).toString('hex'));
-
-// In-memory caps (per workspace)
+// In-memory caps (per authenticated user)
 const MAX_MESSAGES_PER_CHAT = Number(process.env.WHATSAPP_MAX_MESSAGES_PER_CHAT || 500);
 const MAX_EVENTS_PER_WORKSPACE = Number(process.env.WHATSAPP_MAX_EVENTS || 1000);
 
@@ -46,21 +40,21 @@ const sessions = new Map();
 // Session registry helpers
 // ============================================
 
-function normalizeWorkspaceId(raw) {
+function normalizeSessionUid(raw) {
   const value = String(raw || '').trim();
   return value || 'default';
 }
 
-function getSessionName(workspaceId) {
-  const normalized = normalizeWorkspaceId(workspaceId).replace(/[^a-zA-Z0-9_-]/g, '_');
-  return `oneplace_workspace_${normalized || 'default'}`;
+function getSessionName(uid) {
+  const normalized = normalizeSessionUid(uid).replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `oneplace_user_${normalized || 'default'}`;
 }
 
-function getSessionMeta(workspaceId) {
-  const sessionName = getSessionName(workspaceId);
+function getSessionMeta(uid) {
+  const sessionName = getSessionName(uid);
   if (!sessions.has(sessionName)) {
     sessions.set(sessionName, {
-      workspaceId,
+      uid,
       sessionName,
       client: null,
       creating: null,          // Promise while wppconnect.create() is in flight
@@ -78,8 +72,8 @@ function getSessionMeta(workspaceId) {
   return sessions.get(sessionName);
 }
 
-function hasStoredToken(workspaceId) {
-  const dir = path.join(SESSIONS_DIR, getSessionName(workspaceId));
+function hasStoredToken(uid) {
+  const dir = path.join(SESSIONS_DIR, getSessionName(uid));
   try {
     return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
   } catch (error) {
@@ -127,103 +121,7 @@ function uiStatusFromState(rawStatus) {
 }
 
 // ============================================
-// Workspace auth tokens (HMAC-signed, short-lived)
-// ============================================
-
-function toBase64Url(input) {
-  return Buffer.from(input).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-}
-
-function fromBase64Url(input) {
-  const padded = String(input || '').replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(String(input || '').length / 4) * 4, '=');
-  return Buffer.from(padded, 'base64').toString('utf8');
-}
-
-function signWorkspaceAuthToken(payload) {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  const encodedHeader = toBase64Url(JSON.stringify(header));
-  const encodedPayload = toBase64Url(JSON.stringify(payload));
-  const message = `${encodedHeader}.${encodedPayload}`;
-  const signature = crypto
-    .createHmac('sha256', WORKSPACE_AUTH_SECRET)
-    .update(message)
-    .digest('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-  return `${message}.${signature}`;
-}
-
-function verifyWorkspaceAuthToken(token) {
-  if (!token || typeof token !== 'string') {
-    const err = new Error('Missing workspace authorization token.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    const err = new Error('Workspace authorization token is invalid.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  const [encodedHeader, encodedPayload, encodedSignature] = parts;
-  const message = `${encodedHeader}.${encodedPayload}`;
-  const expectedSignature = crypto
-    .createHmac('sha256', WORKSPACE_AUTH_SECRET)
-    .update(message)
-    .digest('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-
-  const received = Buffer.from(encodedSignature);
-  const expected = Buffer.from(expectedSignature);
-  if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) {
-    const err = new Error('Workspace authorization signature is invalid.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  let payload;
-  try {
-    payload = JSON.parse(fromBase64Url(encodedPayload));
-  } catch (error) {
-    const err = new Error('Workspace authorization payload is invalid.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  if (!payload || !payload.uid || !payload.workspaceId || !payload.exp) {
-    const err = new Error('Workspace authorization payload is incomplete.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  if (Number(payload.exp) <= now) {
-    const err = new Error('Workspace authorization token has expired.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  return payload;
-}
-
-function getWorkspaceIdFromRequest(req) {
-  return String(
-    req.query.workspaceId ||
-    req.query.activeWorkspaceId ||
-    (req.body && req.body.workspaceId) ||
-    (req.body && req.body.activeWorkspaceId) ||
-    req.headers['x-workspace-id'] ||
-    ''
-  ).trim();
-}
-
-// ============================================
-// Firebase token + workspace membership
+// Firebase token + UID authorization
 // ============================================
 
 async function verifyFirebaseToken(req) {
@@ -279,134 +177,17 @@ async function verifyFirebaseToken(req) {
   }
 }
 
-async function verifyWorkspaceMembership(uid, workspaceId, idToken) {
-  const workspaceIdValue = String(workspaceId || '').trim();
-  if (!workspaceIdValue) {
-    const err = new Error('Workspace ID is required.');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  if (!idToken && !ALLOW_LOCAL_DEV) {
-    const err = new Error('Missing Firebase token for workspace membership verification.');
-    err.statusCode = 401;
-    throw err;
-  }
-
-  if (ALLOW_LOCAL_DEV && !idToken) {
-    return true;
-  }
-
-  const encodedWorkspace = encodeURIComponent(workspaceIdValue);
-  const encodedUid = encodeURIComponent(uid);
-  const memberDocUrl = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/workspaces/${encodedWorkspace}/members/${encodedUid}`;
-  const response = await fetch(memberDocUrl, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-      Accept: 'application/json'
-    }
-  });
-
-  if (response.status === 403 || response.status === 404) {
-    const err = new Error('User is not authorized for this workspace.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  if (!response.ok) {
-    const err = new Error('Workspace membership verification failed.');
-    err.statusCode = 502;
-    throw err;
-  }
-
-  const memberDoc = await response.json().catch(() => null);
-  if (!memberDoc || !memberDoc.name) {
-    const err = new Error('Workspace membership record is invalid.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  const expectedSuffix = `/workspaces/${workspaceIdValue}/members/${uid}`;
-  if (!String(memberDoc.name).endsWith(expectedSuffix)) {
-    const err = new Error('Workspace membership record does not match authenticated user.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  return true;
-}
-
-async function createWorkspaceAuthorization(req) {
-  const workspaceId = getWorkspaceIdFromRequest(req);
-  if (!workspaceId) {
-    const err = new Error('workspaceId is required.');
-    err.statusCode = 400;
-    throw err;
-  }
-
+async function authorizeUser(req) {
   const identity = await verifyFirebaseToken(req);
-  await verifyWorkspaceMembership(identity.uid, workspaceId, identity.token);
-
-  const now = Math.floor(Date.now() / 1000);
-  const payload = {
-    uid: identity.uid,
-    workspaceId,
-    email: identity.email || null,
-    iat: now,
-    exp: now + WORKSPACE_AUTH_TTL_SECONDS
-  };
-
-  const token = signWorkspaceAuthToken(payload);
-  return {
-    workspaceId,
-    token,
-    expiresAt: new Date(payload.exp * 1000).toISOString(),
-    expiresInSeconds: WORKSPACE_AUTH_TTL_SECONDS
-  };
-}
-
-async function authorizeWorkspace(req) {
-  const workspaceId = getWorkspaceIdFromRequest(req);
-
-  if (!workspaceId) {
-    const err = new Error('workspaceId is required.');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  const identity = await verifyFirebaseToken(req);
-  const workspaceAuthToken = String(
-    req.headers['x-workspace-auth'] ||
-    req.headers['x-workspace-token'] ||
-    req.query.workspaceAuthToken ||
-    (req.body && req.body.workspaceAuthToken) ||
-    ''
-  ).trim();
-
-  const workspaceClaims = verifyWorkspaceAuthToken(workspaceAuthToken);
-  if (workspaceClaims.uid !== identity.uid) {
-    const err = new Error('Workspace authorization user mismatch.');
-    err.statusCode = 403;
-    throw err;
-  }
-
-  if (workspaceClaims.workspaceId !== workspaceId) {
-    const err = new Error('Workspace authorization workspace mismatch.');
-    err.statusCode = 403;
-    throw err;
-  }
-
   return {
     uid: identity.uid,
-    workspaceId,
     email: identity.email || null,
-    workspaceClaims
+    localDev: !!identity.localDev
   };
 }
 
 // ============================================
-// Message normalization + per-workspace store
+// Message normalization + per-user store
 // ============================================
 
 function normalizeChatId(value) {
@@ -608,8 +389,8 @@ async function createClient(meta, options = {}) {
  * Concurrent calls share one in-flight create() promise so we never spawn
  * two Chromium instances for the same session.
  */
-async function ensureClientForWorkspace(workspaceId, options = {}) {
-  const meta = getSessionMeta(workspaceId);
+async function ensureClientForUser(uid, options = {}) {
+  const meta = getSessionMeta(uid);
 
   if (meta.client) {
     return meta.client;
@@ -633,26 +414,26 @@ async function ensureClientForWorkspace(workspaceId, options = {}) {
   return meta.creating;
 }
 
-async function getWorkspaceStatus(workspaceId) {
-  const meta = getSessionMeta(workspaceId);
+async function getUserStatus(uid) {
+  const meta = getSessionMeta(uid);
 
   // Auto-resume a persisted session in the background so a plain status
   // poll reconnects WhatsApp after a service restart.
-  if (!meta.client && !meta.creating && hasStoredToken(workspaceId)) {
-    ensureClientForWorkspace(workspaceId).catch(() => {});
+  if (!meta.client && !meta.creating && hasStoredToken(uid)) {
+    ensureClientForUser(uid).catch(() => {});
   }
 
   if (!meta.client) {
     return {
-      workspaceId,
-      sessionName: getSessionName(workspaceId),
+      uid,
+      sessionName: getSessionName(uid),
       connectionStatus: meta.creating ? 'initializing' : 'notLogged',
       status: meta.creating ? 'Connecting' : 'Not connected',
       statusText: meta.creating ? 'Connecting' : 'Not connected',
       connected: false,
       qr: meta.qr || null,
       pairingCode: meta.pairingCode || null,
-      hasStoredSession: hasStoredToken(workspaceId),
+      hasStoredSession: hasStoredToken(uid),
       lastUpdatedAt: meta.updatedAt,
       account: null
     };
@@ -669,8 +450,8 @@ async function getWorkspaceStatus(workspaceId) {
     const account = await readClientAccountInfo(meta.client);
 
     return {
-      workspaceId,
-      sessionName: getSessionName(workspaceId),
+      uid,
+      sessionName: getSessionName(uid),
       connectionStatus: nextStatus,
       status: mapStatus(nextStatus),
       statusText: uiStatusFromState(nextStatus),
@@ -685,15 +466,15 @@ async function getWorkspaceStatus(workspaceId) {
   } catch (error) {
     meta.lastError = String(error && error.message ? error.message : error);
     return {
-      workspaceId,
-      sessionName: getSessionName(workspaceId),
+      uid,
+      sessionName: getSessionName(uid),
       connectionStatus: meta.status || 'notLogged',
       status: mapStatus(meta.status || 'notLogged'),
       statusText: uiStatusFromState(meta.status || 'notLogged'),
       connected: false,
       qr: meta.qr || null,
       pairingCode: meta.pairingCode || null,
-      hasStoredSession: hasStoredToken(workspaceId),
+      hasStoredSession: hasStoredToken(uid),
       lastUpdatedAt: meta.updatedAt,
       connectedAt: meta.connectedAt,
       error: meta.lastError,
@@ -702,8 +483,8 @@ async function getWorkspaceStatus(workspaceId) {
   }
 }
 
-async function disconnectWorkspaceSession(workspaceId) {
-  const meta = getSessionMeta(workspaceId);
+async function disconnectUserSession(uid) {
+  const meta = getSessionMeta(uid);
   if (meta.client && typeof meta.client.logout === 'function') {
     await meta.client.logout();
   }
@@ -723,7 +504,7 @@ async function disconnectWorkspaceSession(workspaceId) {
   meta.events = [];
   meta.eventSeq = 0;
 
-  const proprietaryTokenDir = path.join(SESSIONS_DIR, getSessionName(workspaceId));
+  const proprietaryTokenDir = path.join(SESSIONS_DIR, getSessionName(uid));
   if (fs.existsSync(proprietaryTokenDir)) {
     try {
       fs.rmSync(proprietaryTokenDir, { recursive: true, force: true });
@@ -731,7 +512,7 @@ async function disconnectWorkspaceSession(workspaceId) {
   }
 
   return {
-    workspaceId,
+    uid,
     disconnected: true,
     status: 'Not connected'
   };
@@ -761,7 +542,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Workspace-Auth', 'X-Workspace-Token', 'X-Workspace-Id', 'X-User-Id']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id']
 }));
 // 25mb to carry base64 media payloads
 app.use(express.json({ limit: '25mb' }));
@@ -781,29 +562,12 @@ app.get('/api/whatsapp/health', (req, res) => {
   res.json({ ok: true, service: 'oneplace-whatsapp' });
 });
 
-// ---------- Auth ----------
-
-app.post('/api/whatsapp/workspace-auth', async (req, res) => {
-  try {
-    const auth = await createWorkspaceAuthorization(req);
-    res.json({
-      success: true,
-      workspaceId: auth.workspaceId,
-      workspaceAuthToken: auth.token,
-      workspaceAuthExpiresAt: auth.expiresAt,
-      expiresInSeconds: auth.expiresInSeconds
-    });
-  } catch (error) {
-    handleError(res, error, 'Unable to authorize workspace.', 'WHATSAPP_WORKSPACE_AUTH_ERROR');
-  }
-});
-
 // ---------- Status / connection ----------
 
 app.get('/api/whatsapp/status', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const status = await getWorkspaceStatus(access.workspaceId);
+    const access = await authorizeUser(req);
+    const status = await getUserStatus(access.uid);
     res.json({ success: true, ...status });
   } catch (error) {
     handleError(res, error, 'Unable to load WhatsApp status.', 'WHATSAPP_STATUS_ERROR');
@@ -820,15 +584,15 @@ app.get('/api/whatsapp/connect', (req, res) => {
 
 app.post('/api/whatsapp/connect', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
+    const access = await authorizeUser(req);
     const phoneNumber = req.body && req.body.phoneNumber ? String(req.body.phoneNumber) : null;
-    await ensureClientForWorkspace(access.workspaceId, phoneNumber ? { phoneNumber } : {});
-    const status = await getWorkspaceStatus(access.workspaceId);
+    await ensureClientForUser(access.uid, phoneNumber ? { phoneNumber } : {});
+    const status = await getUserStatus(access.uid);
 
     res.json({
       success: true,
-      workspaceId: access.workspaceId,
-      sessionName: getSessionName(access.workspaceId),
+      uid: access.uid,
+      sessionName: getSessionName(access.uid),
       qr: status.qr || null,
       pairingCode: status.pairingCode || null,
       status: status.status,
@@ -844,8 +608,8 @@ app.post('/api/whatsapp/connect', async (req, res) => {
 
 app.get('/api/whatsapp/qr', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const status = await getWorkspaceStatus(access.workspaceId);
+    const access = await authorizeUser(req);
+    const status = await getUserStatus(access.uid);
     res.json({
       success: true,
       qr: status.qr || null,
@@ -861,8 +625,8 @@ app.get('/api/whatsapp/qr', async (req, res) => {
 
 app.post('/api/whatsapp/disconnect', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const result = await disconnectWorkspaceSession(access.workspaceId);
+    const access = await authorizeUser(req);
+    const result = await disconnectUserSession(access.uid);
     res.json({ success: true, ...result });
   } catch (error) {
     handleError(res, error, 'Unable to disconnect WhatsApp.', 'WHATSAPP_DISCONNECT_ERROR');
@@ -873,8 +637,8 @@ app.post('/api/whatsapp/disconnect', async (req, res) => {
 
 app.get('/api/whatsapp/chats', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const client = await ensureClientForWorkspace(access.workspaceId);
+    const access = await authorizeUser(req);
+    const client = await ensureClientForUser(access.uid);
     const chats = typeof client.getAllChats === 'function' ? await client.getAllChats() : [];
     res.json({ success: true, chats });
   } catch (error) {
@@ -884,10 +648,10 @@ app.get('/api/whatsapp/chats', async (req, res) => {
 
 app.get('/api/whatsapp/chats/:chatId/messages', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
+    const access = await authorizeUser(req);
     const chatId = decodeURIComponent(req.params.chatId);
     const limit = Math.max(1, Math.min(Number(req.query.limit) || 50, 200));
-    const meta = getSessionMeta(access.workspaceId);
+    const meta = getSessionMeta(access.uid);
 
     let messages = [];
     if (meta.client && typeof meta.client.getMessages === 'function') {
@@ -915,8 +679,8 @@ app.get('/api/whatsapp/chats/:chatId/messages', async (req, res) => {
 
 app.get('/api/whatsapp/contacts', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const client = await ensureClientForWorkspace(access.workspaceId);
+    const access = await authorizeUser(req);
+    const client = await ensureClientForUser(access.uid);
     const contacts = typeof client.getAllContacts === 'function' ? await client.getAllContacts() : [];
     res.json({ success: true, contacts });
   } catch (error) {
@@ -928,14 +692,14 @@ app.get('/api/whatsapp/contacts', async (req, res) => {
 
 app.post('/api/whatsapp/messages', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
+    const access = await authorizeUser(req);
     const { to, text } = req.body || {};
 
     if (!to || !text) {
       return res.status(400).json({ success: false, message: 'Recipient and message text are required.' });
     }
 
-    const client = await ensureClientForWorkspace(access.workspaceId);
+    const client = await ensureClientForUser(access.uid);
 
     if (typeof client.sendText !== 'function') {
       return res.status(400).json({ success: false, message: 'WhatsApp sendText is unavailable in the current session.' });
@@ -943,8 +707,7 @@ app.post('/api/whatsapp/messages', async (req, res) => {
 
     const result = await client.sendText(to, text);
 
-    // Record the outgoing message so every workspace member sees it
-    const meta = getSessionMeta(access.workspaceId);
+    const meta = getSessionMeta(access.uid);
     storeMessage(meta, {
       id: (result && result.id && (result.id._serialized || result.id.id)) || `out_${Date.now()}`,
       chatId: String(to),
@@ -971,14 +734,14 @@ app.post('/api/whatsapp/messages', async (req, res) => {
 
 app.post('/api/whatsapp/messages/media', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
+    const access = await authorizeUser(req);
     const { to, base64, filename, mimetype, caption, kind } = req.body || {};
 
     if (!to || !base64) {
       return res.status(400).json({ success: false, message: 'Recipient (to) and base64 media are required.' });
     }
 
-    const client = await ensureClientForWorkspace(access.workspaceId);
+    const client = await ensureClientForUser(access.uid);
     const mediaKind = String(kind || 'file').toLowerCase();
     const name = filename || `file-${Date.now()}`;
     let result;
@@ -993,7 +756,7 @@ app.post('/api/whatsapp/messages/media', async (req, res) => {
       return res.status(400).json({ success: false, message: 'WhatsApp media sending is unavailable in the current session.' });
     }
 
-    const meta = getSessionMeta(access.workspaceId);
+    const meta = getSessionMeta(access.uid);
     storeMessage(meta, {
       id: (result && result.id && (result.id._serialized || result.id.id)) || `out_${Date.now()}`,
       chatId: String(to),
@@ -1022,9 +785,9 @@ app.post('/api/whatsapp/messages/media', async (req, res) => {
 
 app.get('/api/whatsapp/media/:messageId', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
+    const access = await authorizeUser(req);
     const messageId = decodeURIComponent(req.params.messageId);
-    const meta = getSessionMeta(access.workspaceId);
+    const meta = getSessionMeta(access.uid);
 
     if (!meta.client || typeof meta.client.downloadMedia !== 'function') {
       return res.status(400).json({ success: false, message: 'WhatsApp media download is unavailable in the current session.' });
@@ -1046,11 +809,11 @@ app.get('/api/whatsapp/media/:messageId', async (req, res) => {
 
 app.get('/api/whatsapp/events', async (req, res) => {
   try {
-    const access = await authorizeWorkspace(req);
-    const meta = getSessionMeta(access.workspaceId);
+    const access = await authorizeUser(req);
+    const meta = getSessionMeta(access.uid);
     const since = Math.max(0, Number(req.query.since) || 0);
     const events = meta.events.filter(e => e.seq > since);
-    const status = await getWorkspaceStatus(access.workspaceId);
+    const status = await getUserStatus(access.uid);
 
     res.json({
       success: true,

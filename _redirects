@@ -1,4 +1,2 @@
 # Render static SPA fallback and route rewrites
-/workspace-create  /auth/workspace-create.html  200
-/workspace-select  /auth/workspace-select.html  200
 /*  /index.html  200

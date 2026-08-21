@@ -174,8 +174,7 @@
       // --- end debug panel setup ---
       // Redirect if authenticated
       if (OP.auth.isAuthenticated()) {
-        const workspaces = OP.workspace.getUserWorkspaces();
-        window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+        window.location.href = '../dashboard/main-dashboard.html';
         return;
       }
 
@@ -256,9 +255,8 @@
 
           if (result.success) {
             OP.toast.show(result.message, 'success');
-            const workspaces = OP.workspace.getUserWorkspaces();
             setTimeout(() => {
-              window.location.href = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+              window.location.href = '../dashboard/main-dashboard.html';
             }, 500);
           } else {
             showError('email', result.message);
@@ -291,8 +289,7 @@
 
           if (result.success) {
             OP.toast.show(result.message, 'success');
-            const workspaces = OP.workspace.getUserWorkspaces();
-            const target = workspaces.length > 0 ? 'workspace-select.html' : 'workspace-create.html';
+            const target = '../dashboard/main-dashboard.html';
             try { appendDebugLine('[AUTH FLOW] 6. About to redirect to: ' + target); } catch (e) {}
             setTimeout(() => {
               try { appendDebugLine('[AUTH FLOW] 7. Redirect executed'); } catch (e) {}

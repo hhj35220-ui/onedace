@@ -30,20 +30,8 @@
     return session;
   }
 
-  function getWorkspaceId() {
-    const session = ensureUser();
-    return session.organizationId || session.user?.organizationId || session.workspaceId || null;
-  }
-
   function getCollectionPath(collectionName) {
-    const workspaceId = getWorkspaceId();
-    if (!workspaceId) {
-      return `${collectionName}`;
-    }
-    if (collectionName === 'workspaces' || collectionName === 'users') {
-      return collectionName;
-    }
-    return `workspaces/${workspaceId}/${collectionName}`;
+    return `${collectionName}`;
   }
 
   function docRef(collectionName, docId) {
@@ -65,7 +53,6 @@
   const dataLayer = {
     ensureFirebase,
     ensureUser,
-    getWorkspaceId,
     collectionRef,
     docRef,
     async getDocument(collectionName, docId) {

@@ -81,12 +81,7 @@
     // Check if already authenticated
     document.addEventListener('DOMContentLoaded', () => {
       if (OP.auth.isAuthenticated()) {
-        const workspaces = OP.workspace.getUserWorkspaces();
-        if (workspaces.length > 0) {
-          window.location.href = 'workspace-select.html';
-        } else {
-          window.location.href = 'workspace-create.html';
-        }
+        window.location.href = '../dashboard/main-dashboard.html';
       }
     });
   </script>

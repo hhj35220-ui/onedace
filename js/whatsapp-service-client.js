@@ -1,17 +1,4 @@
-/* OnePlace Enterprise — WhatsApp Service Client
-   Thin browser client for the OnePlace WhatsApp service (whatsapp-service/),
-   which embeds WPPConnect. Exposed as window.OP.whatsappService.
-
-   Auth flow per request:
-     1. Firebase ID token  -> Authorization: Bearer <idToken>
-     2. Workspace-auth token (HMAC, short-lived) obtained once per workspace
-        from POST /api/whatsapp/workspace-auth and cached until expiry.
-     3. workspaceId is resolved from the active OnePlace workspace.
-
-   Local development without Firebase: run the service with
-   ALLOW_LOCAL_DEV=true and set localStorage 'op_wa_dev_user' to any uid;
-   the client then sends X-User-Id instead of a Bearer token.
-*/
+/* OnePlace Enterprise — WhatsApp Service Client */
 (function () {
   if (!window.OP) window.OP = {};
   if (window.OP.whatsappService) return;
@@ -19,35 +6,9 @@
   const DEFAULT_BASE_URL = 'http://localhost:3001';
   const DEV_USER_KEY = 'op_wa_dev_user';
 
-  // workspaceId -> { token, expiresAt }
-  const workspaceAuthCache = new Map();
-
   function getBaseUrl() {
     const configured = window.OP_CONFIG && window.OP_CONFIG.whatsappServiceUrl;
     return String(configured || DEFAULT_BASE_URL).replace(/\/+$/, '');
-  }
-
-  function getWorkspaceId() {
-    const workspace = window.OP.workspace && typeof window.OP.workspace.getCurrentWorkspace === 'function'
-      ? window.OP.workspace.getCurrentWorkspace()
-      : null;
-    return (workspace && workspace.id) || '';
-  }
-
-  async function resolveWorkspaceId() {
-    const workspaceId = getWorkspaceId();
-    if (!workspaceId) {
-      throw new Error('No workspace is selected. Please select a workspace and try again.');
-    }
-
-    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.getWorkspace === 'function') {
-      const firestoreWorkspace = await window.OP.firebaseWorkspaces.getWorkspace(workspaceId);
-      if (!firestoreWorkspace || !firestoreWorkspace.id) {
-        throw new Error('Selected workspace is not Firestore-backed. Create or join a workspace in Firebase before using WhatsApp.');
-      }
-    }
-
-    return workspaceId;
   }
 
   function getDevUser() {
@@ -75,7 +36,6 @@
   }
 
   async function getIdToken() {
-    // Preferred path: live Firebase Auth session (SDK loaded on the page).
     try {
       if (typeof window.OP.firebaseReady === 'function') {
         const firebase = await window.OP.firebaseReady();
@@ -86,19 +46,16 @@
           }
         }
       }
-    } catch (e) {
-      // fall through to stored tokens
-    }
+    } catch (e) {}
 
-    // Fallback: token persisted by the auth flow, if any.
     const session = window.OP.auth && typeof window.OP.auth.getSession === 'function'
       ? window.OP.auth.getSession()
       : null;
     return (session && (session.idToken || (session.user && session.user.idToken))) || null;
   }
 
-  async function buildAuthHeaders(workspaceId) {
-    const headers = { 'X-Workspace-Id': workspaceId };
+  async function buildAuthHeaders() {
+    const headers = {};
     const idToken = await getIdToken();
     if (idToken) {
       headers['Authorization'] = `Bearer ${idToken}`;
@@ -108,40 +65,10 @@
     return headers;
   }
 
-  async function getWorkspaceAuthToken(workspaceId) {
-    const cached = workspaceAuthCache.get(workspaceId);
-    if (cached && cached.expiresAt > Date.now() + 15000) {
-      return cached.token;
-    }
-
-    const headers = await buildAuthHeaders(workspaceId);
-    headers['Content-Type'] = 'application/json';
-
-    const response = await fetch(`${getBaseUrl()}/api/whatsapp/workspace-auth`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ workspaceId })
-    });
-
-    const payload = await response.json().catch(() => null);
-    if (!response.ok || !payload || !payload.success) {
-      throw new Error((payload && payload.message) || 'Unable to authorize workspace for WhatsApp.');
-    }
-
-    workspaceAuthCache.set(workspaceId, {
-      token: payload.workspaceAuthToken,
-      expiresAt: Date.parse(payload.workspaceAuthExpiresAt) || (Date.now() + 590000)
-    });
-    return payload.workspaceAuthToken;
-  }
-
   async function request(path, options = {}) {
-    const workspaceId = options.workspaceId || await resolveWorkspaceId();
-    const workspaceAuth = await getWorkspaceAuthToken(workspaceId);
-    const headers = await buildAuthHeaders(workspaceId);
-    headers['X-Workspace-Auth'] = workspaceAuth;
-
+    const headers = await buildAuthHeaders();
     let body;
+
     if (options.body !== undefined) {
       headers['Content-Type'] = 'application/json';
       body = JSON.stringify(options.body);
@@ -154,13 +81,6 @@
     });
 
     const payload = await response.json().catch(() => null);
-
-    // Workspace-auth tokens are short-lived: refresh once on 403 and retry.
-    if (response.status === 403 && !options._retried) {
-      workspaceAuthCache.delete(workspaceId);
-      return request(path, Object.assign({}, options, { _retried: true }));
-    }
-
     if (!response.ok || !payload || payload.success === false) {
       const error = new Error((payload && payload.message) || `WhatsApp service request failed (${response.status}).`);
       error.status = response.status;
@@ -182,7 +102,6 @@
 
   window.OP.whatsappService = {
     getBaseUrl,
-    getWorkspaceId,
 
     status() {
       return request('/api/whatsapp/status');
@@ -219,10 +138,6 @@
       return request('/api/whatsapp/messages', { method: 'POST', body: { to, text } });
     },
 
-    /**
-     * Send media as base64.
-     * kind: 'image' | 'ptt' (voice) | 'file' (document/video/anything)
-     */
     sendMedia(to, media) {
       return request('/api/whatsapp/messages/media', {
         method: 'POST',
@@ -241,12 +156,10 @@
       return request(`/api/whatsapp/media/${encodeURIComponent(messageId)}`);
     },
 
-    /** Poll new events (incoming/outgoing messages) after a sequence number. */
     events(since = 0) {
       return request(`/api/whatsapp/events${qs({ since })}`);
     },
 
-    /** Read a File into a base64 data payload ready for sendMedia(). */
     fileToMedia(file, kind) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();

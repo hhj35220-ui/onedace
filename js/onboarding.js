@@ -63,7 +63,7 @@
     _defaultChecklist() {
       return [
         { id: 'profile', title: 'Complete profile', done: false, detect: () => !!window.OP.profile.getProfile() },
-        { id: 'logo', title: 'Upload workspace logo', done: false, detect: () => { const w = window.OP.workspace.getCurrentWorkspace(); return !!(w && w.logo); } },
+        { id: 'logo', title: 'Upload profile photo', done: false, detect: () => !!window.OP.profile.getProfile()?.photoURL },
         { id: 'gmail', title: 'Connect Gmail', done: false, detect: () => this._detectIntegration('gmail') },
         { id: 'whatsapp', title: 'Connect WhatsApp', done: false, detect: () => this._detectIntegration('whatsapp') },
         { id: 'invite', title: 'Invite teammate', done: false, detect: () => this._detectInvite() },
@@ -149,10 +149,8 @@
     }
 
     _autoDetectState() {
-      // Trial: start when workspace exists
-      const ws = window.OP.workspace.getCurrentWorkspace();
-      if (ws && !this.trial) {
-        this.trial = { startDate: ws.createdAt || new Date().toISOString(), days: 14 };
+      if (!this.trial) {
+        this.trial = { startDate: new Date().toISOString(), days: 14 };
         this._save(ONB.TRIAL, this.trial);
       }
 
@@ -271,7 +269,7 @@
       const stepsEl = root.querySelector('.op-wizard-steps');
       const step = this.wizardState.step || 0;
       const steps = [
-        { id: 'workspace_info', title: 'Workspace information' },
+        { id: 'profile_info', title: 'Profile information' },
         { id: 'upload_logo', title: 'Upload company logo' },
         { id: 'choose_theme', title: 'Choose theme' },
         { id: 'invite', title: 'Invite teammates' },
@@ -286,10 +284,10 @@
       const current = steps[step] || steps[steps.length-1];
       // Render minimal forms for each step
       switch (current.id) {
-        case 'workspace_info':
+        case 'profile_info':
           body.innerHTML = `
-            <label>Workspace name<input id="op-wiz-workspace-name" type="text" value="${(window.OP.workspace.getCurrentWorkspace()||{}).name||''}" /></label>
-            <label>Workspace URL<input id="op-wiz-workspace-url" type="text" value="${(window.OP.workspace.getCurrentWorkspace()||{}).url||''}" /></label>
+            <label>Display name<input id="op-wiz-display-name" type="text" value="${(window.OP.profile.getProfile()||{}).displayName||''}" /></label>
+            <label>Email<input id="op-wiz-email" type="text" value="${(window.OP.auth.getSession()||{}).email||''}" disabled /></label>
           `;
           break;
         case 'upload_logo':
@@ -353,8 +351,8 @@
       const reader = new FileReader();
       reader.onload = () => {
         const data = reader.result;
-        const ws = window.OP.workspace.getCurrentWorkspace();
-        if (ws) { ws.logo = data; const wss = window.OP.workspace.getWorkspaces(); const i = wss.findIndex(w=>w.id===ws.id); if (i>-1) { wss[i]=ws; window.OP.workspace.saveWorkspaces(wss); } }
+        const profile = window.OP.profile.getProfile() || {};
+        window.OP.profile.saveProfile({ ...profile, photoURL: data, updatedAt: new Date().toISOString() });
         const preview = document.getElementById('op-wiz-logo-preview'); if (preview) preview.innerHTML = `<img src="${data}" alt="logo" style="max-width:120px;" />`;
         this.refreshChecklist();
       };
@@ -364,12 +362,10 @@
     _sendInvite() {
       const email = document.getElementById('op-wiz-invite-email')?.value;
       if (!email) return;
-      const ws = window.OP.workspace.getCurrentWorkspace();
-      if (!ws) return;
-      ws.members.push({ userId: email, role: 'Invited', joinedAt: new Date().toISOString() });
-      const wss = window.OP.workspace.getWorkspaces();
-      const i = wss.findIndex(w=>w.id===ws.id);
-      if (i>-1) { wss[i]=ws; window.OP.workspace.saveWorkspaces(wss); }
+      const key = 'op_invites';
+      const invites = JSON.parse(localStorage.getItem(key) || '[]');
+      invites.push({ email, invitedAt: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(invites));
       document.getElementById('op-wiz-invite-result').textContent = 'Invite sent.';
       this.refreshChecklist();
     }
@@ -390,8 +386,8 @@
 
     _detectInvite() {
       try {
-        const ws = window.OP.workspace.getCurrentWorkspace();
-        return ws && Array.isArray(ws.members) && ws.members.length > 1;
+        const invites = JSON.parse(localStorage.getItem('op_invites') || '[]');
+        return Array.isArray(invites) && invites.length > 0;
       } catch { return false; }
     }
 

@@ -9,8 +9,6 @@
 const STORAGE_KEYS = {
   SESSION: 'op_session',
   AUTH_TOKENS: 'op_api_auth_tokens',
-  WORKSPACES: 'op_workspaces',
-  CURRENT_WORKSPACE: 'op_current_workspace',
   PROFILE: 'op_profile',
   SETTINGS: 'op_settings',
   THEME: 'op_theme',
@@ -242,7 +240,7 @@ class AuthManager {
       if (!raw || typeof raw !== 'object') return null;
       if (raw.data && typeof raw.data === 'object') {
         const payload = raw.data;
-        const looksLikeSession = payload.userId !== undefined || payload.email !== undefined || payload.fullName !== undefined || payload.user !== undefined || payload.organizationId !== undefined || payload.role !== undefined;
+        const looksLikeSession = payload.userId !== undefined || payload.email !== undefined || payload.fullName !== undefined || payload.user !== undefined || payload.role !== undefined;
         if (looksLikeSession) {
           return payload;
         }
@@ -262,48 +260,7 @@ class AuthManager {
   }
 
   ensureOrganizationWorkspace() {
-    try {
-      // If the signup flow is active, do not auto-create or hydrate workspaces here.
-      try {
-        if (localStorage.getItem(STORAGE_KEYS.SIGNUP_FLOW) === '1') {
-          return;
-        }
-      } catch (ignore) {}
-      if (!window.OP || !window.OP.workspace) return;
-      const session = this.getSession();
-      const organizationId = session?.organizationId || session?.user?.organizationId || session?.user?.organization?.id || null;
-      if (!organizationId) return;
-
-      const workspaces = window.OP.workspace.getUserWorkspaces();
-      const existingWorkspace = workspaces.find(w => w.organizationId === organizationId);
-      if (existingWorkspace) {
-        window.OP.workspace.setCurrentWorkspace(existingWorkspace.id);
-        return;
-      }
-
-      const organizationName = session?.user?.organization?.name || `${session?.fullName || 'Workspace'}`;
-      const organizationSlug = session?.user?.organization?.slug || `workspace-${organizationId.slice(0, 8)}`;
-      const generatedUrl = String(organizationSlug).toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-
-      const workspace = {
-        id: organizationId,
-        name: organizationName,
-        url: generatedUrl || `workspace-${organizationId.slice(0, 8)}`,
-        size: '1-10',
-        industry: null,
-        ownerId: session.userId,
-        organizationId,
-        createdAt: new Date().toISOString(),
-        members: [{ userId: session.userId, role: 'Owner', joinedAt: new Date().toISOString() }]
-      };
-
-      const saved = window.OP.workspace.getWorkspaces() || [];
-      saved.push(workspace);
-      window.OP.workspace.saveWorkspaces(saved);
-      window.OP.workspace.setCurrentWorkspace(workspace.id);
-    } catch (error) {
-      // Keep workspace hydration best-effort and do not break auth flow.
-    }
+    return;
   }
 
   clearSession() {
@@ -314,10 +271,8 @@ class AuthManager {
   clearAuthStorage() {
     this.clearSession();
     localStorage.removeItem(STORAGE_KEYS.AUTH_TOKENS);
-    localStorage.removeItem(STORAGE_KEYS.WORKSPACES);
     localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
     localStorage.removeItem('op_remembered_email');
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_WORKSPACE);
     localStorage.removeItem(STORAGE_KEYS.RESET_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.VERIFICATION_CODE);
     sessionStorage.removeItem('op_verification_code_display');
@@ -424,15 +379,13 @@ class AuthManager {
       email: normalizedEmail,
       fullName,
       role: user.role || 'USER',
-      organizationId: user.organizationId || null,
       verified: true,
       rememberMe,
       expiresAt: rememberMe
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
         : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       user: {
-        ...user,
-        organizationId: user.organizationId || null
+        ...user
       }
     };
 
@@ -465,7 +418,6 @@ class AuthManager {
       }
     } catch (e) {}
 
-    // If signup flow is active, do not auto-create or auto-hydrate workspaces here.
     const signupFlow = (function () {
       try { return localStorage.getItem(STORAGE_KEYS.SIGNUP_FLOW) === '1'; } catch (e) { return false; }
     })();
@@ -479,20 +431,10 @@ class AuthManager {
       // Keep the login response session and fall back to the user payload if /auth/me is unavailable.
     }
 
-    // Log detection of existing workspaces for clarity.
-    try {
-      const workspaces = (window.OP && window.OP.workspace) ? window.OP.workspace.getUserWorkspaces() : [];
-      if (workspaces && workspaces.length > 0) {
-        log('[AUTH FLOW] Existing workspace detected');
-      } else {
-        log('[AUTH FLOW] No existing workspace detected');
-      }
-    } catch (ignore) {}
-
     if (signupFlow) {
       log('[AUTH FLOW] SIGNUP');
       log('[AUTH FLOW] Backend authentication successful');
-      log('[AUTH FLOW] Starting workspace onboarding');
+      log('[AUTH FLOW] Starting profile onboarding');
       // Return a result that indicates onboarding should be started by the caller (signup page).
       return {
         success: true,
@@ -500,11 +442,6 @@ class AuthManager {
         message: payload && payload.message ? payload.message : 'Signed in successfully.'
       };
     }
-
-    // Normal login flow: allow workspace hydration/selection.
-    try {
-      this.ensureOrganizationWorkspace();
-    } catch (ignore) {}
 
     return {
       success: true,
@@ -527,7 +464,6 @@ class AuthManager {
       displayName: displayName || `${firstName} ${lastName}`.trim() || email,
       photoURL: user.photoURL || null,
       role: user.role || 'USER',
-      organizationId: user.organizationId || null,
       emailVerified: !!user.emailVerified,
       providerId: user.providerId || 'firebase'
     };
@@ -700,22 +636,17 @@ class AuthManager {
             email: userProfile.email || session.email,
             fullName: userProfile.displayName || [userProfile.firstName, userProfile.lastName].filter(Boolean).join(' ').trim() || session.fullName,
             role: userProfile.role || session.role,
-            organizationId: userProfile.organizationId || session.organizationId || null,
             verified: typeof userProfile.emailVerified === 'boolean' ? userProfile.emailVerified : session.verified,
             user: {
               ...(session.user || {}),
               ...userProfile,
               uid: userProfile.uid || session.userId,
               email: userProfile.email || session.email,
-              displayName: userProfile.displayName || [userProfile.firstName, userProfile.lastName].filter(Boolean).join(' ').trim() || session.fullName,
-              activeWorkspaceId: userProfile.activeWorkspaceId || session.user?.activeWorkspaceId || null
+              displayName: userProfile.displayName || [userProfile.firstName, userProfile.lastName].filter(Boolean).join(' ').trim() || session.fullName
             }
           };
 
           this.setSession(mergedSession);
-          if (userProfile.activeWorkspaceId) {
-            localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, userProfile.activeWorkspaceId);
-          }
           return { success: true, data: userProfile };
         }
       }
@@ -736,13 +667,11 @@ class AuthManager {
         email: user.email || session.email,
         fullName: [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || session.fullName,
         role: user.role || session.role,
-        organizationId: user.organizationId || session.organizationId || null,
         verified: typeof user.emailVerified === 'boolean' ? user.emailVerified : session.verified,
         user
       };
 
       this.setSession(mergedSession);
-      this.ensureOrganizationWorkspace();
       return { success: true, data: user };
     } catch (error) {
       const message = error && error.message ? error.message : 'Unable to load current user.';
@@ -864,8 +793,7 @@ class AuthManager {
       email: session.email || payload.email || '',
       displayName: fullName || [firstName, lastName].filter(Boolean).join(' ').trim() || session.fullName || '',
       photoURL: payload.photoURL || payload.avatarUrl || session.user?.photoURL || null,
-      onboardingCompleted: payload.onboardingCompleted ?? true,
-      activeWorkspaceId: payload.activeWorkspaceId || session.user?.activeWorkspaceId || localStorage.getItem(STORAGE_KEYS.CURRENT_WORKSPACE) || null
+      onboardingCompleted: payload.onboardingCompleted ?? true
     };
 
     if (firstName) updatePayload.firstName = firstName;
@@ -891,8 +819,7 @@ class AuthManager {
             ...(session.user || {}),
             ...result,
             email: result?.email || session.email,
-            displayName: result?.displayName || session.fullName || '',
-            activeWorkspaceId: result?.activeWorkspaceId || session.user?.activeWorkspaceId || null
+            displayName: result?.displayName || session.fullName || ''
           }
         });
         this.setSession(mergedSession);
@@ -946,239 +873,11 @@ class AuthManager {
 }
 
 // ============================================
-// Workspace Manager
+// Session View Manager
 // ============================================
-class WorkspaceManager {
-  constructor() {
-    this.toast = new ToastManager();
-  }
-
-  getFirebaseUid() {
-    try {
-      return window.OP?.firebase?.auth?.currentUser?.uid || null;
-    } catch {
-      return null;
-    }
-  }
-
-  getWorkspaces() {
-    try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES) || 'null');
-      if (Array.isArray(raw)) return raw;
-      if (raw && typeof raw === 'object') {
-        if (Array.isArray(raw.data)) return raw.data;
-        if (Array.isArray(raw.workspaces)) return raw.workspaces;
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  }
-
-  saveWorkspaces(workspaces) {
-    localStorage.setItem(STORAGE_KEYS.WORKSPACES, JSON.stringify(workspaces));
-  }
-
-  async loadUserWorkspaces() {
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
-    if (!session || !session.userId) return [];
-    const firebaseUid = this.getFirebaseUid();
-    const identityUids = [firebaseUid, session.userId].filter(Boolean);
-
-    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.listUserWorkspaces === 'function') {
-      try {
-        const workspaces = await window.OP.firebaseWorkspaces.listUserWorkspaces();
-        if (Array.isArray(workspaces) && workspaces.length > 0) {
-          this.saveWorkspaces(workspaces);
-          return workspaces;
-        }
-      } catch (error) {
-        console.warn('[WorkspaceManager] Firestore workspace query failed', error);
-      }
-    }
-
-    const localWorkspaces = this.getWorkspaces();
-  const directMembership = localWorkspaces.filter(w => (w.members || []).some(m => identityUids.includes(m.userId) || identityUids.includes(m.uid)));
-    if (directMembership.length > 0) return directMembership;
-
-    if (session.organizationId) {
-      return localWorkspaces.filter(w => w.organizationId === session.organizationId);
-    }
-
-    return localWorkspaces;
-  }
-
-  async createWorkspace(name, url, size, industry, organizationId = null) {
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
-    if (!session) return { success: false, message: 'Not authenticated.' };
-    const firebaseUid = this.getFirebaseUid();
-
-    const normalizedUrl = String(url || '').trim().toLowerCase();
-    const normalizedName = String(name || '').trim();
-
-    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.createWorkspace === 'function') {
-      try {
-        const result = await window.OP.firebaseWorkspaces.createWorkspace({
-          name: normalizedName,
-          slug: normalizedUrl,
-          size,
-          industry: industry || null,
-          ownerId: firebaseUid || session.userId,
-          organizationId: organizationId || session.organizationId || null
-        });
-        if (result && result.success && result.workspace) {
-          const workspaces = this.getWorkspaces();
-          const exists = workspaces.some(w => String(w.id || '').toLowerCase() === String(result.workspace.id || '').toLowerCase());
-          if (!exists) {
-            workspaces.push(result.workspace);
-            this.saveWorkspaces(workspaces);
-          }
-          this.setCurrentWorkspace(result.workspace.id);
-        }
-        return result;
-      } catch (error) {
-        console.warn('[WorkspaceManager] Firebase workspace create failed', error);
-      }
-    }
-
-    const workspaces = this.getWorkspaces();
-    if (workspaces.some(w => String(w.url || '').toLowerCase() === normalizedUrl)) {
-      return { success: false, message: 'This workspace URL is already taken.' };
-    }
-
-    const workspace = {
-      id: crypto.randomUUID(),
-      name: normalizedName,
-      url: normalizedUrl,
-      size,
-      industry: industry || null,
-      ownerId: session.userId,
-      organizationId: organizationId || session.organizationId || null,
-      createdAt: new Date().toISOString(),
-      members: [{ userId: session.userId, role: 'Owner', joinedAt: new Date().toISOString() }]
-    };
-
-    workspaces.push(workspace);
-    this.saveWorkspaces(workspaces);
-    this.setCurrentWorkspace(workspace.id);
-    return { success: true, message: 'Workspace created successfully.', workspace };
-  }
-
-  async joinWorkspace(inviteCode) {
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
-    if (!session) return { success: false, message: 'Not authenticated.' };
-    const firebaseUid = this.getFirebaseUid();
-
-    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.joinWorkspace === 'function') {
-      try {
-        const result = await window.OP.firebaseWorkspaces.joinWorkspace({ inviteCode, uid: firebaseUid || session.userId });
-        if (result && result.success && result.workspace) {
-          const workspaces = this.getWorkspaces();
-          const existing = workspaces.find(w => String(w.id || '').toLowerCase() === String(result.workspace.id || '').toLowerCase());
-          if (!existing) {
-            workspaces.push(result.workspace);
-            this.saveWorkspaces(workspaces);
-          }
-          this.setCurrentWorkspace(result.workspace.id);
-        }
-        return result;
-      } catch (error) {
-        console.warn('[WorkspaceManager] Firebase workspace join failed', error);
-      }
-    }
-
-    const workspaces = this.getWorkspaces();
-    const workspace = workspaces.find(w => String(w.id || '').slice(0, 8).toUpperCase() === String(inviteCode || '').toUpperCase());
-    
-    if (!workspace) {
-      return { success: false, message: 'Invalid invite code.' };
-    }
-
-    const isMember = workspace.members.some(m => m.userId === session.userId);
-    if (isMember) {
-      return { success: false, message: 'You are already a member of this workspace.' };
-    }
-
-    workspace.members.push({
-      userId: session.userId,
-      role: 'Member',
-      joinedAt: new Date().toISOString()
-    });
-    if (!workspace.organizationId && session.organizationId) {
-      workspace.organizationId = session.organizationId;
-    }
-
-    this.saveWorkspaces(workspaces);
-    this.setCurrentWorkspace(workspace.id);
-    return { success: true, message: 'Joined workspace successfully.', workspace };
-  }
-
-  getUserWorkspaces() {
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
-    if (!session) return [];
-    const firebaseUid = this.getFirebaseUid();
-    const identityUids = [firebaseUid, session.userId].filter(Boolean);
-
-    const workspaces = this.getWorkspaces();
-    const directMembership = workspaces.filter(w => (w.members || []).some(m => identityUids.includes(m.userId) || identityUids.includes(m.uid)));
-    if (directMembership.length > 0) return directMembership;
-
-    if (session.organizationId) {
-      return workspaces.filter(w => w.organizationId === session.organizationId);
-    }
-
-    return workspaces;
-  }
-
-  setCurrentWorkspace(workspaceId) {
-    localStorage.setItem(STORAGE_KEYS.CURRENT_WORKSPACE, workspaceId || '');
-
-    const session = window.OP?.auth?.getSession?.() || null;
-    if (window.OP && window.OP.firebaseWorkspaces && typeof window.OP.firebaseWorkspaces.setCurrentWorkspace === 'function') {
-      window.OP.firebaseWorkspaces.setCurrentWorkspace(workspaceId).catch(() => {});
-    }
-
-    if (session) {
-      const workspace = this.getWorkspaces().find(w => w.id === workspaceId);
-      const fallbackOrganizationId = workspace?.organizationId || workspace?.id || session.organizationId || null;
-      if (fallbackOrganizationId && session.organizationId !== fallbackOrganizationId) {
-        const updatedSession = {
-          ...session,
-          organizationId: fallbackOrganizationId,
-          user: {
-            ...(session.user || {}),
-            organizationId: fallbackOrganizationId
-          }
-        };
-        window.OP.auth.setSession(updatedSession);
-      }
-    }
-  }
-
-  getCurrentWorkspace() {
-    const id = localStorage.getItem(STORAGE_KEYS.CURRENT_WORKSPACE);
-    const workspaces = this.getWorkspaces();
-    if (id) {
-      const current = workspaces.find(w => w.id === id);
-      if (current) return current;
-    }
-
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || 'null');
-    if (session && session.organizationId) {
-      const fallback = workspaces.find(w => w.organizationId === session.organizationId);
-      if (fallback) {
-        this.setCurrentWorkspace(fallback.id);
-        return fallback;
-      }
-    }
-
-    if (workspaces.length > 0) {
-      const fallback = workspaces[0];
-      this.setCurrentWorkspace(fallback.id);
-      return fallback;
-    }
-
-    return null;
+class SessionViewManager {
+  hasSession() {
+    return !!(window.OP && window.OP.auth && typeof window.OP.auth.getSession === 'function' && window.OP.auth.getSession());
   }
 }
 
@@ -1300,7 +999,7 @@ class LoadingManager {
 class NavigationGuard {
   constructor() {
     this.auth = new AuthManager();
-    this.ws = new WorkspaceManager();
+    this.sessionView = new SessionViewManager();
   }
 
   requireAuth() {
@@ -1317,12 +1016,7 @@ class NavigationGuard {
 
   requireGuest() {
     if (this.auth.isAuthenticated()) {
-      const workspaces = this.ws.getUserWorkspaces();
-      if (workspaces.length > 0) {
-        window.location.href = 'workspace-select.html';
-      } else {
-        window.location.href = 'workspace-create.html';
-      }
+      window.location.href = '../dashboard/main-dashboard.html';
       return false;
     }
     return true;
@@ -1343,7 +1037,7 @@ class NavigationGuard {
 // ============================================
 const themeManager = new ThemeManager();
 const authManager = new AuthManager();
-const workspaceManager = new WorkspaceManager();
+const sessionViewManager = new SessionViewManager();
 const profileManager = new ProfileManager();
 const loadingManager = new LoadingManager();
 const navGuard = new NavigationGuard();
@@ -1636,7 +1330,7 @@ class CommandPalette {
 window.OP = Object.assign({
   theme: themeManager,
   auth: authManager,
-  workspace: workspaceManager,
+  sessionView: sessionViewManager,
   profile: profileManager,
   loading: loadingManager,
   nav: navGuard,
@@ -1678,9 +1372,7 @@ window.OP.ensureFirebaseModules = async function () {
   const baseUrl = new URL('../js/', currentPage);
   const moduleUrls = [
     new URL('firebase/firestore.js', baseUrl),
-    new URL('firebase/users.js', baseUrl),
-    new URL('firebase/workspaces.js', baseUrl),
-    new URL('firebase/members.js', baseUrl)
+    new URL('firebase/users.js', baseUrl)
   ];
 
   window.OP.firebaseModulesReady = (async () => {
