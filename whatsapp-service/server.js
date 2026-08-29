@@ -603,7 +603,9 @@ app.post('/api/whatsapp/connect', async (req, res) => {
   try {
     const access = await authorizeUser(req);
     const phoneNumber = req.body && req.body.phoneNumber ? String(req.body.phoneNumber) : null;
-    await ensureClientForUser(access.uid, phoneNumber ? { phoneNumber } : {});
+    ensureClientForUser(access.uid, phoneNumber ? { phoneNumber } : {}).catch(error => {
+      console.error('[WHATSAPP_CONNECT_BACKGROUND_ERROR]', error);
+    });
     const status = await getUserStatus(access.uid);
 
     res.json({
