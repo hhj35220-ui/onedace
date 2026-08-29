@@ -470,6 +470,11 @@
   color: var(--gray-400);
 }
 
+.wa-qr-timeout i {
+  font-size: 32px;
+  color: var(--danger-500, #ef4444);
+}
+
 .wa-qr-loader {
   width: 34px;
   height: 34px;

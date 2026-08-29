@@ -1137,10 +1137,14 @@ class WhatsAppApp {
           }
         }
 
-        if (!status.connected && Date.now() - this.statusPollStartedAt >= 60000) {
-          const error = new Error('No QR code was received after 60 seconds. Check the WPPConnect server logs and SECRET_KEY values.');
+        if (!status.connected && Date.now() - this.statusPollStartedAt >= 5000) {
+          const error = new Error('No QR code was received after 5 seconds. Check the WPPConnect server logs and SECRET_KEY values.');
           if (window.DEBUG) window.DEBUG.error('QR loading timed out', { status: status.status, diagnostic: status.diagnostic });
           this.stopStatusPolling();
+          const qrContainer = document.querySelector('.wa-qr-container');
+          if (qrContainer) {
+            qrContainer.innerHTML = '<div class="wa-qr-placeholder wa-qr-timeout"><i class="ph ph-warning" aria-hidden="true"></i><span>QR code unavailable. Click Connect WhatsApp to retry.</span></div>';
+          }
           if (typeof OP !== 'undefined' && OP.toast) OP.toast.show(error.message, 'error');
         }
 
