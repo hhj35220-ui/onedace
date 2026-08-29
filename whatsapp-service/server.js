@@ -100,7 +100,7 @@ async function wppRequest(sessionName, method, path, data = null, options = {}) 
   };
 
   try {
-    const response = await axios({ method, url, headers, data, timeout: options.timeout || 30000 });
+    const response = await axios({ method, url, headers, data, timeout: options.timeout || 30000, responseType: options.responseType });
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -312,6 +312,8 @@ function uiStatusFromState(rawStatus) {
 // ============================================
 
 function extractQrCode(payload) {
+  if (Buffer.isBuffer(payload)) return `data:image/png;base64,${payload.toString('base64')}`;
+  if (payload instanceof Uint8Array) return `data:image/png;base64,${Buffer.from(payload).toString('base64')}`;
   const candidates = [
     payload?.qrcode,
     payload?.qr,
@@ -329,7 +331,7 @@ async function refreshQrCode(meta) {
   for (const endpoint of ['/qrcode-session', '/qr-code']) {
     try {
       console.log(`[refreshQrCode] Requesting ${endpoint} for ${meta.sessionName}...`);
-      const qrResp = await wppRequest(meta.sessionName, 'get', endpoint);
+      const qrResp = await wppRequest(meta.sessionName, 'get', endpoint, null, { responseType: 'arraybuffer' });
       const qr = extractQrCode(qrResp);
       if (!qr) {
         console.log(`[refreshQrCode] ${endpoint} returned no QR. Keys:`, Object.keys(qrResp || {}));
