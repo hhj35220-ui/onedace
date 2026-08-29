@@ -603,10 +603,30 @@ app.post('/api/whatsapp/connect', async (req, res) => {
   try {
     const access = await authorizeUser(req);
     const phoneNumber = req.body && req.body.phoneNumber ? String(req.body.phoneNumber) : null;
-    ensureClientForUser(access.uid, phoneNumber ? { phoneNumber } : {}).catch(error => {
-      console.error('[WHATSAPP_CONNECT_BACKGROUND_ERROR]', error);
-    });
-    const status = await getUserStatus(access.uid);
+    const meta = getSessionMeta(access.uid);
+    const clientOptions = phoneNumber ? { phoneNumber } : {};
+
+    if (!meta.client && !meta.creating) {
+      meta.status = 'initializing';
+      meta.updatedAt = new Date().toISOString();
+      setImmediate(() => {
+        ensureClientForUser(access.uid, clientOptions).catch(error => {
+          console.error('[WHATSAPP_CONNECT_BACKGROUND_ERROR]', error);
+        });
+      });
+    }
+
+    const status = {
+      uid: access.uid,
+      sessionName: meta.sessionName,
+      connectionStatus: meta.client ? meta.status : 'initializing',
+      status: meta.client ? uiStatusFromState(meta.status) : 'Connecting',
+      statusText: meta.client ? uiStatusFromState(meta.status) : 'Connecting',
+      connected: !!meta.client && uiStatusFromState(meta.status) === 'Connected',
+      account: meta.client ? await readClientAccountInfo(meta.client) : null,
+      qr: meta.qr || null,
+      pairingCode: meta.pairingCode || null
+    };
 
     res.json({
       success: true,
