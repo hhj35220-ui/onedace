@@ -121,9 +121,9 @@
 
       <div class="sidebar-footer">
         <div class="sidebar-user">
-          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan" class="sidebar-user-avatar-img">
+          <img id="whatsapp-sidebar-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User profile" class="sidebar-user-avatar-img">
           <div class="sidebar-user-info">
-            <div class="sidebar-user-name">Alex Morgan</div>
+            <div id="whatsapp-sidebar-user-name" class="sidebar-user-name">User</div>
             <div class="sidebar-user-role">Admin</div>
           </div>
           <button class="sidebar-user-menu"><i class="ph ph-caret-up"></i></button>
@@ -159,7 +159,7 @@
             <i class="ph ph-moon"></i>
           </button>
           <div class="header-avatar" id="user-menu-btn">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Morgan">
+            <img id="whatsapp-header-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User profile">
           </div>
         </div>
       </header>
@@ -392,5 +392,26 @@
   <script src="../js/storage.js"></script>
   <script src="../js/whatsapp-service-client.js"></script>
   <script src="../js/whatsapp.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!window.OP || !OP.auth) return;
+
+      await OP.auth.syncCurrentUser();
+      const session = OP.auth.getSession() || {};
+      const user = session.user || {};
+      const name = session.fullName || user.displayName || session.email || 'User';
+      const avatar = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=25D366&color=fff&size=64';
+
+      const sidebarName = document.getElementById('whatsapp-sidebar-user-name');
+      const sidebarAvatar = document.getElementById('whatsapp-sidebar-avatar');
+      const headerAvatar = document.getElementById('whatsapp-header-avatar');
+      if (sidebarName) sidebarName.textContent = name;
+      [sidebarAvatar, headerAvatar].forEach(image => {
+        if (!image) return;
+        image.src = avatar;
+        image.alt = name;
+      });
+    });
+  </script>
 </body>
 </html>
