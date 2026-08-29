@@ -1013,6 +1013,16 @@ class WhatsAppApp {
       const connectResp = await window.OP.whatsappService.connect();
       if (window.DEBUG) window.DEBUG.success('connect() API call succeeded', { response: connectResp });
       
+      // Store session info and display QR code immediately if available
+      if (connectResp) {
+        this.session = { ...connectResp, connected: false, connectionStatus: 'qrReadyToScan' };
+        this.renderConnectionStatus(this.session);
+        if (connectResp.qr) {
+          if (window.DEBUG) window.DEBUG.info('QR code received, displaying...');
+          this.displayQr(connectResp.qr);
+        }
+      }
+      
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show('WhatsApp connection started. Scan the QR code when it appears.', 'success');
       }
