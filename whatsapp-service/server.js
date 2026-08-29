@@ -326,7 +326,10 @@ async function refreshQrCode(meta) {
       console.log(`[refreshQrCode] Requesting ${endpoint} for ${meta.sessionName}...`);
       const qrResp = await wppRequest(meta.sessionName, 'get', endpoint);
       const qr = extractQrCode(qrResp);
-      if (!qr) continue;
+      if (!qr) {
+        console.log(`[refreshQrCode] ${endpoint} returned no QR. Keys:`, Object.keys(qrResp || {}));
+        continue;
+      }
       meta.qr = qr;
       meta.status = 'qrReadSuccess';
       meta.updatedAt = new Date().toISOString();
@@ -363,7 +366,9 @@ async function ensureClientForUser(uid) {
   try {
     console.log(`[ensureClientForUser] Starting session for ${meta.sessionName}...`);
     const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
-      webhook: process.env.WEBHOOK_URL || undefined
+      webhook: process.env.WEBHOOK_URL || undefined,
+      waitQrCode: true,
+      waitForLogin: true
     });
     console.log(`[ensureClientForUser] WPPConnect /start-session full response:`, JSON.stringify(startResp, null, 2));
     const startQr = extractQrCode(startResp);
@@ -465,7 +470,14 @@ async function getUserStatus(uid) {
       hasStoredSession: !!meta.tokenFull,
       lastUpdatedAt: meta.updatedAt,
       connectedAt: meta.connectedAt,
-      account
+      account,
+      diagnostic: {
+        rawStatus: statusResp?.status,
+        rawResponse: statusResp?.response,
+        metaStatus: meta.status,
+        lastError: meta.lastError,
+        qrPresent: !!meta.qr
+      }
     };
   } catch (error) {
     meta.lastError = String(error?.message || error);
@@ -482,7 +494,12 @@ async function getUserStatus(uid) {
       lastUpdatedAt: meta.updatedAt,
       connectedAt: meta.connectedAt,
       error: meta.lastError,
-      account: null
+      account: null,
+      diagnostic: {
+        metaStatus: meta.status,
+        lastError: meta.lastError,
+        qrPresent: !!meta.qr
+      }
     };
   }
 }
@@ -640,7 +657,12 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       statusText: status.statusText,
       connectionStatus: status.connectionStatus,
       connected: status.connected,
-      account: status.account || null
+      account: status.account || null,
+      diagnostic: {
+        metaStatus: meta.status,
+        lastError: meta.lastError,
+        qrPresent: !!meta.qr
+      }
     });
   } catch (error) {
     console.error('[WhatsApp Connect] Fatal error:', error.message, error.stack);
@@ -658,7 +680,10 @@ app.get('/api/whatsapp/qr', async (req, res) => {
     }
 
     try {
-      const startResp = await wppRequest(meta.sessionName, 'post', '/start-session');
+      const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
+        waitQrCode: true,
+        waitForLogin: true
+      });
       const startQr = extractQrCode(startResp);
       if (startQr) {
         meta.qr = startQr;

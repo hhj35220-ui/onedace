@@ -1016,7 +1016,8 @@ class WhatsAppApp {
         statusText: connectResp?.statusText,
         connectionStatus: connectResp?.connectionStatus,
         connected: connectResp?.connected,
-        hasQr: !!connectResp?.qr 
+        hasQr: !!connectResp?.qr,
+        diagnostic: connectResp?.diagnostic
       });
       
       // Store session info and display QR code immediately if available
@@ -1120,7 +1121,11 @@ class WhatsAppApp {
               if (window.DEBUG) window.DEBUG.success('Dedicated QR endpoint returned a QR code', { qrLength: qrResp.qr.length });
               this.displayQr(qrResp.qr);
             } else if (window.DEBUG) {
-              window.DEBUG.info('Dedicated QR endpoint returned no QR code', { status: qrResp?.status, statusText: qrResp?.statusText });
+              window.DEBUG.info('Dedicated QR endpoint returned no QR code', {
+                status: qrResp?.status,
+                statusText: qrResp?.statusText,
+                diagnostic: qrResp?.diagnostic
+              });
             }
           } catch (qrError) {
             if (window.DEBUG) window.DEBUG.error('Dedicated QR endpoint failed', qrError);
