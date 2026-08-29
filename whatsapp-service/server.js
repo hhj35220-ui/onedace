@@ -700,23 +700,9 @@ app.get('/api/whatsapp/qr', async (req, res) => {
       return res.json({ success: true, qr: null, pairingCode: null, status: 'Not connected', statusText: 'Not connected', connected: false });
     }
 
-    try {
-      meta.qr = null;
-      const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
-        waitQrCode: true,
-        waitForLogin: true
-      });
-      const startQr = extractQrCode(startResp);
-      if (startQr) {
-        meta.qr = startQr;
-        meta.status = 'qrReadSuccess';
-        meta.updatedAt = new Date().toISOString();
-      } else if (!meta.qr) {
-        await refreshQrCode(meta);
-      }
-    } catch (e) {
-      await refreshQrCode(meta);
-    }
+    // Do not restart the session here. This endpoint is polled by the browser;
+    // restarting it would invalidate the QR while a phone is scanning it.
+    if (!meta.qr) await refreshQrCode(meta);
 
     const status = await getUserStatus(access.uid);
     res.json({
