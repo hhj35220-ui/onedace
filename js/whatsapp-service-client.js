@@ -3,7 +3,9 @@
   if (!window.OP) window.OP = {};
   if (window.OP.whatsappService) return;
 
-  const DEFAULT_BASE_URL = 'http://localhost:3001';
+  const DEFAULT_BASE_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://localhost:3001'
+    : 'https://onedace.onrender.com';
   const DEV_USER_KEY = 'op_wa_dev_user';
 
   function getBaseUrl() {
