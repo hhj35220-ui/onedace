@@ -628,6 +628,9 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       if (!meta.tokenFull) {
         return handleError(res, new Error('WhatsApp upstream is not configured or unreachable.'), 'WhatsApp upstream is not configured or unreachable.', 'WPPCONNECT_UNAVAILABLE');
       }
+      if (meta.lastError && !meta.qr) {
+        return handleError(res, new Error(meta.lastError), 'Unable to start the WhatsApp session.', 'WPPCONNECT_SESSION_ERROR');
+      }
     } catch (ensureErr) {
       console.error('[WhatsApp Connect] ensureClientForUser failed:', ensureErr.message, 'code:', ensureErr.code);
       // Continue even if ensureClient fails - we can still return status

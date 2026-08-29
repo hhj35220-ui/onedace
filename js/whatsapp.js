@@ -309,6 +309,8 @@ class WhatsAppApp {
     this.lastEventSeq = 0;
     this.statusPollTimer = null;
     this.eventPollTimer = null;
+    this.statusPollStartedAt = 0;
+    this.statusPollInFlight = false;
     this.init();
   }
 
@@ -1104,7 +1106,10 @@ class WhatsAppApp {
 
   startStatusPolling() {
     this.stopStatusPolling();
+    this.statusPollStartedAt = Date.now();
     this.statusPollTimer = setInterval(async () => {
+      if (this.statusPollInFlight) return;
+      this.statusPollInFlight = true;
       try {
         const status = await window.OP.whatsappService.status();
         this.session = status;
@@ -1132,6 +1137,13 @@ class WhatsAppApp {
           }
         }
 
+        if (!status.connected && Date.now() - this.statusPollStartedAt >= 60000) {
+          const error = new Error('No QR code was received after 60 seconds. Check the WPPConnect server logs and SECRET_KEY values.');
+          if (window.DEBUG) window.DEBUG.error('QR loading timed out', { status: status.status, diagnostic: status.diagnostic });
+          this.stopStatusPolling();
+          if (typeof OP !== 'undefined' && OP.toast) OP.toast.show(error.message, 'error');
+        }
+
         if (status.connected) {
           if (window.DEBUG) window.DEBUG.success('Status polling: Session connected!');
           this.stopStatusPolling();
@@ -1145,7 +1157,9 @@ class WhatsAppApp {
           if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp connected.', 'success');
         }
       } catch (error) {
-        // keep polling
+        if (window.DEBUG) window.DEBUG.error('Status polling failed', error);
+      } finally {
+        this.statusPollInFlight = false;
       }
     }, 3000);
   }
