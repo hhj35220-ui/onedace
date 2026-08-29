@@ -1,16 +1,17 @@
 {
   "name": "oneplace-whatsapp-service",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "engines": {
     "node": "22.x"
   },
   "dependencies": {
-    "@wppconnect-team/wppconnect": "2.2.4",
+    "axios": "^1.7.7",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jose": "^5.9.6"

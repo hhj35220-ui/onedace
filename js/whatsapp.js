@@ -1,7 +1,6 @@
 /**
- * OnePlace Enterprise v3.0 — WhatsApp Business Module
+ * OnePlace Enterprise v3.0 — WhatsApp Business Module (WPPConnect Server)
  * Vanilla JavaScript (ES6+)
- * Matches the design photo exactly
  */
 
 const WA_STORAGE_KEYS = {
@@ -16,17 +15,9 @@ const WA_STORAGE_KEYS = {
   WHATSAPP_MESSAGES: 'op_wa_messages',
   WHATSAPP_LABELS: 'op_wa_labels'
 };
-// No sample/demo data: the UI will use live backend data only.
-// Local storage keys are initialized empty; data is populated by API calls below.
-
-// ============================================
-// WhatsApp Storage Manager
-// ============================================
 
 class WhatsAppStorage {
-  constructor() {
-    this.init();
-  }
+  constructor() { this.init(); }
 
   init() {
     const emptyValues = {
@@ -46,14 +37,8 @@ class WhatsAppStorage {
     });
   }
 
-  // Contacts
-  getContacts() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS) || '[]');
-  }
-
-  getContactById(id) {
-    return this.getContacts().find(c => c.id === id);
-  }
+  getContacts() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS) || '[]'); }
+  getContactById(id) { return this.getContacts().find(c => c.id === id); }
 
   addContact(contact) {
     const contacts = this.getContacts();
@@ -80,37 +65,30 @@ class WhatsAppStorage {
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
   }
 
-  // Conversations
   getConversations(search = '', filter = '') {
     let conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
     const contacts = this.getContacts();
-
     conversations = conversations.map(conv => {
       const contact = contacts.find(c => c.id === conv.contactId);
       return { ...conv, contact: contact || {} };
     });
-
     if (search) {
       const q = search.toLowerCase();
-      conversations = conversations.filter(c => 
+      conversations = conversations.filter(c =>
         (c.contact?.name || '').toLowerCase().includes(q) ||
         (c.lastMessage || '').toLowerCase().includes(q)
       );
     }
-
     if (filter) {
       conversations = conversations.filter(c => c.tag === filter || c.status === filter);
     }
-
     return conversations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }
 
   getConversationById(id) {
-    const conversations = this.getConversations();
-    return conversations.find(c => c.id === id);
+    return this.getConversations().find(c => c.id === id);
   }
 
-  // Messages
   getMessages(conversationId) {
     const allMessages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
     return allMessages[conversationId] || [];
@@ -119,13 +97,11 @@ class WhatsAppStorage {
   addMessage(conversationId, message) {
     const allMessages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
     if (!allMessages[conversationId]) allMessages[conversationId] = [];
-
-    message.id = 'm_' + Date.now();
-    message.time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    message.id = message.id || 'm_' + Date.now();
+    message.time = message.time || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     allMessages[conversationId].push(message);
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES, JSON.stringify(allMessages));
 
-    // Update conversation last message
     const conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
     const idx = conversations.findIndex(c => c.id === conversationId);
     if (idx !== -1) {
@@ -136,7 +112,6 @@ class WhatsAppStorage {
       }
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
     }
-
     return message;
   }
 
@@ -149,15 +124,11 @@ class WhatsAppStorage {
     }
   }
 
-  // Insert a live (service-originated) message preserving its id/time,
-  // de-duplicating by message id, and updating the conversation preview.
   upsertMessage(conversationId, message) {
     const allMessages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
     if (!allMessages[conversationId]) allMessages[conversationId] = [];
-
     const list = allMessages[conversationId];
     if (message.id && list.some(m => m.id === message.id)) return null;
-
     if (!message.id) message.id = 'm_' + Date.now();
     if (!message.time) message.time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     list.push(message);
@@ -173,7 +144,6 @@ class WhatsAppStorage {
       }
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
     }
-
     return message;
   }
 
@@ -199,10 +169,7 @@ class WhatsAppStorage {
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
   }
 
-  // Templates
-  getTemplates() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES) || '[]');
-  }
+  getTemplates() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES) || '[]'); }
 
   addTemplate(template) {
     const templates = this.getTemplates();
@@ -217,10 +184,7 @@ class WhatsAppStorage {
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_TEMPLATES, JSON.stringify(templates));
   }
 
-  // Quick Replies
-  getQuickReplies() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES) || '[]');
-  }
+  getQuickReplies() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES) || '[]'); }
 
   addQuickReply(qr) {
     const qrs = this.getQuickReplies();
@@ -235,10 +199,7 @@ class WhatsAppStorage {
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_QUICK_REPLIES, JSON.stringify(qrs));
   }
 
-  // Catalog
-  getCatalog() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG) || '[]');
-  }
+  getCatalog() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG) || '[]'); }
 
   addProduct(product) {
     const catalog = this.getCatalog();
@@ -253,10 +214,7 @@ class WhatsAppStorage {
     localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CATALOG, JSON.stringify(catalog));
   }
 
-  // Settings
-  getSettings() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_SETTINGS) || '{}');
-  }
+  getSettings() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_SETTINGS) || '{}'); }
 
   updateSettings(settings) {
     const current = this.getSettings();
@@ -265,10 +223,7 @@ class WhatsAppStorage {
     return updated;
   }
 
-  // Integration
-  getIntegration() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_INTEGRATION) || '{}');
-  }
+  getIntegration() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_INTEGRATION) || '{}'); }
 
   updateIntegration(data) {
     const current = this.getIntegration();
@@ -277,10 +232,7 @@ class WhatsAppStorage {
     return updated;
   }
 
-  // Labels
-  getLabels() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_LABELS) || '[]');
-  }
+  getLabels() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_LABELS) || '[]'); }
 
   addLabel(label) {
     const labels = this.getLabels();
@@ -290,10 +242,7 @@ class WhatsAppStorage {
     return label;
   }
 
-  // Broadcasts
-  getBroadcasts() {
-    return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_BROADCASTS) || '[]');
-  }
+  getBroadcasts() { return JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_BROADCASTS) || '[]'); }
 
   addBroadcast(broadcast) {
     const broadcasts = this.getBroadcasts();
@@ -305,12 +254,10 @@ class WhatsAppStorage {
     return broadcast;
   }
 
-  // Stats
   getStats() {
     const conversations = this.getConversations();
     const contacts = this.getContacts();
     const messages = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_MESSAGES) || '{}');
-
     const today = new Date().toDateString();
     const messagesToday = Object.values(messages).flat().filter(m => {
       return new Date().toDateString() === today;
@@ -336,10 +283,6 @@ class WhatsAppStorage {
   }
 }
 
-// ============================================
-// WhatsApp App Controller
-// ============================================
-
 class WhatsAppApp {
   constructor() {
     this.storage = new WhatsAppStorage();
@@ -357,7 +300,6 @@ class WhatsAppApp {
   async init() {
     this.bindEvents();
     this.renderConversations();
-
     await this.loadBackendStatus();
 
     if (this.session?.connected) {
@@ -369,18 +311,12 @@ class WhatsAppApp {
       }
       this.startEventPolling();
     } else {
-      // Not connected: render conversations (will be empty) and display QR if available
       this.renderConversations();
       if (this.session?.qr) this.displayQr(this.session.qr);
-      if (this.session?.pairingCode) this.displayPairingCode(this.session.pairingCode);
     }
   }
 
-  // ============================================
-  // Event Binding
-  // ============================================
   bindEvents() {
-    // Sidebar toggle
     const toggleBtn = document.getElementById('sidebar-toggle');
     const sidebar = document.querySelector('.dashboard-sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
@@ -401,7 +337,6 @@ class WhatsAppApp {
       });
     }
 
-    // Search
     const searchInput = document.getElementById('global-search');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -410,7 +345,6 @@ class WhatsAppApp {
       });
     }
 
-    // Conversation search
     const convSearch = document.getElementById('conversation-search');
     if (convSearch) {
       convSearch.addEventListener('input', (e) => {
@@ -419,7 +353,6 @@ class WhatsAppApp {
       });
     }
 
-    // Theme toggle
     const themeBtn = document.getElementById('theme-toggle-header');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
@@ -431,7 +364,6 @@ class WhatsAppApp {
       });
     }
 
-    // Create button
     const createBtn = document.getElementById('create-btn');
     if (createBtn) {
       createBtn.addEventListener('click', () => {
@@ -445,13 +377,14 @@ class WhatsAppApp {
       connectBtn.addEventListener('click', () => {
         if (this.session?.connected) {
           this.disconnectSession();
+        } else if (this.session?.connectionStatus === 'qrReadSuccess' || this.session?.connectionStatus === 'connecting') {
+          this.reconnectSession();
         } else {
           this.connectSession();
         }
       });
     }
 
-    // Attachment button -> send media through the WhatsApp service
     const attachBtn = document.querySelector('.wa-input-action[title="Attachment"]');
     if (attachBtn) {
       const fileInput = document.createElement('input');
@@ -474,30 +407,23 @@ class WhatsAppApp {
       });
     }
 
-    // Notifications
     const notifBtn = document.getElementById('notifications-btn');
     if (notifBtn) {
       notifBtn.addEventListener('click', () => {
-        if (typeof OP !== 'undefined' && OP.toast) {
-          OP.toast.show('Notifications panel would open here', 'info');
-        }
+        if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('Notifications panel would open here', 'info');
       });
     }
 
-    // User menu
     const userBtn = document.getElementById('user-menu-btn');
     if (userBtn) {
       userBtn.addEventListener('click', () => {
         if (confirm('Sign out of OnePlace Enterprise?')) {
-          if (typeof OP !== 'undefined' && OP.auth) {
-            OP.auth.signOut();
-          }
+          if (typeof OP !== 'undefined' && OP.auth) OP.auth.signOut();
           window.location.href = '../auth/signin.html';
         }
       });
     }
 
-    // Send message
     const sendBtn = document.getElementById('send-btn');
     const chatInput = document.getElementById('chat-input');
     if (sendBtn && chatInput) {
@@ -510,7 +436,6 @@ class WhatsAppApp {
       });
     }
 
-    // Chat tabs
     document.querySelectorAll('.wa-chat-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         document.querySelectorAll('.wa-chat-tab').forEach(t => t.classList.remove('active'));
@@ -518,7 +443,6 @@ class WhatsAppApp {
       });
     });
 
-    // Close dropdowns on outside click
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#create-btn') && !e.target.closest('#create-menu')) {
         const menu = document.getElementById('create-menu');
@@ -527,9 +451,6 @@ class WhatsAppApp {
     });
   }
 
-  // ============================================
-  // Conversation List Rendering
-  // ============================================
   renderConversations() {
     const list = document.getElementById('conversation-list');
     if (!list) return;
@@ -556,7 +477,7 @@ class WhatsAppApp {
 
       html += `
         <div class="wa-conversation-item ${activeClass} ${unreadClass}" data-id="${conv.id}">
-          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=88" 
+          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=88"
                alt="${contact.name}" class="wa-conv-avatar">
           <div class="wa-conv-content">
             <div class="wa-conv-header">
@@ -574,46 +495,31 @@ class WhatsAppApp {
     });
 
     list.innerHTML = html;
-
-    // Add click handlers
     list.querySelectorAll('.wa-conversation-item').forEach(item => {
-      item.addEventListener('click', () => {
-        this.selectConversation(item.dataset.id);
-      });
+      item.addEventListener('click', () => this.selectConversation(item.dataset.id));
     });
   }
 
-  // ============================================
-  // Select Conversation
-  // ============================================
   selectConversation(id) {
     this.currentConversation = id;
     this.storage.markConversationRead(id);
-
-    // Update active state in list
     document.querySelectorAll('.wa-conversation-item').forEach(item => {
       item.classList.toggle('active', item.dataset.id === id);
       item.classList.remove('unread');
     });
-
     this.renderChatHeader(id);
     this.renderChatMessages(id);
     this.renderContactPanel(id);
   }
 
-  // ============================================
-  // Chat Header Rendering
-  // ============================================
   renderChatHeader(conversationId) {
     const header = document.getElementById('chat-header');
     if (!header) return;
-
     const conv = this.storage.getConversationById(conversationId);
     if (!conv) return;
-
     const contact = conv.contact || {};
     header.innerHTML = `
-      <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=80" 
+      <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=80"
            alt="${contact.name}" class="wa-chat-header-avatar">
       <div class="wa-chat-header-info">
         <div class="wa-chat-header-name">${contact.name || 'Unknown'}</div>
@@ -627,15 +533,11 @@ class WhatsAppApp {
     `;
   }
 
-  // ============================================
-  // Chat Messages Rendering
-  // ============================================
   renderChatMessages(conversationId) {
     const container = document.getElementById('chat-messages');
     if (!container) return;
 
     const messages = this.storage.getMessages(conversationId);
-
     if (messages.length === 0) {
       container.innerHTML = `
         <div class="wa-empty-state">
@@ -680,7 +582,6 @@ class WhatsAppApp {
     if (!media.messageId) {
       return `<div class="wa-media-attachment"><i class="ph ph-file"></i> ${this.escapeHtml(media.filename || 'Attachment')}</div>`;
     }
-
     if (isImage) {
       return `<div class="wa-media-attachment wa-media-image" data-media-id="${this.escapeHtml(media.messageId)}" data-media-kind="image"><i class="ph ph-image"></i> Loading image...</div>`;
     }
@@ -690,7 +591,6 @@ class WhatsAppApp {
     return `<div class="wa-media-attachment" data-media-id="${this.escapeHtml(media.messageId)}" data-media-kind="file"><i class="ph ph-file-arrow-down"></i> ${this.escapeHtml(media.filename || 'Download attachment')}</div>`;
   }
 
-  // Lazily download media for rendered placeholders via the service.
   hydrateMediaAttachments(container) {
     if (!window.OP || !window.OP.whatsappService) return;
     container.querySelectorAll('[data-media-id]').forEach(el => {
@@ -714,28 +614,21 @@ class WhatsAppApp {
     });
   }
 
-  // ============================================
-  // Contact Panel Rendering (matches photo exactly)
-  // ============================================
   renderContactPanel(conversationId) {
     const panel = document.getElementById('contact-panel');
     if (!panel) return;
-
     const conv = this.storage.getConversationById(conversationId);
     if (!conv) return;
-
     const contact = conv.contact || {};
     const labels = this.storage.getLabels();
     const contactLabels = contact.tags || [];
-
-    // Get current time for display
     const now = new Date();
     const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
 
     panel.innerHTML = `
       <div class="wa-contact-section">
         <div class="wa-contact-header">
-          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=160" 
+          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=160"
                alt="${contact.name}" class="wa-contact-avatar">
           <div class="wa-contact-name-row">
             <span class="wa-contact-name">${contact.name || 'Unknown'}</span>
@@ -828,9 +721,6 @@ class WhatsAppApp {
     `;
   }
 
-  // ============================================
-  // Send Message (via WPPConnect service)
-  // ============================================
   resolveChatId(conversationId) {
     const conv = this.storage.getConversationById(conversationId);
     return conv?.chatId || conv?.contact?.phone || conversationId;
@@ -839,7 +729,6 @@ class WhatsAppApp {
   async sendMessage() {
     const input = document.getElementById('chat-input');
     if (!input || !this.currentConversation) return;
-
     const text = input.value.trim();
     if (!text) return;
 
@@ -851,7 +740,6 @@ class WhatsAppApp {
     const to = this.resolveChatId(this.currentConversation);
     input.value = '';
 
-    // Optimistic local echo; the service event feed reconciles it later.
     this.storage.upsertMessage(this.currentConversation, {
       id: 'local_' + Date.now(),
       type: 'sent',
@@ -904,16 +792,12 @@ class WhatsAppApp {
     }
   }
 
-  // ============================================
-  // Backend integration (OnePlace WhatsApp service / WPPConnect)
-  // ============================================
   async loadBackendStatus() {
     try {
       if (!window.OP || !window.OP.whatsappService) {
         this.renderConnectionStatus(null);
         return;
       }
-
       const status = await window.OP.whatsappService.status();
       this.session = status;
       this.renderConnectionStatus(status);
@@ -921,17 +805,18 @@ class WhatsAppApp {
       this.session = null;
       this.renderConnectionStatus(null);
       if (typeof OP !== 'undefined' && OP.toast) {
-        OP.toast.show('Unable to reach the WhatsApp service. Make sure whatsapp-service is running.', 'error');
+        OP.toast.show('Unable to reach the WhatsApp service. Make sure the service is running.', 'error');
       }
     }
   }
 
   mapChatToConversation(chat) {
-    const chatId = (chat.id && (chat.id._serialized || chat.id.id)) || String(chat.id || chat.chatId || '');
+    const chatId = chat.id || String(chat.chatId || '');
     const contact = chat.contact || {};
     const name = chat.name || contact.name || contact.pushname || contact.shortName || chatId.replace(/@.*$/, '');
     const lastMsg = chat.lastMessage || {};
-    const timestamp = chat.t ? new Date(chat.t * 1000).toISOString()
+    const timestamp = chat.t
+      ? new Date(chat.t * 1000).toISOString()
       : (lastMsg.timestamp ? new Date(lastMsg.timestamp * 1000).toISOString() : new Date().toISOString());
 
     return {
@@ -975,7 +860,6 @@ class WhatsAppApp {
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONTACTS, JSON.stringify(contacts));
       localStorage.setItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS, JSON.stringify(conversations));
 
-      // Recent messages per conversation
       const messagesStore = {};
       for (const conv of conversations) {
         try {
@@ -991,9 +875,6 @@ class WhatsAppApp {
     }
   }
 
-  // ============================================
-  // Live event feed (incoming + outgoing messages)
-  // ============================================
   startEventPolling() {
     this.stopEventPolling();
     this.eventPollTimer = setInterval(async () => {
@@ -1011,7 +892,7 @@ class WhatsAppApp {
           this.handleServiceEvents(resp.events);
         }
       } catch (error) {
-        // transient failure — next tick retries
+        // transient failure
       }
     }, 4000);
   }
@@ -1062,15 +943,11 @@ class WhatsAppApp {
     if (listChanged) this.renderConversations();
   }
 
-  // ============================================
-  // Connect / disconnect with QR + pairing code
-  // ============================================
   async connectSession() {
     try {
       if (!window.OP || !window.OP.whatsappService) {
         throw new Error('WhatsApp service client is unavailable.');
       }
-
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
       await window.OP.whatsappService.connect();
       if (typeof OP !== 'undefined' && OP.toast) {
@@ -1085,18 +962,21 @@ class WhatsAppApp {
     }
   }
 
-  async connectWithPairingCode() {
-    const phone = window.prompt('Enter the WhatsApp phone number in international format (digits only, e.g. 15551234567):');
-    if (!phone) return;
-
+  async reconnectSession() {
     try {
+      if (!window.OP || !window.OP.whatsappService) {
+        throw new Error('WhatsApp service client is unavailable.');
+      }
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
-      await window.OP.whatsappService.connect({ phoneNumber: phone });
+      await window.OP.whatsappService.reconnect();
+      if (typeof OP !== 'undefined' && OP.toast) {
+        OP.toast.show('Reconnecting WhatsApp...', 'info');
+      }
       this.startStatusPolling();
     } catch (error) {
       this.renderConnectionStatus(null);
       if (typeof OP !== 'undefined' && OP.toast) {
-        OP.toast.show(error?.message || 'Unable to start pairing-code login.', 'error');
+        OP.toast.show(error?.message || 'Unable to reconnect WhatsApp.', 'error');
       }
     }
   }
@@ -1125,7 +1005,6 @@ class WhatsAppApp {
         this.renderConnectionStatus(status);
 
         if (status.qr) this.displayQr(status.qr);
-        if (status.pairingCode) this.displayPairingCode(status.pairingCode);
 
         if (status.connected) {
           this.stopStatusPolling();
@@ -1139,7 +1018,7 @@ class WhatsAppApp {
           if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp connected.', 'success');
         }
       } catch (error) {
-        // keep polling while the service spins up the browser session
+        // keep polling
       }
     }, 3000);
   }
@@ -1152,7 +1031,6 @@ class WhatsAppApp {
   }
 
   displayQr(qrData) {
-    // qrData may be a data URL or a plain string (svg/png/base64). Insert into account card if present.
     const accountCard = document.querySelector('.wa-account-card');
     if (!accountCard) return;
     let container = accountCard.querySelector('.wa-qr-container');
@@ -1162,32 +1040,13 @@ class WhatsAppApp {
       container.style.marginTop = '12px';
       accountCard.appendChild(container);
     }
-    // determine data type
     let src = qrData;
     if (!/^data:/.test(qrData) && qrData && qrData.length > 0) {
-      // backend may return base64 without data: prefix
-      if (/^([A-Za-z0-9+/=\n])+$/m.test(qrData.replace(/\s+/g, ''))) {
+      if (/^([A-Za-z0-9+/=\n])+$/.test(qrData.replace(/\s+/g, ''))) {
         src = 'data:image/png;base64,' + qrData.replace(/\s+/g, '');
       }
     }
     container.innerHTML = `<img src="${src}" alt="WhatsApp QR" style="width:160px;height:160px;object-fit:contain;border-radius:6px;" />`;
-  }
-
-  displayPairingCode(code) {
-    const accountCard = document.querySelector('.wa-account-card');
-    if (!accountCard || !code) return;
-    let container = accountCard.querySelector('.wa-qr-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'wa-qr-container';
-      container.style.marginTop = '12px';
-      accountCard.appendChild(container);
-    }
-    container.innerHTML = `
-      <div style="text-align:center; padding:12px; border:1px dashed var(--gray-300, #d1d5db); border-radius:8px;">
-        <div style="font-size:12px; color:var(--gray-500, #6b7280); margin-bottom:6px;">Pairing code — enter it in WhatsApp → Linked devices → Link with phone number</div>
-        <div style="font-size:22px; font-weight:700; letter-spacing:2px;">${this.escapeHtml(code)}</div>
-      </div>`;
   }
 
   renderConnectionStatus(status) {
@@ -1219,13 +1078,15 @@ class WhatsAppApp {
     }
 
     if (connectBtn) {
-      connectBtn.textContent = connected ? 'Disconnect' : 'Connect WhatsApp';
+      connectBtn.textContent = connected ? 'Disconnect' : (connecting ? 'Reconnect' : 'Connect WhatsApp');
+    }
+
+    if (connected) {
+      const qrContainer = document.querySelector('.wa-qr-container');
+      if (qrContainer) qrContainer.remove();
     }
   }
 
-  // ============================================
-  // Utility
-  // ============================================
   formatTimeAgo(timestamp) {
     const date = new Date(timestamp);
     const now = new Date();
@@ -1248,11 +1109,9 @@ class WhatsAppApp {
   }
 }
 
-// Initialize
 window.WhatsAppApp = WhatsAppApp;
 window.WhatsAppStorage = WhatsAppStorage;
 
-// Auto-initialize if on a WhatsApp page
 document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('.whatsapp-layout')) {
     if (typeof OP !== 'undefined' && OP.nav && OP.nav.requireAuth) {
