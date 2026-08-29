@@ -66,23 +66,38 @@ class WhatsAppStorage {
   }
 
   getConversations(search = '', filter = '') {
-    let conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
-    const contacts = this.getContacts();
-    conversations = conversations.map(conv => {
-      const contact = contacts.find(c => c.id === conv.contactId);
-      return { ...conv, contact: contact || {} };
-    });
-    if (search) {
-      const q = search.toLowerCase();
-      conversations = conversations.filter(c =>
-        (c.contact?.name || '').toLowerCase().includes(q) ||
-        (c.lastMessage || '').toLowerCase().includes(q)
-      );
+    try {
+      let conversations = JSON.parse(localStorage.getItem(WA_STORAGE_KEYS.WHATSAPP_CONVERSATIONS) || '[]');
+      
+      // Ensure conversations is an array
+      if (!Array.isArray(conversations)) {
+        if (window.DEBUG) window.DEBUG.error('getConversations: stored data is not an array', { type: typeof conversations });
+        conversations = [];
+      }
+      
+      const contacts = this.getContacts();
+      conversations = conversations.map(conv => {
+        const contact = contacts.find(c => c.id === conv.contactId);
+        return { ...conv, contact: contact || {} };
+      });
+      
+      if (search) {
+        const q = search.toLowerCase();
+        conversations = conversations.filter(c =>
+          (c.contact?.name || '').toLowerCase().includes(q) ||
+          (c.lastMessage || '').toLowerCase().includes(q)
+        );
+      }
+      
+      if (filter) {
+        conversations = conversations.filter(c => c.tag === filter || c.status === filter);
+      }
+      
+      return conversations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } catch (error) {
+      if (window.DEBUG) window.DEBUG.error('getConversations() failed', error);
+      return [];
     }
-    if (filter) {
-      conversations = conversations.filter(c => c.tag === filter || c.status === filter);
-    }
-    return conversations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }
 
   getConversationById(id) {
@@ -486,30 +501,30 @@ class WhatsAppApp {
       }
 
       let html = '';
-    conversations.forEach(conv => {
-      const contact = conv.contact || {};
-      const timeAgo = this.formatTimeAgo(conv.timestamp);
-      const activeClass = this.currentConversation === conv.id ? 'active' : '';
-      const unreadClass = conv.unread > 0 ? 'unread' : '';
+      conversations.forEach(conv => {
+        const contact = conv.contact || {};
+        const timeAgo = this.formatTimeAgo(conv.timestamp);
+        const activeClass = this.currentConversation === conv.id ? 'active' : '';
+        const unreadClass = conv.unread > 0 ? 'unread' : '';
 
-      html += `
-        <div class="wa-conversation-item ${activeClass} ${unreadClass}" data-id="${conv.id}">
-          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=88"
-               alt="${contact.name}" class="wa-conv-avatar">
-          <div class="wa-conv-content">
-            <div class="wa-conv-header">
-              <span class="wa-conv-name">${contact.name || 'Unknown'}</span>
-              <span class="wa-conv-time">${timeAgo}</span>
-            </div>
-            <div class="wa-conv-preview">${conv.lastMessage || 'No messages yet'}</div>
-            <div class="wa-conv-meta">
-              ${conv.tag ? '<span class="wa-conv-tag ' + conv.tag + '">' + conv.tag.replace('-', ' ') + '</span>' : ''}
-              ${conv.unread > 0 ? '<span class="wa-conv-unread">' + conv.unread + '</span>' : ''}
+        html += `
+          <div class="wa-conversation-item ${activeClass} ${unreadClass}" data-id="${conv.id}">
+            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name || 'U')}&background=${(contact.color || '#6366f1').replace('#', '')}&color=fff&size=88"
+                 alt="${contact.name}" class="wa-conv-avatar">
+            <div class="wa-conv-content">
+              <div class="wa-conv-header">
+                <span class="wa-conv-name">${contact.name || 'Unknown'}</span>
+                <span class="wa-conv-time">${timeAgo}</span>
+              </div>
+              <div class="wa-conv-preview">${conv.lastMessage || 'No messages yet'}</div>
+              <div class="wa-conv-meta">
+                ${conv.tag ? '<span class="wa-conv-tag ' + conv.tag + '">' + conv.tag.replace('-', ' ') + '</span>' : ''}
+                ${conv.unread > 0 ? '<span class="wa-conv-unread">' + conv.unread + '</span>' : ''}
+              </div>
             </div>
           </div>
-        </div>
-      `;
-    });
+        `;
+      });
 
       list.innerHTML = html;
       list.querySelectorAll('.wa-conversation-item').forEach(item => {
@@ -518,6 +533,11 @@ class WhatsAppApp {
     } catch (error) {
       if (window.DEBUG) window.DEBUG.error('renderConversations() failed', error);
       const list = document.getElementById('conversation-list');
+      if (list) {
+        list.innerHTML = `<div class="wa-empty-state"><div class="wa-empty-state-icon"><i class="ph ph-warning"></i></div><div class="wa-empty-state-title">Error</div><div class="wa-empty-state-desc">${error.message}</div></div>`;
+      }
+    }
+  }
       if (list) {
         list.innerHTML = `<div class="wa-empty-state"><div class="wa-empty-state-icon"><i class="ph ph-warning"></i></div><div class="wa-empty-state-title">Error</div><div class="wa-empty-state-desc">${error.message}</div></div>`;
       }

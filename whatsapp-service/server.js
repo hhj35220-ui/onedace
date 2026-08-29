@@ -517,8 +517,14 @@ app.post('/api/whatsapp/connect', async (req, res) => {
   try {
     console.log('[WhatsApp Connect] Request started at', new Date().toISOString());
     
-    const access = await authorizeUser(req);
-    console.log('[WhatsApp Connect] User authorized:', access.uid);
+    let access;
+    try {
+      access = await authorizeUser(req);
+      console.log('[WhatsApp Connect] User authorized:', access.uid);
+    } catch (authErr) {
+      console.error('[WhatsApp Connect] Authorization failed:', authErr.message);
+      return handleError(res, authErr, 'Unable to authorize user.', 'WHATSAPP_AUTH_ERROR');
+    }
     
     const meta = getSessionMeta(access.uid);
     console.log('[WhatsApp Connect] Session meta created:', meta.sessionName);
@@ -526,16 +532,23 @@ app.post('/api/whatsapp/connect', async (req, res) => {
     try {
       console.log('[WhatsApp Connect] Calling ensureClientForUser...');
       await ensureClientForUser(access.uid);
-      console.log('[WhatsApp Connect] ensureClientForUser completed, status:', meta.status);
+      console.log('[WhatsApp Connect] ensureClientForUser completed, status:', meta.status, 'qr:', !!meta.qr);
     } catch (ensureErr) {
-      console.error('[WhatsApp Connect] ensureClientForUser failed:', ensureErr.message, ensureErr.code);
+      console.error('[WhatsApp Connect] ensureClientForUser failed:', ensureErr.message, 'code:', ensureErr.code);
       // Continue even if ensureClient fails - we can still return status
     }
     
-    console.log('[WhatsApp Connect] Calling getUserStatus...');
-    const status = await getUserStatus(access.uid);
-    console.log('[WhatsApp Connect] getUserStatus returned:', { status: status.status, connected: status.connected });
+    let status;
+    try {
+      console.log('[WhatsApp Connect] Calling getUserStatus...');
+      status = await getUserStatus(access.uid);
+      console.log('[WhatsApp Connect] getUserStatus returned:', { status: status.status, connected: status.connected, hasQr: !!status.qr });
+    } catch (statusErr) {
+      console.error('[WhatsApp Connect] getUserStatus failed:', statusErr.message);
+      return handleError(res, statusErr, 'Unable to get WhatsApp status.', 'WHATSAPP_STATUS_ERROR');
+    }
 
+    console.log('[WhatsApp Connect] Sending success response');
     res.json({
       success: true,
       uid: access.uid,
@@ -872,6 +885,32 @@ app.post('/webhook/wppconnect', express.json({ limit: '5mb' }), (req, res) => {
     console.error('[WEBHOOK_ERROR]', error);
     res.status(500).json({ success: false, message: 'Webhook processing failed.' });
   }
+});
+
+// ---------- Global Error Handler ----------
+
+app.use((err, req, res, next) => {
+  console.error('[GLOBAL_ERROR_HANDLER]', err);
+  const message = (err && err.message) || 'Internal server error';
+  const statusCode = (err && err.statusCode) || 500;
+  
+  // Never send HTML errors
+  res.status(statusCode).json({
+    success: false,
+    message: message,
+    code: err?.code || 'INTERNAL_SERVER_ERROR'
+  });
+});
+
+// ---------- 404 Handler ----------
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Endpoint not found',
+    code: 'NOT_FOUND',
+    path: req.path
+  });
 });
 
 // ---------- Start ----------
