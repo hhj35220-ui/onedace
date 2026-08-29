@@ -538,11 +538,6 @@ class WhatsAppApp {
       }
     }
   }
-      if (list) {
-        list.innerHTML = `<div class="wa-empty-state"><div class="wa-empty-state-icon"><i class="ph ph-warning"></i></div><div class="wa-empty-state-title">Error</div><div class="wa-empty-state-desc">${error.message}</div></div>`;
-      }
-    }
-  }
 
   selectConversation(id) {
     this.currentConversation = id;
