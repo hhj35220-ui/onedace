@@ -335,23 +335,34 @@ function extractQrCode(payload) {
 }
 
 async function refreshQrCode(meta) {
-  for (const endpoint of ['/qrcode-session', '/qr-code']) {
-    try {
-      console.log(`[refreshQrCode] Requesting ${endpoint} for ${meta.sessionName}...`);
-      const qrResp = await wppRequest(meta.sessionName, 'get', endpoint, null, { responseType: 'arraybuffer' });
-      const qr = extractQrCode(qrResp);
-      if (!qr) {
-        console.log(`[refreshQrCode] ${endpoint} returned no QR. Keys:`, Object.keys(qrResp || {}));
-        continue;
-      }
-      meta.qr = qr;
+  try {
+    console.log(`[refreshQrCode] Requesting /qrcode-session for ${meta.sessionName}...`);
+    const image = await wppRequest(meta.sessionName, 'get', '/qrcode-session', null, { responseType: 'arraybuffer' });
+    const imageQr = extractQrCode(image);
+    if (imageQr) {
+      meta.qr = imageQr;
       meta.status = 'qrReadSuccess';
       meta.updatedAt = new Date().toISOString();
-      console.log(`[refreshQrCode] QR code found via ${endpoint}, length: ${qr.length}`);
+      console.log(`[refreshQrCode] QR code found via /qrcode-session, length: ${imageQr.length}`);
       return true;
-    } catch (error) {
-      console.log(`[refreshQrCode] ${endpoint} failed for ${meta.sessionName}: ${error.message}`);
     }
+  } catch (error) {
+    console.log(`[refreshQrCode] /qrcode-session failed for ${meta.sessionName}: ${error.message}`);
+  }
+
+  try {
+    console.log(`[refreshQrCode] Requesting /qr-code for ${meta.sessionName}...`);
+    const jsonResponse = await wppRequest(meta.sessionName, 'get', '/qr-code');
+    const jsonQr = extractQrCode(jsonResponse);
+    if (jsonQr) {
+      meta.qr = jsonQr;
+      meta.status = 'qrReadSuccess';
+      meta.updatedAt = new Date().toISOString();
+      console.log(`[refreshQrCode] QR code found via /qr-code, length: ${jsonQr.length}`);
+      return true;
+    }
+  } catch (error) {
+    console.log(`[refreshQrCode] /qr-code failed for ${meta.sessionName}: ${error.message}`);
   }
   return false;
 }
@@ -376,16 +387,22 @@ async function readClientAccountInfo(sessionName) {
 async function ensureClientForUser(uid) {
   const meta = getSessionMeta(uid);
   await ensureSessionToken(meta);
+
+  if (['starting', 'connecting', 'qrReadSuccess'].includes(meta.status)) {
+    console.log(`[ensureClientForUser] Session ${meta.sessionName} already starting, skipping /start-session`);
+    return meta;
+  }
+
   meta.qr = null;
   meta.lastError = null;
+  meta.status = 'starting';
   meta.updatedAt = new Date().toISOString();
 
   try {
     console.log(`[ensureClientForUser] Starting session for ${meta.sessionName}...`);
     const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
       webhook: process.env.WEBHOOK_URL || undefined,
-      waitQrCode: true,
-      waitForLogin: true
+      waitQrCode: true
     });
     console.log(`[ensureClientForUser] WPPConnect /start-session full response:`, JSON.stringify(startResp, null, 2));
     const startQr = extractQrCode(startResp);
