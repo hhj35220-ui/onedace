@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "oneplace-whatsapp-service",
   "version": "1.0.0",
   "private": true,
