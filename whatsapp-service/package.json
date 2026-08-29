@@ -4,7 +4,11 @@
   "private": true,
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "npx puppeteer browsers install chrome"
+  },
+  "engines": {
+    "node": "22.x"
   },
   "dependencies": {
     "@wppconnect-team/wppconnect": "2.2.4",

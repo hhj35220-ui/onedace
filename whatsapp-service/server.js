@@ -565,6 +565,7 @@ app.use(express.static(FRONTEND_DIR, {
 
 function handleError(res, error, fallbackMessage, code) {
   const message = error && error.message ? error.message : fallbackMessage;
+  console.error(`[${code}]`, error);
   res.status(error.statusCode || 500).json({ success: false, message, code });
 }
 
