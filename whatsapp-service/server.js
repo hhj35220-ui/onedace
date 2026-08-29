@@ -321,19 +321,22 @@ function extractQrCode(payload) {
 }
 
 async function refreshQrCode(meta) {
-  try {
-    const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
-    const qr = extractQrCode(qrResp);
-    if (!qr) return false;
-    meta.qr = qr;
-    meta.status = 'qrReadSuccess';
-    meta.updatedAt = new Date().toISOString();
-    console.log(`[refreshQrCode] QR code found for ${meta.sessionName}, length: ${qr.length}`);
-    return true;
-  } catch (error) {
-    console.log(`[refreshQrCode] QR lookup failed for ${meta.sessionName}: ${error.message}`);
-    return false;
+  for (const endpoint of ['/qrcode-session', '/qr-code']) {
+    try {
+      console.log(`[refreshQrCode] Requesting ${endpoint} for ${meta.sessionName}...`);
+      const qrResp = await wppRequest(meta.sessionName, 'get', endpoint);
+      const qr = extractQrCode(qrResp);
+      if (!qr) continue;
+      meta.qr = qr;
+      meta.status = 'qrReadSuccess';
+      meta.updatedAt = new Date().toISOString();
+      console.log(`[refreshQrCode] QR code found via ${endpoint}, length: ${qr.length}`);
+      return true;
+    } catch (error) {
+      console.log(`[refreshQrCode] ${endpoint} failed for ${meta.sessionName}: ${error.message}`);
+    }
   }
+  return false;
 }
 
 async function readClientAccountInfo(sessionName) {
@@ -442,9 +445,7 @@ async function getUserStatus(uid) {
     meta.status = isConnected ? 'isLogged' : (meta.status || 'notLogged');
     meta.updatedAt = new Date().toISOString();
 
-    if (!isConnected && !meta.qr) {
-      await refreshQrCode(meta);
-    }
+    if (!isConnected && !meta.qr) await refreshQrCode(meta);
 
     let account = null;
     if (isConnected) {
