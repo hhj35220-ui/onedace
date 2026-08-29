@@ -22,6 +22,7 @@ const FRONTEND_DIR = require('path').resolve(__dirname, '..');
 // WPPConnect Server configuration
 const WPPCONNECT_URL = (process.env.WPPCONNECT_SERVER_URL || 'http://localhost:21465').replace(/\/+$/, '');
 const WPPCONNECT_SECRET = process.env.WPPCONNECT_SECRET_KEY || 'THISISMYSECURETOKEN';
+const WPPCONNECT_CONFIGURED = !!process.env.WPPCONNECT_SERVER_URL;
 const ALLOW_LOCAL_DEV = process.env.ALLOW_LOCAL_DEV === 'true';
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'oneplace-c3ac8';
 const FIREBASE_ISSUER = `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`;
@@ -116,6 +117,10 @@ async function wppRequest(sessionName, method, path, data = null, options = {}) 
 async function ensureSessionToken(meta) {
   if (meta.tokenFull) return meta.tokenFull;
   if (meta.tokenCreating) return meta.tokenCreating;
+
+  if (!WPPCONNECT_CONFIGURED && process.env.NODE_ENV === 'production') {
+    throw Object.assign(new Error('WPPCONNECT_SERVER_URL is not configured on the WhatsApp service.'), { statusCode: 503 });
+  }
 
   meta.tokenCreating = (async () => {
     try {
@@ -581,11 +586,11 @@ function handleError(res, error, fallbackMessage, code) {
 // ---------- Health ----------
 
 app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'oneplace-whatsapp-service', wppconnectUrl: WPPCONNECT_URL });
+  res.json({ ok: true, service: 'oneplace-whatsapp-service', wppconnectUrl: WPPCONNECT_URL, wppconnectConfigured: WPPCONNECT_CONFIGURED });
 });
 
 app.get('/api/whatsapp/health', (req, res) => {
-  res.json({ ok: true, service: 'oneplace-whatsapp', wppconnectUrl: WPPCONNECT_URL });
+  res.json({ ok: true, service: 'oneplace-whatsapp', wppconnectUrl: WPPCONNECT_URL, wppconnectConfigured: WPPCONNECT_CONFIGURED });
 });
 
 // ---------- Status / connection ----------
@@ -620,6 +625,9 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       console.log('[WhatsApp Connect] Calling ensureClientForUser...');
       await ensureClientForUser(access.uid);
       console.log('[WhatsApp Connect] ensureClientForUser completed, status:', meta.status, 'qr:', !!meta.qr);
+      if (!meta.tokenFull) {
+        return handleError(res, new Error('WhatsApp upstream is not configured or unreachable.'), 'WhatsApp upstream is not configured or unreachable.', 'WPPCONNECT_UNAVAILABLE');
+      }
     } catch (ensureErr) {
       console.error('[WhatsApp Connect] ensureClientForUser failed:', ensureErr.message, 'code:', ensureErr.code);
       // Continue even if ensureClient fails - we can still return status
