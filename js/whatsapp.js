@@ -311,6 +311,7 @@ class WhatsAppApp {
     this.eventPollTimer = null;
     this.statusPollStartedAt = 0;
     this.statusPollInFlight = false;
+    this.qrReceivedForConnection = false;
     this.init();
   }
 
@@ -1009,6 +1010,7 @@ class WhatsAppApp {
       }
 
       if (window.DEBUG) window.DEBUG.info('Rendering connecting status...');
+      this.qrReceivedForConnection = false;
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
       
       if (window.DEBUG) window.DEBUG.info('Calling whatsappService.connect()...');
@@ -1116,6 +1118,7 @@ class WhatsAppApp {
         this.renderConnectionStatus(status);
 
         if (status.qr) {
+          this.qrReceivedForConnection = true;
           if (window.DEBUG) window.DEBUG.info('Status polling: QR code found', { qrLength: status.qr.length });
           this.displayQr(status.qr);
         } else if (window.DEBUG && !status.connected) {
@@ -1123,6 +1126,7 @@ class WhatsAppApp {
           try {
             const qrResp = await window.OP.whatsappService.qr();
             if (qrResp?.qr) {
+              this.qrReceivedForConnection = true;
               if (window.DEBUG) window.DEBUG.success('Dedicated QR endpoint returned a QR code', { qrLength: qrResp.qr.length });
               this.displayQr(qrResp.qr);
             } else if (window.DEBUG) {
@@ -1137,7 +1141,7 @@ class WhatsAppApp {
           }
         }
 
-        if (!status.connected && !status.qr && Date.now() - this.statusPollStartedAt >= 5000) {
+        if (!status.connected && !status.qr && !this.qrReceivedForConnection && Date.now() - this.statusPollStartedAt >= 5000) {
           const error = new Error('No QR code was received after 5 seconds. Check the WPPConnect server logs and SECRET_KEY values.');
           if (window.DEBUG) window.DEBUG.error('QR loading timed out', { status: status.status, diagnostic: status.diagnostic });
           this.stopStatusPolling();
