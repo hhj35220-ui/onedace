@@ -157,15 +157,19 @@
     </main>
   </div>
 
+  <script src="../js/firebase-init.js"></script>
   <script src="../js/app.js?v=3.1"></script>
   <script src="../js/storage.js?v=3.1"></script>
   <script src="../js/dashboard.js?v=3.1"></script>
+  <script src="../js/whatsapp-service-client.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       if (!OP.nav.requireAuth()) return;
 
       const app = new DashboardApp();
       const storage = app.storage;
+
+      await OP.auth.syncCurrentUser();
 
       // Set user name
       const session = OP.auth.getSession();
