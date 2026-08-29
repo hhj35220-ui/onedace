@@ -328,23 +328,44 @@ async function ensureClientForUser(uid) {
   await ensureSessionToken(meta);
 
   try {
+    console.log(`[ensureClientForUser] Starting session for ${meta.sessionName}...`);
     const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
       webhook: process.env.WEBHOOK_URL || undefined
     });
+    console.log(`[ensureClientForUser] Start response status: ${startResp?.status}, has qrcode: ${!!startResp?.qrcode}`);
+    
     if (startResp?.status === 'QRCODE' && startResp?.qrcode) {
       meta.qr = startResp.qrcode.startsWith('data:') ? startResp.qrcode : `data:image/png;base64,${startResp.qrcode}`;
       meta.status = 'qrReadSuccess';
       meta.updatedAt = new Date().toISOString();
+      console.log(`[ensureClientForUser] QR code set, length: ${meta.qr.length}`);
     } else if (startResp?.status === 'CONNECTED' || startResp?.status === 'isLogged') {
       meta.status = 'isLogged';
       meta.connectedAt = meta.connectedAt || new Date().toISOString();
       meta.qr = null;
       meta.updatedAt = new Date().toISOString();
+      console.log(`[ensureClientForUser] Session already logged in`);
     } else if (startResp?.status) {
       meta.status = String(startResp.status);
       meta.updatedAt = new Date().toISOString();
+      console.log(`[ensureClientForUser] Status set to: ${meta.status}`);
+      
+      // Try to fetch QR code if status is pending
+      if (startResp.status !== 'CONNECTED' && startResp.status !== 'isLogged') {
+        try {
+          console.log(`[ensureClientForUser] Attempting to fetch QR code...`);
+          const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
+          if (qrResp?.qrcode) {
+            meta.qr = qrResp.qrcode.startsWith('data:') ? qrResp.qrcode : `data:image/png;base64,${qrResp.qrcode}`;
+            console.log(`[ensureClientForUser] QR code fetched successfully`);
+          }
+        } catch (qrErr) {
+          console.log(`[ensureClientForUser] Could not fetch QR code: ${qrErr.message}`);
+        }
+      }
     }
   } catch (error) {
+    console.error(`[ensureClientForUser] Error for ${meta.sessionName}:`, error.message);
     if (error.wppStatus !== 400 && error.wppStatus !== 409) {
       meta.lastError = String(error?.message || error);
     }
@@ -541,6 +562,20 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       // Continue even if ensureClient fails - we can still return status
     }
     
+    // Fallback: if QR not set yet, try to fetch it directly
+    if (!meta.qr && (meta.status === 'qrReadSuccess' || meta.status === 'QRCODE')) {
+      try {
+        console.log('[WhatsApp Connect] Attempting fallback QR code fetch...');
+        const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
+        if (qrResp?.qrcode) {
+          meta.qr = qrResp.qrcode.startsWith('data:') ? qrResp.qrcode : `data:image/png;base64,${qrResp.qrcode}`;
+          console.log('[WhatsApp Connect] Fallback QR fetch succeeded');
+        }
+      } catch (qrErr) {
+        console.log('[WhatsApp Connect] Fallback QR fetch failed:', qrErr.message);
+      }
+    }
+    
     let status;
     try {
       console.log('[WhatsApp Connect] Calling getUserStatus...');
@@ -551,7 +586,7 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       return handleError(res, statusErr, 'Unable to get WhatsApp status.', 'WHATSAPP_STATUS_ERROR');
     }
 
-    console.log('[WhatsApp Connect] Sending success response');
+    console.log('[WhatsApp Connect] Sending success response with qr:', !!meta.qr);
     res.json({
       success: true,
       uid: access.uid,
