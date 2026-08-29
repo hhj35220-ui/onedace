@@ -19,11 +19,20 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { jwtVerify, createRemoteJWKSet } = require('jose');
-const wppconnect = require('@wppconnect-team/wppconnect');
+
+let wppconnect;
+
+function getWppconnect() {
+  if (!wppconnect) {
+    wppconnect = require('@wppconnect-team/wppconnect');
+  }
+  return wppconnect;
+}
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
 const SESSIONS_DIR = path.join(__dirname, 'sessions');
+const FRONTEND_DIR = path.resolve(__dirname, '..');
 const ALLOW_LOCAL_DEV = process.env.ALLOW_LOCAL_DEV === 'true';
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'oneplace-c3ac8';
 const FIREBASE_ISSUER = `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`;
@@ -340,7 +349,7 @@ function attachClientHandlers(client, meta) {
 }
 
 async function createClient(meta, options = {}) {
-  const client = await wppconnect.create({
+  const client = await getWppconnect().create({
     session: meta.sessionName,
     headless: true,
     debug: false,
@@ -546,6 +555,13 @@ app.use(cors({
 }));
 // 25mb to carry base64 media payloads
 app.use(express.json({ limit: '25mb' }));
+
+// The Render service hosts the static OnePlace frontend alongside this API.
+app.use('/whatsapp-service', (req, res) => res.status(404).end());
+app.use(express.static(FRONTEND_DIR, {
+  dotfiles: 'deny',
+  index: 'index.html'
+}));
 
 function handleError(res, error, fallbackMessage, code) {
   const message = error && error.message ? error.message : fallbackMessage;
