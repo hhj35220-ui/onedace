@@ -374,6 +374,9 @@ async function readClientAccountInfo(sessionName) {
 async function ensureClientForUser(uid) {
   const meta = getSessionMeta(uid);
   await ensureSessionToken(meta);
+  meta.qr = null;
+  meta.lastError = null;
+  meta.updatedAt = new Date().toISOString();
 
   try {
     console.log(`[ensureClientForUser] Starting session for ${meta.sessionName}...`);
@@ -698,6 +701,7 @@ app.get('/api/whatsapp/qr', async (req, res) => {
     }
 
     try {
+      meta.qr = null;
       const startResp = await wppRequest(meta.sessionName, 'post', '/start-session', {
         waitQrCode: true,
         waitForLogin: true
