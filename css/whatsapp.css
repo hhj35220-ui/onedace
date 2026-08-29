@@ -470,6 +470,19 @@
   color: var(--gray-400);
 }
 
+.wa-qr-loader {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--wa-green);
+  border-radius: 50%;
+  animation: wa-qr-spin 0.85s linear infinite;
+}
+
+@keyframes wa-qr-spin {
+  to { transform: rotate(360deg); }
+}
+
 .wa-status-dot {
   width: 8px;
   height: 8px;
