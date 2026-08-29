@@ -11,4 +11,5 @@ backend-runtime.log
 **/.env.*
 **/credentials/*.json
 **/secrets/*.json
+whatsapp-service/node_modules/
 whatsapp-service/sessions/
