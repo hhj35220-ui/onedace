@@ -375,6 +375,15 @@ class WhatsAppApp {
     const connectBtn = document.querySelector('.wa-view-integration-btn');
     if (connectBtn) {
       connectBtn.addEventListener('click', () => {
+        if (window.DEBUG) {
+          if (this.session?.connected) {
+            window.DEBUG.info('Connect button clicked: disconnecting active session');
+          } else if (this.session?.connectionStatus === 'qrReadSuccess' || this.session?.connectionStatus === 'connecting') {
+            window.DEBUG.info('Connect button clicked: reconnecting (QR/connecting state)');
+          } else {
+            window.DEBUG.info('Connect button clicked: initiating new connection', { currentStatus: this.session?.connectionStatus });
+          }
+        }
         if (this.session?.connected) {
           this.disconnectSession();
         } else if (this.session?.connectionStatus === 'qrReadSuccess' || this.session?.connectionStatus === 'connecting') {
@@ -945,23 +954,43 @@ class WhatsAppApp {
 
   async connectSession() {
     try {
+      if (window.DEBUG) window.DEBUG.info('connectSession() started', { timestamp: new Date().toISOString() });
+      
       if (!window.OP || !window.OP.whatsappService) {
-        throw new Error('WhatsApp service client is unavailable.');
+        const err = new Error('WhatsApp service client is unavailable.');
+        if (window.DEBUG) window.DEBUG.error('Service client unavailable', err);
+        throw err;
       }
+      
+      if (window.DEBUG) window.DEBUG.info('Service client found, running health check...');
+      
       // Quick health check so network errors surface instantly
       try {
-        await window.OP.whatsappService.status();
+        const statusResp = await window.OP.whatsappService.status();
+        if (window.DEBUG) window.DEBUG.success('Health check passed', { status: statusResp });
       } catch (healthErr) {
-        if (healthErr.code === 'WHATSAPP_SERVICE_UNREACHABLE') throw healthErr;
+        if (window.DEBUG) window.DEBUG.warning('Health check failed', { message: healthErr.message, code: healthErr.code });
+        if (healthErr.code === 'WHATSAPP_SERVICE_UNREACHABLE') {
+          if (window.DEBUG) window.DEBUG.error('Service unreachable - aborting connection', healthErr);
+          throw healthErr;
+        }
       }
 
+      if (window.DEBUG) window.DEBUG.info('Rendering connecting status...');
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
-      await window.OP.whatsappService.connect();
+      
+      if (window.DEBUG) window.DEBUG.info('Calling whatsappService.connect()...');
+      const connectResp = await window.OP.whatsappService.connect();
+      if (window.DEBUG) window.DEBUG.success('connect() API call succeeded', { response: connectResp });
+      
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show('WhatsApp connection started. Scan the QR code when it appears.', 'success');
       }
+      
+      if (window.DEBUG) window.DEBUG.info('Starting status polling...');
       this.startStatusPolling();
     } catch (error) {
+      if (window.DEBUG) window.DEBUG.error('connectSession() failed', error);
       this.renderConnectionStatus(null);
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show(error?.message || 'Unable to connect WhatsApp.', 'error');
@@ -971,16 +1000,29 @@ class WhatsAppApp {
 
   async reconnectSession() {
     try {
+      if (window.DEBUG) window.DEBUG.info('reconnectSession() started');
+      
       if (!window.OP || !window.OP.whatsappService) {
-        throw new Error('WhatsApp service client is unavailable.');
+        const err = new Error('WhatsApp service client is unavailable.');
+        if (window.DEBUG) window.DEBUG.error('Service client unavailable', err);
+        throw err;
       }
+      
+      if (window.DEBUG) window.DEBUG.info('Rendering connecting status...');
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
-      await window.OP.whatsappService.reconnect();
+      
+      if (window.DEBUG) window.DEBUG.info('Calling whatsappService.reconnect()...');
+      const reconnectResp = await window.OP.whatsappService.reconnect();
+      if (window.DEBUG) window.DEBUG.success('reconnect() API call succeeded', { response: reconnectResp });
+      
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show('Reconnecting WhatsApp...', 'info');
       }
+      
+      if (window.DEBUG) window.DEBUG.info('Starting status polling...');
       this.startStatusPolling();
     } catch (error) {
+      if (window.DEBUG) window.DEBUG.error('reconnectSession() failed', error);
       this.renderConnectionStatus(null);
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show(error?.message || 'Unable to reconnect WhatsApp.', 'error');
@@ -990,13 +1032,19 @@ class WhatsAppApp {
 
   async disconnectSession() {
     try {
+      if (window.DEBUG) window.DEBUG.info('disconnectSession() started');
+      
+      if (window.DEBUG) window.DEBUG.info('Calling whatsappService.disconnect()...');
       await window.OP.whatsappService.disconnect();
+      if (window.DEBUG) window.DEBUG.success('disconnect() API call succeeded');
+      
       this.session = null;
       this.stopEventPolling();
       this.stopStatusPolling();
       this.renderConnectionStatus(null);
       if (typeof OP !== 'undefined' && OP.toast) OP.toast.show('WhatsApp disconnected.', 'success');
     } catch (error) {
+      if (window.DEBUG) window.DEBUG.error('disconnectSession() failed', error);
       if (typeof OP !== 'undefined' && OP.toast) {
         OP.toast.show(error?.message || 'Unable to disconnect WhatsApp.', 'error');
       }

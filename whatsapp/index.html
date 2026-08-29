@@ -367,6 +367,282 @@
     </a>
   </div>
 
+  <!-- DEBUG PANEL — WhatsApp Connection Issues -->
+  <div id="debug-panel" class="debug-panel debug-panel-hidden">
+    <div class="debug-panel-header">
+      <div class="debug-panel-title">
+        <i class="ph ph-bug"></i>
+        <span>WhatsApp Debug Console</span>
+        <span class="debug-panel-badge" id="debug-badge">0</span>
+      </div>
+      <div class="debug-panel-controls">
+        <button id="debug-clear-btn" class="debug-btn" title="Clear logs">
+          <i class="ph ph-trash"></i>
+        </button>
+        <button id="debug-toggle-btn" class="debug-btn" title="Toggle panel">
+          <i class="ph ph-caret-down"></i>
+        </button>
+      </div>
+    </div>
+    <div class="debug-panel-content" id="debug-content">
+      <div class="debug-log-entry debug-log-system">
+        <span class="debug-time">00:00:00</span>
+        <span class="debug-msg">Debug panel initialized. Watching for WhatsApp connect errors...</span>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .debug-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 450px;
+      max-height: 400px;
+      background: #1a1a1a;
+      border: 2px solid #ff6b6b;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .debug-panel-hidden {
+      max-height: 45px;
+    }
+
+    .debug-panel-header {
+      background: #ff6b6b;
+      color: white;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      user-select: none;
+    }
+
+    .debug-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .debug-panel-badge {
+      background: rgba(255, 255, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .debug-panel-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .debug-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .debug-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .debug-panel-content {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      overflow-y: auto;
+      max-height: 350px;
+      padding: 12px;
+      border-radius: 0 0 6px 6px;
+    }
+
+    .debug-log-entry {
+      margin-bottom: 8px;
+      padding: 8px;
+      background: #2d2d2d;
+      border-left: 3px solid #444;
+      border-radius: 3px;
+      font-size: 11px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .debug-log-entry.debug-log-error {
+      border-left-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff9999;
+    }
+
+    .debug-log-entry.debug-log-warning {
+      border-left-color: #ffd43b;
+      background: rgba(255, 212, 59, 0.1);
+      color: #ffe066;
+    }
+
+    .debug-log-entry.debug-log-success {
+      border-left-color: #51cf66;
+      background: rgba(81, 207, 102, 0.1);
+      color: #84e6a0;
+    }
+
+    .debug-log-entry.debug-log-info {
+      border-left-color: #74c0fc;
+      background: rgba(116, 192, 252, 0.1);
+      color: #a5d8ff;
+    }
+
+    .debug-log-entry.debug-log-system {
+      border-left-color: #888;
+      background: rgba(136, 136, 136, 0.1);
+      color: #b8b8b8;
+    }
+
+    .debug-time {
+      color: #888;
+      margin-right: 8px;
+      font-weight: 600;
+    }
+
+    .debug-msg {
+      display: inline;
+    }
+
+    .debug-panel-hidden .debug-panel-content {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .debug-panel {
+        width: calc(100vw - 40px);
+        max-height: 250px;
+      }
+    }
+  </style>
+
+  <script type="module">
+    // Debug Console for WhatsApp Connection Issues
+    const DEBUG = {
+      panel: document.getElementById('debug-panel'),
+      content: document.getElementById('debug-content'),
+      badge: document.getElementById('debug-badge'),
+      count: 0,
+      maxLogs: 50,
+
+      log(message, type = 'info', details = null) {
+        const now = new Date();
+        const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        
+        const entry = document.createElement('div');
+        entry.className = `debug-log-entry debug-log-${type}`;
+        
+        let fullMsg = message;
+        if (details) {
+          fullMsg += ` — ${JSON.stringify(details, null, 2)}`;
+        }
+        
+        entry.innerHTML = `<span class="debug-time">${time}</span><span class="debug-msg">${escapeHtml(fullMsg)}</span>`;
+        this.content.appendChild(entry);
+        
+        this.count++;
+        this.badge.textContent = this.count;
+        this.panel.classList.remove('debug-panel-hidden');
+        this.content.scrollTop = this.content.scrollHeight;
+
+        // Keep only last N logs
+        const entries = this.content.querySelectorAll('.debug-log-entry');
+        if (entries.length > this.maxLogs) {
+          entries[0].remove();
+        }
+
+        console.log(`[DEBUG ${type.toUpperCase()}]`, message, details || '');
+      },
+
+      error(message, error = null) {
+        this.log(message, 'error', error ? { message: error.message, code: error.code, status: error.status } : null);
+      },
+
+      success(message) {
+        this.log(message, 'success');
+      },
+
+      warning(message, details = null) {
+        this.log(message, 'warning', details);
+      },
+
+      info(message, details = null) {
+        this.log(message, 'info', details);
+      },
+
+      clear() {
+        this.content.innerHTML = '<div class="debug-log-entry debug-log-system"><span class="debug-time">00:00:00</span><span class="debug-msg">Debug console cleared.</span></div>';
+        this.count = 0;
+        this.badge.textContent = '0';
+      }
+    };
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Panel Controls
+    document.getElementById('debug-toggle-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      DEBUG.panel.classList.toggle('debug-panel-hidden');
+    });
+
+    document.getElementById('debug-clear-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      DEBUG.clear();
+    });
+
+    DEBUG.panel.addEventListener('click', () => {
+      DEBUG.panel.classList.toggle('debug-panel-hidden');
+    });
+
+    // Global Error Capture
+    window.addEventListener('error', (event) => {
+      DEBUG.error('Uncaught JS Error', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+      });
+    });
+
+    window.addEventListener('unhandledrejection', (event) => {
+      DEBUG.error('Unhandled Promise Rejection', {
+        message: event.reason?.message || String(event.reason),
+        code: event.reason?.code
+      });
+    });
+
+    // Make DEBUG globally available
+    window.DEBUG = DEBUG;
+    DEBUG.info('WhatsApp Debug Console Ready');
+  </script>
+
   <script type="module">
     // Firebase Auth session for the WhatsApp service client (ID token auth).
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
