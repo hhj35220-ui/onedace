@@ -455,6 +455,7 @@ const defaultOrigins = [
   'http://localhost:3000', 'http://127.0.0.1:3000',
   'http://localhost:5173', 'http://127.0.0.1:5173',
   'http://localhost:4200', 'http://127.0.0.1:4200',
+  'https://onedace.onrender.com',
   'null'
 ];
 const envOrigins = String(process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
@@ -465,6 +466,8 @@ app.use(cors({
     if (!origin) return callback(null, true);
     if (allowedOrigins.has(origin)) return callback(null, true);
     if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
+    if (/^https:\/\/[a-z0-9-]+\.onrender\.com$/.test(origin)) return callback(null, true);
+    console.log('[CORS] Allowing origin:', origin);
     return callback(new Error(`CORS origin not allowed: ${origin}`));
   },
   credentials: true,
