@@ -520,6 +520,23 @@
   border-color: var(--gray-300);
 }
 
+.wa-new-qr-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--wa-green);
+  border-radius: 10px;
+  background: var(--wa-green-bg);
+  color: var(--wa-green);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wa-new-qr-btn:hover {
+  filter: brightness(0.96);
+}
+
 /* Today's Overview Card */
 .wa-overview-card {
   padding: 16px;

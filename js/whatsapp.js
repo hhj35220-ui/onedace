@@ -391,6 +391,7 @@ class WhatsAppApp {
     }
 
     const connectBtn = document.querySelector('.wa-view-integration-btn');
+    const newQrBtn = document.querySelector('.wa-new-qr-btn');
     if (connectBtn) {
       connectBtn.addEventListener('click', () => {
         if (window.DEBUG) {
@@ -410,6 +411,10 @@ class WhatsAppApp {
           this.connectSession();
         }
       });
+    }
+
+    if (newQrBtn) {
+      newQrBtn.addEventListener('click', () => this.requestNewQrCode());
     }
 
     const attachBtn = document.querySelector('.wa-input-action[title="Attachment"]');
@@ -1083,6 +1088,17 @@ class WhatsAppApp {
         OP.toast.show(error?.message || 'Unable to reconnect WhatsApp.', 'error');
       }
     }
+  }
+
+  async requestNewQrCode() {
+    if (window.DEBUG) window.DEBUG.info('Get New QR Code clicked');
+    this.qrReceivedForConnection = false;
+    this.stopStatusPolling();
+    const qrContainer = document.querySelector('.wa-qr-container');
+    if (qrContainer) {
+      qrContainer.innerHTML = '<div class="wa-qr-placeholder"><span class="wa-qr-loader" aria-hidden="true"></span><span>Loading QR code...</span></div>';
+    }
+    await this.reconnectSession();
   }
 
   async disconnectSession() {
