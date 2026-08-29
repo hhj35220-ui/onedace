@@ -1011,16 +1011,26 @@ class WhatsAppApp {
       
       if (window.DEBUG) window.DEBUG.info('Calling whatsappService.connect()...');
       const connectResp = await window.OP.whatsappService.connect();
-      if (window.DEBUG) window.DEBUG.success('connect() API call succeeded', { response: connectResp });
+      if (window.DEBUG) window.DEBUG.success('connect() API call succeeded', { 
+        status: connectResp?.status, 
+        statusText: connectResp?.statusText,
+        connectionStatus: connectResp?.connectionStatus,
+        connected: connectResp?.connected,
+        hasQr: !!connectResp?.qr 
+      });
       
       // Store session info and display QR code immediately if available
       if (connectResp) {
         this.session = { ...connectResp, connected: false, connectionStatus: 'qrReadyToScan' };
         this.renderConnectionStatus(this.session);
         if (connectResp.qr) {
-          if (window.DEBUG) window.DEBUG.info('QR code received, displaying...');
+          if (window.DEBUG) window.DEBUG.info('QR code received, displaying...', { qrLength: connectResp.qr.length });
           this.displayQr(connectResp.qr);
+        } else {
+          if (window.DEBUG) window.DEBUG.warning('No QR code in connect response', { responseKeys: Object.keys(connectResp || {}) });
         }
+      } else {
+        if (window.DEBUG) window.DEBUG.error('connect() returned null/undefined response');
       }
       
       if (typeof OP !== 'undefined' && OP.toast) {
@@ -1099,9 +1109,16 @@ class WhatsAppApp {
         this.session = status;
         this.renderConnectionStatus(status);
 
-        if (status.qr) this.displayQr(status.qr);
+        if (status.qr) {
+          if (window.DEBUG) window.DEBUG.info('Status polling: QR code found', { qrLength: status.qr.length });
+          this.displayQr(status.qr);
+        } else if (window.DEBUG && !status.connected) {
+          // Only log if not connected and no QR
+          if (window.DEBUG) window.DEBUG.info('Status polling: No QR code, status:', status.status);
+        }
 
         if (status.connected) {
+          if (window.DEBUG) window.DEBUG.success('Status polling: Session connected!');
           this.stopStatusPolling();
           await this.fetchAndStoreLiveData();
           this.renderConversations();
@@ -1126,22 +1143,56 @@ class WhatsAppApp {
   }
 
   displayQr(qrData) {
-    const accountCard = document.querySelector('.wa-account-card');
-    if (!accountCard) return;
+    if (window.DEBUG) window.DEBUG.info('displayQr() called', { qrDataLength: qrData?.length, isDataUrl: /^data:/.test(qrData || '') });
+    
+    if (!qrData) {
+      if (window.DEBUG) window.DEBUG.warning('displayQr: No QR data provided');
+      return;
+    }
+    
+    let accountCard = document.querySelector('.wa-account-card');
+    if (!accountCard) {
+      if (window.DEBUG) window.DEBUG.warning('displayQr: .wa-account-card not found, creating fallback container');
+      // Fallback: create a temporary container
+      accountCard = document.createElement('div');
+      accountCard.className = 'wa-account-card';
+      const chatArea = document.querySelector('.wa-chat-area') || document.querySelector('.whatsapp-layout');
+      if (chatArea) {
+        chatArea.insertBefore(accountCard, chatArea.firstChild);
+      } else {
+        document.body.appendChild(accountCard);
+      }
+    }
+    
     let container = accountCard.querySelector('.wa-qr-container');
     if (!container) {
       container = document.createElement('div');
       container.className = 'wa-qr-container';
       container.style.marginTop = '12px';
+      container.style.padding = '12px';
+      container.style.backgroundColor = '#f5f5f5';
+      container.style.borderRadius = '8px';
+      container.style.textAlign = 'center';
       accountCard.appendChild(container);
+      if (window.DEBUG) window.DEBUG.info('Created .wa-qr-container');
     }
+    
     let src = qrData;
     if (!/^data:/.test(qrData) && qrData && qrData.length > 0) {
+      // Check if it looks like base64
       if (/^([A-Za-z0-9+/=\n])+$/.test(qrData.replace(/\s+/g, ''))) {
         src = 'data:image/png;base64,' + qrData.replace(/\s+/g, '');
+        if (window.DEBUG) window.DEBUG.info('Converted QR to data URL');
       }
     }
-    container.innerHTML = `<img src="${src}" alt="WhatsApp QR" style="width:160px;height:160px;object-fit:contain;border-radius:6px;" />`;
+    
+    try {
+      container.innerHTML = `<img src="${src}" alt="WhatsApp QR" style="width:160px;height:160px;object-fit:contain;border-radius:6px;" />`;
+      if (window.DEBUG) window.DEBUG.success('QR code displayed successfully');
+    } catch (err) {
+      if (window.DEBUG) window.DEBUG.error('Failed to display QR code', err);
+      container.innerHTML = `<div style="color:#888;">Failed to display QR code</div>`;
+    }
   }
 
   renderConnectionStatus(status) {
