@@ -95,12 +95,14 @@ async function wppRequest(sessionName, method, path, data = null, options = {}) 
   const url = `${WPPCONNECT_URL}/api/${encodeURIComponent(sessionName)}${path}`;
   const headers = {
     'Accept': 'application/json',
-    'Content-Type': 'application/json',
     'Authorization': `Bearer ${meta.tokenFull}`
   };
+  if (data !== null && data !== undefined) headers['Content-Type'] = 'application/json';
 
   try {
-    const response = await axios({ method, url, headers, data, timeout: options.timeout || 30000, responseType: options.responseType });
+    const request = { method, url, headers, timeout: options.timeout || 30000, responseType: options.responseType };
+    if (data !== null && data !== undefined) request.data = data;
+    const response = await axios(request);
     return response.data;
   } catch (error) {
     if (error.response) {
