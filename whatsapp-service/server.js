@@ -129,7 +129,12 @@ async function ensureSessionToken(meta) {
       if (!data || !data.full) {
         throw new Error('WPPConnect Server token generation returned invalid payload.');
       }
-      meta.tokenFull = data.full;
+      // WPPConnect expects only the hash in the Bearer header; data.full is
+      // the session and hash combined for the alternate session-token format.
+      meta.tokenFull = data.token || String(data.full).split(':').slice(1).join(':');
+      if (!meta.tokenFull) {
+        throw new Error('WPPConnect Server token generation returned no access token.');
+      }
       meta.updatedAt = new Date().toISOString();
       return meta.tokenFull;
     } catch (error) {
