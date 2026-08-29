@@ -1,0 +1,7 @@
+.git
+.gitignore
+**/node_modules
+whatsapp-service/sessions
+**/.env
+**/.env.*
+npm-debug.log

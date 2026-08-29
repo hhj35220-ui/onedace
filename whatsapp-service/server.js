@@ -356,6 +356,10 @@ async function createClient(meta, options = {}) {
     logQR: false,
     updatesLog: false,
     autoClose: 0,
+    useChrome: false,
+    puppeteerOptions: process.env.PUPPETEER_EXECUTABLE_PATH
+      ? { executablePath: process.env.PUPPETEER_EXECUTABLE_PATH }
+      : {},
     chromeVersion: 'stable',
     tokenStore: 'file',
     folderNameToken: path.join(SESSIONS_DIR, meta.sessionName),
