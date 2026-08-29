@@ -76,20 +76,26 @@
       body = JSON.stringify(options.body);
     }
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
-      method: options.method || 'GET',
-      headers,
-      body
-    });
+    let response;
+    try {
+      response = await fetch(`${getBaseUrl()}${path}`, {
+        method: options.method || 'GET',
+        headers,
+        body
+      });
+    } catch (networkError) {
+      const err = new Error(
+        `WhatsApp service is unreachable at ${getBaseUrl()}. ` +
+        `Make sure the service is running. (${networkError.message})`
+      );
+      err.status = 0;
+      err.code = 'WHATSAPP_SERVICE_UNREACHABLE';
+      throw err;
+    }
 
     const responseText = await response.text();
-    const payload = (() => {
-      try {
-        return JSON.parse(responseText);
-      } catch (error) {
-        return null;
-      }
-    })();
+    const payload = (() => { try { return JSON.parse(responseText); } catch (e) { return null; } })();
+
     if (!response.ok || !payload || payload.success === false) {
       const message = (payload && payload.message) || responseText.trim().slice(0, 500);
       const error = new Error(message || `WhatsApp service request failed (${response.status}).`);
@@ -97,7 +103,6 @@
       error.code = payload && payload.code;
       throw error;
     }
-
     return payload;
   }
 
@@ -130,6 +135,10 @@
 
     disconnect() {
       return request('/api/whatsapp/disconnect', { method: 'POST', body: {} });
+    },
+
+    reconnect() {
+      return request('/api/whatsapp/connect', { method: 'POST', body: {} });
     },
 
     chats() {

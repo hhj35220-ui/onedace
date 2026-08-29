@@ -948,6 +948,13 @@ class WhatsAppApp {
       if (!window.OP || !window.OP.whatsappService) {
         throw new Error('WhatsApp service client is unavailable.');
       }
+      // Quick health check so network errors surface instantly
+      try {
+        await window.OP.whatsappService.status();
+      } catch (healthErr) {
+        if (healthErr.code === 'WHATSAPP_SERVICE_UNREACHABLE') throw healthErr;
+      }
+
       this.renderConnectionStatus({ connectionStatus: 'connecting', connected: false });
       await window.OP.whatsappService.connect();
       if (typeof OP !== 'undefined' && OP.toast) {

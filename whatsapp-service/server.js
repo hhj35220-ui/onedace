@@ -447,12 +447,15 @@ async function disconnectUserSession(uid) {
 // ============================================
 
 const defaultOrigins = [
-  'http://localhost:8000',
-  'http://127.0.0.1:8000',
-  'http://localhost:3001',
-  'http://127.0.0.1:3001',
-  'http://localhost:21465',
-  'http://127.0.0.1:21465'
+  'http://localhost:8000', 'http://127.0.0.1:8000',
+  'http://localhost:3001', 'http://127.0.0.1:3001',
+  'http://localhost:21465', 'http://127.0.0.1:21465',
+  'http://localhost:5500', 'http://127.0.0.1:5500',
+  'http://localhost:8080', 'http://127.0.0.1:8080',
+  'http://localhost:3000', 'http://127.0.0.1:3000',
+  'http://localhost:5173', 'http://127.0.0.1:5173',
+  'http://localhost:4200', 'http://127.0.0.1:4200',
+  'null'
 ];
 const envOrigins = String(process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
 const allowedOrigins = new Set([...defaultOrigins, ...envOrigins]);
@@ -461,11 +464,13 @@ app.use(cors({
   origin(origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.has(origin)) return callback(null, true);
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
     return callback(new Error(`CORS origin not allowed: ${origin}`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json({ limit: '25mb' }));
