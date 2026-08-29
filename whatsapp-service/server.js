@@ -612,12 +612,7 @@ app.post('/api/whatsapp/connect', async (req, res) => {
     if (!meta.qr && meta.status !== 'isLogged') {
       try {
         console.log('[WhatsApp Connect] Attempting fallback QR code fetch...');
-        const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
-        const fallbackQr = extractQrCode(qrResp);
-        if (fallbackQr) {
-          meta.qr = fallbackQr;
-          console.log('[WhatsApp Connect] Fallback QR fetch succeeded');
-        }
+        await refreshQrCode(meta);
       } catch (qrErr) {
         console.log('[WhatsApp Connect] Fallback QR fetch failed:', qrErr.message);
       }
@@ -669,8 +664,12 @@ app.get('/api/whatsapp/qr', async (req, res) => {
         meta.qr = startQr;
         meta.status = 'qrReadSuccess';
         meta.updatedAt = new Date().toISOString();
+      } else if (!meta.qr) {
+        await refreshQrCode(meta);
       }
-    } catch (e) {}
+    } catch (e) {
+      await refreshQrCode(meta);
+    }
 
     const status = await getUserStatus(access.uid);
     res.json({

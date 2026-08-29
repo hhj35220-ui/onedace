@@ -1113,8 +1113,18 @@ class WhatsAppApp {
           if (window.DEBUG) window.DEBUG.info('Status polling: QR code found', { qrLength: status.qr.length });
           this.displayQr(status.qr);
         } else if (window.DEBUG && !status.connected) {
-          // Only log if not connected and no QR
-          if (window.DEBUG) window.DEBUG.info('Status polling: No QR code, status:', status.status);
+          if (window.DEBUG) window.DEBUG.info('Status polling: No QR code, requesting dedicated QR endpoint', { status: status.status });
+          try {
+            const qrResp = await window.OP.whatsappService.qr();
+            if (qrResp?.qr) {
+              if (window.DEBUG) window.DEBUG.success('Dedicated QR endpoint returned a QR code', { qrLength: qrResp.qr.length });
+              this.displayQr(qrResp.qr);
+            } else if (window.DEBUG) {
+              window.DEBUG.info('Dedicated QR endpoint returned no QR code', { status: qrResp?.status, statusText: qrResp?.statusText });
+            }
+          } catch (qrError) {
+            if (window.DEBUG) window.DEBUG.error('Dedicated QR endpoint failed', qrError);
+          }
         }
 
         if (status.connected) {
