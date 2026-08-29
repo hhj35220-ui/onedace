@@ -464,20 +464,28 @@ class WhatsAppApp {
     const list = document.getElementById('conversation-list');
     if (!list) return;
 
-    const conversations = this.storage.getConversations(this.currentSearch, this.currentFilter);
+    try {
+      const conversations = this.storage.getConversations(this.currentSearch, this.currentFilter);
+      
+      // Safety check: ensure conversations is an array
+      if (!Array.isArray(conversations)) {
+        if (window.DEBUG) window.DEBUG.error('renderConversations: data is not an array', { type: typeof conversations });
+        list.innerHTML = '<div class="wa-empty-state"><div class="wa-empty-state-icon"><i class="ph ph-warning"></i></div><div class="wa-empty-state-title">Data Error</div><div class="wa-empty-state-desc">Unable to load conversations. Try refreshing the page.</div></div>';
+        return;
+      }
 
-    if (conversations.length === 0) {
-      list.innerHTML = `
-        <div class="wa-empty-state">
-          <div class="wa-empty-state-icon"><i class="ph ph-chat-circle-dots"></i></div>
-          <div class="wa-empty-state-title">No conversations</div>
-          <div class="wa-empty-state-desc">No conversations match your current search or filter.</div>
-        </div>
-      `;
-      return;
-    }
+      if (conversations.length === 0) {
+        list.innerHTML = `
+          <div class="wa-empty-state">
+            <div class="wa-empty-state-icon"><i class="ph ph-chat-circle-dots"></i></div>
+            <div class="wa-empty-state-title">No conversations</div>
+            <div class="wa-empty-state-desc">No conversations match your current search or filter.</div>
+          </div>
+        `;
+        return;
+      }
 
-    let html = '';
+      let html = '';
     conversations.forEach(conv => {
       const contact = conv.contact || {};
       const timeAgo = this.formatTimeAgo(conv.timestamp);
@@ -503,10 +511,17 @@ class WhatsAppApp {
       `;
     });
 
-    list.innerHTML = html;
-    list.querySelectorAll('.wa-conversation-item').forEach(item => {
-      item.addEventListener('click', () => this.selectConversation(item.dataset.id));
-    });
+      list.innerHTML = html;
+      list.querySelectorAll('.wa-conversation-item').forEach(item => {
+        item.addEventListener('click', () => this.selectConversation(item.dataset.id));
+      });
+    } catch (error) {
+      if (window.DEBUG) window.DEBUG.error('renderConversations() failed', error);
+      const list = document.getElementById('conversation-list');
+      if (list) {
+        list.innerHTML = `<div class="wa-empty-state"><div class="wa-empty-state-icon"><i class="ph ph-warning"></i></div><div class="wa-empty-state-title">Error</div><div class="wa-empty-state-desc">${error.message}</div></div>`;
+      }
+    }
   }
 
   selectConversation(id) {

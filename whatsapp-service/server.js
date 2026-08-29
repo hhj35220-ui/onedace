@@ -479,9 +479,16 @@ app.use('/whatsapp-service', (req, res) => res.status(404).end());
 app.use(express.static(FRONTEND_DIR, { dotfiles: 'deny', index: 'index.html' }));
 
 function handleError(res, error, fallbackMessage, code) {
-  const message = error?.message || fallbackMessage;
-  console.error(`[${code}]`, error);
-  res.status(error.statusCode || 500).json({ success: false, message, code });
+  let message = error?.message || fallbackMessage;
+  
+  // Ensure we're not sending HTML error pages
+  if (message && (message.includes('<!DOCTYPE') || message.includes('<html'))) {
+    message = fallbackMessage || 'Internal server error';
+  }
+  
+  const statusCode = error?.statusCode || 500;
+  console.error(`[${code}]`, { message, statusCode, errorMessage: error?.message?.slice(0, 100) });
+  res.status(statusCode).json({ success: false, message, code });
 }
 
 // ---------- Health ----------
@@ -508,10 +515,26 @@ app.get('/api/whatsapp/status', async (req, res) => {
 
 app.post('/api/whatsapp/connect', async (req, res) => {
   try {
+    console.log('[WhatsApp Connect] Request started at', new Date().toISOString());
+    
     const access = await authorizeUser(req);
+    console.log('[WhatsApp Connect] User authorized:', access.uid);
+    
     const meta = getSessionMeta(access.uid);
-    await ensureClientForUser(access.uid);
+    console.log('[WhatsApp Connect] Session meta created:', meta.sessionName);
+    
+    try {
+      console.log('[WhatsApp Connect] Calling ensureClientForUser...');
+      await ensureClientForUser(access.uid);
+      console.log('[WhatsApp Connect] ensureClientForUser completed, status:', meta.status);
+    } catch (ensureErr) {
+      console.error('[WhatsApp Connect] ensureClientForUser failed:', ensureErr.message, ensureErr.code);
+      // Continue even if ensureClient fails - we can still return status
+    }
+    
+    console.log('[WhatsApp Connect] Calling getUserStatus...');
     const status = await getUserStatus(access.uid);
+    console.log('[WhatsApp Connect] getUserStatus returned:', { status: status.status, connected: status.connected });
 
     res.json({
       success: true,
@@ -526,6 +549,7 @@ app.post('/api/whatsapp/connect', async (req, res) => {
       account: status.account || null
     });
   } catch (error) {
+    console.error('[WhatsApp Connect] Fatal error:', error.message, error.stack);
     handleError(res, error, 'Unable to connect WhatsApp.', 'WHATSAPP_CONNECT_ERROR');
   }
 });
