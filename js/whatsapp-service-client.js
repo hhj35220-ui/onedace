@@ -82,9 +82,17 @@
       body
     });
 
-    const payload = await response.json().catch(() => null);
+    const responseText = await response.text();
+    const payload = (() => {
+      try {
+        return JSON.parse(responseText);
+      } catch (error) {
+        return null;
+      }
+    })();
     if (!response.ok || !payload || payload.success === false) {
-      const error = new Error((payload && payload.message) || `WhatsApp service request failed (${response.status}).`);
+      const message = (payload && payload.message) || responseText.trim().slice(0, 500);
+      const error = new Error(message || `WhatsApp service request failed (${response.status}).`);
       error.status = response.status;
       error.code = payload && payload.code;
       throw error;
