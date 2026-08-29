@@ -306,6 +306,36 @@ function uiStatusFromState(rawStatus) {
 // WPPConnect Server session lifecycle
 // ============================================
 
+function extractQrCode(payload) {
+  const candidates = [
+    payload?.qrcode,
+    payload?.qr,
+    payload?.response?.qrcode,
+    payload?.response?.qr,
+    payload?.data?.qrcode,
+    payload?.data?.qr
+  ];
+  const value = candidates.find(candidate => typeof candidate === 'string' && candidate.trim());
+  if (!value) return null;
+  return value.startsWith('data:') ? value : `data:image/png;base64,${value}`;
+}
+
+async function refreshQrCode(meta) {
+  try {
+    const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
+    const qr = extractQrCode(qrResp);
+    if (!qr) return false;
+    meta.qr = qr;
+    meta.status = 'qrReadSuccess';
+    meta.updatedAt = new Date().toISOString();
+    console.log(`[refreshQrCode] QR code found for ${meta.sessionName}, length: ${qr.length}`);
+    return true;
+  } catch (error) {
+    console.log(`[refreshQrCode] QR lookup failed for ${meta.sessionName}: ${error.message}`);
+    return false;
+  }
+}
+
 async function readClientAccountInfo(sessionName) {
   const account = {};
   try {
@@ -333,11 +363,12 @@ async function ensureClientForUser(uid) {
       webhook: process.env.WEBHOOK_URL || undefined
     });
     console.log(`[ensureClientForUser] WPPConnect /start-session full response:`, JSON.stringify(startResp, null, 2));
-    console.log(`[ensureClientForUser] Start response status: ${startResp?.status}, has qrcode: ${!!startResp?.qrcode}`);
+    const startQr = extractQrCode(startResp);
+    console.log(`[ensureClientForUser] Start response status: ${startResp?.status}, has qrcode: ${!!startQr}`);
     
-    if (startResp?.status === 'QRCODE' && startResp?.qrcode) {
+    if (startQr) {
       console.log(`[ensureClientForUser] Processing QRCODE response...`);
-      meta.qr = startResp.qrcode.startsWith('data:') ? startResp.qrcode : `data:image/png;base64,${startResp.qrcode}`;
+      meta.qr = startQr;
       meta.status = 'qrReadSuccess';
       meta.updatedAt = new Date().toISOString();
       console.log(`[ensureClientForUser] ✓ QR code set, length: ${meta.qr.length}`);
@@ -360,8 +391,9 @@ async function ensureClientForUser(uid) {
           console.log(`[ensureClientForUser] Attempting to fetch QR code via /qr-code endpoint...`);
           const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
           console.log(`[ensureClientForUser] /qr-code response:`, JSON.stringify(qrResp, null, 2));
-          if (qrResp?.qrcode) {
-            meta.qr = qrResp.qrcode.startsWith('data:') ? qrResp.qrcode : `data:image/png;base64,${qrResp.qrcode}`;
+          const fallbackQr = extractQrCode(qrResp);
+          if (fallbackQr) {
+            meta.qr = fallbackQr;
             console.log(`[ensureClientForUser] ✓ QR code fetched via fallback, length: ${meta.qr.length}`);
           } else {
             console.log(`[ensureClientForUser] ✗ /qr-code returned no qrcode field`);
@@ -409,6 +441,10 @@ async function getUserStatus(uid) {
 
     meta.status = isConnected ? 'isLogged' : (meta.status || 'notLogged');
     meta.updatedAt = new Date().toISOString();
+
+    if (!isConnected && !meta.qr) {
+      await refreshQrCode(meta);
+    }
 
     let account = null;
     if (isConnected) {
@@ -572,12 +608,13 @@ app.post('/api/whatsapp/connect', async (req, res) => {
     }
     
     // Fallback: if QR not set yet, try to fetch it directly
-    if (!meta.qr && (meta.status === 'qrReadSuccess' || meta.status === 'QRCODE')) {
+    if (!meta.qr && meta.status !== 'isLogged') {
       try {
         console.log('[WhatsApp Connect] Attempting fallback QR code fetch...');
         const qrResp = await wppRequest(meta.sessionName, 'get', '/qr-code');
-        if (qrResp?.qrcode) {
-          meta.qr = qrResp.qrcode.startsWith('data:') ? qrResp.qrcode : `data:image/png;base64,${qrResp.qrcode}`;
+        const fallbackQr = extractQrCode(qrResp);
+        if (fallbackQr) {
+          meta.qr = fallbackQr;
           console.log('[WhatsApp Connect] Fallback QR fetch succeeded');
         }
       } catch (qrErr) {
@@ -626,8 +663,9 @@ app.get('/api/whatsapp/qr', async (req, res) => {
 
     try {
       const startResp = await wppRequest(meta.sessionName, 'post', '/start-session');
-      if (startResp?.status === 'QRCODE' && startResp?.qrcode) {
-        meta.qr = startResp.qrcode.startsWith('data:') ? startResp.qrcode : `data:image/png;base64,${startResp.qrcode}`;
+      const startQr = extractQrCode(startResp);
+      if (startQr) {
+        meta.qr = startQr;
         meta.status = 'qrReadSuccess';
         meta.updatedAt = new Date().toISOString();
       }
