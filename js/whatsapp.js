@@ -1137,7 +1137,7 @@ class WhatsAppApp {
           }
         }
 
-        if (!status.connected && Date.now() - this.statusPollStartedAt >= 5000) {
+        if (!status.connected && !status.qr && Date.now() - this.statusPollStartedAt >= 5000) {
           const error = new Error('No QR code was received after 5 seconds. Check the WPPConnect server logs and SECRET_KEY values.');
           if (window.DEBUG) window.DEBUG.error('QR loading timed out', { status: status.status, diagnostic: status.diagnostic });
           this.stopStatusPolling();
